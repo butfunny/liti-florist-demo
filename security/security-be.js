@@ -44,7 +44,7 @@ module.exports = {
     isAdmin: (req, res, next) => {
         decode(req).then((decodedAuth) => {
                 UserDao.findOne({_id: decodedAuth._id}, {"password": 0}, (err, user) => {
-                    if (user.isAdmin) {
+                    if (user.role === "admin") {
                         req.user = user;
                         next();
                     } else {

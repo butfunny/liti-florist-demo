@@ -2,8 +2,6 @@ import React, {Fragment} from "react";
 import {Form} from "../../components/form/form";
 import {Input} from "../../components/input/input";
 import {minLength, required} from "../../components/form/validations";
-import {premisesInfo} from "../../security/premises-info";
-import {Checkbox} from "../../components/checkbox/checkbox";
 export class ManageUserModal extends React.Component {
 
     constructor(props) {
@@ -24,16 +22,37 @@ export class ManageUserModal extends React.Component {
                     valid: user._id ? true : usernames.indexOf(val) == -1
                 })
             ]},
-            {"name" : [required("Tên nhân viên")]},
-            {"premises": [() => {
-                if (!user.isAdmin && (user.premises || []).length == 0) return {valid: false, text: "Mỗi nhân viên phải được quyền truy cập ít nhất 1 cơ sở"}
-                return {valid: true}
-            }]}
+            {"name" : [required("Tên nhân viên")]}
         ];
 
         if (!user._id) validations.push({"password" : [required("Mật khẩu"), minLength(6, "Mật khẩu")]},);
-        let premises = premisesInfo.getPremises();
 
+
+        const roles = [{
+            value: "admin",
+            label: "Ban Giám Đốc"
+        }, {
+            value: "mkt",
+            label: "Marketing"
+        }, {
+            value: "dvkh",
+            label: "Dịch Vụ Khách Hàng"
+        }, {
+            value: "sale",
+            label: "Sale"
+        }, {
+            value: "florist",
+            label: "Florist"
+        }, {
+            value: "ship",
+            label: "Ship"
+        }, {
+            value: "ns",
+            label: "Nhân Sự"
+        }, {
+            value: "kt",
+            label: "Kế Toán"
+        }];
 
         return (
             <div className="app-modal-box ">
@@ -71,38 +90,13 @@ export class ManageUserModal extends React.Component {
                                     />
 
                                     <div className="form-group">
-                                        <select className="form-control" value={user.isAdmin}
-                                                onChange={(e) => this.setState({user: {...user, isAdmin: e.target.value}})}>
-                                            <option value={true}>Admin</option>
-                                            <option value={false}>Nhân Viên</option>
+                                        <select className="form-control" value={user.role}
+                                                onChange={(e) => this.setState({user: {...user, role: e.target.value}})}>
+                                            { roles.map((role, index) => (
+                                                <option value={role.value} key={index}>{role.label}</option>
+                                            ))}
                                         </select>
                                     </div>
-
-                                    { !user.isAdmin && (
-                                        <div className="form-group">
-                                            <label className="control-label">
-                                                Được quyền truy cập cơ sở:
-                                            </label>
-
-                                            { premises.map((premise, index) => (
-                                                <Checkbox
-                                                    key={index}
-                                                    label={premise.name}
-                                                    value={(user.premises || []).indexOf(premise._id) > -1}
-                                                    onChange={(value) => {
-                                                        if (value) this.setState({user: {...user, premises: (user.premises || []).concat(premise._id)}});
-                                                        else {
-                                                            this.setState({user: {...user, premises: user.premises.filter(p => p != premise._id)}})
-                                                        }
-                                                    }}
-                                                />
-                                            ))}
-
-                                            <div className="error-text">
-                                                {getInvalidByKey("premises")}
-                                            </div>
-                                        </div>
-                                    )}
 
                                     { !user._id && (
                                         <Input

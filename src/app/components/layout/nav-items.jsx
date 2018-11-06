@@ -28,6 +28,16 @@ export const navItems = (premises, user) => {
         to: "/customers",
         hide: () => false
     }, {
+        label: "Khuyến Mại",
+        to: "/customers",
+        hide: () => false
+    }, {
+        label: "Kho",
+        child: [{
+            label: "Will Code",
+            hide: () => false
+        }],
+    }, {
         label: "Cơ Sở",
         child: [{
             label: "Quản Lý Cơ Sở",

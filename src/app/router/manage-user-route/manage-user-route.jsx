@@ -36,7 +36,7 @@ export class ManageUserRoute extends React.Component {
         const modal = modals.openModal({
             content: (
                 <ManageUserModal
-                    user={{isAdmin: false}}
+                    user={{role: "sale"}}
                     usernames={users.map(u => u.username)}
                     onDismiss={() => modal.close()}
                     onClose={(user) => {
@@ -56,7 +56,7 @@ export class ManageUserRoute extends React.Component {
                 username: user.username,
                 name: user.name,
                 password: user.password,
-                premises: user.premises
+                role: user.role
             }).then(() => {
                 this.setState({
                     users: users.map(u => {
@@ -101,6 +101,17 @@ export class ManageUserRoute extends React.Component {
         let {users} = this.state;
         const user = userInfo.getUser();
 
+        const roles = {
+            "admin": "Ban Giám Đốc",
+            "mkt": "Marketing",
+            "dvkh": "Dịch Vụ Khách Hàng",
+            "sale": "Sale",
+            "florist": "Florist",
+            "ship": "Ship",
+            "ns": "Nhân Sự",
+            "kt": "Kế Toán"
+        };
+
         return (
             <Layout
                 activeRoute="Tài Khoản"
@@ -137,7 +148,7 @@ export class ManageUserRoute extends React.Component {
                                 <td>
                                     <div>Tên tài khoản: <b>{item.username}</b></div>
                                     <div>{item.name &&
-                                    <span>{item.name} - </span>}<b>{item.isAdmin ? "Admin" : "Nhân Viên"}</b></div>
+                                    <span>{item.name} - </span>}<b>{roles[item.role]}</b></div>
                                 </td>
                                 <td>
                                     <button className="btn btn-outline-primary btn-sm"
