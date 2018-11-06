@@ -7,13 +7,12 @@ const fse = require('fs-extra');
 const crypto = require("crypto");
 
 
-
 function makeid() {
     let text = "";
     let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     for (let i = 0; i < 5; i++)
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
 
     return text;
 }
@@ -56,8 +55,8 @@ gulp.task("dev", () => {
     }
 });
 
-let packageAssets = function() {
-    gulp.src(["./dev/**","!./dev/assets/js/**"])
+let packageAssets = function () {
+    gulp.src(["./dev/**", "!./dev/assets/js/**"])
         .pipe(gulp.dest("./build"));
 };
 
@@ -81,14 +80,43 @@ gulp.task("deploy", (done) => {
 
 gulp.task("create-default-admin", () => {
     const mongoose = require('mongoose');
-    mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/hoa-lyly", { useNewUrlParser: true });
+    mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/hoa-lyly", {useNewUrlParser: true});
 
     const UserDao = require("./dao/user-dao");
     const PremisesDao = require("./dao/premises-dao");
 
-    UserDao.create({username: "cuongnguyen", isAdmin: true, password: crypto.createHash('md5').update("123123").digest("hex")}, (() => {
+    UserDao.create({
+        username: "cuongnguyen",
+        isAdmin: true,
+        password: crypto.createHash('md5').update("123123").digest("hex")
+    }, (() => {
         PremisesDao.create({name: "3 Phố Huế", deleteable: false}, () => {
             mongoose.disconnect();
         })
     }))
+});
+
+gulp.task("create-premises", () => {
+    const mongoose = require('mongoose');
+    mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/payment", {useNewUrlParser: true});
+    const ShopDao = require("./dao/shop-dao");
+    ShopDao.create([{base_id: null, name: "Phố Huế", address: "số 3 Phố Huế, Hà Nội"}, {
+        base_id: 2,
+        name: "Kim Mã",
+        address: "229 Kim Mã, Ba Đình, Hà Nội"
+    }, {
+        base_id: 3,
+        name: "Trần Duy Hưng",
+        address: "51 Trần Duy Hưng, Hà Nội"
+    }, {
+        base_id: 4,
+        name: "Hai Bà Trưng",
+        address: "357 Hai Bà Trưng, Hồ Chí Minh"
+    }, {
+        base_id: 5,
+        name: "Quang Trung",
+        address: "306 Quang Trung, Hà Đông, Hà Nội"
+    }], () => {
+        mongoose.disconnect();
+    })
 });
