@@ -9,16 +9,13 @@ export let security = {
             securityApi.login(data).then((resp) => {
                 cache.set(resp.token, "token");
                 const user = resp.user;
-                userInfo.setUser(user);
-                resolve();
 
-                // premisesApi.get().then(content => {
-                //     premisesAllInfo.updatePremises(content);
-                //     if (user.isAdmin) premisesInfo.updatePremises(content);
-                //     else premisesInfo.updatePremises(content.filter(c => (user.premises|| []).indexOf(c._id) > -1));
-                //     userInfo.setUser(user);
-                //     resolve();
-                // });
+                shopApi.get().then(shops => {
+                    premisesAllInfo.updatePremises(shops);
+                    premisesInfo.updatePremises(shops);
+                    userInfo.setUser(user);
+                    resolve();
+                });
             }, (err) => {
                 reject(err);
             })
@@ -28,13 +25,11 @@ export let security = {
         return new Promise((resolve, reject)=>{
             securityApi.me().then((user) => {
                 userInfo.setUser(user);
-                resolve();
-                // premisesApi.get().then(content => {
-                //     premisesAllInfo.updatePremises(content);
-                //     if (user.isAdmin) premisesInfo.updatePremises(content);
-                //     else premisesInfo.updatePremises(content.filter(c => (user.premises|| []).indexOf(c._id) > -1));
-                //     resolve();
-                // });
+                shopApi.get().then(content => {
+                    premisesAllInfo.updatePremises(content);
+                    premisesInfo.updatePremises(content);
+                    resolve();
+                });
 
             }, () => {
                 localStorage.removeItem("token");

@@ -57,17 +57,17 @@ export class LeftSide extends React.Component {
 
         return (
             <Fragment>
-                <BillAddItem
-                    onChangeItem={(item) => this.addItem(item)}
-                    onChangeCatalog={(catalog) => this.addCatalog(catalog)}
-                    saving={saving}
-                />
+                {/*<BillAddItem*/}
+                    {/*onChangeItem={(item) => this.addItem(item)}*/}
+                    {/*onChangeCatalog={(catalog) => this.addCatalog(catalog)}*/}
+                    {/*saving={saving}*/}
+                {/*/>*/}
 
-                <BillCatalog
-                    catalogs={catalogs}
-                    onChangeCatalogs={(catalogs) => this.setState({catalogs})}
-                    onAddItem={(item) => this.addItem(item)}
-                />
+                {/*<BillCatalog*/}
+                    {/*catalogs={catalogs}*/}
+                    {/*onChangeCatalogs={(catalogs) => this.setState({catalogs})}*/}
+                    {/*onAddItem={(item) => this.addItem(item)}*/}
+                {/*/>*/}
             </Fragment>
         );
     }

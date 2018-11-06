@@ -23,7 +23,7 @@ import omit from "lodash/omit";
 import {Checkbox} from "../../components/checkbox/checkbox";
 import {configApi} from "../../api/config-api";
 
-export class BillReportRoute extends RComponent {
+export class BillOrderRoute extends RComponent {
 
     constructor(props) {
         super(props);

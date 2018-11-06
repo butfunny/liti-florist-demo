@@ -13,6 +13,7 @@ let router = express.Router();
 app.use("/api", router);
 
 require("../controllers/account-controller")(router);
+require("../controllers/shop-controller")(router);
 
 app.get("*", (req, res) => {
     res.sendFile(__dirname + "/index.html");

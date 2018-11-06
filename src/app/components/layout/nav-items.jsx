@@ -21,35 +21,18 @@ export const navItems = (premises, user) => {
         label: "Hoá Đơn",
         to: "/"
     }, {
-        label: "Báo Cáo",
-        to: "/report"
+        label: "Đơn Hàng",
+        to: "/orders"
     }, {
         label: "Khách Hàng",
         to: "/customers",
-        hide: () => !user.isAdmin
+        hide: () => false
     }, {
-        label: "Cài Đặt",
+        label: "Cơ Sở",
         child: [{
             label: "Quản Lý Cơ Sở",
             to: "/manage-premises",
-            hide: () => !user.isAdmin
-        }, {
-            label: "Cài đặt hệ thống",
-            hide: () => !user.isAdmin,
-            click: () => {
-                const modal = modals.openModal({
-                    content: (
-                        <ConfigModal
-                            onClose={() => modal.close()}
-                            onDone={() => {
-                                modal.close();
-                                confirmModal.alert("Cập nhật thành công");
-                            }}
-                        />
-                    )
-                })
-            }
-
+            hide: () => false
         }, ..._premises],
     }, {
         label: "Tài Khoản",
@@ -71,7 +54,7 @@ export const navItems = (premises, user) => {
         }, {
             label: "Quản Lý Nhân Viên",
             to: "/manage-user",
-            hide: () => !user.isAdmin
+            hide: () => false
         }, {
             label: "Thoát",
             click: () => {

@@ -5,4 +5,4 @@ module.exports = mongoose.model('UserDao', {
     password: String,
     name: String,
     role: String
-}, "user");
+}, "users");

@@ -80,20 +80,18 @@ gulp.task("deploy", (done) => {
 
 gulp.task("create-default-admin", () => {
     const mongoose = require('mongoose');
-    mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/hoa-lyly", {useNewUrlParser: true});
+    mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/payment", {useNewUrlParser: true});
 
     const UserDao = require("./dao/user-dao");
-    const PremisesDao = require("./dao/premises-dao");
 
     UserDao.create({
         username: "cuongnguyen",
-        isAdmin: true,
+        role: "admin",
         password: crypto.createHash('md5').update("123123").digest("hex")
-    }, (() => {
-        PremisesDao.create({name: "3 Phố Huế", deleteable: false}, () => {
-            mongoose.disconnect();
-        })
-    }))
+    }, (err, user) => {
+        mongoose.disconnect();
+        console.log(user);
+    })
 });
 
 gulp.task("create-premises", () => {
