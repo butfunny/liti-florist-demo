@@ -1,0 +1,24 @@
+const express = require('express');
+const app = express();
+const bodyParser = require("body-parser");
+
+const server = require('http').Server(app);
+const mongoose = require('mongoose');
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/hoa-lyly", { useNewUrlParser: true });
+
+app.use(express.static(__dirname));
+app.use("/api", bodyParser.json());
+
+let router = express.Router();
+app.use("/api", router);
+
+
+app.get("*", (req, res) => {
+    res.sendFile(__dirname + "/index.html");
+});
+
+
+const port = process.env.PORT || 3000;
+server.listen(port, () => {
+    console.log(`Server running at:${port}` );
+});

@@ -1,0 +1,51 @@
+.bill-catalog {
+  .product {
+    color: #555;
+    text-decoration: none;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border 1px solid #dedede;
+    margin-top: 10px;
+    padding: .625rem .75rem;
+    position relative;
+    cursor pointer;
+    no-select();
+
+    &:hover {
+      background-color: #f5f5f5;
+      .product-edit {
+        opacity 1;
+      }
+
+    }
+
+    .badge {
+      display: inline-block;
+      min-width: 10px;
+      padding: 3px 7px;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+      color: #fff;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      background-color: #777;
+      border-radius: 10px;
+      right .75rem;
+      position absolute;
+
+    }
+
+    .product-edit {
+      position: absolute;
+      top: 10px;
+      right: -75px;
+      z-index: 1;
+      opacity 0;
+      transition opacity .25s
+
+    }
+  }
+
+}
