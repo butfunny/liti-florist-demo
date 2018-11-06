@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 
 const server = require('http').Server(app);
 const mongoose = require('mongoose');
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/hoa-lyly", { useNewUrlParser: true });
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/payment", { useNewUrlParser: true });
 
 app.use(express.static(__dirname));
 app.use("/api", bodyParser.json());
@@ -12,6 +12,7 @@ app.use("/api", bodyParser.json());
 let router = express.Router();
 app.use("/api", router);
 
+require("../controllers/account-controller")(router);
 
 app.get("*", (req, res) => {
     res.sendFile(__dirname + "/index.html");

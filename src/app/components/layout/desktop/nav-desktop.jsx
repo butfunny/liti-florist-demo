@@ -19,32 +19,32 @@ export class NavDesktop extends RComponent {
 
     render() {
 
-        let premises = premisesInfo.getPremises();
+        let premises = premisesInfo.getPremises() || [];
         let user = userInfo.getUser();
         let {activeRoute} = this.props;
 
-        const getCurrentPremise = () => {
-            const activeID = cache.get("active-premises");
-            if (!activeID) {
-                cache.set(premises[0]._id, "active-premises");
-                return premises[0].name;
-            }
-            const found = premises.find(p => p._id == activeID);
-            if (found) return found.name;
-            else {
-                cache.set(premises[0]._id, "active-premises");
-                return premises[0].name
-            }
-        };
+        // const getCurrentPremise = () => {
+        //     const activeID = cache.get("active-premises");
+        //     if (!activeID) {
+        //         cache.set(premises[0]._id, "active-premises");
+        //         return premises[0].name;
+        //     }
+        //     const found = premises.find(p => p._id == activeID);
+        //     if (found) return found.name;
+        //     else {
+        //         cache.set(premises[0]._id, "active-premises");
+        //         return premises[0].name
+        //     }
+        // };
 
-        const activeID = cache.get("active-premises") || premises[0]._id;
+        // const activeID = cache.get("active-premises") || premises[0]._id;
 
 
         return (
             <nav className="navbar navbar-expand-lg navbar-dark bg-primary nav-desktop">
                 <div className="container">
                     <Link className="navbar-brand" to="/"><b>F.Flower</b>
-                        <sup>{getCurrentPremise()}</sup>
+                        {/*<sup>{getCurrentPremise()}</sup>*/}
                     </Link>
                     <ul className="navbar-nav ml-lg-auto">
                         { navItems(premises.filter(p => p._id != activeID), user).filter(n =>  (n.hide ? !n.hide() : true) &&  (n.child ? n.child.filter(c => !c.hide || !c.hide()).length > 0 : true)).map((navItem, index) => (
