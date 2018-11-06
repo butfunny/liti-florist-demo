@@ -1,7 +1,7 @@
 import React, {Fragment} from "react";
 import {formatNumber, getTotalBill} from "../../../common/common";
 import moment from "moment";
-import {premisesApi} from "../../../api/premises-api";
+import {shopApi} from "../../../api/shop-api";
 import {premisesAllInfo} from "../../../security/premises-info";
 export class BillPrint extends React.Component {
 

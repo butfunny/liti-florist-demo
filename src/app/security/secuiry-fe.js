@@ -1,7 +1,7 @@
 import {userInfo} from "./user-info";
 import {securityApi} from "../api/security-api";
 import {cache} from "../common/cache";
-import {premisesApi} from "../api/premises-api";
+import {shopApi} from "../api/shop-api";
 import {premisesAllInfo, premisesInfo} from "./premises-info";
 export let security = {
     login: (data) => {

@@ -1,6 +1,6 @@
 import React from "react";
 import {Layout} from "../../components/layout/layout";
-import {premisesApi} from "../../api/premises-api";
+import {shopApi} from "../../api/shop-api";
 import {modals} from "../../components/modal/modals";
 import {ManagePremisesModal} from "./manage-premises-modal";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
@@ -19,7 +19,7 @@ export class PremisesRoute extends React.Component {
         let {premises} = this.state;
 
         const handleClose = (item) => {
-            premisesApi.create(item).then((newItem) => {
+            shopApi.create(item).then((newItem) => {
                 let updated = premises.concat(newItem);
                 premisesInfo.updatePremises(updated);
 
@@ -44,7 +44,7 @@ export class PremisesRoute extends React.Component {
         let {premises} = this.state;
 
         const handleClose = (item) => {
-            premisesApi.update(content._id, item).then(() => {
+            shopApi.update(content._id, item).then(() => {
                 let updated = premises.map(p => {
                     if (p._id == content._id) return {...p, ...item};
                     return p;
@@ -80,7 +80,7 @@ export class PremisesRoute extends React.Component {
             this.setState({
                 premises: updated
             });
-            premisesApi.delete(content._id);
+            shopApi.delete(content._id);
         })
     }
 

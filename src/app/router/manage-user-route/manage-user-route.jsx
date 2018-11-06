@@ -6,7 +6,7 @@ import {modals} from "../../components/modal/modals";
 import {ManageUserModal} from "./manage-user-modal";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 import {premisesInfo} from "../../security/premises-info";
-import {premisesApi} from "../../api/premises-api";
+import {shopApi} from "../../api/shop-api";
 
 export class ManageUserRoute extends React.Component {
 
