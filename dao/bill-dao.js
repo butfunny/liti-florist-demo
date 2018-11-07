@@ -28,7 +28,7 @@ module.exports = mongoose.model('BillDao', {
         saleEmp: String,
         shipMoney: String
     },
-    base_id: Number,
+    base_id: String,
     vipSaleType: String,
     created: {type: Date, default: Date.now},
     created_by: String,

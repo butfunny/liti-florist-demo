@@ -118,3 +118,32 @@ gulp.task("create-premises", () => {
         mongoose.disconnect();
     })
 });
+
+gulp.task("update-bill-with-premies", () => {
+    const mongoose = require('mongoose');
+    mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/payment", {useNewUrlParser: true});
+    const ShopDao = require("./dao/shop-dao");
+    const BillDao = require("./dao/bill-dao");
+
+    const updateBill = (baseID, id) => {
+        return new Promise((resolve, reject)=>{
+            BillDao.update({base_id: baseID}, {base_id: id}, {multi: true}, (err) =>{
+                console.log("updated: " + baseID);
+                resolve();
+            })
+        })
+
+    };
+
+    ShopDao.find({}, (err, shops) => {
+        let promises = [];
+        for (let shop of shops) {
+            promises.push(updateBill(shop.base_id, shop._id))
+        }
+
+        Promise.all(promises).then(() => {
+            console.log("finished");
+            mongoose.disconnect();
+        })
+    })
+});
