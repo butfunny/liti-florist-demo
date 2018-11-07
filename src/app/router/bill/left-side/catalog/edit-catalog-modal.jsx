@@ -3,7 +3,7 @@ import {Form} from "../../../../components/form/form";
 import {Input} from "../../../../components/input/input";
 import {isNumber, required} from "../../../../components/form/validations";
 import {InputNumber} from "../../../../components/input-number/input-number";
-import {catalogApi} from "../../../../api/catalog-api";
+import {productApi} from "../../../../api/product-api";
 export class EditCatalogModal extends React.Component {
 
     constructor(props) {
@@ -17,7 +17,7 @@ export class EditCatalogModal extends React.Component {
     submit() {
         let {catalog} = this.state;
         this.setState({saving: true});
-        catalogApi.update(catalog._id, {
+        productApi.update(catalog._id, {
             name: catalog.name,
             price: catalog.price
         }).then(() => {

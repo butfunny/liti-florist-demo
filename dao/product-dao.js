@@ -3,5 +3,5 @@ let mongoose = require('mongoose');
 module.exports = mongoose.model('ProductDao', {
     name: String,
     price: Number,
-    base_id: Number
-}, "product");
+    base_id: String
+}, "products");

@@ -1,7 +1,7 @@
 import React from "react";
 import {formatNumber} from "../../../../common/common";
 import {confirmModal} from "../../../../components/confirm-modal/confirm-modal";
-import {catalogApi} from "../../../../api/catalog-api";
+import {productApi} from "../../../../api/product-api";
 import {modals} from "../../../../components/modal/modals";
 import {EditCatalogModal} from "./edit-catalog-modal";
 export class BillCatalog extends React.Component {
@@ -40,7 +40,7 @@ export class BillCatalog extends React.Component {
         let {onChangeCatalogs, catalogs} = this.props;
 
         confirmModal.show({title: `Xoá ${catalog.name}?`, description: "Bạn có chắc chắn muốn xoá sản phẩm này?"}).then(() => {
-            catalogApi.delete(catalog._id);
+            productApi.delete(catalog._id);
             onChangeCatalogs(catalogs.filter(c => c._id != catalog._id));
         })
     }

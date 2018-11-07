@@ -2,7 +2,8 @@ import React, {Fragment} from "react";
 import {BillAddItem} from "./add/bill-add-item";
 import {BillCatalog} from "./catalog/bill-catalog";
 import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
-import {catalogApi} from "../../../api/catalog-api";
+import {productApi} from "../../../api/product-api";
+import {premisesInfo} from "../../../security/premises-info";
 export class LeftSide extends React.Component {
 
     constructor(props) {
@@ -12,8 +13,15 @@ export class LeftSide extends React.Component {
             catalogs: []
         };
 
-        catalogApi.get().then((catalogs) => {
+        productApi.get().then((catalogs) => {
             this.setState({catalogs})
+        });
+
+        premisesInfo.onChange(() => {
+            this.setState({catalogs: []});
+            productApi.get().then((catalogs) => {
+                this.setState({catalogs})
+            });
         })
     }
 
@@ -44,7 +52,7 @@ export class LeftSide extends React.Component {
             confirmModal.alert("Sản phẩm đã được thêm rồi");
         } else {
             this.setState({saving: true});
-            catalogApi.create({name, price}).then((catalog) => {
+            productApi.create({name, price}).then((catalog) => {
                 this.setState({saving: false});
                 this.setState({catalogs: catalogs.concat(catalog)})
             });
@@ -57,17 +65,17 @@ export class LeftSide extends React.Component {
 
         return (
             <Fragment>
-                {/*<BillAddItem*/}
-                    {/*onChangeItem={(item) => this.addItem(item)}*/}
-                    {/*onChangeCatalog={(catalog) => this.addCatalog(catalog)}*/}
-                    {/*saving={saving}*/}
-                {/*/>*/}
+                <BillAddItem
+                    onChangeItem={(item) => this.addItem(item)}
+                    onChangeCatalog={(catalog) => this.addCatalog(catalog)}
+                    saving={saving}
+                />
 
-                {/*<BillCatalog*/}
-                    {/*catalogs={catalogs}*/}
-                    {/*onChangeCatalogs={(catalogs) => this.setState({catalogs})}*/}
-                    {/*onAddItem={(item) => this.addItem(item)}*/}
-                {/*/>*/}
+                <BillCatalog
+                    catalogs={catalogs}
+                    onChangeCatalogs={(catalogs) => this.setState({catalogs})}
+                    onAddItem={(item) => this.addItem(item)}
+                />
             </Fragment>
         );
     }
