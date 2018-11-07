@@ -54,11 +54,11 @@ export class BillView extends React.Component {
                                 <td className="no-padding col-action">
 
                                     <button type="button" className="btn btn-danger btn-sm" onClick={() => {
-                                        if (item.qty == 1) {
+                                        if (item.quantity == 1) {
                                             onChangeItems(items.filter(i => i.name != item.name))
                                         } else {
                                             onChangeItems(items.map(i => {
-                                                if (i.name == item.name) return {...i, qty: i.qty - 1};
+                                                if (i.name == item.name) return {...i, quantity: i.quantity - 1};
                                                 return i;
                                             }))
                                         }
@@ -70,10 +70,10 @@ export class BillView extends React.Component {
                                     <InputNumber
                                         disabled={editMode}
                                         autoSelect
-                                        value={item.qty}
-                                        onChange={(qty) => {
+                                        value={item.quantity}
+                                        onChange={(quantity) => {
                                             onChangeItems(items.map(i => {
-                                                if (i.name == item.name) return {...i, qty};
+                                                if (i.name == item.name) return {...i, quantity};
                                                 return i;
                                             }))
                                         }}
@@ -81,7 +81,7 @@ export class BillView extends React.Component {
 
                                     <button type="button" className="btn btn-primary btn-sm btn-right" onClick={() => {
                                         onChangeItems(items.map(i => {
-                                            if (i.name == item.name) return {...i, qty: i.qty + 1};
+                                            if (i.name == item.name) return {...i, quantity: i.quantity + 1};
                                             return i;
                                         }))
                                     }}>

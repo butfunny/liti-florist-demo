@@ -31,14 +31,14 @@ export class LeftSide extends React.Component {
         if (found) {
             onChangeItems(items.map(item => {
                 if (item.name == name) {
-                    return {...item, qty: item.qty + 1}
+                    return {...item, quantity: item.quantity + 1}
                 }
 
                 return item;
             }))
         } else {
             onChangeItems(items.concat({
-                name, price, qty: 1, vat: 0
+                name, price, quantity: 1, vat: 0
             }))
         }
 
