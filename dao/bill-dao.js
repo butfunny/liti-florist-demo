@@ -32,4 +32,4 @@ module.exports = mongoose.model('BillDao', {
     vipSaleType: String,
     created: {type: Date, default: Date.now},
     created_by: String,
-}, "bill");
+}, "bills");

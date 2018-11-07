@@ -11,5 +11,5 @@ module.exports = mongoose.model('CustomerDao', {
     paymentType: String,
     birthDate: String,
     "gender": String
-}, "customer");
+}, "customers");
 
