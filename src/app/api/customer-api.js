@@ -8,7 +8,7 @@ export const customerApi = {
         return api.get(`/api/customer/${id}`)
     },
     getCustomerByPhone: (phone) => {
-        return api.get(`/api/customer-by-phone/${phone}`)
+        return api.get(`/api/find-customers-by-phone/${phone}`)
     },
     createCustomer: (customer) => {
         return api.post(`/api/customer`, customer)

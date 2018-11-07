@@ -40,52 +40,20 @@ export class BillCustomer extends React.Component {
                         )}
                     </div>
 
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Tên Khách Đặt</label>
-                            <Input
-                                value={customer.name}
-                                onChange={(e) => onChange({...customer, name: e.target.value})}
-                            />
-                        </div>
-                    </div>
 
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Tên Khách Nhận</label>
-                            <Input
-                                value={customer.receiver_name}
-                                onChange={(e) => onChange({...customer, receiver_name: e.target.value})}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Địa Chỉ</label>
-                            <Input
-                                value={customer.address}
-                                onChange={(e) => onChange({...customer, address: e.target.value})}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Địa Chỉ Nhận</label>
-                            <Input
-                                value={customer.receiver_place}
-                                onChange={(e) => onChange({...customer, receiver_place: e.target.value})}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="col-lg-6">
+                    <div className="col-lg-12">
                         <div className="form-group">
                             <label className="control-label">Số Điện Thoại</label>
                             <AutoComplete
                                 disabled={editMode}
-                                asyncGet={(phone) => customerApi.getCustomerByPhone(phone)}
+                                asyncGet={(phone) => {
+                                    if (phone.length > 3) {
+                                        return customerApi.getCustomerByPhone(phone).then((resp) => {
+                                            return [{isNew: true, customerPhone: phone}].concat(resp.customers)
+                                        })
+                                    }
+                                    return Promise.resolve([{isNew: true, customerPhone: phone}])
+                                }}
                                 onSelect={(updatedCustomer) => {
                                     this.setState({oriCustomer: updatedCustomer});
                                     onChange({
@@ -93,98 +61,141 @@ export class BillCustomer extends React.Component {
                                         ...updatedCustomer
                                     })
                                 }}
-                                onChange={(value) => onChange({...customer, phone: value})}
-                                objectKey="phone"
+                                onChange={(value) => onChange({...customer, customerPhone: value})}
+                                objectKey="customerPhone"
                                 object={customer}
-                                displayAs={(customer) => `${customer.phone} - ${customer.name}`}
+                                displayAs={(customer) => {
+                                    if (customer.isNew) return <span>Khách hàng mới: <b>{customer.customerPhone}</b></span>;
+                                    return `${customer.customerPhone} - ${customer.customerName}`
+                                }}
                             />
                         </div>
                     </div>
 
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Số Điện Thoại Nhận</label>
-                            <Input
-                                value={customer.receiver_phone}
-                                onChange={(e) => onChange({...customer, receiver_phone: e.target.value})}
-                            />
-                        </div>
-                    </div>
+                    {/*<div className="col-lg-6">*/}
+                        {/*<div className="form-group">*/}
+                            {/*<label className="control-label">Tên Khách Đặt</label>*/}
+                            {/*<Input*/}
+                                {/*value={customer.name}*/}
+                                {/*onChange={(e) => onChange({...customer, name: e.target.value})}*/}
+                            {/*/>*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
 
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Ngày nhận hàng</label>
-                            <DatePicker
-                                value={new Date(customer.delivery_time)}
-                                onChange={(delivery_time) => onChange({...customer, delivery_time})}
-                            />
-                        </div>
-                    </div>
+                    {/*<div className="col-lg-6">*/}
+                        {/*<div className="form-group">*/}
+                            {/*<label className="control-label">Tên Khách Nhận</label>*/}
+                            {/*<Input*/}
+                                {/*value={customer.receiver_name}*/}
+                                {/*onChange={(e) => onChange({...customer, receiver_name: e.target.value})}*/}
+                            {/*/>*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
 
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Giờ nhận hàng</label>
-                            <TimePicker
-                                value={new Date(customer.delivery_time)}
-                                onChange={(delivery_time) => onChange({...customer, delivery_time})}
-                            />
-                        </div>
-                    </div>
+                    {/*<div className="col-lg-6">*/}
+                        {/*<div className="form-group">*/}
+                            {/*<label className="control-label">Địa Chỉ</label>*/}
+                            {/*<Input*/}
+                                {/*value={customer.address}*/}
+                                {/*onChange={(e) => onChange({...customer, address: e.target.value})}*/}
+                            {/*/>*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
 
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Florist</label>
-                            <Input
-                                value={customer.florist}
-                                onChange={(e) => onChange({...customer, florist: e.target.value})}
-                            />
-                        </div>
-                    </div>
+                    {/*<div className="col-lg-6">*/}
+                        {/*<div className="form-group">*/}
+                            {/*<label className="control-label">Địa Chỉ Nhận</label>*/}
+                            {/*<Input*/}
+                                {/*value={customer.receiver_place}*/}
+                                {/*onChange={(e) => onChange({...customer, receiver_place: e.target.value})}*/}
+                            {/*/>*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
 
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Nhân viên ship (hoặc phí ship)</label>
-                            <Input
-                                value={customer.ship}
-                                onChange={(e) => onChange({...customer, ship: e.target.value})}
-                            />
-                        </div>
-                    </div>
+                    {/*<div className="col-lg-6">*/}
+                        {/*<div className="form-group">*/}
+                            {/*<label className="control-label">Số Điện Thoại Nhận</label>*/}
+                            {/*<Input*/}
+                                {/*value={customer.receiver_phone}*/}
+                                {/*onChange={(e) => onChange({...customer, receiver_phone: e.target.value})}*/}
+                            {/*/>*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
 
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Hình thức thanh toán</label>
-                            <select className="form-control"
-                                    value={customer.payment_type}
-                                    onChange={(e) => onChange({...customer, payment_type: e.target.value})}>
-                                { paymentTypes.map((type, index) => (
-                                    <option value={type} key={index}>{type}</option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
+                    {/*<div className="col-lg-6">*/}
+                        {/*<div className="form-group">*/}
+                            {/*<label className="control-label">Ngày nhận hàng</label>*/}
+                            {/*<DatePicker*/}
+                                {/*value={new Date(customer.delivery_time)}*/}
+                                {/*onChange={(delivery_time) => onChange({...customer, delivery_time})}*/}
+                            {/*/>*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
 
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Ghi Chú</label>
-                            <Input
-                                value={customer.notes}
-                                onChange={(e) => onChange({...customer, notes: e.target.value})}
-                            />
-                        </div>
-                    </div>
+                    {/*<div className="col-lg-6">*/}
+                        {/*<div className="form-group">*/}
+                            {/*<label className="control-label">Giờ nhận hàng</label>*/}
+                            {/*<TimePicker*/}
+                                {/*value={new Date(customer.delivery_time)}*/}
+                                {/*onChange={(delivery_time) => onChange({...customer, delivery_time})}*/}
+                            {/*/>*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
 
-                    <div className="col-lg-12">
-                        <div className="form-group">
-                            <label className="control-label">Nội dung thiệp</label>
-                            <textarea
-                                rows="3"
-                                className="form-control no-height"
-                                value={customer.card}
-                                onChange={(e) => onChange({...customer, card: e.target.value})}
-                            />
-                        </div>
-                    </div>
+                    {/*<div className="col-lg-6">*/}
+                        {/*<div className="form-group">*/}
+                            {/*<label className="control-label">Florist</label>*/}
+                            {/*<Input*/}
+                                {/*value={customer.florist}*/}
+                                {/*onChange={(e) => onChange({...customer, florist: e.target.value})}*/}
+                            {/*/>*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
+
+                    {/*<div className="col-lg-6">*/}
+                        {/*<div className="form-group">*/}
+                            {/*<label className="control-label">Nhân viên ship (hoặc phí ship)</label>*/}
+                            {/*<Input*/}
+                                {/*value={customer.ship}*/}
+                                {/*onChange={(e) => onChange({...customer, ship: e.target.value})}*/}
+                            {/*/>*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
+
+                    {/*<div className="col-lg-6">*/}
+                        {/*<div className="form-group">*/}
+                            {/*<label className="control-label">Hình thức thanh toán</label>*/}
+                            {/*<select className="form-control"*/}
+                                    {/*value={customer.payment_type}*/}
+                                    {/*onChange={(e) => onChange({...customer, payment_type: e.target.value})}>*/}
+                                {/*{ paymentTypes.map((type, index) => (*/}
+                                    {/*<option value={type} key={index}>{type}</option>*/}
+                                {/*))}*/}
+                            {/*</select>*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
+
+                    {/*<div className="col-lg-6">*/}
+                        {/*<div className="form-group">*/}
+                            {/*<label className="control-label">Ghi Chú</label>*/}
+                            {/*<Input*/}
+                                {/*value={customer.notes}*/}
+                                {/*onChange={(e) => onChange({...customer, notes: e.target.value})}*/}
+                            {/*/>*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
+
+                    {/*<div className="col-lg-12">*/}
+                        {/*<div className="form-group">*/}
+                            {/*<label className="control-label">Nội dung thiệp</label>*/}
+                            {/*<textarea*/}
+                                {/*rows="3"*/}
+                                {/*className="form-control no-height"*/}
+                                {/*value={customer.card}*/}
+                                {/*onChange={(e) => onChange({...customer, card: e.target.value})}*/}
+                            {/*/>*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
                 </div>
             </div>
         );

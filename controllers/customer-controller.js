@@ -13,7 +13,7 @@ module.exports = (app) => {
     });
 
     app.get("/find-customers-by-phone/:pn",Security.authorDetails, function (req, res) {
-        CustomerDao.find({customerPhone: new RegExp(".*" + req.params.pn + ".*")} , function (err, users) {
+        CustomerDao.find({customerPhone: new RegExp(".*" + req.params.pn + ".*")}).limit(10).exec(function (err, users) {
             res.json({customers: users});
         });
     });
