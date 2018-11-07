@@ -38,7 +38,7 @@ export class LeftSide extends React.Component {
             }))
         } else {
             onChangeItems(items.concat({
-                name, price, qty: 1
+                name, price, qty: 1, vat: 0
             }))
         }
 

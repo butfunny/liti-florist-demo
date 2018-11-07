@@ -8,6 +8,8 @@ module.exports = mongoose.model('CustomerDao', {
     "customerPhone": String,
     "email": String,
     "receiverPhone": String,
-    paymentType: String
+    paymentType: String,
+    birthDate: String,
+    "gender": String
 }, "customer");
 
