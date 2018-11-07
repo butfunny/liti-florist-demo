@@ -22,13 +22,9 @@ module.exports = (app) => {
 
     app.delete("/shops/:id", Security.isAdmin, (req, res) => {
         ShopDao.findOne({_id: req.params.id}, (err, item) => {
-            if (item.deleteable) {
-                ShopDao.remove({_id: req.params.id}, (err) => {
-                    res.end();
-                })
-            } else {
-                res.status(500).end();
-            }
+            ShopDao.deleteOne({_id: req.params.id}, (err) => {
+                res.end();
+            })
         })
     })
 };

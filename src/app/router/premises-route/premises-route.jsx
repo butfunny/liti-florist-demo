@@ -125,7 +125,7 @@ export class PremisesRoute extends React.Component {
                                     <button className="btn btn-outline-primary btn-sm" onClick={() => this.editPremises(item)}>
                                         <i className="fa fa-pencil"/>
                                     </button>
-                                    { item.deleteable && (
+                                    { premises.length > 1 && (
                                         <button className="btn btn-outline-danger btn-sm" onClick={() => this.remove(item)}>
                                             <i className="fa fa-trash"/>
                                         </button>

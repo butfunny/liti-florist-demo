@@ -14,7 +14,7 @@ export class Input extends React.Component {
     }
 
     render() {
-        let {className, value, onChange, placeholder, type, error, disabled, autoSelect, onKeyDown, onFocus, onBlur, label} = this.props;
+        let {className, value, onChange, placeholder, type, error, disabled, autoSelect, onKeyDown, onFocus, onBlur, label, saving} = this.props;
         let {focus} = this.state;
 
         return (
@@ -41,6 +41,14 @@ export class Input extends React.Component {
                     }}
                     onKeyDown={onKeyDown}
                 />
+
+                { saving && (
+                    <div className="spin-icon">
+                        <i className="fa fa-spinner fa-pulse"/>
+                    </div>
+                )}
+
+
 
                 <div className="error-text">
                     {error}
