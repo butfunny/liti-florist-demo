@@ -22,14 +22,16 @@ export class BillView extends React.Component {
                             <col width="120"/>
                             <col width="120"/>
                             <col width="120"/>
+                            <col width="75"/>
                             <col width="50"/>
                         </colgroup>
                         <thead>
                         <tr>
                             <th>Tên</th>
-                            <th className="text-right">Số Lượng</th>
+                            <th className="text-right">SL</th>
                             <th className="text-right">Đơn Giá</th>
-                            <th className="text-right">Giảm giá(%)</th>
+                            <th className="text-right">Giảm giá</th>
+                            <th className="text-right">VAT</th>
                             <th/>
                         </tr>
                         </thead>
@@ -49,7 +51,22 @@ export class BillView extends React.Component {
                                     {item.name}
                                 </td>
 
-                                <td className="no-padding">
+                                <td className="no-padding col-action">
+
+                                    <button type="button" className="btn btn-danger btn-sm" onClick={() => {
+                                        if (item.qty == 1) {
+                                            onChangeItems(items.filter(i => i.name != item.name))
+                                        } else {
+                                            onChangeItems(items.map(i => {
+                                                if (i.name == item.name) return {...i, qty: i.qty - 1};
+                                                return i;
+                                            }))
+                                        }
+
+                                    }}>
+                                        <i className="fa fa-minus"/>
+                                    </button>
+
                                     <InputNumber
                                         disabled={editMode}
                                         autoSelect
@@ -61,12 +78,23 @@ export class BillView extends React.Component {
                                             }))
                                         }}
                                     />
+
+                                    <button type="button" className="btn btn-primary btn-sm btn-right" onClick={() => {
+                                        onChangeItems(items.map(i => {
+                                            if (i.name == item.name) return {...i, qty: i.qty + 1};
+                                            return i;
+                                        }))
+                                    }}>
+                                        <i className="fa fa-plus"/>
+                                    </button>
+
                                 </td>
 
                                 <td className="text-right">{formatNumber(item.price)}</td>
 
                                 <td className="no-padding">
                                     <InputNumber
+                                        maxVal={100}
                                         disabled={editMode}
                                         autoSelect
                                         value={item.discount || ""}
@@ -74,6 +102,23 @@ export class BillView extends React.Component {
                                             if (discount <= 100) {
                                                 onChangeItems(items.map(i => {
                                                     if (i.name == item.name) return {...i, discount};
+                                                    return i;
+                                                }))
+                                            }
+                                        }}
+                                    />
+                                </td>
+
+                                <td className="no-padding">
+                                    <InputNumber
+                                        maxVal={100}
+                                        disabled={editMode}
+                                        autoSelect
+                                        value={item.vat || ""}
+                                        onChange={(vat) => {
+                                            if (vat <= 100) {
+                                                onChangeItems(items.map(i => {
+                                                    if (i.name == item.name) return {...i, vat};
                                                     return i;
                                                 }))
                                             }

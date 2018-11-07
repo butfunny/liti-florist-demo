@@ -3,10 +3,15 @@ import sumBy from "lodash/sumBy";
 export let formatNumber = numb => numb.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
 
 export const getTotalBill = (items) => sumBy(items, item => {
-    const price = item.price * item.qty;
+    let price = item.price * item.qty;
     if (item.discount) {
-        return price - price * item.discount / 100
+        price = price - price * item.discount / 100
     }
+
+    if (item.vat) {
+        price = price + price * item.vat / 100
+    }
+
     return price;
 });
 
