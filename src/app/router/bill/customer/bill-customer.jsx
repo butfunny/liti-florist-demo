@@ -17,17 +17,15 @@ export class BillCustomer extends React.Component {
 
     getCustomerInfo(id) {
         customerApi.getCustomer(id).then((resp) => {
-            this.setState({customerInfo: resp.spend})
+            this.setState({customerInfo: resp.spend});
+            this.props.onChangeLocations(resp.locations);
         })
     }
 
     render() {
 
-        let {customer, onChange, editMode} = this.props;
+        let {customer, onChange, editMode, onChangeLocations} = this.props;
         let {customerInfo} = this.state;
-
-
-        const paymentTypes = ["Ship", "Shop", "Thẻ", "Chuyển Khoản", "Nợ"];
 
         return (
             <div className="bill-customer">
@@ -87,6 +85,7 @@ export class BillCustomer extends React.Component {
                                         receiverPhone: "",
                                         customerName: "",
                                     });
+                                    onChangeLocations([]);
 
                                     if (phone.length > 3) {
                                         return customerApi.getCustomerByPhone(phone).then((resp) => {
@@ -107,6 +106,7 @@ export class BillCustomer extends React.Component {
                                             receiverPhone: "",
                                             customerName: "",
                                         });
+                                        onChangeLocations([]);
                                         this.setState({oriCustomer: updatedCustomer, customerInfo: null})
                                     } else {
                                         this.setState({oriCustomer: updatedCustomer, customerInfo: null});

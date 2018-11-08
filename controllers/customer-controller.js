@@ -31,7 +31,7 @@ module.exports = (app) => {
                     }
                 }
 
-                res.json({customer, spend: {totalSpend, totalOwe}, locations: _.uniq(_.map(bills, b => b.to.receiverPlace))});
+                res.json({customer, spend: {totalSpend, totalOwe}, locations: _.uniq(_.map(bills, b => b.to.receiverPlace).filter(i => i != null && i.length > 0))});
             })
         })
     });

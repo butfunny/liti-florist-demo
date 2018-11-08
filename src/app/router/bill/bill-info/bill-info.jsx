@@ -5,6 +5,8 @@ import {AutoComplete} from "../../../components/auto-complete/auto-complete";
 import {customerApi} from "../../../api/customer-api";
 import {DatePicker} from "../../../components/date-picker/date-picker";
 import {TimePicker} from "../../../components/time-picker/time-picker";
+import {Checkbox} from "../../../components/checkbox/checkbox";
+import {AutoCompleteNormal} from "../../../components/auto-complete/auto-complete-normal";
 export class BillInfo extends React.Component {
 
     constructor(props) {
@@ -13,7 +15,7 @@ export class BillInfo extends React.Component {
 
     render() {
 
-        let {customer = {}, onChange, editMode} = this.props;
+        let {to, onChange, deliverTime, onChangeDeliverTime, locations} = this.props;
 
         const paymentTypes = ["Ship", "Shop", "Thẻ", "Chuyển Khoản", "Nợ"];
 
@@ -30,18 +32,8 @@ export class BillInfo extends React.Component {
                         <div className="form-group">
                             <label className="control-label">Tên Khách Nhận</label>
                             <Input
-                                value={customer.receiverName}
-                                onChange={(e) => onChange({...customer, receiverName: e.target.value})}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Địa Chỉ Nhận</label>
-                            <Input
-                                value={customer.receiverPlace}
-                                onChange={(e) => onChange({...customer, receiverPlace: e.target.value})}
+                                value={to.receiverName}
+                                onChange={(e) => onChange({...to, receiverName: e.target.value})}
                             />
                         </div>
                     </div>
@@ -50,19 +42,18 @@ export class BillInfo extends React.Component {
                         <div className="form-group">
                             <label className="control-label">Số Điện Thoại Nhận</label>
                             <Input
-                                value={customer.receiverPhone}
-                                onChange={(e) => onChange({...customer, receiverPhone: e.target.value})}
+                                value={to.receiverPhone}
+                                onChange={(e) => onChange({...to, receiverPhone: e.target.value})}
                             />
                         </div>
                     </div>
-
 
                     <div className="col-lg-6">
                         <div className="form-group">
                             <label className="control-label">Ngày nhận hàng</label>
                             <DatePicker
-                                value={new Date(customer.delivery_time)}
-                                onChange={(delivery_time) => onChange({...customer, delivery_time})}
+                                value={deliverTime}
+                                onChange={(deliverTime) => onChangeDeliverTime(deliverTime)}
                             />
                         </div>
                     </div>
@@ -71,18 +62,44 @@ export class BillInfo extends React.Component {
                         <div className="form-group">
                             <label className="control-label">Giờ nhận hàng</label>
                             <TimePicker
-                                value={new Date(customer.delivery_time)}
-                                onChange={(delivery_time) => onChange({...customer, delivery_time})}
+                                value={deliverTime}
+                                onChange={(deliverTime) => onChangeDeliverTime(deliverTime)}
                             />
                         </div>
                     </div>
 
                     <div className="col-lg-6">
                         <div className="form-group">
+                            <label className="control-label">Nơi Nhận</label>
+                            <AutoCompleteNormal
+                                value={to.receiverPlace}
+                                onSelect={(location) => onChange({...to, receiverPlace: location})}
+                                onChange={(value) => onChange({...to, receiverPlace: value})}
+                                displayAs={(location) => location}
+                                defaultList={locations}
+                            />
+                        </div>
+                    </div>
+
+
+                    <div className="col-lg-6">
+                        <div className="form-group">
+                            <label className="control-label">Phí Ship</label>
+                            <Input
+                                value={to.ship}
+                                onChange={(e) => onChange({...to, ship: e.target.value})}
+                            />
+                        </div>
+                    </div>
+
+
+
+                    <div className="col-lg-6">
+                        <div className="form-group">
                             <label className="control-label">Florist</label>
                             <Input
-                                value={customer.florist}
-                                onChange={(e) => onChange({...customer, florist: e.target.value})}
+                                value={to.florist}
+                                onChange={(e) => onChange({...to, florist: e.target.value})}
                             />
                         </div>
                     </div>
@@ -91,8 +108,8 @@ export class BillInfo extends React.Component {
                         <div className="form-group">
                             <label className="control-label">Nhân viên ship (hoặc phí ship)</label>
                             <Input
-                                value={customer.ship}
-                                onChange={(e) => onChange({...customer, ship: e.target.value})}
+                                value={to.ship}
+                                onChange={(e) => onChange({...to, ship: e.target.value})}
                             />
                         </div>
                     </div>
@@ -101,8 +118,8 @@ export class BillInfo extends React.Component {
                         <div className="form-group">
                             <label className="control-label">Hình thức thanh toán</label>
                             <select className="form-control"
-                                    value={customer.payment_type}
-                                    onChange={(e) => onChange({...customer, payment_type: e.target.value})}>
+                                    value={to.payment_type}
+                                    onChange={(e) => onChange({...to, payment_type: e.target.value})}>
                                 { paymentTypes.map((type, index) => (
                                     <option value={type} key={index}>{type}</option>
                                 ))}
@@ -114,8 +131,8 @@ export class BillInfo extends React.Component {
                         <div className="form-group">
                             <label className="control-label">Ghi Chú</label>
                             <Input
-                                value={customer.notes}
-                                onChange={(e) => onChange({...customer, notes: e.target.value})}
+                                value={to.notes}
+                                onChange={(e) => onChange({...to, notes: e.target.value})}
                             />
                         </div>
                     </div>
@@ -126,8 +143,8 @@ export class BillInfo extends React.Component {
                             <textarea
                                 rows="3"
                                 className="form-control no-height"
-                                value={customer.card}
-                                onChange={(e) => onChange({...customer, card: e.target.value})}
+                                value={to.card}
+                                onChange={(e) => onChange({...to, card: e.target.value})}
                             />
                         </div>
                     </div>

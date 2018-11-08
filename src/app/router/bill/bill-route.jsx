@@ -24,11 +24,21 @@ export class BillRoute extends React.Component {
             bill: {
                 items: [],
                 customer: {
-                    delivery_time: new Date(),
-                    payment_type: "Shop"
-                }
+                },
+                to: {
+                    receiverPhone: "",
+                    receiverName: "",
+                    receiverPlace: "",
+                    cardContent: "",
+                    notes: "",
+                    paymentType: "",
+                    shipMoney: 0
+                },
+                payment_type: "Shop",
+                deliverTime: new Date()
             },
-            saving: false
+            saving: false,
+            locations: []
         };
     }
 
@@ -94,7 +104,7 @@ export class BillRoute extends React.Component {
 
     render() {
 
-        let {bill, saving} = this.state;
+        let {bill, saving, locations} = this.state;
 
         return (
             <Layout
@@ -126,6 +136,7 @@ export class BillRoute extends React.Component {
                                render={(getInvalidByKey, invalidPaths) => (
                                     <Fragment>
                                         <BillCustomer
+                                            onChangeLocations={(locations) => this.setState({locations})}
                                             customer={bill.customer}
                                             onChange={(customer) => {
                                                 this.setState({bill: {...bill, customer}})
@@ -133,8 +144,11 @@ export class BillRoute extends React.Component {
                                         />
 
                                         <BillInfo
-                                            bill={bill}
-                                            onChange={(bill) => this.setState({bill})}
+                                            locations={locations}
+                                            deliverTime={bill.deliverTime}
+                                            onChangeDeliverTime={(deliverTime) => this.setState({bill: {...bill, deliverTime}})}
+                                            to={bill.to}
+                                            onChange={(to) => this.setState({bill: {...bill, to}})}
                                         />
 
                                         <div className="text-right btn-action">

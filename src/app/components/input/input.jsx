@@ -14,12 +14,12 @@ export class Input extends React.Component {
     }
 
     render() {
-        let {className, value, onChange, placeholder, type, error, disabled, autoSelect, onKeyDown, onFocus, onBlur, label, saving} = this.props;
+        let {className, value, onChange, placeholder, type, error, disabled, autoSelect, onKeyDown, onFocus, onBlur, label, saving, style, autocomplete} = this.props;
         let {focus} = this.state;
 
         return (
 
-            <div className={classnames("form-group input", className, focus && "focused")}>
+            <div className={classnames("form-group input", className, focus && "focused")} style={style}>
                 {label && (
                     <label className="control-label">
                         {label}
@@ -40,6 +40,7 @@ export class Input extends React.Component {
                         autoSelect && this.input.select();
                     }}
                     onKeyDown={onKeyDown}
+                    autoComplete={autocomplete}
                 />
 
                 { saving && (
