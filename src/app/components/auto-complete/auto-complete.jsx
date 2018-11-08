@@ -75,7 +75,7 @@ export class AutoComplete extends React.Component {
 
     render() {
 
-        let {onSelect, displayAs, objectKey, onChange} = this.props;
+        let {onSelect, displayAs, objectKey, onChange, noPopup} = this.props;
         let {selected, selectedIndex, list, loading, value} = this.state;
 
         return (
@@ -89,7 +89,7 @@ export class AutoComplete extends React.Component {
                         if (e.target.value.length > 0) this.handleChange(e.target.value);
                     }}
                     onKeyDown={(e) => this.handleKeyDown(e)}
-                    onFocus={() => this.setState({selected: true})}
+                    onFocus={() => !noPopup && this.setState({selected: true})}
                     onBlur={() => this.setState({selected: false})}
                 />
 

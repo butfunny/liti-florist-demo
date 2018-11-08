@@ -15,6 +15,7 @@ import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 import {PrintService} from "../../common/print-service/print-service";
 import {BillPrint} from "./print/bill-print";
 import {cache} from "../../common/cache";
+import {BillInfo} from "./bill-info/bill-info";
 export class BillRoute extends React.Component {
 
     constructor(props) {
@@ -129,6 +130,11 @@ export class BillRoute extends React.Component {
                                             onChange={(customer) => {
                                                 this.setState({bill: {...bill, customer}})
                                             }}
+                                        />
+
+                                        <BillInfo
+                                            bill={bill}
+                                            onChange={(bill) => this.setState({bill})}
                                         />
 
                                         <div className="text-right btn-action">

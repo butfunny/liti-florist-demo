@@ -5,19 +5,26 @@ import {TimePicker} from "../../../components/time-picker/time-picker";
 import {DatePicker} from "../../../components/date-picker/date-picker";
 import {customerApi} from "../../../api/customer-api";
 import {formatNumber} from "../../../common/common";
+import uuid from "uuid/v4";
 export class BillCustomer extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            oriCustomer: null
+            customerInfo: null
         }
+    }
+
+    getCustomerInfo(id) {
+        customerApi.getCustomer(id).then((resp) => {
+            this.setState({customerInfo: resp.spend})
+        })
     }
 
     render() {
 
         let {customer, onChange, editMode} = this.props;
-        let {oriCustomer} = this.state;
+        let {customerInfo} = this.state;
 
 
         const paymentTypes = ["Ship", "Shop", "Thẻ", "Chuyển Khoản", "Nợ"];
@@ -31,22 +38,56 @@ export class BillCustomer extends React.Component {
                 <div className="row">
 
                     <div className="col-lg-12 info-customer">
-                        { oriCustomer && oriCustomer.phone == customer.phone && (
+                        { customerInfo && (
                             <div className="text-primary">
-                                Khách hàng {oriCustomer.name} đã chi {formatNumber(oriCustomer.total_pay)}
+                                Khách hàng {customer.customerName} đã chi {formatNumber(customerInfo.totalSpend)}
 
-                                { oriCustomer.total_owe > 0 && (<div className="text-danger">Đang nợ {formatNumber(oriCustomer.total_owe)}</div>)}
+                                { customerInfo.totalOwe > 0 && (<div className="text-danger">Đang nợ {formatNumber(customerInfo.totalOwe)}</div>)}
                             </div>
                         )}
                     </div>
 
 
-                    <div className="col-lg-12">
+                    <div className="col-lg-6">
+                        <div className="form-group">
+                            <label className="control-label">Tên Khách Đặt</label>
+                            <Input
+                                value={customer.customerName}
+                                onChange={(e) => onChange({...customer, customerName: e.target.value})}
+                            />
+                        </div>
+                    </div>
+
+
+                    <div className="col-lg-6">
+                        <div className="form-group">
+                            <label className="control-label">Địa Chỉ</label>
+                            <Input
+                                value={customer.customerPlace}
+                                onChange={(e) => onChange({...customer, customerPlace: e.target.value})}
+                            />
+                        </div>
+                    </div>
+
+
+                    <div className="col-lg-6">
                         <div className="form-group">
                             <label className="control-label">Số Điện Thoại</label>
                             <AutoComplete
                                 disabled={editMode}
                                 asyncGet={(phone) => {
+                                    this.setState({customerInfo: null});
+                                    onChange({
+                                        ...customer,
+                                        customerPhone: phone,
+                                        receiverName: "",
+                                        customerPlace: "",
+                                        receiverPlace: "",
+                                        email: "",
+                                        receiverPhone: "",
+                                        customerName: "",
+                                    });
+
                                     if (phone.length > 3) {
                                         return customerApi.getCustomerByPhone(phone).then((resp) => {
                                             return [{isNew: true, customerPhone: phone}].concat(resp.customers)
@@ -55,11 +96,26 @@ export class BillCustomer extends React.Component {
                                     return Promise.resolve([{isNew: true, customerPhone: phone}])
                                 }}
                                 onSelect={(updatedCustomer) => {
-                                    this.setState({oriCustomer: updatedCustomer});
-                                    onChange({
-                                        ...customer,
-                                        ...updatedCustomer
-                                    })
+                                    if (updatedCustomer.isNew) {
+                                        onChange({
+                                            ...customer,
+                                            customerPhone: updatedCustomer.customerPhone,
+                                            receiverName: "",
+                                            customerPlace: "",
+                                            receiverPlace: "",
+                                            email: "",
+                                            receiverPhone: "",
+                                            customerName: "",
+                                        });
+                                        this.setState({oriCustomer: updatedCustomer, customerInfo: null})
+                                    } else {
+                                        this.setState({oriCustomer: updatedCustomer, customerInfo: null});
+                                        this.getCustomerInfo(updatedCustomer._id);
+                                        onChange({
+                                            ...customer,
+                                            ...updatedCustomer
+                                        })
+                                    }
                                 }}
                                 onChange={(value) => onChange({...customer, customerPhone: value})}
                                 objectKey="customerPhone"
@@ -68,134 +124,31 @@ export class BillCustomer extends React.Component {
                                     if (customer.isNew) return <span>Khách hàng mới: <b>{customer.customerPhone}</b></span>;
                                     return `${customer.customerPhone} - ${customer.customerName}`
                                 }}
+                                noPopup
                             />
                         </div>
                     </div>
 
-                    {/*<div className="col-lg-6">*/}
-                        {/*<div className="form-group">*/}
-                            {/*<label className="control-label">Tên Khách Đặt</label>*/}
-                            {/*<Input*/}
-                                {/*value={customer.name}*/}
-                                {/*onChange={(e) => onChange({...customer, name: e.target.value})}*/}
-                            {/*/>*/}
-                        {/*</div>*/}
-                    {/*</div>*/}
 
-                    {/*<div className="col-lg-6">*/}
-                        {/*<div className="form-group">*/}
-                            {/*<label className="control-label">Tên Khách Nhận</label>*/}
-                            {/*<Input*/}
-                                {/*value={customer.receiver_name}*/}
-                                {/*onChange={(e) => onChange({...customer, receiver_name: e.target.value})}*/}
-                            {/*/>*/}
-                        {/*</div>*/}
-                    {/*</div>*/}
+                    <div className="col-lg-6">
+                        <div className="form-group">
+                            <label className="control-label">Email</label>
+                            <Input
+                                value={customer.email}
+                                onChange={(e) => onChange({...customer, email: e.target.value})}
+                            />
+                        </div>
+                    </div>
 
-                    {/*<div className="col-lg-6">*/}
-                        {/*<div className="form-group">*/}
-                            {/*<label className="control-label">Địa Chỉ</label>*/}
-                            {/*<Input*/}
-                                {/*value={customer.address}*/}
-                                {/*onChange={(e) => onChange({...customer, address: e.target.value})}*/}
-                            {/*/>*/}
-                        {/*</div>*/}
-                    {/*</div>*/}
-
-                    {/*<div className="col-lg-6">*/}
-                        {/*<div className="form-group">*/}
-                            {/*<label className="control-label">Địa Chỉ Nhận</label>*/}
-                            {/*<Input*/}
-                                {/*value={customer.receiver_place}*/}
-                                {/*onChange={(e) => onChange({...customer, receiver_place: e.target.value})}*/}
-                            {/*/>*/}
-                        {/*</div>*/}
-                    {/*</div>*/}
-
-                    {/*<div className="col-lg-6">*/}
-                        {/*<div className="form-group">*/}
-                            {/*<label className="control-label">Số Điện Thoại Nhận</label>*/}
-                            {/*<Input*/}
-                                {/*value={customer.receiver_phone}*/}
-                                {/*onChange={(e) => onChange({...customer, receiver_phone: e.target.value})}*/}
-                            {/*/>*/}
-                        {/*</div>*/}
-                    {/*</div>*/}
-
-                    {/*<div className="col-lg-6">*/}
-                        {/*<div className="form-group">*/}
-                            {/*<label className="control-label">Ngày nhận hàng</label>*/}
-                            {/*<DatePicker*/}
-                                {/*value={new Date(customer.delivery_time)}*/}
-                                {/*onChange={(delivery_time) => onChange({...customer, delivery_time})}*/}
-                            {/*/>*/}
-                        {/*</div>*/}
-                    {/*</div>*/}
-
-                    {/*<div className="col-lg-6">*/}
-                        {/*<div className="form-group">*/}
-                            {/*<label className="control-label">Giờ nhận hàng</label>*/}
-                            {/*<TimePicker*/}
-                                {/*value={new Date(customer.delivery_time)}*/}
-                                {/*onChange={(delivery_time) => onChange({...customer, delivery_time})}*/}
-                            {/*/>*/}
-                        {/*</div>*/}
-                    {/*</div>*/}
-
-                    {/*<div className="col-lg-6">*/}
-                        {/*<div className="form-group">*/}
-                            {/*<label className="control-label">Florist</label>*/}
-                            {/*<Input*/}
-                                {/*value={customer.florist}*/}
-                                {/*onChange={(e) => onChange({...customer, florist: e.target.value})}*/}
-                            {/*/>*/}
-                        {/*</div>*/}
-                    {/*</div>*/}
-
-                    {/*<div className="col-lg-6">*/}
-                        {/*<div className="form-group">*/}
-                            {/*<label className="control-label">Nhân viên ship (hoặc phí ship)</label>*/}
-                            {/*<Input*/}
-                                {/*value={customer.ship}*/}
-                                {/*onChange={(e) => onChange({...customer, ship: e.target.value})}*/}
-                            {/*/>*/}
-                        {/*</div>*/}
-                    {/*</div>*/}
-
-                    {/*<div className="col-lg-6">*/}
-                        {/*<div className="form-group">*/}
-                            {/*<label className="control-label">Hình thức thanh toán</label>*/}
-                            {/*<select className="form-control"*/}
-                                    {/*value={customer.payment_type}*/}
-                                    {/*onChange={(e) => onChange({...customer, payment_type: e.target.value})}>*/}
-                                {/*{ paymentTypes.map((type, index) => (*/}
-                                    {/*<option value={type} key={index}>{type}</option>*/}
-                                {/*))}*/}
-                            {/*</select>*/}
-                        {/*</div>*/}
-                    {/*</div>*/}
-
-                    {/*<div className="col-lg-6">*/}
-                        {/*<div className="form-group">*/}
-                            {/*<label className="control-label">Ghi Chú</label>*/}
-                            {/*<Input*/}
-                                {/*value={customer.notes}*/}
-                                {/*onChange={(e) => onChange({...customer, notes: e.target.value})}*/}
-                            {/*/>*/}
-                        {/*</div>*/}
-                    {/*</div>*/}
-
-                    {/*<div className="col-lg-12">*/}
-                        {/*<div className="form-group">*/}
-                            {/*<label className="control-label">Nội dung thiệp</label>*/}
-                            {/*<textarea*/}
-                                {/*rows="3"*/}
-                                {/*className="form-control no-height"*/}
-                                {/*value={customer.card}*/}
-                                {/*onChange={(e) => onChange({...customer, card: e.target.value})}*/}
-                            {/*/>*/}
-                        {/*</div>*/}
-                    {/*</div>*/}
+                    <div className="col-lg-6">
+                        <div className="form-group">
+                            <label className="control-label">Ngày Sinh</label>
+                            <DatePicker
+                                value={customer.birthDate ? new Date(customer.birthDate) : new Date()}
+                                onChange={(value) => onChange({...customer, birthDate: value})}
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
         );
