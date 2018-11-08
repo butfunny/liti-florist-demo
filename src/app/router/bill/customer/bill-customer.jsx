@@ -149,6 +149,19 @@ export class BillCustomer extends React.Component {
                             />
                         </div>
                     </div>
+
+                    <div className="col-lg-6">
+                        <div className="form-group">
+                            <label className="control-label">Giới Tính</label>
+                            <select className="form-control"
+                                    value={customer.gender}
+                                    onChange={(e) => onChange({...customer, gender: e.target.value})}>
+                                { ["Nam", "Nữ"].map((type, index) => (
+                                    <option value={type} key={index}>{type}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
         );
