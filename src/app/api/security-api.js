@@ -21,5 +21,8 @@ export const securityApi = {
     },
     removeUser: (id) => {
         return api.delete(`/api/manage/user/${id}`)
+    },
+    getSalesAndFlorist: () => {
+        return api.get("/api//get-sales-florist-account")
     }
 };

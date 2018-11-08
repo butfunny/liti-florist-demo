@@ -23,11 +23,23 @@ module.exports = mongoose.model('BillDao', {
         cardContent: String,
         notes: String,
         paymentType: String,
-        shippingEmp: String,
-        florist: String,
-        saleEmp: String,
         shipMoney: String,
     },
+    sales: [{
+        user_id: String,
+        username: String,
+        name: String
+    }],
+    florists: [{
+        user_id: String,
+        username: String,
+        name: String
+    }],
+    ships: [{
+        user_id: String,
+        username: String,
+        name: String
+    }],
     base_id: String,
     vipSaleType: String,
     created: {type: Date, default: Date.now},

@@ -1,0 +1,89 @@
+.input-tag {
+  display flex;
+  background-color: #fff;
+  border: 1px solid #e6e6e6;
+  flex-flow row wrap;
+  position relative;
+  border-radius: 4px;
+
+  .tag-item {
+    position: relative;
+    margin: 2px;
+    border: 1px solid #5e72e4;
+    border-radius: 4px;
+    font-size: 13px;
+    padding: 5px 30px 5px 5px;
+    cursor pointer;
+    &:hover {
+      background-color: lighten(#5e72e4, 40%);
+    }
+
+    &.selected {
+      background lighten(red, 40%) !important;
+      color white;
+      border-color lighten(red, 40%) !important;
+
+    }
+
+    &.error-tag {
+      border: 1px solid red;
+    }
+
+    .remove-tag {
+      color: #585858;
+      position: absolute;
+      right: 3px;
+      top: 5px;
+
+      i {
+        font-size: 15px;
+      }
+    }
+  }
+
+  input {
+    flex 1;
+    margin-left 5px;
+    outline none;
+    border none;
+    font-size 14px;
+    height 31px;
+
+    &.error-add {
+      color red;
+    }
+
+  }
+
+  .pop-up {
+    position absolute
+    width: 100%;
+    top: 100%;
+    background: #fff;
+    left: 0;
+    font-size: 13px;
+    list-style-type: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    border-radius: 3px;
+    line-height: 32px;
+    z-index: 10;
+    box-shadow: 0 6px 10px rgba(0,0,0,0.3);
+
+    .content {
+      display: block;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-left: 15px;
+
+      &.highlight {
+        background: #5e72e4;
+        color #fff !important
+      }
+    }
+  }
+}

@@ -69,6 +69,12 @@ module.exports = (app) => {
         UserDao.remove({_id: req.params.id}, () => {
             res.end()
         })
+    });
+
+    app.get("/get-sales-florist-account", Security.authorDetails, (req, res) => {
+        UserDao.find({$or: [{role: "sale"}, {role: "florist"}, {role: "ship"}]}, (err, users) => {
+            res.send(users)
+        })
     })
 
 };

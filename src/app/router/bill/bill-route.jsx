@@ -16,11 +16,16 @@ import {PrintService} from "../../common/print-service/print-service";
 import {BillPrint} from "./print/bill-print";
 import {cache} from "../../common/cache";
 import {BillInfo} from "./bill-info/bill-info";
+import {securityApi} from "../../api/security-api";
+import {userInfo} from "../../security/user-info";
 
 export class BillRoute extends React.Component {
 
     constructor(props) {
         super(props);
+
+        let user = userInfo.getUser();
+
         this.state = {
             bill: {
                 items: [],
@@ -35,11 +40,35 @@ export class BillRoute extends React.Component {
                     shipMoney: 0
                 },
                 payment_type: "Shop",
-                deliverTime: new Date()
+                deliverTime: new Date(),
+                sales: [{
+                    user_id: user._id,
+                    username: user.username,
+                    name: user.name
+                }],
+                florists: [],
+                ships: []
             },
             saving: false,
-            locations: []
+            locations: [],
+            sales: [],
+            florists: [],
+            ships: []
         };
+
+        securityApi.getSalesAndFlorist().then((users) => {
+
+            const mapItem = (u) => ({
+                user_id: u._id,
+                name: u.name,
+                username: u.username
+            });
+
+            this.setState({sales: users.filter(u => u.role == "sale").map(mapItem),
+                florists: users.filter(u => u.role == "florist").map(mapItem),
+                ships: users.filter(u => u.role == "ships").map(mapItem)
+            })
+        });
 
         premisesInfo.onChange(() => {
             this.setState({
@@ -128,7 +157,7 @@ export class BillRoute extends React.Component {
 
     render() {
 
-        let {bill, saving, locations} = this.state;
+        let {bill, saving, locations, florists, sales, ships} = this.state;
 
         return (
             <Layout
@@ -168,6 +197,11 @@ export class BillRoute extends React.Component {
                                         />
 
                                         <BillInfo
+                                            bill={bill}
+                                            onChangeBill={(bill) => this.setState({bill})}
+                                            florists={florists}
+                                            sales={sales}
+                                            ships={ships}
                                             ref={elem => this.billInfo = elem}
                                             locations={locations}
                                             deliverTime={bill.deliverTime}

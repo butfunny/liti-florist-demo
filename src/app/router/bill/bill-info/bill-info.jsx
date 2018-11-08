@@ -11,6 +11,7 @@ import {googleMapsApi} from "../../../api/google-maps-api";
 import {premisesInfo} from "../../../security/premises-info";
 import debounce from "lodash/debounce";
 import {InputNumber} from "../../../components/input-number/input-number";
+import {InputTag} from "../../../components/input-tag/input-tag";
 export class BillInfo extends React.Component {
 
     constructor(props) {
@@ -44,7 +45,7 @@ export class BillInfo extends React.Component {
 
     render() {
 
-        let {to, onChange, deliverTime, onChangeDeliverTime, locations} = this.props;
+        let {to, onChange, deliverTime, onChangeDeliverTime, locations, bill, onChangeBill, sales, florists, ships} = this.props;
         let {error, distance} = this.state;
 
         const paymentTypes = ["Ship", "Shop", "Thẻ", "Chuyển Khoản", "Nợ"];
@@ -147,7 +148,7 @@ export class BillInfo extends React.Component {
 
                     <div className="col-lg-6">
                         <div className="form-group">
-                            <label className="control-label">Nhân viên ship (hoặc phí ship)</label>
+                            <label className="control-label">Nhân viên ship</label>
                             <Input
                                 value={to.ship}
                                 onChange={(e) => onChange({...to, ship: e.target.value})}
@@ -170,15 +171,28 @@ export class BillInfo extends React.Component {
 
                     <div className="col-lg-6">
                         <div className="form-group">
+                            <label className="control-label">Sale</label>
+                            <InputTag
+                                tags={bill.sales}
+                                onChange={(sales) => onChangeBill({...bill, sales})}
+                                list={sales.concat(florists)}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="col-lg-6">
+                        <div className="form-group">
                             <label className="control-label">Ghi Chú</label>
-                            <Input
+                            <textarea
+                                rows="3"
+                                className="form-control no-height"
                                 value={to.notes}
                                 onChange={(e) => onChange({...to, notes: e.target.value})}
                             />
                         </div>
                     </div>
 
-                    <div className="col-lg-12">
+                    <div className="col-lg-6">
                         <div className="form-group">
                             <label className="control-label">Nội dung thiệp</label>
                             <textarea
