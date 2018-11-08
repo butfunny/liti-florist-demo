@@ -66,7 +66,7 @@ export class BillRoute extends React.Component {
 
             this.setState({sales: users.filter(u => u.role == "sale").map(mapItem),
                 florists: users.filter(u => u.role == "florist").map(mapItem),
-                ships: users.filter(u => u.role == "ships").map(mapItem)
+                ships: users.filter(u => u.role == "ship").map(mapItem)
             })
         });
 

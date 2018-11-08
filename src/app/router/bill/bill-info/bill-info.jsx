@@ -12,6 +12,7 @@ import {premisesInfo} from "../../../security/premises-info";
 import debounce from "lodash/debounce";
 import {InputNumber} from "../../../components/input-number/input-number";
 import {InputTag} from "../../../components/input-tag/input-tag";
+import uniq from "lodash/uniq"
 export class BillInfo extends React.Component {
 
     constructor(props) {
@@ -47,7 +48,6 @@ export class BillInfo extends React.Component {
 
         let {to, onChange, deliverTime, onChangeDeliverTime, locations, bill, onChangeBill, sales, florists, ships} = this.props;
         let {error, distance} = this.state;
-
         const paymentTypes = ["Ship", "Shop", "Thẻ", "Chuyển Khoản", "Nợ"];
 
 
@@ -62,9 +62,16 @@ export class BillInfo extends React.Component {
                     <div className="col-lg-6">
                         <div className="form-group">
                             <label className="control-label">Tên Khách Nhận</label>
-                            <Input
+                            <AutoCompleteNormal
                                 value={to.receiverName}
-                                onChange={(e) => onChange({...to, receiverName: e.target.value})}
+                                onSelect={(location) => {
+                                    onChange({...to, receiverName: location});
+                                }}
+                                onChange={(value) => {
+                                    onChange({...to, receiverName: value})
+                                }}
+                                displayAs={(location) => location}
+                                defaultList={uniq(locations.map(l => l.receiverName)).filter(l => l != null && l.length > 0)}
                             />
                         </div>
                     </div>
@@ -72,9 +79,16 @@ export class BillInfo extends React.Component {
                     <div className="col-lg-6">
                         <div className="form-group">
                             <label className="control-label">Số Điện Thoại Nhận</label>
-                            <Input
+                            <AutoCompleteNormal
                                 value={to.receiverPhone}
-                                onChange={(e) => onChange({...to, receiverPhone: e.target.value})}
+                                onSelect={(location) => {
+                                    onChange({...to, receiverPhone: location});
+                                }}
+                                onChange={(value) => {
+                                    onChange({...to, receiverPhone: value})
+                                }}
+                                displayAs={(location) => location}
+                                defaultList={uniq(locations.map(l => l.receiverPhone)).filter(l => l != null && l.length > 0)}
                             />
                         </div>
                     </div>
@@ -117,7 +131,7 @@ export class BillInfo extends React.Component {
                                     this.getDistance(value)
                                 }}
                                 displayAs={(location) => location}
-                                defaultList={locations}
+                                defaultList={uniq(locations.map(l => l.receiverPlace)).filter(l => l != null && l.length > 0)}
                                 info={error ? "Không tính được khoảng cách vui lòng tư tính tiền ship" : distance ? `Khoảng cách ${distance.text}` : ""}
                             />
                         </div>
