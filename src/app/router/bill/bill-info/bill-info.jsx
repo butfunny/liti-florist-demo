@@ -139,9 +139,10 @@ export class BillInfo extends React.Component {
                     <div className="col-lg-6">
                         <div className="form-group">
                             <label className="control-label">Florist</label>
-                            <Input
-                                value={to.florist}
-                                onChange={(e) => onChange({...to, florist: e.target.value})}
+                            <InputTag
+                                tags={bill.florists}
+                                onChange={(florists) => onChangeBill({...bill, florists})}
+                                list={florists}
                             />
                         </div>
                     </div>
@@ -149,9 +150,10 @@ export class BillInfo extends React.Component {
                     <div className="col-lg-6">
                         <div className="form-group">
                             <label className="control-label">Nhân viên ship</label>
-                            <Input
-                                value={to.ship}
-                                onChange={(e) => onChange({...to, ship: e.target.value})}
+                            <InputTag
+                                tags={bill.ships}
+                                onChange={(ships) => onChangeBill({...bill, ships})}
+                                list={ships}
                             />
                         </div>
                     </div>

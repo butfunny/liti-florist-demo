@@ -130,7 +130,7 @@ export class InputTag extends React.Component {
                 ))}
 
                 <div className="input-wrapper auto-complete">
-                    <input placeholder="Điền username tại đây"
+                    <input placeholder="Nhập username.."
                            className={classnames(this.state.error && "error-add")}
                            value={value}
                            onChange={(e) => this.setState({value: e.target.value})}
