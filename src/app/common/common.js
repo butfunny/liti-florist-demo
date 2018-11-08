@@ -15,6 +15,19 @@ export const getTotalBill = (items) => sumBy(items, item => {
     return price;
 });
 
+
+export const getShipFees = (deliverTime, distance) => {
+    if (new Date(deliverTime).getHours() >= 18 && new Date(deliverTime).getMinutes() >= 30) {
+        return 30000
+    }
+
+    if (distance < 10) {
+        return 15000;
+    }
+
+    return 20000;
+};
+
 export const formatValue = (value) => {
     if (value < 10) return `0${value}`;
     return value
@@ -36,10 +49,10 @@ export const filteredByKeys = (obj, keys, keyword) => {
     })
 };
 
-export const getDates = function(startDate, endDate) {
+export const getDates = function (startDate, endDate) {
     let dates = [],
         currentDate = startDate,
-        addDays = function(days) {
+        addDays = function (days) {
             var date = new Date(this.valueOf());
             date.setDate(date.getDate() + days);
             return date;

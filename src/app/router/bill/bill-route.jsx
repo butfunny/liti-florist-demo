@@ -16,6 +16,7 @@ import {PrintService} from "../../common/print-service/print-service";
 import {BillPrint} from "./print/bill-print";
 import {cache} from "../../common/cache";
 import {BillInfo} from "./bill-info/bill-info";
+
 export class BillRoute extends React.Component {
 
     constructor(props) {
@@ -23,8 +24,7 @@ export class BillRoute extends React.Component {
         this.state = {
             bill: {
                 items: [],
-                customer: {
-                },
+                customer: {},
                 to: {
                     receiverPhone: "",
                     receiverName: "",
@@ -40,6 +40,27 @@ export class BillRoute extends React.Component {
             saving: false,
             locations: []
         };
+
+        premisesInfo.onChange(() => {
+            this.setState({
+                bill: {
+                    items: [],
+                    customer: {},
+                    to: {
+                        receiverPhone: "",
+                        receiverName: "",
+                        receiverPlace: "",
+                        cardContent: "",
+                        notes: "",
+                        paymentType: "",
+                        shipMoney: 0
+                    },
+                    payment_type: "Shop",
+                    deliverTime: new Date()
+                },
+                locations: []
+            })
+        })
     }
 
     submitBill() {
@@ -79,7 +100,10 @@ export class BillRoute extends React.Component {
                     premises_id: getCurrentPremise(),
                     status: "pending",
                 }).then((bill) => {
-                    this.setState({saving: false, bill: {items: [], customer: {delivery_time: new Date(), payment_type: "Shop"}}});
+                    this.setState({
+                        saving: false,
+                        bill: {items: [], customer: {delivery_time: new Date(), payment_type: "Shop"}}
+                    });
                     PrintService.printBill({
                         body: (
                             <BillPrint
@@ -130,10 +154,10 @@ export class BillRoute extends React.Component {
                                 onChangeItems={(items) => this.setState({bill: {...bill, items}})}
                             />
 
-                           <Form
-                               formValue={bill.customer}
-                               validations={[]}
-                               render={(getInvalidByKey, invalidPaths) => (
+                            <Form
+                                formValue={bill.customer}
+                                validations={[]}
+                                render={(getInvalidByKey, invalidPaths) => (
                                     <Fragment>
                                         <BillCustomer
                                             onChangeLocations={(locations) => this.setState({locations})}
@@ -144,9 +168,19 @@ export class BillRoute extends React.Component {
                                         />
 
                                         <BillInfo
+                                            ref={elem => this.billInfo = elem}
                                             locations={locations}
                                             deliverTime={bill.deliverTime}
-                                            onChangeDeliverTime={(deliverTime) => this.setState({bill: {...bill, deliverTime}})}
+                                            onChangeDeliverTime={(deliverTime) => this.setState({
+                                                bill: {
+                                                    ...bill,
+                                                    deliverTime,
+                                                    to: {
+                                                        ...bill.to,
+                                                        shipMoney: this.billInfo.getShipMoney(deliverTime)
+                                                    }
+                                                }
+                                            })}
                                             to={bill.to}
                                             onChange={(to) => this.setState({bill: {...bill, to}})}
                                         />
@@ -154,20 +188,22 @@ export class BillRoute extends React.Component {
                                         <div className="text-right btn-action">
                                             <button type="button" className="btn btn-info"
                                                     onClick={() => this.saveCustomer()}
-                                                disabled={invalidPaths.length > 0}
+                                                    disabled={invalidPaths.length > 0}
                                             >Lưu thông tin khách hàng
                                             </button>
 
                                             <button type="button"
                                                     disabled={saving || invalidPaths.length > 0 || bill.items.length == 0}
-                                                    className="btn btn-primary btn-icon" onClick={() => this.submitBill()}>
+                                                    className="btn btn-primary btn-icon"
+                                                    onClick={() => this.submitBill()}>
                                                 <span className="btn-inner--text">Bán Hàng</span>
-                                                { saving && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
+                                                {saving && <span className="btn-inner--icon"><i
+                                                    className="fa fa-spinner fa-pulse"/></span>}
                                             </button>
                                         </div>
                                     </Fragment>
                                 )}
-                           />
+                            />
                         </div>
                     </div>
                 </div>

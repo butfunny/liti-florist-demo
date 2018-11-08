@@ -1,5 +1,5 @@
 import React from "react";
-import {formatNumber} from "../../../common/common";
+import {formatNumber, getShipFees} from "../../../common/common";
 import {Input} from "../../../components/input/input";
 import {AutoComplete} from "../../../components/auto-complete/auto-complete";
 import {customerApi} from "../../../api/customer-api";
@@ -7,15 +7,45 @@ import {DatePicker} from "../../../components/date-picker/date-picker";
 import {TimePicker} from "../../../components/time-picker/time-picker";
 import {Checkbox} from "../../../components/checkbox/checkbox";
 import {AutoCompleteNormal} from "../../../components/auto-complete/auto-complete-normal";
+import {googleMapsApi} from "../../../api/google-maps-api";
+import {premisesInfo} from "../../../security/premises-info";
+import debounce from "lodash/debounce";
+import {InputNumber} from "../../../components/input-number/input-number";
 export class BillInfo extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            error: false,
+            distance: null
+        }
+    }
+
+
+    getDistance = debounce((to) => {
+        googleMapsApi.getDistance({from: premisesInfo.getActivePremise().address, to}).then((distance) => {
+            this.setState({distance});
+            let {deliverTime, onChange, to} = this.props;
+            onChange({...to, shipMoney: getShipFees(deliverTime, distance.value / 1000)})
+        }, () => {
+            this.setState({error: true})
+        })
+    }, 800);
+
+    getShipMoney(deliverTime) {
+        let {distance} = this.state;
+        let {to} = this.props;
+        if (distance) {
+            return getShipFees(deliverTime, distance.value / 1000)
+        }
+
+        return to.shipMoney;
     }
 
     render() {
 
         let {to, onChange, deliverTime, onChangeDeliverTime, locations} = this.props;
+        let {error, distance} = this.state;
 
         const paymentTypes = ["Ship", "Shop", "Thẻ", "Chuyển Khoản", "Nợ"];
 
@@ -63,7 +93,9 @@ export class BillInfo extends React.Component {
                             <label className="control-label">Giờ nhận hàng</label>
                             <TimePicker
                                 value={deliverTime}
-                                onChange={(deliverTime) => onChangeDeliverTime(deliverTime)}
+                                onChange={(deliverTime) => {
+                                    onChangeDeliverTime(deliverTime);
+                                }}
                             />
                         </div>
                     </div>
@@ -73,10 +105,19 @@ export class BillInfo extends React.Component {
                             <label className="control-label">Nơi Nhận</label>
                             <AutoCompleteNormal
                                 value={to.receiverPlace}
-                                onSelect={(location) => onChange({...to, receiverPlace: location})}
-                                onChange={(value) => onChange({...to, receiverPlace: value})}
+                                onSelect={(location) => {
+                                    onChange({...to, receiverPlace: location});
+                                    this.setState({error: false, distance: null});
+                                    this.getDistance(location);
+                                }}
+                                onChange={(value) => {
+                                    onChange({...to, receiverPlace: value});
+                                    this.setState({error: false, distance: null});
+                                    this.getDistance(value)
+                                }}
                                 displayAs={(location) => location}
                                 defaultList={locations}
+                                info={error ? "Không tính được khoảng cách vui lòng tư tính tiền ship" : distance ? `Khoảng cách ${distance.text}` : ""}
                             />
                         </div>
                     </div>
@@ -85,9 +126,9 @@ export class BillInfo extends React.Component {
                     <div className="col-lg-6">
                         <div className="form-group">
                             <label className="control-label">Phí Ship</label>
-                            <Input
-                                value={to.ship}
-                                onChange={(e) => onChange({...to, ship: e.target.value})}
+                            <InputNumber
+                                value={to.shipMoney}
+                                onChange={(value) => onChange({...to, shipMoney: value})}
                             />
                         </div>
                     </div>
