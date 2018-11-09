@@ -4,8 +4,8 @@ export let formatNumber = numb => numb.toString().replace(/(\d)(?=(\d\d\d)+(?!\d
 
 export const getTotalBill = (bill) => sumBy(bill.items, item => {
     let price = item.price * item.quantity;
-    if (item.discount) {
-        price = price - price * item.discount / 100
+    if (item.sale) {
+        price = price - price * item.sale / 100
     }
 
     if (item.vat) {
@@ -18,6 +18,8 @@ export const getTotalBill = (bill) => sumBy(bill.items, item => {
 
     return price;
 });
+
+
 
 
 export const getShipFees = (deliverTime, distance) => {

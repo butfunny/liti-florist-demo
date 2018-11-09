@@ -220,8 +220,8 @@ export class BillInfo extends React.Component {
                             <textarea
                                 rows="3"
                                 className="form-control no-height"
-                                value={to.card}
-                                onChange={(e) => onChange({...to, card: e.target.value})}
+                                value={to.cardContent}
+                                onChange={(e) => onChange({...to, cardContent: e.target.value})}
                             />
                         </div>
                     </div>

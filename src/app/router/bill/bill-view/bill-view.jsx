@@ -98,11 +98,11 @@ export class BillView extends React.Component {
                                         maxVal={100}
                                         disabled={editMode}
                                         autoSelect
-                                        value={item.discount || ""}
-                                        onChange={(discount) => {
-                                            if (discount <= 100) {
+                                        value={item.sale || ""}
+                                        onChange={(sale) => {
+                                            if (sale <= 100) {
                                                 onChangeItems(items.map(i => {
-                                                    if (i.name == item.name) return {...i, discount};
+                                                    if (i.name == item.name) return {...i, sale};
                                                     return i;
                                                 }))
                                             }

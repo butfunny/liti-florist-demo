@@ -19,31 +19,34 @@ import {BillInfo} from "./bill-info/bill-info";
 import {securityApi} from "../../api/security-api";
 import {userInfo} from "../../security/user-info";
 
+
+const initBill = {
+    items: [],
+    customer: {},
+    customerInfo: null,
+    to: {
+        receiverPhone: "",
+        receiverName: "",
+        receiverPlace: "",
+        cardContent: "",
+        notes: "",
+        paymentType: "Shop",
+        shipMoney: 0
+    },
+    deliverTime: new Date(),
+    sales: [],
+    florists: [],
+    ships: [],
+    payOwe: false
+}
+
 export class BillRoute extends React.Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
-            bill: {
-                items: [],
-                customer: {},
-                customerInfo: null,
-                to: {
-                    receiverPhone: "",
-                    receiverName: "",
-                    receiverPlace: "",
-                    cardContent: "",
-                    notes: "",
-                    paymentType: "Shop",
-                    shipMoney: 0
-                },
-                deliverTime: new Date(),
-                sales: [],
-                florists: [],
-                ships: [],
-                payOwe: false
-            },
+            bill: initBill,
             saving: false,
             locations: [],
             sales: [],
@@ -67,21 +70,7 @@ export class BillRoute extends React.Component {
 
         premisesInfo.onChange(() => {
             this.setState({
-                bill: {
-                    items: [],
-                    customer: {},
-                    to: {
-                        receiverPhone: "",
-                        receiverName: "",
-                        receiverPlace: "",
-                        cardContent: "",
-                        notes: "",
-                        paymentType: "",
-                        shipMoney: 0
-                    },
-                    payment_type: "Shop",
-                    deliverTime: new Date()
-                },
+                bill: initBill,
                 locations: []
             })
         })
@@ -137,20 +126,27 @@ export class BillRoute extends React.Component {
                     created: new Date(),
                     isNewCustomer: !bill.customer._id,
                     isOwe: bill.to.paymentType == "Nợ"
-                }).then((bill) => {
+                }).then(() => {
+
+                    PrintService.printBill({
+                        body: (
+                            <BillPrint
+                                bill={{...bill,
+                                    bill_number: `${formatValue(today.getDate())}${formatValue(today.getMonth() + 1)}${today.getFullYear()}${formatValue(bills.length + 1)}`,
+                                    isOwe: bill.to.paymentType == "Nợ",
+                                    created_by: userInfo.getUser().username
+                                }}
+                            />
+                        )
+                    });
 
 
-                    // this.setState({
-                    //     saving: false,
-                    //     bill: {items: [], customer: {delivery_time: new Date(), payment_type: "Shop"}}
-                    // });
-                    // PrintService.printBill({
-                    //     body: (
-                    //         <BillPrint
-                    //             bill={{...bill, ...bill.customer, customer}}
-                    //         />
-                    //     )
-                    // })
+                    this.setState({
+                        bill: initBill,
+                        saving: false
+                    });
+
+
 
                 })
             })
@@ -234,7 +230,7 @@ export class BillRoute extends React.Component {
 
                                         <div className="text-right btn-action">
                                             <button type="button" className="btn btn-info"
-                                                    onClick={() => this.saveCustomer()}
+                                                    onClick={() => this.saveDraftBill()}
                                                     disabled={bill.items.length == 0 || saving || bill.sales.length == 0 || bill.florists.length == 0}
                                             >Lưu đơn sẵn
                                             </button>
