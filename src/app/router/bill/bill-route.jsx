@@ -154,17 +154,72 @@ export class BillRoute extends React.Component {
 
     }
 
-    saveCustomer() {
-        let {bill} = this.state;
-        customerApi.createCustomer(pick(bill.customer, ["phone", "name", "address", "receiver_name", "receiver_place", "receiver_phone"])).then((customer) => {
-            confirmModal.alert("Lưu thông tin khách hàng thành công");
-            this.setState({bill: {...bill, customer: {delivery_time: new Date(), payment_type: "Shop"}}})
+    saveDraftBill(bill) {
+        this.setState({savingDraft: true});
+
+        let premises = premisesInfo.getPremises();
+
+        const getCurrentPremise = () => {
+            const activeID = cache.get("active-premises");
+            if (!activeID) {
+                cache.set(premises[0]._id, "active-premises");
+                return premises[0]._id;
+            }
+            const found = premises.find(p => p._id == activeID);
+            if (found) return found._id;
+            else {
+                cache.set(premises[0]._id, "active-premises");
+                return premises[0]._id
+            }
+        };
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const endDay = new Date();
+        endDay.setHours(23, 59, 59, 99);
+
+        const getCustomerID = () => {
+            if (!bill.customer._id) {
+                return customerApi.createCustomer(bill.customer).then((customer) => {
+                    return customer._id
+                })
+            }
+
+            return customerApi.updateCustomer(bill.customer._id, omit(bill.customer, "_id")).then(() => {
+                return bill.customer._id
+            });
+        };
+
+
+        getCustomerID().then((customerID) => {
+            billApi.getAllBills({from: today, to: endDay}).then((bills) => {
+                billApi.createBill({
+                    ...bill,
+                    bill_number: `${formatValue(today.getDate())}${formatValue(today.getMonth() + 1)}${today.getFullYear()}${formatValue(bills.length + 1)}`,
+                    customerId: customerID,
+                    base_id: getCurrentPremise(),
+                    status: "Chờ xử lý",
+                    created_by: userInfo.getUser().username,
+                    created: new Date(),
+                    isNewCustomer: !bill.customer._id,
+                    isOwe: bill.to.paymentType == "Nợ"
+                }).then(() => {
+                    confirmModal.alert("Lưu thành công");
+                    this.setState({
+                        bill: initBill,
+                        savingDraft: false
+                    });
+
+
+
+                })
+            })
         });
     }
 
     render() {
 
-        let {bill, saving, locations, florists, sales, ships} = this.state;
+        let {bill, saving, locations, florists, sales, ships, savingDraft} = this.state;
 
         return (
             <Layout
@@ -230,9 +285,10 @@ export class BillRoute extends React.Component {
 
                                         <div className="text-right btn-action">
                                             <button type="button" className="btn btn-info"
-                                                    onClick={() => this.saveDraftBill()}
-                                                    disabled={bill.items.length == 0 || saving || bill.sales.length == 0 || bill.florists.length == 0}
-                                            >Lưu đơn sẵn
+                                                    onClick={() => this.saveDraftBill(bill)}
+                                                    disabled={bill.items.length == 0 || savingDraft}
+                                            >Lưu đơn sẵn {savingDraft && <span className="btn-inner--icon"><i
+                                                className="fa fa-spinner fa-pulse"/></span>}
                                             </button>
 
                                             <button type="button"
