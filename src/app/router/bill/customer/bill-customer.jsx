@@ -6,6 +6,8 @@ import {DatePicker} from "../../../components/date-picker/date-picker";
 import {customerApi} from "../../../api/customer-api";
 import {formatNumber} from "../../../common/common";
 import uuid from "uuid/v4";
+import {Checkbox} from "../../../components/checkbox/checkbox";
+
 export class BillCustomer extends React.Component {
 
     constructor(props) {
@@ -16,16 +18,17 @@ export class BillCustomer extends React.Component {
     }
 
     getCustomerInfo(id) {
+
+        let {onChangeBill, bill} = this.props;
+
         customerApi.getCustomer(id).then((resp) => {
-            this.setState({customerInfo: resp.spend});
-            this.props.onChangeLocations(resp.locations);
+            onChangeBill({...bill, customerInfo: resp, customer: resp.customer});
         })
     }
 
     render() {
 
-        let {customer, onChange, editMode, onChangeLocations} = this.props;
-        let {customerInfo} = this.state;
+        let {customer, onChange, editMode, bill, onChangeBill} = this.props;
 
         return (
             <div className="bill-customer">
@@ -36,11 +39,20 @@ export class BillCustomer extends React.Component {
                 <div className="row">
 
                     <div className="col-lg-12 info-customer">
-                        { customerInfo && (
+                        {bill.customerInfo && (
                             <div className="text-primary">
-                                Khách hàng {customer.customerName} đã chi {formatNumber(customerInfo.totalSpend)}
+                                Khách hàng {customer.customerName} đã chi {formatNumber(bill.customerInfo.spend.totalSpend)}
 
-                                { customerInfo.totalOwe > 0 && (<div className="text-danger">Đang nợ {formatNumber(customerInfo.totalOwe)}</div>)}
+                                {bill.customerInfo.spend.totalOwe > 0 && (
+                                    <div>
+                                        <span
+                                            className="text-danger"> Đang nợ {formatNumber(bill.customerInfo.spend.totalOwe)} </span>
+                                        <div style={{marginTop: "10px"}}>
+                                            <Checkbox label="Thanh toán nợ" value={bill.payOwe}
+                                                      onChange={(value) => onChangeBill({...bill, payOwe: value})}/>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
@@ -74,18 +86,21 @@ export class BillCustomer extends React.Component {
                             <AutoComplete
                                 disabled={editMode}
                                 asyncGet={(phone) => {
-                                    this.setState({customerInfo: null});
-                                    onChange({
-                                        ...customer,
-                                        customerPhone: phone,
-                                        receiverName: "",
-                                        customerPlace: "",
-                                        receiverPlace: "",
-                                        email: "",
-                                        receiverPhone: "",
-                                        customerName: "",
+                                    onChangeBill({
+                                        ...bill, customerInfo: null, payOwe: false, customer: {
+                                            ...customer,
+                                            customerPhone: phone,
+                                            customerPlace: "",
+                                            email: "",
+                                            customerName: "",
+                                        },
+                                        to: {
+                                            ...bill.to,
+                                            receiverPhone: "",
+                                            receiverName: "",
+                                            receiverPlace: "",
+                                        }
                                     });
-                                    onChangeLocations([]);
 
                                     if (phone.length > 3) {
                                         return customerApi.getCustomerByPhone(phone).then((resp) => {
@@ -96,25 +111,24 @@ export class BillCustomer extends React.Component {
                                 }}
                                 onSelect={(updatedCustomer) => {
                                     if (updatedCustomer.isNew) {
-                                        onChange({
-                                            ...customer,
-                                            customerPhone: updatedCustomer.customerPhone,
-                                            receiverName: "",
-                                            customerPlace: "",
-                                            receiverPlace: "",
-                                            email: "",
-                                            receiverPhone: "",
-                                            customerName: "",
+                                        onChangeBill({
+                                            ...bill, customerInfo: null, payOwe: false, customer: {
+                                                ...customer,
+                                                customerPhone: phone,
+                                                customerPlace: "",
+                                                email: "",
+                                                customerName: "",
+                                            },
+                                            to: {
+                                                ...bill.to,
+                                                receiverPhone: "",
+                                                receiverName: "",
+                                                receiverPlace: "",
+                                            }
                                         });
-                                        onChangeLocations([]);
-                                        this.setState({oriCustomer: updatedCustomer, customerInfo: null})
                                     } else {
-                                        this.setState({oriCustomer: updatedCustomer, customerInfo: null});
+                                        onChangeBill({...bill, customerInfo: null, payOwe: false});
                                         this.getCustomerInfo(updatedCustomer._id);
-                                        onChange({
-                                            ...customer,
-                                            ...updatedCustomer
-                                        })
                                     }
                                 }}
                                 onChange={(value) => onChange({...customer, customerPhone: value})}
@@ -156,7 +170,7 @@ export class BillCustomer extends React.Component {
                             <select className="form-control"
                                     value={customer.gender}
                                     onChange={(e) => onChange({...customer, gender: e.target.value})}>
-                                { ["Nam", "Nữ"].map((type, index) => (
+                                {["Nam", "Nữ"].map((type, index) => (
                                     <option value={type} key={index}>{type}</option>
                                 ))}
                             </select>

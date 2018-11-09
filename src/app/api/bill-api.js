@@ -4,6 +4,9 @@ export const billApi = {
     createBill: (bill) => {
         return api.post(`/api/bill`, bill)
     },
+    createBillDraft: (bill) => {
+        return api.post(`/api/bill-draft`, bill)
+    },
     getBills: (id, time) => {
         return api.post(`/api/bills/${id}`, time)
     },

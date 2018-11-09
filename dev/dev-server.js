@@ -16,6 +16,7 @@ require("../controllers/account-controller")(router);
 require("../controllers/shop-controller")(router);
 require("../controllers/product-controller")(router);
 require("../controllers/customer-controller")(router);
+require("../controllers/bill-controller")(router);
 
 app.get("*", (req, res) => {
     res.sendFile(__dirname + "/index.html");

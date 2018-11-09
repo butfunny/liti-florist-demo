@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const Security = require("../security/security-be");
 const CustomerDao = require("../dao/customer-dao");
-const CustomerLocations = require("../dao/customer-locations");
 const BillDao = require("../dao/bill-dao");
 const BillSupport = require("../common/common");
 
@@ -38,13 +37,7 @@ module.exports = (app) => {
 
     app.put("/customer/:id",Security.authorDetails, function(req, res) {
         CustomerDao.findOneAndUpdate({_id: req.params["id"]}, {$set: req.body}, function() {
-            if (!req.body.location_id) {
-                CustomerLocations.create({customer_id: req.params.id, location: req.body.location}, () => {
-                    res.end();
-                })
-            } else {
-                res.end();
-            }
+            res.end();
         });
     });
 

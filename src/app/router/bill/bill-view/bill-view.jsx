@@ -10,7 +10,8 @@ export class BillView extends React.Component {
 
     render() {
 
-        let {items, onChangeItems, editMode} = this.props;
+        let {bill, onChangeItems, editMode} = this.props;
+        const items = bill.items;
 
 
         return (
@@ -144,9 +145,15 @@ export class BillView extends React.Component {
 
                 </div>
 
+                { bill.payOwe && bill.customerInfo && (
+                    <div className="text-right">
+                        Thanh toán nợ: <b>{formatNumber(bill.customerInfo.spend.totalOwe)}</b>
+                    </div>
+                )}
+
                 { items.length > 0 && (
                     <div className="text-right">
-                        Tổng Tiền: <b>{formatNumber(getTotalBill(items))}</b>
+                        Tổng Tiền: <b>{formatNumber(getTotalBill(bill))}</b>
                     </div>
                 )}
             </div>

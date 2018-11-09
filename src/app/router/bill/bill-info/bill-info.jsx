@@ -44,9 +44,15 @@ export class BillInfo extends React.Component {
         return to.shipMoney;
     }
 
+    componentWillReceiveProps(props) {
+      if (!props.to.receiverPlace || props.to.receiverPlace == "") {
+          this.setState({error: false, distance: null})
+      }
+    }
+
     render() {
 
-        let {to, onChange, deliverTime, onChangeDeliverTime, locations, bill, onChangeBill, sales, florists, ships} = this.props;
+        let {to, onChange, deliverTime, onChangeDeliverTime, bill, onChangeBill, sales, florists, ships} = this.props;
         let {error, distance} = this.state;
         const paymentTypes = ["Ship", "Shop", "Thẻ", "Chuyển Khoản", "Nợ"];
 
@@ -71,7 +77,7 @@ export class BillInfo extends React.Component {
                                     onChange({...to, receiverName: value})
                                 }}
                                 displayAs={(location) => location}
-                                defaultList={uniq(locations.map(l => l.receiverName)).filter(l => l != null && l.length > 0)}
+                                defaultList={uniq(!bill.customerInfo ? [] : bill.customerInfo.locations.map(l => l.receiverName)).filter(l => l != null && l.length > 0)}
                             />
                         </div>
                     </div>
@@ -88,7 +94,7 @@ export class BillInfo extends React.Component {
                                     onChange({...to, receiverPhone: value})
                                 }}
                                 displayAs={(location) => location}
-                                defaultList={uniq(locations.map(l => l.receiverPhone)).filter(l => l != null && l.length > 0)}
+                                defaultList={uniq(!bill.customerInfo ? [] : bill.customerInfo.locations.map(l => l.receiverPhone)).filter(l => l != null && l.length > 0)}
                             />
                         </div>
                     </div>
@@ -131,7 +137,7 @@ export class BillInfo extends React.Component {
                                     this.getDistance(value)
                                 }}
                                 displayAs={(location) => location}
-                                defaultList={uniq(locations.map(l => l.receiverPlace)).filter(l => l != null && l.length > 0)}
+                                defaultList={uniq(!bill.customerInfo ? [] : bill.customerInfo.locations.map(l => l.receiverPlace)).filter(l => l != null && l.length > 0)}
                                 info={error ? "Không tính được khoảng cách vui lòng tư tính tiền ship" : distance ? `Khoảng cách ${distance.text}` : ""}
                             />
                         </div>
@@ -176,8 +182,8 @@ export class BillInfo extends React.Component {
                         <div className="form-group">
                             <label className="control-label">Hình thức thanh toán</label>
                             <select className="form-control"
-                                    value={to.payment_type}
-                                    onChange={(e) => onChange({...to, payment_type: e.target.value})}>
+                                    value={to.paymentType}
+                                    onChange={(e) => onChange({...to, paymentType: e.target.value})}>
                                 { paymentTypes.map((type, index) => (
                                     <option value={type} key={index}>{type}</option>
                                 ))}

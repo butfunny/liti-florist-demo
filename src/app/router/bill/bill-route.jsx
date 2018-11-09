@@ -24,36 +24,31 @@ export class BillRoute extends React.Component {
     constructor(props) {
         super(props);
 
-        let user = userInfo.getUser();
-
         this.state = {
             bill: {
                 items: [],
                 customer: {},
+                customerInfo: null,
                 to: {
                     receiverPhone: "",
                     receiverName: "",
                     receiverPlace: "",
                     cardContent: "",
                     notes: "",
-                    paymentType: "",
+                    paymentType: "Shop",
                     shipMoney: 0
                 },
-                payment_type: "Shop",
                 deliverTime: new Date(),
-                sales: [{
-                    user_id: user._id,
-                    username: user.username,
-                    name: user.name
-                }],
+                sales: [],
                 florists: [],
-                ships: []
+                ships: [],
+                payOwe: false
             },
             saving: false,
             locations: [],
             sales: [],
             florists: [],
-            ships: []
+            ships: [],
         };
 
         securityApi.getSalesAndFlorist().then((users) => {
@@ -92,9 +87,8 @@ export class BillRoute extends React.Component {
         })
     }
 
-    submitBill() {
+    submitBill(bill) {
 
-        let {bill} = this.state;
         this.setState({saving: true});
 
         let premises = premisesInfo.getPremises();
@@ -118,31 +112,48 @@ export class BillRoute extends React.Component {
         const endDay = new Date();
         endDay.setHours(23, 59, 59, 99);
 
-        customerApi.createCustomer(pick(bill.customer, ["phone", "name", "address", "receiver_name", "receiver_place", "receiver_phone"])).then((customer) => {
+        const getCustomerID = () => {
+            if (!bill.customer._id) {
+                return customerApi.createCustomer(bill.customer).then((customer) => {
+                    return customer._id
+                })
+            }
+
+            return customerApi.updateCustomer(bill.customer._id, omit(bill.customer, "_id")).then(() => {
+                return bill.customer._id
+            });
+        };
+
+
+        getCustomerID().then((customerID) => {
             billApi.getAllBills({from: today, to: endDay}).then((bills) => {
                 billApi.createBill({
-                    items: bill.items,
+                    ...bill,
+                    bill_number: `${formatValue(today.getDate())}${formatValue(today.getMonth() + 1)}${today.getFullYear()}${formatValue(bills.length + 1)}`,
+                    customerId: customerID,
+                    base_id: getCurrentPremise(),
+                    status: "Chờ xử lý",
+                    created_by: userInfo.getUser().username,
                     created: new Date(),
-                    ...omit(bill.customer, ["phone", "name", "address", "_id", "_v", "total_pay"]),
-                    bill_id: `${formatValue(today.getDate())}${formatValue(today.getMonth() + 1)}${today.getFullYear()}${formatValue(bills.length + 1)}`,
-                    customer_id: customer._id,
-                    premises_id: getCurrentPremise(),
-                    status: "pending",
+                    isNewCustomer: !bill.customer._id,
+                    isOwe: bill.to.paymentType == "Nợ"
                 }).then((bill) => {
-                    this.setState({
-                        saving: false,
-                        bill: {items: [], customer: {delivery_time: new Date(), payment_type: "Shop"}}
-                    });
-                    PrintService.printBill({
-                        body: (
-                            <BillPrint
-                                bill={{...bill, ...bill.customer, customer}}
-                            />
-                        )
-                    })
+
+
+                    // this.setState({
+                    //     saving: false,
+                    //     bill: {items: [], customer: {delivery_time: new Date(), payment_type: "Shop"}}
+                    // });
+                    // PrintService.printBill({
+                    //     body: (
+                    //         <BillPrint
+                    //             bill={{...bill, ...bill.customer, customer}}
+                    //         />
+                    //     )
+                    // })
 
                 })
-            });
+            })
         });
 
     }
@@ -179,7 +190,7 @@ export class BillRoute extends React.Component {
 
                         <div className="col-md-8">
                             <BillView
-                                items={bill.items}
+                                bill={bill}
                                 onChangeItems={(items) => this.setState({bill: {...bill, items}})}
                             />
 
@@ -189,6 +200,8 @@ export class BillRoute extends React.Component {
                                 render={(getInvalidByKey, invalidPaths) => (
                                     <Fragment>
                                         <BillCustomer
+                                            bill={bill}
+                                            onChangeBill={(bill) => this.setState({bill})}
                                             onChangeLocations={(locations) => this.setState({locations})}
                                             customer={bill.customer}
                                             onChange={(customer) => {
@@ -222,14 +235,14 @@ export class BillRoute extends React.Component {
                                         <div className="text-right btn-action">
                                             <button type="button" className="btn btn-info"
                                                     onClick={() => this.saveCustomer()}
-                                                    disabled={invalidPaths.length > 0}
-                                            >Lưu thông tin khách hàng
+                                                    disabled={bill.items.length == 0 || saving || bill.sales.length == 0 || bill.florists.length == 0}
+                                            >Lưu đơn sẵn
                                             </button>
 
                                             <button type="button"
-                                                    disabled={saving || invalidPaths.length > 0 || bill.items.length == 0}
+                                                    disabled={bill.items.length == 0 || saving || bill.sales.length == 0 || bill.florists.length == 0}
                                                     className="btn btn-primary btn-icon"
-                                                    onClick={() => this.submitBill()}>
+                                                    onClick={() => this.submitBill(bill)}>
                                                 <span className="btn-inner--text">Bán Hàng</span>
                                                 {saving && <span className="btn-inner--icon"><i
                                                     className="fa fa-spinner fa-pulse"/></span>}

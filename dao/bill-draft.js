@@ -1,7 +1,7 @@
 
 let mongoose = require('mongoose');
 
-module.exports = mongoose.model('BillDao', {
+module.exports = mongoose.model('BillDraftDao', {
     items:[{
         name: String,
         price: Number,
@@ -44,5 +44,4 @@ module.exports = mongoose.model('BillDao', {
     vipSaleType: String,
     created: {type: Date, default: Date.now},
     created_by: String,
-    isNewCustomer: Boolean
-}, "bills");
+}, "bills_draft");
