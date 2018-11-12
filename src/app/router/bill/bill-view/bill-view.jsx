@@ -145,6 +145,12 @@ export class BillView extends React.Component {
 
                 </div>
 
+                { bill.vipSaleType && (
+                    <div className="text-right">
+                        VIP: <b>{bill.vipSaleType}</b>
+                    </div>
+                )}
+
                 { bill.payOwe && bill.customerInfo && (
                     <div className="text-right">
                         Thanh toán nợ: <b>{formatNumber(bill.customerInfo.spend.totalOwe)}</b>

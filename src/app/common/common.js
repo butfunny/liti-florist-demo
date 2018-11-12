@@ -2,22 +2,38 @@ import sumBy from "lodash/sumBy";
 
 export let formatNumber = numb => numb.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
 
-export const getTotalBill = (bill) => sumBy(bill.items, item => {
-    let price = item.price * item.quantity;
-    if (item.sale) {
-        price = price - price * item.sale / 100
-    }
+export const getTotalBill = (bill) => {
 
-    if (item.vat) {
-        price = price + price * item.vat / 100
-    }
+    let totalBillItems = sumBy(bill.items, item => {
+        let price = item.price * item.quantity;
+        if (item.sale) {
+            price = price - price * item.sale / 100
+        }
+
+        if (item.vat) {
+            price = price + price * item.vat / 100
+        }
+
+        return price;
+    });
 
     if (bill.payOwe && bill.customerInfo) {
-        price += bill.customerInfo.spend.totalOwe
+        totalBillItems += bill.customerInfo.spend.totalOwe
     }
 
-    return price;
-});
+    let discount = 0;
+
+    if (bill.vipSaleType == "Giảm giá 5%") {
+        discount += 5;
+    }
+
+    if (bill.vipSaleType == "Giảm giá 20%") {
+        discount += 20;
+    }
+
+    return totalBillItems - totalBillItems * discount / 100
+
+};
 
 
 
