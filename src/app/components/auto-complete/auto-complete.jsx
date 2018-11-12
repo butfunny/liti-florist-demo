@@ -22,6 +22,10 @@ export class AutoComplete extends React.Component {
         }
     }
 
+    setValue(value) {
+        this.setState({value})
+    }
+
     handleKeyDown(e) {
 
         let {selectedIndex, list} = this.state;

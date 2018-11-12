@@ -11,6 +11,7 @@ import {vipApi} from "../../../api/vip-api";
 import {modals} from "../../../components/modal/modals";
 import {VipCardModal} from "./vip-card-modal";
 import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
+import {VipCardReaderModal} from "./vip-card-reader-modal";
 
 export class BillCustomer extends React.Component {
 
@@ -32,6 +33,7 @@ export class BillCustomer extends React.Component {
             });
 
             onChangeBill({...bill, customerInfo: resp, customer: resp.customer});
+            this.phone.setValue(resp.customer.customerPhone);
         })
     }
 
@@ -56,16 +58,50 @@ export class BillCustomer extends React.Component {
         })
     }
 
+    scanCard() {
+
+        let {onChangeBill, bill} = this.props;
+
+        const modal = modals.openModal({
+            content: (
+                <VipCardReaderModal
+                    onClose={(vip) => {
+                        modal.close();
+                        onChangeBill({...bill, vipSaleType: vip.isVFamily ? "Giảm giá 20%" : "Giảm giá 5%"});
+                        this.setState({vipPay: vip.isVFamily ? "vfamily" : "vip"});
+                        this.getCustomerInfo(vip.customerId);
+                    }}
+                    onDismiss={() => modal.close()}
+                />
+            )
+        })
+    }
+
     render() {
 
         let {customer, onChange, editMode, bill, onChangeBill} = this.props;
-        let {isNotVip} = this.state;
+        let {isNotVip, vipPay} = this.state;
 
 
         return (
             <div className="bill-customer">
                 <div className="panel-header">
                     <b>Thông tin khách hàng</b>
+
+                    <br/>
+
+                    { vipPay && (
+                        <span className="text-action" style={{fontSize: "13px"}} onClick={() => {
+                            this.setState({vipPay: false});
+                            onChangeBill({...bill, vipSaleType: null});
+                        }}>
+                            Chuyển về thanh toán thường
+                        </span>
+                    )}
+
+                    <div className="vip-card" onClick={() => this.scanCard()}>
+                        <i className="fa fa-credit-card"/>
+                    </div>
                 </div>
 
                 <div className="row">
@@ -102,6 +138,7 @@ export class BillCustomer extends React.Component {
                         <div className="form-group">
                             <label className="control-label">Tên Khách Đặt</label>
                             <Input
+                                disabled={vipPay}
                                 value={customer.customerName}
                                 onChange={(e) => onChange({...customer, customerName: e.target.value})}
                             />
@@ -113,6 +150,7 @@ export class BillCustomer extends React.Component {
                         <div className="form-group">
                             <label className="control-label">Địa Chỉ</label>
                             <Input
+                                disabled={vipPay}
                                 value={customer.customerPlace}
                                 onChange={(e) => onChange({...customer, customerPlace: e.target.value})}
                             />
@@ -124,7 +162,8 @@ export class BillCustomer extends React.Component {
                         <div className="form-group">
                             <label className="control-label">Số Điện Thoại</label>
                             <AutoComplete
-                                disabled={editMode}
+                                ref={elem => this.phone = elem}
+                                disabled={vipPay}
                                 asyncGet={(phone) => {
                                     onChangeBill({
                                         ...bill, customerInfo: null, payOwe: false, customer: {
@@ -219,6 +258,31 @@ export class BillCustomer extends React.Component {
                             </select>
                         </div>
                     </div>
+
+                    { vipPay == "vip" && (
+                        <div className="col-lg-6">
+                            <div className="form-group">
+                                <label className="control-label">VIP sale</label>
+                                <select className="form-control" value={bill.vipSaleType}
+                                        onChange={(e) => onChangeBill({...bill, vipSaleType: e.target.value})}>
+                                    <option value="Giảm giá 5%" >Giảm giá 5%</option>
+                                    <option value="Tăng 10% định lượng hoa">Tăng 10% định lượng hoa</option>
+                                </select>
+                            </div>
+                        </div>
+                    )}
+
+                    { vipPay == "vfamily" && (
+                        <div className="col-lg-6">
+                            <div className="form-group">
+                                <label className="control-label">VFamily Sale</label>
+                                <Input
+                                    disabled
+                                    value="Giảm giá 20%"
+                                />
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         );
