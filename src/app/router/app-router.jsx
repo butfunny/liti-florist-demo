@@ -10,6 +10,7 @@ import {ManageUserRoute} from "./manage-user-route/manage-user-route";
 import {BillOrderRoute} from "./order/bill-order";
 import {BillEditRoute} from "./bill-edit-route/bill-edit-route";
 import {Customers} from "./customers/customers";
+import {VipRoute} from "./vip/vip-route";
 export class AppRouter extends React.Component {
 
     constructor(props) {
@@ -46,6 +47,7 @@ export class AppRouter extends React.Component {
                         <Route exact path="/orders" component={requireAuthen(BillOrderRoute)} />
                         <Route exact path="/edit-bill/:id" component={requireAuthen(BillEditRoute)} />
                         <Route exact path="/customers" component={requireAuthenAdmin(Customers)} />
+                        <Route exact path="/vip" component={requireAuthen(VipRoute)} />
                     </Switch>
                 </BrowserRouter>
                 <ModalsRegistry />

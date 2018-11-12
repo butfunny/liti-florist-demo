@@ -77,6 +77,7 @@ export class AutoComplete extends React.Component {
 
         let {onSelect, displayAs, objectKey, onChange, noPopup} = this.props;
         let {selected, selectedIndex, list, loading, value} = this.state;
+        console.log(value);
 
         return (
             <div className="auto-complete">

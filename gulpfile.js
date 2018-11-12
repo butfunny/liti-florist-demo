@@ -147,3 +147,32 @@ gulp.task("update-bill-with-premies", () => {
         })
     })
 });
+
+gulp.task("update-customer-birthdate", () => {
+    const mongoose = require('mongoose');
+    mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/payment", {useNewUrlParser: true});
+    const CustomerDao = require("./dao/customer-dao");
+    const VipDao = require("./dao/vip-dao");
+
+    const updateCustomer = (customerID, birthDate) => {
+        return new Promise((resolve, reject)=>{
+            CustomerDao.findOneAndUpdate({_id: customerID}, {birthDate: birthDate}, (err) =>{
+                console.log("updated: " + customerID);
+                resolve();
+            })
+        })
+
+    };
+
+    VipDao.find({}, (err, vips) => {
+        let promises = [];
+        for (let vip of vips) {
+            promises.push(updateCustomer(vip.customerId, vip.birthDate))
+        }
+
+        Promise.all(promises).then(() => {
+            console.log("finished");
+            mongoose.disconnect();
+        })
+    })
+});
