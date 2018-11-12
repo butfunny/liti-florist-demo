@@ -23,6 +23,10 @@ export class BillCustomer extends React.Component {
         }
     }
 
+    setVipPay(value) {
+        this.setState({vipPay: value})
+    }
+
     getCustomerInfo(id) {
 
         let {onChangeBill, bill} = this.props;

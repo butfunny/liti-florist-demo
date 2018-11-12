@@ -145,6 +145,7 @@ export class BillRoute extends React.Component {
                         bill: initBill,
                         saving: false
                     });
+                    this.billCustomer.setVipPay(false);
 
 
 
@@ -209,7 +210,7 @@ export class BillRoute extends React.Component {
                         bill: initBill,
                         savingDraft: false
                     });
-
+                    this.billCustomer.setVipPay(false);
 
 
                 })
@@ -251,6 +252,7 @@ export class BillRoute extends React.Component {
                                 render={(getInvalidByKey, invalidPaths) => (
                                     <Fragment>
                                         <BillCustomer
+                                            ref={elem => this.billCustomer = elem}
                                             bill={bill}
                                             onChangeBill={(bill) => this.setState({bill})}
                                             onChangeLocations={(locations) => this.setState({locations})}
