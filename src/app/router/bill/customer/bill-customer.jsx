@@ -4,16 +4,21 @@ import {AutoComplete} from "../../../components/auto-complete/auto-complete";
 import {TimePicker} from "../../../components/time-picker/time-picker";
 import {DatePicker} from "../../../components/date-picker/date-picker";
 import {customerApi} from "../../../api/customer-api";
-import {formatNumber} from "../../../common/common";
+import {formatNumber, getTotalBill} from "../../../common/common";
 import uuid from "uuid/v4";
 import {Checkbox} from "../../../components/checkbox/checkbox";
+import {vipApi} from "../../../api/vip-api";
+import {modals} from "../../../components/modal/modals";
+import {VipCardModal} from "./vip-card-modal";
+import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
 
 export class BillCustomer extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            customerInfo: null
+            customerInfo: null,
+            isNotVip: false
         }
     }
 
@@ -22,13 +27,40 @@ export class BillCustomer extends React.Component {
         let {onChangeBill, bill} = this.props;
 
         customerApi.getCustomer(id).then((resp) => {
+            vipApi.getVipByCustomerID(id).then((vip) => {
+                if (!vip) this.setState({isNotVip: true})
+            });
+
             onChangeBill({...bill, customerInfo: resp, customer: resp.customer});
+        })
+    }
+
+    createVip() {
+
+        let {bill} = this.props;
+
+        const modal = modals.openModal({
+            content: (
+                <VipCardModal
+                    customerID={bill.customer._id}
+                    onClose={() => {
+                        modal.close();
+                        confirmModal.alert("Tạo tài khoản VIP thành công");
+                        this.setState({isNotVip: false})
+                    }}
+                    onDismiss={() => {
+                        modal.close()
+                    }}
+                />
+            )
         })
     }
 
     render() {
 
         let {customer, onChange, editMode, bill, onChangeBill} = this.props;
+        let {isNotVip} = this.state;
+
 
         return (
             <div className="bill-customer">
@@ -51,6 +83,14 @@ export class BillCustomer extends React.Component {
                                             <Checkbox label="Thanh toán nợ" value={bill.payOwe}
                                                       onChange={(value) => onChangeBill({...bill, payOwe: value})}/>
                                         </div>
+                                    </div>
+                                )}
+
+                                { isNotVip && bill.customerInfo.spend.totalSpend + getTotalBill(bill) >= 15000000 && (
+                                    <div>
+                                        Khách đã tiêu trên 15,000,000 <b
+                                        onClick={() => this.createVip()}
+                                        className="text-action">Tạo tài khoản VIP</b>
                                     </div>
                                 )}
                             </div>
@@ -107,6 +147,7 @@ export class BillCustomer extends React.Component {
                                             return [{isNew: true, customerPhone: phone}].concat(resp.customers)
                                         })
                                     }
+                                    this.setState({isNotVip: false});
                                     return Promise.resolve([{isNew: true, customerPhone: phone}])
                                 }}
                                 onSelect={(updatedCustomer) => {
@@ -126,8 +167,10 @@ export class BillCustomer extends React.Component {
                                                 receiverPlace: "",
                                             }
                                         });
+                                        this.setState({isNotVip: false});
                                     } else {
                                         onChangeBill({...bill, customerInfo: null, payOwe: false});
+                                        this.setState({isNotVip: false});
                                         this.getCustomerInfo(updatedCustomer._id);
                                     }
                                 }}
