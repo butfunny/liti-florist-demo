@@ -5,6 +5,8 @@ import {ManageVipModal} from "./manage-vip-modal";
 import {vipApi} from "../../api/vip-api";
 import moment from "moment";
 import {Input} from "../../components/input/input";
+import {confirmModal} from "../../components/confirm-modal/confirm-modal";
+import {securityApi} from "../../api/security-api";
 export class VipRoute extends React.Component {
 
     constructor(props) {
@@ -30,6 +32,19 @@ export class VipRoute extends React.Component {
                     }}
                 />
             )
+        })
+    }
+
+    remove(vip) {
+        confirmModal.show({
+            title: `Xoá khách vip?`,
+            description: "Bạn có đồng ý xoá quyền lợi vip của khách này không?"
+        }).then(() => {
+            vipApi.removeVIP(vip._id);
+            let {vips} = this.state;
+            this.setState({
+                vips: vips.filter(v => v._id != vip._id)
+            })
         })
     }
 
@@ -104,10 +119,6 @@ export class VipRoute extends React.Component {
                                     <td
                                         style={{minWidth: "150px"}}
                                     >
-                                        <button className="btn btn-outline-primary btn-sm"
-                                                onClick={() => this.editUser(item)}>
-                                            <i className="fa fa-pencil"/>
-                                        </button>
                                         <button className="btn btn-outline-danger btn-sm"
                                                 onClick={() => this.remove(item)}>
                                             <i className="fa fa-trash"/>
