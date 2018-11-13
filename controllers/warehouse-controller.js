@@ -10,7 +10,7 @@ module.exports = (app) => {
     });
 
     app.get("/warehouse/list", Security.authorDetails, function (req, res) {
-        WareHouseDao.find({}, (err, items) => {
+        WareHouseDao.find({billID: null}, (err, items) => {
             res.json(items)
         })
     });

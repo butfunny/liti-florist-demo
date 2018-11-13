@@ -5,6 +5,7 @@ import {warehouseApi} from "../../api/warehouse-api";
 import {modals} from "../../components/modal/modals";
 import {ManageWarehouseItemModal} from "./manage-warehouse-item";
 import {formatNumber, keysToArray} from "../../common/common";
+import {EditWareHouseItemModal} from "./edit-warehouse-item-modal";
 
 export class WarehouseRoute extends React.Component {
 
@@ -31,6 +32,24 @@ export class WarehouseRoute extends React.Component {
                     onClose={(newItems) => {
                         let {items} = this.state;
                         this.setState({items: items.concat(newItems)});
+                        modal.close();
+                    }}
+                    onDismiss={() => modal.close()}
+                />
+            )
+        })
+    }
+
+    editItem(updatedItems) {
+        let {items} = this.state;
+
+        const modal = modals.openModal({
+            content: (
+                <EditWareHouseItemModal
+                    updatedItems={updatedItems}
+                    items={items}
+                    onClose={(updatedItems) => {
+                        this.setState({items: updatedItems});
                         modal.close();
                     }}
                     onDismiss={() => modal.close()}
@@ -87,7 +106,18 @@ export class WarehouseRoute extends React.Component {
                                     {formatNumber(item.value[0].price)}
                                 </td>
                                 <td>
-                                    Tac uv
+                                    <button className="btn btn-outline-success btn-sm"
+                                            onClick={() => this.transferItem(item)}>
+                                        <i className="fa fa-truck"/>
+                                    </button>
+                                    <button className="btn btn-outline-primary btn-sm"
+                                            onClick={() => this.editItem(item.value)}>
+                                        <i className="fa fa-pencil"/>
+                                    </button>
+                                    <button className="btn btn-outline-danger btn-sm"
+                                            onClick={() => this.removeItem(item)}>
+                                        <i className="fa fa-trash"/>
+                                    </button>
                                 </td>
                             </tr>
                         ))}
