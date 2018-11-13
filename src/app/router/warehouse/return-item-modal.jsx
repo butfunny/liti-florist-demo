@@ -5,6 +5,7 @@ import {Form} from "../../components/form/form";
 import {Input} from "../../components/input/input";
 import {InputNumber} from "../../components/input-number/input-number";
 import {warehouseApi} from "../../api/warehouse-api";
+import {modals} from "../../components/modal/modals";
 export class ReturnItemModal extends React.Component {
 
     constructor(props) {
