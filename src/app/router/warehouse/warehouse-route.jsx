@@ -2,18 +2,20 @@ import React from "react";
 import {Layout} from "../../components/layout/layout";
 import {warehouseApi} from "../../api/warehouse-api";
 import {modals} from "../../components/modal/modals";
-import {ManageWarehouseItemModal} from "./manage-warehouse-item";
+import {ManageWarehouseItemModal} from "./modals/manage-warehouse-item";
 import {WareHouseFullView} from "./view/warehouse-full-view";
 import {premisesInfo} from "../../security/premises-info";
 import {SubWareHouseView} from "./view/sub-warehouse-view";
+import {Input} from "../../components/input/input";
 
 export class WarehouseRoute extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            items: null,
-            viewType: ""
+            items: [],
+            viewType: "",
+            keyword: ""
         };
 
         warehouseApi.getItems().then((items) => {
@@ -45,8 +47,10 @@ export class WarehouseRoute extends React.Component {
 
     render() {
 
-        let {items, viewType} = this.state;
+        let {items, viewType, keyword} = this.state;
         const premises = premisesInfo.getPremises();
+
+        const itemsFiltered = items.filter(i => i.name.toLowerCase().indexOf(keyword.toLowerCase()) > -1);
 
         return (
             <Layout
@@ -79,9 +83,17 @@ export class WarehouseRoute extends React.Component {
                         </select>
                     </div>
 
+                    <div className="form-group">
+                        <Input
+                            value={keyword}
+                            onChange={(e) => this.setState({keyword: e.target.value})}
+                            placeholder="Tìm kiếm theo tên"
+                        />
+                    </div>
+
                     { viewType.length > 0 ? (
                         <SubWareHouseView
-                            items={items.filter(i => i.warehouseID == viewType)}
+                            items={itemsFiltered.filter(i => i.warehouseID == viewType)}
                             onChange={(updatedItems) => {
                                 this.setState({items: items.map(i => {
                                         let updatedItem = updatedItems.find(item => item._id == i._id);
@@ -92,8 +104,12 @@ export class WarehouseRoute extends React.Component {
                         />
                     ) : (
                         <WareHouseFullView
-                            items={items}
-                            onChange={(items) => this.setState({items})}
+                            items={itemsFiltered}
+                            onChange={(updatedItems) => this.setState({items: items.map(i => {
+                                    let updatedItem = updatedItems.find(item => item._id == i._id);
+                                    if (updatedItem) return updatedItem;
+                                    return i;
+                            })})}
                         />
                     )}
 

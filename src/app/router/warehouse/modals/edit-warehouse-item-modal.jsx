@@ -1,10 +1,10 @@
 import React, {Fragment} from "react";
-import {minVal, required} from "../../components/form/validations";
-import {Form} from "../../components/form/form";
-import {Input} from "../../components/input/input";
-import {InputNumber} from "../../components/input-number/input-number";
-import {warehouseApi} from "../../api/warehouse-api";
-import {generateDatas} from "../../common/common";
+import {minVal, required} from "../../../components/form/validations";
+import {Form} from "../../../components/form/form";
+import {Input} from "../../../components/input/input";
+import {InputNumber} from "../../../components/input-number/input-number";
+import {warehouseApi} from "../../../api/warehouse-api";
+import {generateDatas} from "../../../common/common";
 export class EditWareHouseItemModal extends React.Component {
 
     constructor(props) {

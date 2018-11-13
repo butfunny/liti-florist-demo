@@ -2,7 +2,7 @@ import React from "react";
 import {formatNumber, keysToArray} from "../../../common/common";
 import groupBy from "lodash/groupBy";
 import {modals} from "../../../components/modal/modals";
-import {ReturnItemModal} from "../return-item-modal";
+import {ReturnItemModal} from "../modals/return-item-modal";
 export class SubWareHouseView extends React.Component {
 
     constructor(props) {

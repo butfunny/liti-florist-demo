@@ -2,11 +2,11 @@ import React from "react";
 import {formatNumber, keysToArray} from "../../../common/common";
 import groupBy from "lodash/groupBy";
 import {modals} from "../../../components/modal/modals";
-import {EditWareHouseItemModal} from "../edit-warehouse-item-modal";
+import {EditWareHouseItemModal} from "../modals/edit-warehouse-item-modal";
 import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
 import {warehouseApi} from "../../../api/warehouse-api";
-import {TransferItemModal} from "../transfer-item-modal";
-import {ReturnItemModal} from "../return-item-modal";
+import {TransferItemModal} from "../modals/transfer-item-modal";
+import {ReturnItemModal} from "../modals/return-item-modal";
 export class WareHouseFullView extends React.Component {
 
     constructor(props) {
