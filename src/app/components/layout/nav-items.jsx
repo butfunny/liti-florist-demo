@@ -17,6 +17,11 @@ export const navItems = (premises, user) => {
         }
     }));
 
+    const subWarehouse = premises.map(p => ({
+        label: `Kho ${p.name}`,
+        to: `/sub-warehouse/${p._id}`
+    }));
+
     return [{
         label: "Hoá Đơn",
         to: "/"
@@ -36,10 +41,7 @@ export const navItems = (premises, user) => {
         hide: () => false
     }, {
         label: "Kho",
-        child: [{
-            label: "Will Code",
-            hide: () => false
-        }],
+        to: "/warehouse"
     }, {
         label: "Cơ Sở",
         child: [{

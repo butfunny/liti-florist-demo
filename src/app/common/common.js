@@ -85,3 +85,24 @@ export const getDates = function (startDate, endDate) {
     }
     return dates;
 };
+
+export const generateDatas = (item, qty) => {
+    let ret = [];
+    for (let i = 0; i < qty; i++) {
+        ret.push(item)
+    }
+
+    return ret;
+};
+
+export const keysToArray = (obj) => {
+    let ret = [];
+    for (let key in obj) {
+        ret.push({
+            key,
+            value: obj[key]
+        })
+    };
+
+    return ret;
+};
