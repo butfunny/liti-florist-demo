@@ -28,3 +28,11 @@ export const minVal = (path, minVal) => (val) => {
     }
 };
 
+export const maxVal = (path, maxVal) => (val) => {
+    return {
+        text: `${path} phải nhỏ hơn hoặc bằng ${maxVal}`,
+        valid: val <= maxVal
+    }
+};
+
+

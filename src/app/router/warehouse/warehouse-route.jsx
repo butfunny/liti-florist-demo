@@ -8,6 +8,8 @@ import {formatNumber, keysToArray} from "../../common/common";
 import {EditWareHouseItemModal} from "./edit-warehouse-item-modal";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 import {securityApi} from "../../api/security-api";
+import {TransferItemModal} from "./transfer-item-modal";
+import {ReturnItemModal} from "./return-item-modal";
 
 export class WarehouseRoute extends React.Component {
 
@@ -74,10 +76,53 @@ export class WarehouseRoute extends React.Component {
         })
     }
 
+    transferItem(transferItems) {
+        const modal = modals.openModal({
+            content: (
+                <TransferItemModal
+                    items={transferItems}
+                    onDismiss={() => modal.close()}
+                    onClose={(updatedItems) => {
+                        let {items} = this.state;
+                        this.setState({items: items.map(i => {
+                            let updatedItem = updatedItems.find(item => item._id == i._id);
+                            if (updatedItem) return updatedItem;
+                            return i;
+                        })});
+                        modal.close();
+                    }}
+                />
+            )
+        })
+    }
+
+    returnItem(returnItems) {
+        const modal = modals.openModal({
+            content: (
+                <ReturnItemModal
+                    items={returnItems}
+                    onDismiss={() => modal.close()}
+                    onClose={(updatedItems) => {
+                        let {items} = this.state;
+                        this.setState({items: items.map(i => {
+                                let updatedItem = updatedItems.find(item => item._id == i._id);
+                                if (updatedItem) return updatedItem;
+                                return i;
+                            })});
+                        modal.close();
+                    }}
+                />
+            )
+        })
+    }
+
     render() {
 
         let {items} = this.state;
 
+        const generateWarehouseItem = (item) => {
+
+        };
 
         return (
             <Layout
@@ -99,7 +144,7 @@ export class WarehouseRoute extends React.Component {
                     <table className="table table-hover">
                         <thead>
                         <tr>
-                            <th scope="col">Tên - Số Lượng</th>
+                            <th scope="col">Thông Tin</th>
                             <th scope="col">Danh Mục</th>
                             <th scope="col">Giá Gốc</th>
                             <th scope="col">Giá Bán</th>
@@ -110,7 +155,31 @@ export class WarehouseRoute extends React.Component {
                         {items && keysToArray(groupBy(items, i => i.name)).map((item, index) => (
                             <tr key={index}>
                                 <td>
-                                    {item.key} - {item.value.length}
+                                    {item.key}
+
+                                    <div className="text-small">
+                                        <span className="text-danger">*Tồn kho:</span>
+
+                                        <div className="text-primary">
+                                            <b>Kho tổng: {item.value.filter(i => !i.warehouseID).length}</b>
+
+                                            <ul>
+                                                { keysToArray(groupBy(item.value.filter(i => i.warehouseID), "warehouseID")).map((warehouseItem, index) => (
+                                                    <li
+                                                        className="padding-left"
+                                                        key={index}>
+                                                        <b>{warehouseItem.value[0].warehouseName}: {warehouseItem.value.length}</b>
+
+                                                        <button className="btn btn-outline-danger btn-sm"
+                                                                style={{marginLeft: "10px"}}
+                                                                onClick={() => this.returnItem(warehouseItem.value)}>
+                                                            <i className="fa fa-share"/>
+                                                        </button>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td>
                                     {item.value[0].catalog}
@@ -123,11 +192,11 @@ export class WarehouseRoute extends React.Component {
                                 </td>
                                 <td>
                                     <button className="btn btn-outline-success btn-sm"
-                                            onClick={() => this.transferItem(item)}>
+                                            onClick={() => this.transferItem(item.value.filter(i => !i.warehouseID))}>
                                         <i className="fa fa-truck"/>
                                     </button>
                                     <button className="btn btn-outline-primary btn-sm"
-                                            onClick={() => this.editItem(item.value)}>
+                                            onClick={() => this.editItem(item.value.filter(i => !i.warehouseID))}>
                                         <i className="fa fa-pencil"/>
                                     </button>
                                     <button className="btn btn-outline-danger btn-sm"
