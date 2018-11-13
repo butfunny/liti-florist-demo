@@ -6,6 +6,8 @@ import {modals} from "../../components/modal/modals";
 import {ManageWarehouseItemModal} from "./manage-warehouse-item";
 import {formatNumber, keysToArray} from "../../common/common";
 import {EditWareHouseItemModal} from "./edit-warehouse-item-modal";
+import {confirmModal} from "../../components/confirm-modal/confirm-modal";
+import {securityApi} from "../../api/security-api";
 
 export class WarehouseRoute extends React.Component {
 
@@ -55,6 +57,20 @@ export class WarehouseRoute extends React.Component {
                     onDismiss={() => modal.close()}
                 />
             )
+        })
+    }
+
+    removeItem(removedItems) {
+        confirmModal.show({
+            title: `Xoá sản phẩm ${removedItems[0].name}?`,
+            description: "Bạn có đồng ý xoá sản phẩm này không?"
+        }).then(() => {
+            let {items} = this.state;
+            const removedIds = removedItems.map(i => i._id);
+            this.setState({
+                items: items.filter(p => removedIds.indexOf(p._id) == -1)
+            });
+            warehouseApi.removeItems({ids: removedIds})
         })
     }
 
@@ -115,7 +131,7 @@ export class WarehouseRoute extends React.Component {
                                         <i className="fa fa-pencil"/>
                                     </button>
                                     <button className="btn btn-outline-danger btn-sm"
-                                            onClick={() => this.removeItem(item)}>
+                                            onClick={() => this.removeItem(item.value)}>
                                         <i className="fa fa-trash"/>
                                     </button>
                                 </td>
