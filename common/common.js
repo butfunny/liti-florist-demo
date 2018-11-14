@@ -1,4 +1,5 @@
 const sumBy = require("lodash/sumBy");
+const isEmpty = require("lodash/isEmpty");
 
 module.exports = {
     getTotalBill: (bill) => {
@@ -29,9 +30,11 @@ module.exports = {
             discount += 20;
         }
 
-        if (bill.promotion) {
+
+        if (bill.promotion && bill.promotion.discount) {
             discount += bill.promotion.discount;
         }
+
 
         return totalBillItems - totalBillItems * Math.min(discount, 100) / 100
 

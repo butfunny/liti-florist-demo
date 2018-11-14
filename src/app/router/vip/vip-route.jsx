@@ -7,6 +7,7 @@ import moment from "moment";
 import {Input} from "../../components/input/input";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 import {securityApi} from "../../api/security-api";
+import {Checkbox} from "../../components/checkbox/checkbox";
 export class VipRoute extends React.Component {
 
     constructor(props) {
@@ -14,7 +15,8 @@ export class VipRoute extends React.Component {
         this.state = {
             vips: null,
             customers: null,
-            keyword: ""
+            keyword: "",
+            filterBirthDay: false
         };
 
         vipApi.getVipList().then(({customers, vips}) => this.setState({vips, customers}))
@@ -50,12 +52,21 @@ export class VipRoute extends React.Component {
 
     render() {
 
-        let {vips, customers, keyword} = this.state;
+        let {vips, customers, keyword, filterBirthDay} = this.state;
 
         const getCustomer = (customerID) => customers.find(c => c._id == customerID);
+        let today = new Date();
 
         const vipsFiltered = vips && vips.filter((vip) => {
             let customer = getCustomer(vip.customerId);
+
+            if (filterBirthDay) {
+                if (!customer.birthDate) return false;
+                let customerBirthDay = new Date(customer.birthDate);
+                if (customerBirthDay.getMonth() != today.getMonth()) {
+                    return false;
+                }
+            }
 
             return vip.cardId.toLowerCase().indexOf(keyword.toLowerCase()) > - 1 ||
             customer.customerName.toLowerCase().indexOf(keyword.toLowerCase()) > - 1 ||
@@ -86,6 +97,12 @@ export class VipRoute extends React.Component {
                             placeholder="Tìm kiếm theo tên, sđt và số thẻ"
                         />
                     </div>
+
+                    <Checkbox
+                        label="Lọc khách VIP có sinh nhật trong tháng"
+                        value={filterBirthDay}
+                        onChange={(filterBirthDay) => this.setState({filterBirthDay})}
+                    />
 
                     <table className="table table-hover">
                         <thead>

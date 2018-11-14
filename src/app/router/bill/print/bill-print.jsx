@@ -125,6 +125,11 @@ export class BillPrint extends React.Component {
                         {bill.vipSaleType && (
                             <span>VIP: <br/></span>
                         )}
+
+                        {bill.promotion && (
+                            <span>{bill.promotion.name}<br/></span>
+                        )}
+
                         {bill.to.paymentType == "Nợ" ? "Nợ" : "Tổng tiền: "}
                     </div>
                     <div className="col-md-2 col-xs-4 text-right" style={{fontSize: "12px"}}>
@@ -138,6 +143,10 @@ export class BillPrint extends React.Component {
 
                         {bill.vipSaleType && (
                             <b>{bill.vipSaleType} <br/></b>
+                        )}
+
+                        {bill.promotion && (
+                            <b>{bill.promotion.discount}% <br/></b>
                         )}
 
                         {formatNumber(getTotalBill(bill))}
