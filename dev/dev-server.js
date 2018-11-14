@@ -19,6 +19,7 @@ require("../controllers/customer-controller")(router);
 require("../controllers/bill-controller")(router);
 require("../controllers/vip-controller")(router);
 require("../controllers/warehouse-controller")(router);
+require("../controllers/promotion-controller")(router);
 
 app.get("*", (req, res) => {
     res.sendFile(__dirname + "/index.html");

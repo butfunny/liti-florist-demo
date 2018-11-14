@@ -37,7 +37,7 @@ export const navItems = (premises, user) => {
         hide: () => false
     }, {
         label: "Khuyến Mại",
-        to: "/customers",
+        to: "/promotion",
         hide: () => false
     }, {
         label: "Kho",
