@@ -65,6 +65,7 @@ export class PromotionRoute extends React.Component {
             this.setState({
                 promotions: promotions.filter(p => p._id != item._id)
             });
+            promotionApi.delete(item._id);
         })
     }
 

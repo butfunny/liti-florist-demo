@@ -18,6 +18,7 @@ import {cache} from "../../common/cache";
 import {BillInfo} from "./bill-info/bill-info";
 import {securityApi} from "../../api/security-api";
 import {userInfo} from "../../security/user-info";
+import {promotionApi} from "../../api/promotion-api";
 
 
 const initBill = {
@@ -52,6 +53,8 @@ export class BillRoute extends React.Component {
             sales: [],
             florists: [],
             ships: [],
+            activePromotions: [],
+            selectedPromotion: null
         };
 
         securityApi.getSalesAndFlorist().then((users) => {
@@ -62,10 +65,38 @@ export class BillRoute extends React.Component {
                 username: u.username
             });
 
-            this.setState({sales: users.filter(u => u.role == "sale").map(mapItem),
+            this.setState({
+                sales: users.filter(u => u.role == "sale").map(mapItem),
                 florists: users.filter(u => u.role == "florist").map(mapItem),
                 ships: users.filter(u => u.role == "ship").map(mapItem)
             })
+        });
+
+        promotionApi.get().then((promotions) => {
+            let activePromotions = [];
+            for (let promotion of promotions) {
+                let isHave = promotion.dates.find((d) => {
+                    let date = new Date(d);
+                    const today = new Date();
+                    return date.getDate() == today.getDate() && date.getMonth() == today.getMonth() && date.getFullYear() == today.getFullYear()
+                });
+
+                if (isHave) activePromotions.push(promotion)
+            }
+
+            this.setState({activePromotions});
+
+            if (activePromotions.length > 0) {
+                this.setState({
+                    bill: {
+                        ...this.state.bill, promotion: {
+                            promotion_id: activePromotions[0]._id,
+                            name: activePromotions[0].name,
+                            discount: activePromotions[0].discount,
+                        }
+                    }
+                })
+            }
         });
 
         premisesInfo.onChange(() => {
@@ -131,7 +162,8 @@ export class BillRoute extends React.Component {
                     PrintService.printBill({
                         body: (
                             <BillPrint
-                                bill={{...bill,
+                                bill={{
+                                    ...bill,
                                     bill_number: `${formatValue(today.getDate())}${formatValue(today.getMonth() + 1)}${today.getFullYear()}${formatValue(bills.length + 1)}`,
                                     isOwe: bill.to.paymentType == "Nợ",
                                     created_by: userInfo.getUser().username
@@ -140,13 +172,27 @@ export class BillRoute extends React.Component {
                         )
                     });
 
-
                     this.setState({
                         bill: initBill,
                         saving: false
-                    });
-                    this.billCustomer.setVipPay(false);
+                    }, () => {
+                        let {activePromotions} = this.state;
+                        if (activePromotions.length > 0) {
+                            this.setState({
+                                bill: {
+                                    ...this.state.bill,
+                                    promotion: {
+                                        promotion_id: activePromotions[0]._id,
+                                        name: activePromotions[0].name,
+                                        discount: activePromotions[0].discount,
+                                    }
 
+                                }
+                            })
+                        }
+                    });
+
+                    this.billCustomer.setVipPay(false);
 
 
                 })
@@ -206,10 +252,27 @@ export class BillRoute extends React.Component {
                     isOwe: bill.to.paymentType == "Nợ"
                 }).then(() => {
                     confirmModal.alert("Lưu thành công");
+
                     this.setState({
                         bill: initBill,
                         savingDraft: false
+                    }, () => {
+                        let {activePromotions} = this.state;
+                        if (activePromotions.length > 0) {
+                            this.setState({
+                                bill: {
+                                    ...this.state.bill,
+                                    promotion: {
+                                        promotion_id: activePromotions[0]._id,
+                                        name: activePromotions[0].name,
+                                        discount: activePromotions[0].discount,
+                                    }
+
+                                }
+                            })
+                        }
                     });
+
                     this.billCustomer.setVipPay(false);
 
 
@@ -220,7 +283,8 @@ export class BillRoute extends React.Component {
 
     render() {
 
-        let {bill, saving, locations, florists, sales, ships, savingDraft} = this.state;
+        let {bill, saving, locations, florists, sales, ships, savingDraft, activePromotions, selectedPromotion} = this.state;
+
 
         return (
             <Layout
@@ -242,7 +306,9 @@ export class BillRoute extends React.Component {
 
                         <div className="col-md-8">
                             <BillView
+                                activePromotions={activePromotions}
                                 bill={bill}
+                                onChangeBill={(bill) => this.setState({bill})}
                                 onChangeItems={(items) => this.setState({bill: {...bill, items}})}
                             />
 

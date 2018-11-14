@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Fragment} from "react";
 import {formatNumber, getTotalBill} from "../../../common/common";
 import {InputNumber} from "../../../components/input-number/input-number";
 
@@ -10,7 +10,7 @@ export class BillView extends React.Component {
 
     render() {
 
-        let {bill, onChangeItems, editMode} = this.props;
+        let {bill, onChangeItems, editMode, activePromotions, onChangeBill} = this.props;
         const items = bill.items;
 
 
@@ -38,7 +38,7 @@ export class BillView extends React.Component {
                         </thead>
                         <tbody>
 
-                        { items.length == 0 && (
+                        {items.length == 0 && (
                             <tr>
                                 <td colSpan={3}>
                                     Chưa có mặt hàng nào được chọn.
@@ -46,7 +46,7 @@ export class BillView extends React.Component {
                             </tr>
                         )}
 
-                        { items.map((item, index) => (
+                        {items.map((item, index) => (
                             <tr key={index}>
                                 <td>
                                     {item.name}
@@ -128,7 +128,7 @@ export class BillView extends React.Component {
                                 </td>
 
                                 <td className="no-padding">
-                                    { !editMode && (
+                                    {!editMode && (
                                         <button type="button" className="btn btn-danger btn-sm" onClick={() => {
                                             onChangeItems(items.filter(i => i.name != item.name))
                                         }}>
@@ -145,23 +145,53 @@ export class BillView extends React.Component {
 
                 </div>
 
-                { bill.vipSaleType && (
-                    <div className="text-right">
-                        VIP: <b>{bill.vipSaleType}</b>
-                    </div>
+                {items.length > 0 && (
+                    <Fragment>
+                        {bill.vipSaleType && (
+                            <div className="text-right">
+                                VIP: <b>{bill.vipSaleType}</b>
+                            </div>
+                        )}
+
+                        {activePromotions.length > 0 && bill.promotion && (
+                            <div className="text-right form-group"
+                            >
+                                <select
+                                    value={bill.promotion.id}
+                                    onChange={(e) => {
+                                        const found = activePromotions.find(p => p._id == e.target.value);
+                                        onChangeBill({
+                                            ...bill, promotion: {
+                                                promotion_id: found._id,
+                                                name: found.name,
+                                                discount: found.discount,
+                                            }
+                                        })
+                                    }}
+                                    className="form-control">
+                                    {activePromotions.map((promotion, index) => (
+                                        <option
+                                            key={index}
+                                            value={promotion._id}>{promotion.name} - {promotion.discount}%</option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+
+                        {bill.payOwe && bill.customerInfo && (
+                            <div className="text-right">
+                                Thanh toán nợ: <b>{formatNumber(bill.customerInfo.spend.totalOwe)}</b>
+                            </div>
+                        )}
+
+
+                        <div className="text-right">
+                            Tổng Tiền: <b>{formatNumber(getTotalBill(bill))}</b>
+                        </div>
+                    </Fragment>
                 )}
 
-                { bill.payOwe && bill.customerInfo && (
-                    <div className="text-right">
-                        Thanh toán nợ: <b>{formatNumber(bill.customerInfo.spend.totalOwe)}</b>
-                    </div>
-                )}
 
-                { items.length > 0 && (
-                    <div className="text-right">
-                        Tổng Tiền: <b>{formatNumber(getTotalBill(bill))}</b>
-                    </div>
-                )}
             </div>
         );
     }

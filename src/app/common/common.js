@@ -31,7 +31,11 @@ export const getTotalBill = (bill) => {
         discount += 20;
     }
 
-    return totalBillItems - totalBillItems * discount / 100
+    if (bill.promotion) {
+        discount += bill.promotion.discount
+    }
+
+    return totalBillItems - totalBillItems * Math.min(discount, 100) / 100
 
 };
 

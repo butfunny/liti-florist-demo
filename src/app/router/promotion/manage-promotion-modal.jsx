@@ -1,7 +1,7 @@
 import React, {Fragment} from "react";
 import {Form} from "../../components/form/form";
 import {Input} from "../../components/input/input";
-import {minVal, required} from "../../components/form/validations";
+import {maxVal, minVal, required} from "../../components/form/validations";
 import {InputNumber} from "../../components/input-number/input-number";
 import {DatePicker} from "../../components/date-picker/date-picker";
 export class ManagePromotionModal extends React.Component {
@@ -21,7 +21,7 @@ export class ManagePromotionModal extends React.Component {
 
         const validations = [
             {"name" : [required("Tên chiến dịch")]},
-            {"discount" : [required("Giảm Giá"), minVal("Giảm Giá", 0)]},
+            {"discount" : [required("Giảm Giá"), minVal("Giảm Giá", 0), maxVal("Giảm Giá", 100)]},
             {"dates" : [(val) => ({
                     text: "Phải chọn ít nhất 1 ngày",
                     valid: val.length > 0

@@ -44,5 +44,10 @@ module.exports = mongoose.model('BillDao', {
     vipSaleType: String,
     created: {type: Date, default: Date.now},
     created_by: String,
-    isNewCustomer: Boolean
+    isNewCustomer: Boolean,
+    promotion: {
+        name: String,
+        discount: Number,
+        promotion_id: String
+    }
 }, "bills");
