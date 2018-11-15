@@ -6,6 +6,7 @@ import {warehouseApi} from "../../api/warehouse-api";
 import {premisesInfo} from "../../security/premises-info";
 import {InputNumber} from "../../components/input-number/input-number";
 import {FloristItem} from "./florist-item";
+import {FloristCartBottom} from "./cart/florist-cart-bottom";
 export class FloristWorkingRoute extends React.Component {
 
     constructor(props) {
@@ -29,23 +30,18 @@ export class FloristWorkingRoute extends React.Component {
 
         let {bill, items} = this.state;
 
-        console.log(items);
-
         return (
             <Layout
                 customerClass="florist-container"
             >
                 <div className="florist-working-route">
 
-                    {/*<div className="bill-info">*/}
-                        {/*{ bill && bill.items.map((item, index) => (*/}
-                            {/*<div key={index}>*/}
-                                {/*<b>{item.quantity}</b> {item.name}*/}
-                            {/*</div>*/}
-                        {/*))}*/}
-                    {/*</div>*/}
-
                     <div className="catalog-list">
+
+                        <div className="catalog-item text-primary">
+                           ALL
+                        </div>
+
                         <div className="catalog-item">
                             HOA CHÍNH
                         </div>
@@ -92,6 +88,12 @@ export class FloristWorkingRoute extends React.Component {
                             items={items.filter(i => i.catalog == "Cost")}
                         />
                     </div>
+
+                    { bill && (
+                        <FloristCartBottom
+                            bill={bill}
+                        />
+                    )}
                 </div>
             </Layout>
         );
