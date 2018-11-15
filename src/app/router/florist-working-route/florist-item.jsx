@@ -29,7 +29,7 @@ export class FloristItem extends React.Component {
                             </div>
 
                             <div className="qty">
-                                SL: <b>{item.value.length}</b>
+                                Tồn Kho: <b>{item.value.length}</b>
                             </div>
 
                             <div className="action">

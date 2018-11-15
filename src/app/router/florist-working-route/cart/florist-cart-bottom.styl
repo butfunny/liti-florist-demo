@@ -20,3 +20,107 @@
 
   }
 }
+
+.swipe-up-animation-enter {
+  &.florist-cart-details {
+    transform: translate(0, 50%);
+    opacity 0;
+  }
+}
+
+.swipe-up-animation-enter.swipe-up-animation-enter-active {
+  &.florist-cart-details {
+    transition: transform .3s, opacity .3s;
+    transform: translate(0, 0);
+    opacity 1;
+  }
+}
+
+.swipe-up-animation-exit {
+  &.florist-cart-details {
+    transform: translate(0, 0);
+    opacity 1;
+  }
+}
+
+.swipe-up-animation-exit.swipe-up-animation-exit-active {
+  &.florist-cart-details {
+    transition: transform .3s, opacity .3s;
+    transform: translate(0, 50%);
+    opacity 0;
+  }
+}
+
+.florist-cart-details {
+  position fixed;
+  z-index 100;
+  height calc(100vh - 58px);
+  top: 0;
+  left 0;
+  width 100%;
+  background white;
+
+  .cart-body {
+    height: calc(100% - 41px);
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .cart-title {
+    font-size 14px;
+    color white;
+    padding 10px 15px;
+    font-weight bold;
+    text-align center;
+    position relative;
+
+    .close-btn {
+      font-size 18px;
+      position absolute;
+      top: 50%;
+      right 15px;
+      transform translate(0, -50%);
+      cursor pointer;
+    }
+  }
+
+  .bill-info {
+    padding 10px 15px;
+    border-bottom: 1px solid #edeef3;
+  }
+
+  .product {
+    border-bottom: 1px solid #edeef3;
+    padding 10px 15px;
+    position relative;
+    font-size 13px;
+
+    .action {
+      position absolute;
+      top: 50%;
+      right 15px;
+      transform translate(0, -50%);
+
+      .form-group {
+        margin-bottom 0 !important;
+        margin-right: .5rem;
+        display inline-block;
+
+        .form-control {
+          width: 50px;
+          font-size: 11px;
+          padding: 0 12px;
+          height: 30px;
+          text-align center;
+        }
+
+      }
+
+    }
+
+    .title {
+      font-size 16px;
+      font-weight bold;
+    }
+  }
+}
