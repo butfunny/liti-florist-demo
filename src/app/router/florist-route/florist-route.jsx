@@ -5,7 +5,8 @@ import {floristApi} from "../../api/florist-api";
 import sortBy from "lodash/sortBy";
 import moment from "moment";
 import {formatNumber, getTotalBill} from "../../common/common";
-
+import classnames from "classnames";
+import {userInfo} from "../../security/user-info";
 export class FloristRoute extends React.Component {
 
     constructor(props) {
@@ -33,7 +34,7 @@ export class FloristRoute extends React.Component {
                 bills: bills.map(bill => {
                     return {
                         ...bill,
-                        lastTime: new Date(bill.delivery_time).getTime() - new Date().getTime() < 0 ? 999999999 + Math.abs(new Date(bill.delivery_time).getTime() - new Date().getTime()) : new Date(bill.delivery_time).getTime() - new Date().getTime()
+                        lastTime: new Date(bill.deliverTime).getTime() - new Date().getTime() < 0 ? 999999999 + Math.abs(new Date(bill.deliverTime).getTime() - new Date().getTime()) : new Date(bill.deliverTime).getTime() - new Date().getTime()
                     }
                 })
             })
@@ -43,8 +44,9 @@ export class FloristRoute extends React.Component {
     render() {
 
         let {from, to, loading, bills} = this.state;
+        let {history} = this.props;
 
-        console.log(bills);
+        const user = userInfo.getUser();
 
         return (
             <Layout
@@ -104,9 +106,9 @@ export class FloristRoute extends React.Component {
                             </thead>
                             <tbody>
                             { bills && sortBy(bills, "lastTime").map((bill, index) => (
-                                <tr key={index}>
+                                <tr key={index} className={classnames(new Date(bill.deliverTime).getTime() < new Date().getTime() + 1800000 && bill.status == "Chờ xử lý" &&  "text-danger")}>
                                     <td>
-                                        {moment(bill.delivery_time).format("DD/MM/YYYY HH:mm")}
+                                        {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
                                         <div>Mã đơn hàng: <b>{bill.bill_id}</b></div>
                                         <div>Nhân viên bán: <b>{bill.sales && <b>{bill.sales.map(f => f.username).join(", ")}</b>}</b></div>
                                         <div>Florist: <b>{bill.florists && <b>{bill.florists.map(f => f.username).join(", ")}</b>}</b></div>
@@ -144,10 +146,12 @@ export class FloristRoute extends React.Component {
                                     </td>
 
                                     <td>
-                                        <button className="btn btn-outline-primary btn-sm"
-                                                onClick={() => history.push(`/edit-bill/${bill._id}`)}>
-                                            <i className="fa fa-hand-lizard-o" aria-hidden="true"/>
-                                        </button>
+                                        { bill.florists && bill.florists[0].user_id == user._id && (
+                                            <button className="btn btn-outline-primary btn-sm"
+                                                    onClick={() => history.push(`/florist-working/${bill._id}`)}>
+                                                <i className="fa fa-hand-lizard-o" aria-hidden="true"/>
+                                            </button>
+                                        )}
                                     </td>
                                 </tr>
                             ))}

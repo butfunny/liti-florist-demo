@@ -33,6 +33,12 @@ module.exports = function(app) {
         });
     });
 
+    app.get("/bill/:bid", Security.authorDetails, (req, res) => {
+        BillDao.findOne({_id: req.params.bid}, (err, bill) => {
+            res.json(bill);
+        })
+    });
+
     // app.post("/Bills/getReports", Security.authorDetails, function(req, res) {
     //     billDao.find({deliverTime: {$gte: req.body.from, $lt: req.body.to}, oldData: false, base_id: null}, function(err, bills) {
     //         res.json(bills);

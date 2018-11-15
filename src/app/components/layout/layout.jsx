@@ -2,6 +2,7 @@ import React from "react";
 import {responsive} from "../../common/responsive/responsive";
 import {NavDesktop} from "./desktop/nav-desktop";
 import {NavMobile} from "./mobile/nav-mobile";
+import classnames from "classnames";
 export class Layout extends React.Component {
 
     constructor(props) {
@@ -12,7 +13,7 @@ export class Layout extends React.Component {
     render() {
 
         let isMobile = responsive.le("sm");
-        let {children, activeRoute} = this.props;
+        let {children, activeRoute, customerClass} = this.props;
 
         return (
             <div className="app-layout">
@@ -28,7 +29,7 @@ export class Layout extends React.Component {
                     )}
                 </div>
 
-                <div className="container">
+                <div className={classnames("container", customerClass)}>
                     {children}
                 </div>
             </div>

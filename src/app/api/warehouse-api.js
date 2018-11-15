@@ -14,6 +14,6 @@ export const warehouseApi = {
         return api.post(`/api/warehouse/remove-multiple`, items)
     },
     getItemsById: (baseID) => {
-        return api.post(`/api/warehouse/list-by-id/${baseID}`);
+        return api.get(`/api/warehouse/list-by-id/${baseID}`);
     }
 };

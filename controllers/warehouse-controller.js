@@ -29,7 +29,7 @@ module.exports = (app) => {
     });
 
     app.get("/warehouse/list-by-id/:id", Security.authorDetails, (req, res) => {
-        WareHouseDao.find({warehouseID: req.params.id}, (err, items) => {
+        WareHouseDao.find({warehouseID: req.params.id, billID: null}, (err, items) => {
             res.json(items);
         })
     })

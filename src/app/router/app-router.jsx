@@ -14,6 +14,7 @@ import {VipRoute} from "./vip/vip-route";
 import {WarehouseRoute} from "./warehouse/warehouse-route";
 import {PromotionRoute} from "./promotion/promotion-route";
 import {FloristRoute} from "./florist-route/florist-route";
+import {FloristWorkingRoute} from "./florist-working-route/florist-working-route";
 export class AppRouter extends React.Component {
 
     constructor(props) {
@@ -54,6 +55,7 @@ export class AppRouter extends React.Component {
                         <Route exact path="/warehouse" component={requireAuthen(WarehouseRoute)} />
                         <Route exact path="/promotion" component={requireAuthen(PromotionRoute)} />
                         <Route exact path="/florist" component={requireAuthen(FloristRoute)} />
+                        <Route exact path="/florist-working/:id" component={requireAuthen(FloristWorkingRoute)} />
                     </Switch>
                 </BrowserRouter>
                 <ModalsRegistry />
