@@ -27,4 +27,10 @@ module.exports = (app) => {
             res.end();
         })
     });
+
+    app.get("/warehouse/list-by-id/:id", Security.authorDetails, (req, res) => {
+        WareHouseDao.find({warehouseID: req.params.id}, (err, items) => {
+            res.json(items);
+        })
+    })
 };
