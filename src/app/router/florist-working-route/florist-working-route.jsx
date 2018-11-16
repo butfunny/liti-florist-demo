@@ -32,6 +32,7 @@ export class FloristWorkingRoute extends React.Component {
     render() {
 
         let {bill, items, keyword, filter, selectedItems} = this.state;
+        let {history} = this.props;
 
         const catalogs = ["All", "Hoa Chính", "Hoa Lá Phụ/Lá", "Phụ Kiện", "Cost"];
 
@@ -77,6 +78,7 @@ export class FloristWorkingRoute extends React.Component {
 
                     { bill && (
                         <FloristCartBottom
+                            history={history}
                             selectedItems={selectedItems}
                             onChange={(selectedItems) => this.setState({selectedItems})}
                             bill={bill}

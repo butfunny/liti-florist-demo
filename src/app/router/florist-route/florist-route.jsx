@@ -53,7 +53,7 @@ export class FloristRoute extends React.Component {
                 activeRoute="Đơn Hàng">
                 <div className="florist-route bill-report-route">
                     <div className="ct-page-title">
-                        <h1 className="ct-title">Đơn Hàng Của Tôi</h1>
+                        <h1 className="ct-title">Đơn Hàng</h1>
                     </div>
 
                     <div className="report-header row">
@@ -98,10 +98,8 @@ export class FloristRoute extends React.Component {
                         <table className="table table-hover">
                             <thead>
                             <tr>
-                                <th scope="col">Thời gian</th>
                                 <th scope="col">Thông Tin Đơn</th>
-                                <th scope="col" style={{width: "150px"}}>Tình trạng</th>
-                                <th style={{width: "200px"}} scope="col">Làm Đơn</th>
+                                <th scope="col">Làm Đơn</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -109,12 +107,14 @@ export class FloristRoute extends React.Component {
                                 <tr key={index} className={classnames(new Date(bill.deliverTime).getTime() < new Date().getTime() + 1800000 && bill.status == "Chờ xử lý" &&  "text-danger")}>
                                     <td>
                                         {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
-                                        <div>Mã đơn hàng: <b>{bill.bill_id}</b></div>
+                                        <div>Mã đơn hàng: <b>{bill.bill_number}</b></div>
                                         <div>Nhân viên bán: <b>{bill.sales && <b>{bill.sales.map(f => f.username).join(", ")}</b>}</b></div>
                                         <div>Florist: <b>{bill.florists && <b>{bill.florists.map(f => f.username).join(", ")}</b>}</b></div>
                                         <div>Nhân viên ship (hoặc phí ship): <b>{bill.ships && <b>{bill.ships.map(f => f.username).join(", ")}</b>}</b></div>
-                                    </td>
-                                    <td>
+
+                                        <div>-------</div>
+                                        Sản phẩm:
+
                                         <div>
                                             { bill.items.map((item, index) => (
                                                 <div key={index}>
@@ -141,16 +141,17 @@ export class FloristRoute extends React.Component {
 
 
                                     </td>
-                                    <td>
-                                        {bill.status}
-                                    </td>
 
                                     <td>
-                                        { bill.florists && bill.florists[0].user_id == user._id && (
+                                        { bill.florists && bill.florists[0].user_id == user._id && bill.status == "Chờ xử lý" && (
                                             <button className="btn btn-outline-primary btn-sm"
                                                     onClick={() => history.push(`/florist-working/${bill._id}`)}>
                                                 <i className="fa fa-hand-lizard-o" aria-hidden="true"/>
                                             </button>
+                                        )}
+
+                                        { bill.florists && bill.florists[0].user_id == user._id && bill.status != "Chờ xử lý" && (
+                                            <span>Done</span>
                                         )}
                                     </td>
                                 </tr>

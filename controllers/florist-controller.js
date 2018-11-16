@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const Security = require("../security/security-be");
 const BillDao = require("../dao/bill-dao");
+const WareHouseDao = require("../dao/warehouse-dao");
 
 module.exports = (app) => {
     app.post("/florist/bills", Security.authorDetails, (req, res) => {
@@ -12,6 +13,14 @@ module.exports = (app) => {
 
                 return false;
             }))
+        })
+    });
+
+    app.post("/florist/submit-bill", Security.authorDetails, (req, res) => {
+        WareHouseDao.update({_id: {$in: req.body.ids}}, {billID: req.body.billID}, {multi: true}, (err) => {
+            BillDao.findOneAndUpdate({_id: req.body.billID}, {status: req.body.status}, () => {
+                res.end();
+            })
         })
     })
 };

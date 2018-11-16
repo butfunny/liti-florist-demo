@@ -3,19 +3,34 @@ import {formatNumber, getTotalBill} from "../../../common/common";
 import {FloristCartDetails} from "./florist-cart-details";
 import {CSSTransition} from "react-transition-group";
 import sumBy from "lodash/sumBy";
+import classnames from "classnames";
+import {floristApi} from "../../../api/florist-api";
 export class FloristCartBottom extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            open: false
+            open: false,
+            saving: false
         }
+    }
+
+    submitOrder() {
+        let {selectedItems, bill, history} = this.props;
+        this.setState({saving: true});
+        floristApi.submitBill({
+            ids: selectedItems.map(i => i._id),
+            billID: bill._id,
+            status: bill.ships.length == 0 ? "Done" : "Chờ giao"
+        }).then(() => {
+            history.push(`/florist`);
+        })
     }
 
     render() {
 
         let {bill, selectedItems, onChange, items} = this.props;
-        let {open} = this.state;
+        let {open, saving} = this.state;
 
         return (
             <Fragment>
@@ -40,12 +55,15 @@ export class FloristCartBottom extends React.Component {
                         <b>{bill.bill_number}</b> <span className="text-info">Chi tiết</span>
                     </div>
                     <div className="cart-price">
-                        {formatNumber(sumBy(selectedItems, (p) => p.price))}đ / {formatNumber(getTotalBill(bill))}đ
+                        <span className={classnames(sumBy(selectedItems, (p) => p.price) > getTotalBill(bill) && "text-danger")}>{formatNumber(sumBy(selectedItems, (p) => p.price))}đ</span> / {formatNumber(getTotalBill(bill))}đ
                     </div>
 
-                    <button className="btn btn-primary">
-                        Giao hàng
-                    </button>
+                    { selectedItems.length > 0 && (
+                        <button className="btn btn-primary" onClick={() => this.submitOrder()}>
+                            <span className="btn-inner--text">Done</span>
+                            { saving && (<span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>)}
+                        </button>
+                    )}
                 </div>
             </Fragment>
         );
