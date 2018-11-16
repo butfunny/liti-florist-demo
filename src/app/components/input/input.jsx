@@ -14,7 +14,7 @@ export class Input extends React.Component {
     }
 
     render() {
-        let {className, value, onChange, placeholder, type, error, disabled, autoSelect, onKeyDown, onFocus, onBlur, label, saving, style, autocomplete, info} = this.props;
+        let {className, value, onChange, placeholder, type, error, disabled, autoSelect, onKeyDown, onFocus, onBlur, label, saving, style, autocomplete, info, readOnly} = this.props;
         let {focus} = this.state;
 
         return (
@@ -41,6 +41,7 @@ export class Input extends React.Component {
                     }}
                     onKeyDown={onKeyDown}
                     autoComplete={autocomplete}
+                    readOnly={readOnly}
                 />
 
                 { saving && (

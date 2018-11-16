@@ -2,15 +2,26 @@ import React from "react";
 import {InputNumber} from "../../components/input-number/input-number";
 import {formatNumber, keysToArray} from "../../common/common";
 import groupBy from "lodash/groupBy";
+import classnames from "classnames";
 export class FloristItem extends React.Component {
 
     constructor(props) {
         super(props);
     }
 
+    handleChange(qty, name) {
+        let {selectedItems, items, onChange} = this.props;
+        const ret = selectedItems.filter( s => s.name != name);
+        onChange(ret.concat(items.filter(c => c.name == name).slice(0, qty)))
+    }
+
     render() {
 
-        let {label, items, className, keyword} = this.props;
+        let {label, items, className, keyword, selectedItems, onChange} = this.props;
+
+        const getQtyItem = (name) => {
+            return selectedItems.filter(s => s.name == name).length
+        };
 
         return (
             <div className={`product-item ${className}`}>
@@ -34,20 +45,35 @@ export class FloristItem extends React.Component {
 
                             <div className="action">
                                 <button type="button" className="btn btn-danger btn-sm" onClick={() => {
+                                    if (getQtyItem(item.key) > 0) {
+                                        this.handleChange(getQtyItem(item.key) - 1, item.key)
+                                    }
                                 }}>
                                     <i className="fa fa-minus"/>
                                 </button>
 
                                 <InputNumber
                                     autoSelect
-                                    value={1}
-                                    onChange={(quantity) => {
+                                    value={getQtyItem(item.key)}
+                                    onChange={(qty) => {
+                                        if (qty > item.value.length) {
+                                            this.handleChange(item.value.length, item.key);
+                                            return;
+                                        }
 
+                                        if (qty < 0) {
+                                            this.handleChange(0, item.key);
+                                            return;
+                                        }
+
+                                        this.handleChange(qty, item.key);
                                     }}
                                 />
 
                                 <button type="button" className="btn btn-primary btn-sm btn-right" onClick={() => {
-
+                                    if (getQtyItem(item.key) <= item.value.length) {
+                                        this.handleChange(getQtyItem(item.key) + 1, item.key)
+                                    }
                                 }}>
                                     <i className="fa fa-plus"/>
                                 </button>

@@ -15,7 +15,8 @@ export class FloristWorkingRoute extends React.Component {
             bill: null,
             items: [],
             keyword: "",
-            filter: "All"
+            filter: "All",
+            selectedItems: []
         };
 
         billApi.getBillById(props.match.params.id).then((bill) => {
@@ -30,7 +31,7 @@ export class FloristWorkingRoute extends React.Component {
 
     render() {
 
-        let {bill, items, keyword, filter} = this.state;
+        let {bill, items, keyword, filter, selectedItems} = this.state;
 
         const catalogs = ["All", "Hoa Chính", "Hoa Lá Phụ/Lá", "Phụ Kiện", "Cost"];
 
@@ -63,6 +64,8 @@ export class FloristWorkingRoute extends React.Component {
 
                         { catalogs.slice(1).filter(c => filter == "All" ? true : c == filter).map((c, index) => (
                             <FloristItem
+                                selectedItems={selectedItems}
+                                onChange={(selectedItems) => this.setState({selectedItems})}
                                 keyword={keyword}
                                 key={index}
                                 label={c}
@@ -74,7 +77,10 @@ export class FloristWorkingRoute extends React.Component {
 
                     { bill && (
                         <FloristCartBottom
+                            selectedItems={selectedItems}
+                            onChange={(selectedItems) => this.setState({selectedItems})}
                             bill={bill}
+                            items={items}
                         />
                     )}
                 </div>

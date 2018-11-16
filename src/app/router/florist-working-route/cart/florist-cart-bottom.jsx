@@ -2,6 +2,7 @@ import React, {Fragment} from "react";
 import {formatNumber, getTotalBill} from "../../../common/common";
 import {FloristCartDetails} from "./florist-cart-details";
 import {CSSTransition} from "react-transition-group";
+import sumBy from "lodash/sumBy";
 export class FloristCartBottom extends React.Component {
 
     constructor(props) {
@@ -13,7 +14,7 @@ export class FloristCartBottom extends React.Component {
 
     render() {
 
-        let {bill} = this.props;
+        let {bill, selectedItems, onChange, items} = this.props;
         let {open} = this.state;
 
         return (
@@ -26,6 +27,9 @@ export class FloristCartBottom extends React.Component {
                     classNames="swipe-up-animation"
                 >
                     <FloristCartDetails
+                        items={items}
+                        selectedItems={selectedItems}
+                        onChange={onChange}
                         bill={bill}
                         onClose={() => this.setState({open: false})}
                     />
@@ -36,7 +40,7 @@ export class FloristCartBottom extends React.Component {
                         <b>{bill.bill_number}</b> <span className="text-info">Chi tiết</span>
                     </div>
                     <div className="cart-price">
-                        0đ / {formatNumber(getTotalBill(bill))}đ
+                        {formatNumber(sumBy(selectedItems, (p) => p.price))}đ / {formatNumber(getTotalBill(bill))}đ
                     </div>
 
                     <button className="btn btn-primary">
