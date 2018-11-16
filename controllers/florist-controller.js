@@ -22,5 +22,24 @@ module.exports = (app) => {
                 res.end();
             })
         })
-    })
+    });
+
+
+    app.post("/ship/bills", Security.authorDetails, (req, res) => {
+        BillDao.find({deliverTime: {$gte: req.body.from, $lt: req.body.to}, $or: [{status: "Done"}, {status: "Chờ giao"}]}, (err, bills) => {
+            res.json(bills.filter(bill => {
+                if (bill.ships && bill.ships.length > 0) {
+                    return bill.ships.find(f => f.user_id == req.user._id)
+                }
+
+                return false;
+            }))
+        })
+    });
+
+    app.post("/ship/done-bill", Security.authorDetails, (req, res) => {
+        BillDao.findOneAndUpdate({_id: req.body.billID}, {status: "Done"}, () => {
+            res.end();
+        })
+    });
 };

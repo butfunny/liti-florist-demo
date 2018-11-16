@@ -7,7 +7,10 @@ import moment from "moment";
 import {formatNumber, getTotalBill} from "../../common/common";
 import classnames from "classnames";
 import {userInfo} from "../../security/user-info";
-export class FloristRoute extends React.Component {
+import {shipApi} from "../../api/ship-api";
+import {billApi} from "../../api/bill-api";
+
+export class ShipRoute extends React.Component {
 
     constructor(props) {
         super(props);
@@ -29,7 +32,7 @@ export class FloristRoute extends React.Component {
 
     getBills() {
         let {from, to} = this.state;
-        floristApi.getBills({from, to}).then((bills) => {
+        shipApi.getBills({from, to}).then((bills) => {
             this.setState({
                 bills: bills.map(bill => {
                     return {
@@ -38,6 +41,23 @@ export class FloristRoute extends React.Component {
                     }
                 })
             })
+        })
+    }
+
+    submit(bill) {
+        let {bills} = this.state;
+        this.setState({
+            bills: bills.map(b => {
+                if (b._id == bill._id) {
+                    return {...b, status: "Done"}
+                }
+                return b
+            })
+        });
+
+
+        shipApi.submitBill({
+            billID: bill._id
         })
     }
 
@@ -99,33 +119,37 @@ export class FloristRoute extends React.Component {
                             <thead>
                             <tr>
                                 <th scope="col">Thông Tin Đơn</th>
-                                <th scope="col">Làm Đơn</th>
+                                <th scope="col">Done</th>
                             </tr>
                             </thead>
                             <tbody>
-                            { bills && sortBy(bills, "lastTime").map((bill, index) => (
-                                <tr key={index} className={classnames(new Date(bill.deliverTime).getTime() < new Date().getTime() + 1800000 && bill.status == "Chờ xử lý" &&  "text-danger")}>
+                            {bills && sortBy(bills, "lastTime").map((bill, index) => (
+                                <tr key={index}
+                                    className={classnames(new Date(bill.deliverTime).getTime() < new Date().getTime() + 1800000 && bill.status == "Chờ xử lý" && "text-danger")}>
                                     <td>
                                         {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
                                         <div>Mã đơn hàng: <b>{bill.bill_number}</b></div>
-                                        <div>Nhân viên bán: <b>{bill.sales && <b>{bill.sales.map(f => f.username).join(", ")}</b>}</b></div>
-                                        <div>Florist: <b>{bill.florists && <b>{bill.florists.map(f => f.username).join(", ")}</b>}</b></div>
-                                        <div>Nhân viên ship: <b>{bill.ships && <b>{bill.ships.map(f => f.username).join(", ")}</b>}</b></div>
+                                        <div>Ship: <b>{bill.ships &&
+                                        <b>{bill.ships.map(f => f.username).join(", ")}</b>}</b></div>
+                                        <div>Phí Ship: <b>{formatNumber(bill.to.shipMoney)}</b></div>
 
                                         <div>-------</div>
                                         Sản phẩm:
 
                                         <div>
-                                            { bill.items.map((item, index) => (
+                                            {bill.items.map((item, index) => (
                                                 <div key={index}>
-                                                    <b>{item.quantity}</b> {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>}
+                                                    <b>{item.quantity}</b> {item.name} {item.sale &&
+                                                <span className="text-primary">({item.sale}%)</span>}
                                                 </div>
                                             ))}
 
                                             <div style={{
                                                 marginTop: "10px"
                                             }}>
-                                                {bill.payment_type == "Nợ" ? <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> : <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
+                                                {bill.payment_type == "Nợ" ? <span
+                                                        className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> :
+                                                    <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
                                             </div>
 
 
@@ -139,18 +163,23 @@ export class FloristRoute extends React.Component {
 
                                         </div>
 
+                                        <div>------</div>
+
+                                        <div>Địa chỉ nhận: <b>{bill.to.receiverPlace}</b></div>
+                                        <div>Người Nhận: <b>{bill.to.receiverName}</b></div>
+                                        <div>SĐT: <b>{formatNumber(bill.to.receiverPhone)}</b></div>
 
                                     </td>
 
                                     <td>
-                                        { bill.florists && bill.florists[0].user_id == user._id && bill.status == "Chờ xử lý" && (
-                                            <button className="btn btn-outline-primary btn-sm"
-                                                    onClick={() => history.push(`/florist-working/${bill._id}`)}>
-                                                <i className="fa fa-hand-lizard-o" aria-hidden="true"/>
+                                        {bill.status == "Chờ giao" && (
+                                            <button className="btn btn-outline-success btn-sm"
+                                                    onClick={() => this.submit(bill)}>
+                                                <i className="fa fa-check" aria-hidden="true"/>
                                             </button>
                                         )}
 
-                                        { bill.florists && bill.florists[0].user_id == user._id && bill.status != "Chờ xử lý" && (
+                                        {bill.status == "Done" && (
                                             <span>Done</span>
                                         )}
                                     </td>
