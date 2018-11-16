@@ -13,7 +13,9 @@ export class FloristWorkingRoute extends React.Component {
         super(props);
         this.state = {
             bill: null,
-            items: []
+            items: [],
+            keyword: "",
+            filter: "All"
         };
 
         billApi.getBillById(props.match.params.id).then((bill) => {
@@ -28,7 +30,9 @@ export class FloristWorkingRoute extends React.Component {
 
     render() {
 
-        let {bill, items} = this.state;
+        let {bill, items, keyword, filter} = this.state;
+
+        const catalogs = ["All", "Hoa Chính", "Hoa Lá Phụ/Lá", "Phụ Kiện", "Cost"];
 
         return (
             <Layout
@@ -38,55 +42,34 @@ export class FloristWorkingRoute extends React.Component {
 
                     <div className="catalog-list">
 
-                        <div className="catalog-item text-primary">
-                           ALL
-                        </div>
+                        { catalogs.map((c, index) => (
+                            <div className={classnames("catalog-item", c == filter && "text-primary")}
+                                 onClick={() => this.setState({filter: c})}
+                                 key={index}>
+                                {c}
+                            </div>
+                        ))}
 
-                        <div className="catalog-item">
-                            HOA CHÍNH
-                        </div>
-
-                        <div className="catalog-item">
-                            Hoa Lá Phụ/Lá
-                        </div>
-
-                        <div className="catalog-item">
-                            Phụ Kiện
-                        </div>
-
-                        <div className="catalog-item">
-                            COST
-                        </div>
                     </div>
 
                     <div className="search-item">
-                        <input className="form-control" placeholder="Tìm"/>
+                        <input className="form-control"
+                               value={keyword}
+                               onChange={(e) => this.setState({keyword: e.target.value})}
+                               placeholder="Tìm"/>
                     </div>
 
                     <div className="product-list">
-                        <FloristItem
-                            label="Hoa Chính"
-                            className="hoa-chinh"
-                            items={items.filter(i => i.catalog == "Hoa Chính")}
-                        />
 
-                        <FloristItem
-                            label="Hoa Lá Phụ/Lá"
-                            className="hoa-phu"
-                            items={items.filter(i => i.catalog == "Hoa Lá Phụ/Lá")}
-                        />
+                        { catalogs.slice(1).filter(c => filter == "All" ? true : c == filter).map((c, index) => (
+                            <FloristItem
+                                keyword={keyword}
+                                key={index}
+                                label={c}
+                                items={items.filter(i => i.catalog == c)}
+                            />
+                        ))}
 
-                        <FloristItem
-                            label="Phụ Kiện"
-                            className="phu-kien"
-                            items={items.filter(i => i.catalog == "Phụ Kiện")}
-                        />
-
-                        <FloristItem
-                            label="Cost"
-                            className="hoa-chinh"
-                            items={items.filter(i => i.catalog == "Cost")}
-                        />
                     </div>
 
                     { bill && (

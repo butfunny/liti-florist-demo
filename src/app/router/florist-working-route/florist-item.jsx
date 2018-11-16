@@ -10,7 +10,7 @@ export class FloristItem extends React.Component {
 
     render() {
 
-        let {label, items, className} = this.props;
+        let {label, items, className, keyword} = this.props;
 
         return (
             <div className={`product-item ${className}`}>
@@ -19,7 +19,7 @@ export class FloristItem extends React.Component {
                 </div>
 
                 <div className="product-item-wrapper">
-                    {items && keysToArray(groupBy(items, i => i.name)).map((item, index) => (
+                    {items && keysToArray(groupBy(items, i => i.name)).filter(i => i.key.toLowerCase().indexOf(keyword.toLowerCase()) > -1).map((item, index) => (
                         <div className="product" key={index}>
                             <div className="title">
                                 {item.key}
