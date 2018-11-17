@@ -22,6 +22,7 @@ import {CSVLink, CSVDownload} from 'react-csv';
 import omit from "lodash/omit";
 import {Checkbox} from "../../components/checkbox/checkbox";
 import {configApi} from "../../api/config-api";
+import classnames from "classnames";
 
 export class BillOrderRoute extends RComponent {
 
@@ -38,9 +39,7 @@ export class BillOrderRoute extends RComponent {
             bills: null,
             keyword: "",
             logs: [],
-            showOwe: false,
-            max_day_view_report: 0,
-            selectedDate: today
+            showOwe: false
         };
 
         premisesInfo.onChange(() => {
@@ -49,32 +48,12 @@ export class BillOrderRoute extends RComponent {
 
         this.getBills();
 
-        configApi.get().then((config) => {
-            this.setState({max_day_view_report: config.max_day_view_report});
-        })
-
     }
 
     getBills() {
 
-        let premises = premisesInfo.getPremises();
         this.setState({loading: true});
-
-        const getCurrentPremise = () => {
-            const activeID = cache.get("active-premises");
-            if (!activeID) {
-                cache.set(premises[0]._id, "active-premises");
-                return premises[0]._id;
-            }
-            const found = premises.find(p => p._id == activeID);
-            if (found) return found._id;
-            else {
-                cache.set(premises[0]._id, "active-premises");
-                return premises[0]._id
-            }
-        };
-
-        billApi.getBills(getCurrentPremise(), {from: this.state.from, to: this.state.to}).then(({bills, customers, logs}) => {
+        billApi.getBills(premisesInfo.getActivePremise()._id, {from: this.state.from, to: this.state.to}).then(({bills, customers, logs}) => {
             this.setState({bills: bills.map(bill => {
                 return {
                     ...bill,
@@ -148,31 +127,11 @@ export class BillOrderRoute extends RComponent {
 
         const isMobile = responsive.le("xs");
 
-        const statuses = [{
-            value: "pending",
-            label: "Chờ xử lý"
-        }, {
-            value: "processing",
-            label: "Đang xử lý"
-        }, {
-            value: "wait",
-            label: "Chờ giao"
-        }, {
-            value: "done",
-            label: "Done"
-        }];
+        const formattedBills = bills ? bills.map(b => ({...b, customer: getCustomer(b.customerId), logs: logs.filter(l => l.bill_id == b._id)})) : [];
 
+        let billsFiltered = bills ? filteredByKeys(formattedBills, ["customer.customerName","customer.customerPhone", "bill_number"], keyword) : bills;
 
-
-        const totalOwe = bills ? sum(bills.filter(b => b.payment_type == "Nợ").map(b => getTotalBill(b.items))) : 0
-
-        const total = bills ? sum(bills.map(b => getTotalBill(b.items))) : 0;
-
-        const formattedBills = bills ? bills.map(b => ({...b, customer: getCustomer(b.customer_id), logs: logs.filter(l => l.bill_id == b._id)})) : [];
-
-        let billsFiltered = bills ? filteredByKeys(formattedBills, ["customer.name","customer.phone","customer.address", "bill_id", "created_by.username", "florist", "ship", "receiver_name", "receiver_phone", "receiver_place", "card", "notes"], keyword) : bills;
-
-        if (showOwe) billsFiltered = billsFiltered.filter(b => b.payment_type == "Nợ");
+        if (showOwe) billsFiltered = billsFiltered.filter(b => b.to.paymentType == "Nợ");
 
         let csvData =[
             [
@@ -205,31 +164,31 @@ export class BillOrderRoute extends RComponent {
             return ret;
         };
 
-        if (bills) {
-            for (let bill of billsFiltered) {
-                let ret = [];
-                ret.push(bill.bill_id);
-                ret.push(moment(bill.created).format("DD/MM/YYYY"));
-                ret.push(moment(bill.delivery_time).format("DD/MM/YYYY"));
-                ret.push(moment(bill.delivery_time).format("HH:mm"));
-                ret.push(bill.created_by.username);
-                ret.push(bill.florist);
-                ret.push(bill.payment_type);
-                ret.push(bill.customer.name);
-                ret.push(bill.customer.address);
-                ret.push(bill.customer.phone);
-                ret.push(bill.receiver_name);
-                ret.push(bill.receiver_place);
-                ret.push(bill.receiver_phone);
-                ret.push(bill.ship);
-                ret.push(bill.notes);
-                ret.push(bill.card);
-                ret.push(generateBillItemsText(bill.items));
-                ret.push(getTotalBill(bill.items));
-
-                csvData.push(ret);
-            }
-        }
+        // if (bills) {
+        //     for (let bill of billsFiltered) {
+        //         let ret = [];
+        //         ret.push(bill.bill_id);
+        //         ret.push(moment(bill.created).format("DD/MM/YYYY"));
+        //         ret.push(moment(bill.delivery_time).format("DD/MM/YYYY"));
+        //         ret.push(moment(bill.delivery_time).format("HH:mm"));
+        //         ret.push(bill.created_by.username);
+        //         ret.push(bill.florist);
+        //         ret.push(bill.payment_type);
+        //         ret.push(bill.customer.name);
+        //         ret.push(bill.customer.address);
+        //         ret.push(bill.customer.phone);
+        //         ret.push(bill.receiver_name);
+        //         ret.push(bill.receiver_place);
+        //         ret.push(bill.receiver_phone);
+        //         ret.push(bill.ship);
+        //         ret.push(bill.notes);
+        //         ret.push(bill.card);
+        //         ret.push(generateBillItemsText(bill.items));
+        //         ret.push(getTotalBill(bill.items));
+        //
+        //         csvData.push(ret);
+        //     }
+        // }
 
         const user = userInfo.getUser();
 
@@ -241,57 +200,52 @@ export class BillOrderRoute extends RComponent {
 
         return (
             <Layout
-                activeRoute="Báo Cáo"
+                activeRoute="Đơn Hàng"
             >
                 <div className="bill-report-route">
                     <div className="ct-page-title">
-                        <h1 className="ct-title">Báo Cáo</h1>
+                        <h1 className="ct-title">Đơn Hàng</h1>
                     </div>
 
 
                     <h6>
-                        Tổng thu: <b className="text-primary">{formatNumber(total - totalOwe)}</b>
+                        Tổng Đơn: <b className="text-primary">{bills ? bills.length : 0}</b>
                     </h6>
-                    <h6>Tổng nợ: <b className="text-danger">{formatNumber(totalOwe)}</b></h6>
-
-                    <h5>
-                        Tổng tiền: <b className="text-primary">{formatNumber(total)}</b>
-                    </h5>
+                    <h6>Số Đơn Quá Giờ: <b className="text-danger">{bills ? bills.filter(bill => new Date(bill.deliverTime).getTime() < new Date().getTime() + 1800000 && bill.status == "Chờ xử lý").length : 0}</b></h6>
+                    <h6>Số Đơn Nợ: <b className="text-danger">{bills ? bills.filter(bill => bill.to && bill.to.paymentType == "Nợ").length : 0}</b></h6>
 
 
                     <div className="report-header row">
-                        <div className="col-md-6 row">
-                            <div className="col-md-4">
-                                <div className="form-group">
-                                    <label className="control-label">Từ ngày</label>
-                                    <DatePicker
-                                        value={from}
-                                        onChange={(from) => {
-                                            this.setState({from})
-                                        }}
-                                    />
-                                </div>
+                        <div className="col-md-4">
+                            <div className="form-group">
+                                <label className="control-label">Từ ngày</label>
+                                <DatePicker
+                                    value={from}
+                                    onChange={(from) => {
+                                        this.setState({from})
+                                    }}
+                                />
                             </div>
+                        </div>
 
-                            <div className="col-md-4">
-                                <div className="form-group">
-                                    <label className="control-label">Tới ngày</label>
-                                    <DatePicker
-                                        value={to}
-                                        onChange={(to) => this.setState({to})}
-                                    />
-                                </div>
+                        <div className="col-md-4">
+                            <div className="form-group">
+                                <label className="control-label">Tới ngày</label>
+                                <DatePicker
+                                    value={to}
+                                    onChange={(to) => this.setState({to})}
+                                />
                             </div>
+                        </div>
 
-                            <div className="col-md-4">
-                                <button className="btn btn-primary btn-sm btn-get btn-icon"
-                                        disabled={loading}
-                                        onClick={() => this.getBills()}>
-                                    Xem Hoá Đơn
+                        <div className="col-md-4">
+                            <button className="btn btn-primary btn-sm btn-get btn-icon"
+                                    disabled={loading}
+                                    onClick={() => this.getBills()}>
+                                Xem Hoá Đơn
 
-                                    { loading && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
-                                </button>
-                            </div>
+                                { loading && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
+                            </button>
                         </div>
 
                     </div>
@@ -336,7 +290,9 @@ export class BillOrderRoute extends RComponent {
                             <table className="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th scope="col">Thời gian</th>
+                                        <th scope="col"
+                                            style={{width: "200px"}}
+                                        >Thời gian</th>
                                         <th scope="col">Thông Tin Đơn</th>
                                         <th scope="col"
                                             style={{width: "150px"}}
@@ -348,13 +304,13 @@ export class BillOrderRoute extends RComponent {
                                 </thead>
                                 <tbody>
                                 { bills && sortBy(billsFiltered, "lastTime").map((bill, index) => (
-                                    <tr key={index}>
+                                    <tr key={index} className={classnames(new Date(bill.deliverTime).getTime() < new Date().getTime() + 1800000 && bill.status == "Chờ xử lý" &&  "text-danger")}>
                                         <td>
-                                            {moment(bill.delivery_time).format("DD/MM/YYYY HH:mm")}
-                                            <div>Mã đơn hàng: <b>{bill.bill_id}</b></div>
-                                            <div>Nhân viên bán: <b>{bill.created_by.username}</b></div>
-                                            <div>Florist: <b>{bill.florist}</b></div>
-                                            <div>Nhân viên ship (hoặc phí ship): <b>{bill.ship}</b></div>
+                                            {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
+                                            <div>Mã đơn hàng: <b>{bill.bill_number}</b></div>
+                                            <div>Sale: <b>{bill.sales.length > 0 ? bill.sales.map(s => s.username).join(", ") : bill.to.saleEmp}</b></div>
+                                            <div>Florist: <b>{bill.florists.length > 0 ? bill.florists.map(s => s.username).join(", ") : bill.to.florist}</b></div>
+                                            <div>Nhân viên ship: <b>{bill.ships.length > 0 && bill.ships.map(s => s.username).join(", ")}</b></div>
 
                                             { bill.logs.length > 0 && (
                                                 <div>
@@ -371,24 +327,24 @@ export class BillOrderRoute extends RComponent {
                                             <div>
                                                 { bill.items.map((item, index) => (
                                                     <div key={index}>
-                                                        <b>{item.qty}</b> {item.name} {item.discount && <span className="text-primary">({item.discount}%)</span>}
+                                                        <b>{item.quantity}</b> {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>} {item.vat && <span className="text-primary"> - {item.vat}% VAT</span>}
                                                     </div>
                                                 ))}
 
                                                 <div style={{
                                                     marginTop: "10px"
                                                 }}>
-                                                    {bill.payment_type == "Nợ" ? <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill.items))}</b></span> : <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill.items))}</b></span>}
+                                                    {bill.to.paymentType == "Nợ" ? <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> : <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
                                                 </div>
 
-                                                <div>Hình thức thanh toán: {bill.payment_type}</div>
+                                                <div>Hình thức thanh toán: {bill.to.paymentType}</div>
 
                                                 <div>
-                                                    Ghi chú: {bill.notes}
+                                                    Ghi chú: {bill.to.notes}
                                                 </div>
 
                                                 <div>
-                                                    Nội dung thiệp: {bill.card}
+                                                    Nội dung thiệp: {bill.to.cardContent}
                                                 </div>
 
                                                 <div style={{
@@ -397,13 +353,13 @@ export class BillOrderRoute extends RComponent {
                                                     <b>Bên mua:</b>
 
                                                     <div>
-                                                        {bill.customer.name}
+                                                        {bill.customer.customerName}
                                                     </div>
                                                     <div>
-                                                        {bill.customer.phone}
+                                                        {bill.customer.customerPhone}
                                                     </div>
                                                     <div>
-                                                        {bill.customer.address}
+                                                        {bill.customer.customerPlace}
                                                     </div>
                                                 </div>
 
@@ -412,13 +368,13 @@ export class BillOrderRoute extends RComponent {
                                                 }}>
                                                     <b>Bên nhận: </b>
                                                     <div>
-                                                        {bill.receiver_name}
+                                                        {bill.to.receiverName}
                                                     </div>
                                                     <div>
-                                                        {bill.receiver_phone}
+                                                        {bill.to.receiverPhone}
                                                     </div>
                                                     <div>
-                                                        {bill.receiver_place}
+                                                        {bill.to.receiverPlace}
                                                     </div>
                                                 </div>
                                             </div>
@@ -426,12 +382,7 @@ export class BillOrderRoute extends RComponent {
 
                                         </td>
                                         <td>
-                                            <select className="form-control" value={bill.status}
-                                                    onChange={(e) => this.updateBill(bill, e.target.value)}>
-                                                { statuses.map((status, index) => (
-                                                    <option value={status.value} key={index}>{status.label}</option>
-                                                ))}
-                                            </select>
+                                            {bill.status}
                                         </td>
 
                                         <td>
@@ -445,14 +396,7 @@ export class BillOrderRoute extends RComponent {
                                                 <i className="fa fa-print"/>
                                             </button>
 
-                                            { bill.payment_type == "Nợ" && (
-                                                <button className="btn btn-outline-success btn-sm"
-                                                        onClick={() => this.removeOwe(bill)}>
-                                                    <i className="fa fa-usd"/>
-                                                </button>
-                                            )}
-
-                                            {user.isAdmin && (
+                                            {user.role == "admin" && (
                                                 <button className="btn btn-outline-danger btn-sm"
                                                         onClick={() => this.remove(bill)}>
                                                     <i className="fa fa-trash"/>

@@ -13,19 +13,7 @@ export class ReportTableMobile extends React.Component {
 
         let {bills, history, onRemove, user, onUpdateBill, onShowLog, onRemoveOwe} = this.props;
 
-        const statuses = [{
-            value: "pending",
-            label: "Chờ xử lý"
-        }, {
-            value: "processing",
-            label: "Đang xử lý"
-        }, {
-            value: "wait",
-            label: "Chờ giao"
-        }, {
-            value: "done",
-            label: "Done"
-        }];
+
 
         return (
             <table className="table table-hover">
@@ -39,69 +27,62 @@ export class ReportTableMobile extends React.Component {
                 {bills && bills.map((bill, index) => (
                     <tr key={index}>
                         <td>
-                            Thời gian: <b>{moment(bill.delivery_time).format("DD/MM/YYYY HH:mm")}</b>
-                            <div>Mã đơn hàng: <b>{bill.bill_id}</b></div>
-                            <div>Nhân viên bán: <b>{bill.created_by.username}</b></div>
-                            <div>Florist: <b>{bill.florist}</b></div>
-                            <div className="margin-bottom">Nhân viên ship (hoặc phí ship): <b>{bill.ship}</b></div>
-
+                            Thời gian: <b>{moment(bill.to.deliverTime).format("DD/MM/YYYY HH:mm")}</b>
+                            <div>Mã đơn hàng: <b>{bill.bill_number}</b></div>
+                            <div>Mã đơn hàng: <b>{bill.bill_number}</b></div>
+                            <div>Sale: <b>{bill.sales.length > 0 ? bill.sales.map(s => s.username).join(", ") : bill.to.saleEmp}</b></div>
+                            <div>Florist: <b>{bill.florists.length > 0 ? bill.florists.map(s => s.username).join(", ") : bill.to.florist}</b></div>
+                            <div className="margin-bottom">Nhân viên ship: <b>{bill.ships.length > 0 && bill.ships.map(s => s.username).join(", ")}</b></div>
 
                             <div><b>Sản phẩm: </b></div>
 
                             {bill.items.map((item, index) => (
                                 <div key={index}>
-                                    <b>{item.qty}</b> {item.name} {item.discount &&
-                                <span className="text-primary">({item.discount}%)</span>}
+                                    <b>{item.quantity}</b> {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>} {item.vat && <span className="text-primary"> - {item.vat}% VAT</span>}
                                 </div>
                             ))}
 
                             <div className="margin-top">
-                                {bill.payment_type == "Nợ" ? <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill.items))}</b></span> : <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill.items))}</b></span>}
+                                {bill.to.paymentType == "Nợ" ? <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> : <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
                             </div>
-                            <div>Hình thức thanh toán: {bill.payment_type}</div>
+                            <div>Hình thức thanh toán: {bill.to.paymentType}</div>
 
                             <div>
-                                Ghi chú: {bill.notes}
+                                Ghi chú: {bill.to.notes}
                             </div>
 
                             <div>
-                                Nội dung thiệp: {bill.card}
+                                Nội dung thiệp: {bill.to.cardContent}
                             </div>
 
                             <div className="margin-top margin-bottom"><b>Trạng thái: </b></div>
 
-                            <select
-                                className="form-control" value={bill.status}
-                                onChange={(e) => onUpdateBill(bill, e.target.value)}>
-                                {statuses.map((status, index) => (
-                                    <option value={status.value} key={index}>{status.label}</option>
-                                ))}
-                            </select>
+                            {bill.status}
 
                             <div className="margin-top">
                                 <b>Bên mua:</b>
 
                                 <div>
-                                    {bill.customer.name}
+                                    {bill.customer.customerName}
                                 </div>
                                 <div>
-                                    {bill.customer.phone}
+                                    {bill.customer.customerPhone}
                                 </div>
                                 <div>
-                                    {bill.customer.address}
+                                    {bill.customer.customerPlace}
                                 </div>
                             </div>
 
                             <div className="margin-top">
                                 <b>Bên nhận: </b>
                                 <div>
-                                    {bill.receiver_name}
+                                    {bill.to.receiverName}
                                 </div>
                                 <div>
-                                    {bill.receiver_phone}
+                                    {bill.to.receiverPhone}
                                 </div>
                                 <div>
-                                    {bill.receiver_place}
+                                    {bill.to.receiverPlace}
                                 </div>
                             </div>
 
@@ -126,14 +107,7 @@ export class ReportTableMobile extends React.Component {
                                 <i className="fa fa-pencil"/>
                             </button>
 
-                            { bill.payment_type == "Nợ" && (
-                                <button className="btn btn-outline-success btn-sm"
-                                        onClick={() => onRemoveOwe(bill)}>
-                                    <i className="fa fa-usd"/>
-                                </button>
-                            )}
-
-                            {user.isAdmin && (
+                            {user.role == "admin" && (
                                 <button className="btn btn-outline-danger btn-sm"
                                         onClick={() => onRemove(bill)}>
                                     <i className="fa fa-trash"/>

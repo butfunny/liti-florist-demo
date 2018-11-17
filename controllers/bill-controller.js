@@ -2,6 +2,8 @@ const _ = require('lodash');
 const Security = require("../security/security-be");
 const BillDao = require("../dao/bill-dao");
 const BillDraftDao = require("../dao/bill-draft");
+const LogsDao = require("../dao/logs-dao");
+const CustomerDao = require("../dao/customer-dao");
 
 
 module.exports = function(app) {
@@ -41,9 +43,21 @@ module.exports = function(app) {
 
     app.post("/bills/:base_id", Security.authorDetails, (req, res) => {
         BillDao.find({deliverTime: {$gte: req.body.from, $lt: req.body.to}, base_id: req.params.base_id}, function(err, bills) {
-            res.json(bills);
+            LogsDao.find({bill_id: {$in: bills.map(b => b._id)}}, function (err, logs) {
+                CustomerDao.find({_id: {$in: bills.map(b => b.customerId)}}, (err, customers) => {
+                    res.json({bills, logs, customers});
+                });
+            });
+
         });
     });
+
+    app.delete("/bill/:bid",Security.authorDetails, function (req, res) {
+        BillDao.remove({_id: req.params.bid}, function () {
+            res.end();
+        })
+    });
+
 
     // app.post("/Bills/getReports", Security.authorDetails, function(req, res) {
     //     billDao.find({deliverTime: {$gte: req.body.from, $lt: req.body.to}, oldData: false, base_id: null}, function(err, bills) {
@@ -83,14 +97,7 @@ module.exports = function(app) {
     // });
     //
     //
-    // app.delete("/Bills/:bid",Security.authorDetails, function (req, res) {
-    //     billDao.remove({_id: req.params.bid}, function () {
-    //         starsCustomer.remove({bill_id: req.params.bid}, function () {
-    //             res.end();
-    //         })
-    //     })
-    // });
-    //
+
     // app.get("/Bills/:bid",Security.authorDetails, function (req, res) {
     //     billDao.findOne({_id: req.params.bid}, function (err, bill) {
     //         res.send(bill);
