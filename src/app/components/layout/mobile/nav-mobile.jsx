@@ -50,7 +50,7 @@ export class NavMobile extends RComponent {
         return (
             <nav className="navbar navbar-expand-lg navbar-dark bg-gradient-primary nav-mobile">
                 <div className="container">
-                    <a className="navbar-brand" href="#">LitiFlorist <sup>{getCurrentPremise()}</sup></a>
+                    <a className="navbar-brand" href="#"><img src="/assets/img/liti-logo.png" alt=""/> <sup>{getCurrentPremise()}</sup></a>
                     <button className="navbar-toggler" onClick={() => this.setState({show: true})}>
                         <span className="navbar-toggler-icon"/>
                     </button>
@@ -59,7 +59,7 @@ export class NavMobile extends RComponent {
                             <div className="row">
                                 <div className="col-10 collapse-brand">
                                     <Link to="/">
-                                        <b>Hoá Đơn </b>
+                                        <img src="/assets/img/liti-logo.png" alt=""/>
                                         <sup>{getCurrentPremise()}</sup>
                                     </Link>
                                 </div>
