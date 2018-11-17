@@ -39,6 +39,12 @@ module.exports = function(app) {
         })
     });
 
+    app.post("/bills/:base_id", Security.authorDetails, (req, res) => {
+        BillDao.find({deliverTime: {$gte: req.body.from, $lt: req.body.to}, base_id: req.params.base_id}, function(err, bills) {
+            res.json(bills);
+        });
+    });
+
     // app.post("/Bills/getReports", Security.authorDetails, function(req, res) {
     //     billDao.find({deliverTime: {$gte: req.body.from, $lt: req.body.to}, oldData: false, base_id: null}, function(err, bills) {
     //         res.json(bills);

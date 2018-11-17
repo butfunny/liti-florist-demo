@@ -14,15 +14,14 @@ export class Customers extends React.Component {
     constructor(props) {
         super(props);
 
-
-
         this.state = {
             customers: null,
             page: 1,
             keyword: "",
             bills: null,
             total: 0,
-            loading: false
+            loading: false,
+
         };
 
 
