@@ -17,7 +17,6 @@ module.exports = (app) => {
                 }
 
                 let copyToPath = dir + "/" + currentTime + ".png";
-                console.log(dir);
                 fs.readFile(tempPath, (err, data) => {
                     fs.writeFile(copyToPath, data, (err) => {
                         res.json({file: "/upload/" + currentTime + ".png"});

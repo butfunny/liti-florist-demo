@@ -1,6 +1,7 @@
 import React from "react";
 import moment from "moment";
 import {formatNumber, getTotalBill} from "../../common/common";
+import {UploadBtn} from "./bill-order";
 
 export class ReportTableMobile extends React.Component {
 
@@ -11,8 +12,7 @@ export class ReportTableMobile extends React.Component {
 
     render() {
 
-        let {bills, history, onRemove, user, onUpdateBill, onShowLog, onRemoveOwe} = this.props;
-
+        let {bills, history, onRemove, user, onUpdateBill, onShowLog, onRemoveOwe, uploading, onChangeImage} = this.props;
 
 
         return (
@@ -99,14 +99,18 @@ export class ReportTableMobile extends React.Component {
                                 </div>
                             )}
 
+                            { bill.image && (
+                                <img src={bill.image} className="bill-image" alt=""/>
+                            )}
 
                         </td>
                         <td>
 
-                            <button className="btn btn-outline-success btn-sm"
-                                    onClick={() => history.push(`/edit-bill/${bill._id}`)}>
-                                <i className="fa fa-camera"/>
-                            </button>
+                            <UploadBtn
+                                uploading={uploading}
+                                bill={bill}
+                                onChange={(e) => onChangeImage(e, bill)}
+                            />
 
                             <button className="btn btn-outline-primary btn-sm"
                                     onClick={() => history.push(`/edit-bill/${bill._id}`)}>

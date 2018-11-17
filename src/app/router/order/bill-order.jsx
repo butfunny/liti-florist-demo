@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Fragment} from "react";
 import {Layout} from "../../components/layout/layout";
 import {DatePicker} from "../../components/date-picker/date-picker";
 import {billApi} from "../../api/bill-api";
@@ -119,13 +119,17 @@ export class BillOrderRoute extends RComponent {
         })
     }
 
-    handleChange(e) {
-        this.setState({uploading: true});
+    handleChange(e, bill) {
+        this.setState({uploading: bill._id});
         if (e.target.files[0]) {
             resizeImage(e.target.files[0]).then((file) => {
                 uploadApi.upload(file).then(resp => {
                     this.setState({uploading: false});
-                    console.log(resp.file);
+                    billApi.updateBillImage(bill._id, {file: resp.file}).then(() => {
+                        this.setState({
+                            bills: this.state.bills.map(b => b._id == bill._id ? {...b, image: resp.file} : b)
+                        })
+                    })
                 })
             })
         }
@@ -134,7 +138,7 @@ export class BillOrderRoute extends RComponent {
 
     render() {
 
-        let {bills, customers, keyword, from, to, logs, showOwe, max_day_view_report, selectedDate, loading} = this.state;
+        let {bills, customers, keyword, from, to, logs, showOwe, max_day_view_report, selectedDate, loading, uploading} = this.state;
         let {history} = this.props;
 
         const getCustomer = (id) => customers.find(c => c._id == id) || {};
@@ -299,6 +303,9 @@ export class BillOrderRoute extends RComponent {
                                 onUpdateBill={(bill, status) => this.updateBill(bill, status)}
                                 onShowLog={(logs) => this.showLog(logs)}
                                 onRemoveOwe={(bill) => this.removeOwe(bill)}
+                                onChangeImage={(e, bill) => this.handleChange(e, bill)}
+                                uploading={uploading}
+
                             />
                         ) : (
                             <table className="table table-hover">
@@ -335,6 +342,10 @@ export class BillOrderRoute extends RComponent {
                                                         </span>
                                                     </div>
                                                 </div>
+                                            )}
+
+                                            { bill.image && (
+                                                <img src={bill.image} className="bill-image" alt=""/>
                                             )}
                                         </td>
                                         <td>
@@ -401,16 +412,12 @@ export class BillOrderRoute extends RComponent {
 
                                         <td>
 
-                                            <button className="btn btn-outline-success btn-sm"
-                                                    onClick={() => this.inputUpload.click()}>
-                                                <i className="fa fa-camera"/>
-                                            </button>
-
-                                            <input className="input-upload"
-                                                   ref={elem => this.inputUpload = elem}
-                                                   type="file"
-                                                   onChange={(e) => this.handleChange(e)}
+                                            <UploadBtn
+                                                uploading={uploading}
+                                                bill={bill}
+                                                onChange={(e) => this.handleChange(e, bill)}
                                             />
+
 
                                             <button className="btn btn-outline-primary btn-sm"
                                                     onClick={() => history.push(`/edit-bill/${bill._id}`)}>
@@ -439,5 +446,30 @@ export class BillOrderRoute extends RComponent {
                 </div>
             </Layout>
         );
+    }
+}
+
+export class UploadBtn extends React.Component {
+
+    render() {
+
+        let {bill, onChange, uploading} = this.props;
+
+        return (
+            <Fragment>
+                <button className="btn btn-outline-success btn-sm"
+                        onClick={() => this.inputUpload.click()}>
+
+
+                    { uploading == bill._id ? <i className="fa fa-spinner fa-pulse"/> : <i className="fa fa-camera"/>}
+                </button>
+
+                <input className="input-upload"
+                       ref={elem => this.inputUpload = elem}
+                       type="file"
+                       onChange={(e) => onChange(e)}
+                />
+            </Fragment>
+        )
     }
 }

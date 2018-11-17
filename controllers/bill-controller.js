@@ -59,7 +59,7 @@ module.exports = function(app) {
     });
 
     app.put("/bill/update-image/:bid", Security.authorDetails, (req, res) => {
-        BillDao.findOneAndUpdate({_id: req.params.bid}, {image: req.body.image}, (err) => {
+        BillDao.updateOne({_id: req.params.bid}, {image: req.body.file}, (err) => {
             res.end();
         })
     })

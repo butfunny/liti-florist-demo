@@ -24,5 +24,8 @@ export const billApi = {
     },
     getBillById: (id) => {
         return api.get(`/api/bill/${id}`)
+    },
+    updateBillImage: (billID, file) => {
+        return api.put(`/api/bill/update-image/${billID}`, file)
     }
 };
