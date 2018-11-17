@@ -10,7 +10,7 @@ import moment from "moment";
 import {filteredByKeys, formatNumber, getDates, getTotalBill, resizeImage} from "../../common/common";
 import {userInfo} from "../../security/user-info";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
-import sum from "lodash/sum";
+import sumBy from "lodash/sumBy";
 import sortBy from "lodash/sortBy";
 import {Input} from "../../components/input/input";
 import {PrintService} from "../../common/print-service/print-service";
@@ -231,6 +231,9 @@ export class BillOrderRoute extends RComponent {
                     </h6>
                     <h6>Số Đơn Quá Giờ: <b className="text-danger">{bills ? bills.filter(bill => new Date(bill.deliverTime).getTime() < new Date().getTime() + 1800000 && bill.status == "Chờ xử lý").length : 0}</b></h6>
                     <h6>Số Đơn Nợ: <b className="text-danger">{bills ? bills.filter(bill => bill.to && bill.to.paymentType == "Nợ").length : 0}</b></h6>
+                    <h6>
+                        Tổng Thu: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => getTotalBill(b))) : 0}</b>
+                    </h6>
 
 
                     <div className="report-header row">
