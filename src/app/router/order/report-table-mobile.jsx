@@ -27,7 +27,7 @@ export class ReportTableMobile extends React.Component {
                 {bills && bills.map((bill, index) => (
                     <tr key={index}>
                         <td>
-                            Thời gian: <b>{moment(bill.to.deliverTime).format("DD/MM/YYYY HH:mm")}</b>
+                            Thời gian: <b>{moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}</b>
                             <div>Mã đơn hàng: <b>{bill.bill_number}</b></div>
                             <div>Mã đơn hàng: <b>{bill.bill_number}</b></div>
                             <div>Sale: <b>{bill.sales.length > 0 ? bill.sales.map(s => s.username).join(", ") : bill.to.saleEmp}</b></div>

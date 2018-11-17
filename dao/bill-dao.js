@@ -49,6 +49,5 @@ module.exports = mongoose.model('BillDao', {
         name: String,
         discount: Number,
         promotion_id: String
-    },
-    image: String
+    }
 }, "bills");
