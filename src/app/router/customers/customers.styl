@@ -10,10 +10,57 @@
     width 100%;
   }
 
+  .table-wrapper {
+    font-size 14px;
+  }
+
+
+
+  .tb-header {
+    padding 15px;
+    border-bottom: .125rem solid #dee2e6;
+    border-top: .125rem solid #dee2e6;
+    font-weight bold;
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+
+  }
+
+  .table-data {
+    height 500px;
+    overflow scroll;
+
+    .row {
+      margin-right 0;
+      margin-left 0;
+      padding 15px;
+      padding-left: 0;
+      border-bottom: .125rem solid #dee2e6;
+    }
+  }
 
   .table {
     td, th {
       font-size 14px !important;
+    }
+  }
+
+  .filter-customer {
+    .form-control {
+      height: 28px;
+    }
+  }
+
+  .table-footer {
+    position relative;
+    margin-top: 20px;
+    .total {
+      position absolute;
+      left 0;
+      font-size 12px;
+
     }
   }
 

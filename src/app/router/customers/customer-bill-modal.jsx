@@ -62,14 +62,14 @@ export class CustomerBillModal extends React.Component {
                                                 <div className="timeline-body">
                                                     { bill.items.map((item, index) => (
                                                         <div key={index}>
-                                                            <b>{item.qty}</b> {item.name} {item.discount && <span className="text-primary">({item.discount}%)</span>}
+                                                            <b>{item.quantity}</b> {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>}
                                                         </div>
                                                     ))}
                                                 </div>
 
                                                 <div className="timeline-footer ng-binding">
-                                                    { bill.payment_type == "Nợ" && <span className="text-danger">Nợ: <b>{formatNumber(getTotalBill(bill.items))}</b></span>}
-                                                    { bill.payment_type != "Nợ" && <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill.items))}</b></span>}
+                                                    { bill.payment_type == "Nợ" && <span className="text-danger">Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span>}
+                                                    { bill.payment_type != "Nợ" && <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
                                                 </div>
                                             </div>
                                         ))}

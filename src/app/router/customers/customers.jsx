@@ -1,66 +1,57 @@
 import React from "react";
 import {Layout} from "../../components/layout/layout";
-import {DatePicker} from "../../components/date-picker/date-picker";
 import {customerApi} from "../../api/customer-api";
-import {billApi} from "../../api/bill-api";
 import {Input} from "../../components/input/input";
 import sum from "lodash/sum";
-import sortBy from "lodash/sortBy"
-import moment from "moment";
 import {filteredByKeys, formatNumber, getTotalBill} from "../../common/common";
 import {modals} from "../../components/modal/modals";
 import {CustomerBillModal} from "./customer-bill-modal";
 import {premisesInfo} from "../../security/premises-info";
 import {Pagination} from "../../components/pagination/pagination";
+import {LoadingOverlay} from "../../components/loading-overlay/loading-overlay";
 export class Customers extends React.Component {
 
     constructor(props) {
         super(props);
 
-        let today = new Date();
-        today.setHours(0, 0, 0, 0);
-        let endDay = new Date();
-        endDay.setHours(23, 59, 59, 99);
+
 
         this.state = {
-            from: today,
-            to: endDay,
             customers: null,
-            fullBills: [],
-            filter: "Toàn thời gian",
-            bills: [],
-            keyword: ""
+            page: 1,
+            keyword: "",
+            bills: null,
+            total: 0,
+            loading: false
         };
 
-        let {from, to} = this.state;
 
-        customerApi.getCustomers().then(({customers, bills}) => {
-            billApi.getAllBills({from, to}).then((filteredBill) => {
-                this.setState({customers, fullBills: bills, bills: filteredBill})
-            });
-        });
+    }
 
-
+    componentDidMount() {
+        this.getCustomerBills();
     }
 
     getCustomerBills() {
 
-        let {from, to} = this.state;
+        let {keyword, page} = this.state;
+        this.setState({loading: true});
 
-        billApi.getAllBills({from, to}).then((bills) => {
-            this.setState({bills})
-        })
+        customerApi.getCustomers({
+            keyword,
+            skip: (page - 1) * 50
+        }).then(({customers, bills, total}) => {
+            this.setState({customers, bills, loading: false, total})
+        });
     }
 
     viewBills(customer) {
-        let {filter, fullBills, bills} = this.state;
-        let customerBills = filter == "Toàn thời gian" ? fullBills : bills;
-        customerBills = customerBills.filter(b => b.customer_id == customer._id);
+        let {bills} = this.state;
 
         const modal = modals.openModal({
             content: (
                 <CustomerBillModal
-                    bills={customerBills}
+                    bills={bills.filter(b => b.customerId == customer._id)}
                     onClose={() => modal.close()}
                 />
             )
@@ -69,26 +60,22 @@ export class Customers extends React.Component {
 
     render() {
 
-        let {from, to, customers, fullBills, bills, filter, keyword} = this.state;
+        let {customers, bills, keyword, loading, page, total} = this.state;
 
 
-        const getTotalPay = (customer_id, isOwe) => {
-            let _bills = filter == "Toàn thời gian" ? fullBills : bills;
+        const getTotalPay = (customerId, isOwe) => {
+            let _bills = [];
+            if (isOwe) _bills = bills.filter(b => b.to && b.to.paymentType == "Nợ");
+            else _bills = bills.filter(b => b.to ? b.to.paymentType != "Nợ" : true);
 
-            if (isOwe) _bills = _bills.filter(b => b.payment_type == "Nợ");
-            else _bills = _bills.filter(b => b.payment_type != "Nợ");
-
-            const customerBills = _bills.filter(b => b.customer_id == customer_id);
-            return sum(customerBills.map(b => getTotalBill(b.items)))
+            const customerBills = _bills.filter(b => b.customerId == customerId);
+            return sum(customerBills.map(b => getTotalBill(b)))
         };
 
-        const customersFiltered = customers ? filteredByKeys(customers, ["name", "phone"], keyword) : [];
 
-
-        const getPayOfPremises = (customer_id, premises_id) => {
-            let _bills = filter == "Toàn thời gian" ? fullBills : bills;
-            const customerBills = _bills.filter(b => b.customer_id == customer_id && b.premises_id == premises_id);
-            return sum(customerBills.map(b => getTotalBill(b.items)))
+        const getPayOfPremises = (customerId, premises_id) => {
+            const customerBills = bills.filter(b => b.customerId == customerId && b.base_id == premises_id);
+            return sum(customerBills.map(b => getTotalBill(b)))
         };
 
         let premises = premisesInfo.getPremises();
@@ -103,102 +90,84 @@ export class Customers extends React.Component {
                         <h1 className="ct-title">Danh Sách Khách Hàng</h1>
                     </div>
 
-                    <div className="report-header row">
-                        <div className="col-md-12">
-                            <div className="form-group">
-                                <select
-                                    className="form-control"
-                                    value={filter}
-                                    onChange={(e) => this.setState({filter: e.target.value})}
-                                >
-                                    <option value="Toàn thời gian">Toàn thời gian</option>
-                                    <option value="Lọc theo ngày">Lọc theo ngày</option>
-                                </select>
+                    <Input
+                        onKeyDown={(e) => e.keyCode == 13 && this.setState({page: 1}, () => this.getCustomerBills())}
+                        value={keyword}
+                        onChange={(e) => this.setState({keyword: e.target.value})}
+                        placeholder="Nhấn enter để bắt đầu tìm"
+                    />
+
+                    { !customers && <span>Đang tải... <i className="fa fa-spinner fa-pulse"/></span>}
+
+                    { customers && (
+                        <LoadingOverlay
+                            show={loading}
+                        >
+                            <div className="table-wrapper">
+
+                               <div className="row tb-header">
+                                   <div className="col col-md-6">
+                                       Khách hàng
+                                   </div>
+                                   <div className="col col-md-4">
+                                       Tổng chi
+                                   </div>
+                                   <div className="col col-md-2"/>
+                               </div>
+
+                                <div className="table-data">
+                                { customers.map((customer, index) => (
+                                    <div className="row" key={index}>
+                                        <div className="col col-md-6">
+                                            <div>{customer.customerName}</div>
+                                            {customer.customerPhone}
+
+                                            <div>
+                                                <b>Số tiền đã chi tại từng cơ sở: </b>
+                                            </div>
+
+                                            { premises.map((p, index) => (
+                                                <div key={index}>
+                                                {p.name}: {formatNumber(getPayOfPremises(customer._id, p._id))}
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className="col col-md-4">
+                                            {formatNumber(getTotalPay(customer._id, false))}
+
+                                            { getTotalPay(customer._id, true) > 0 && <div className="text-danger">Nợ <b>{formatNumber(getTotalPay(customer._id, true))}</b></div>}
+                                        </div>
+
+                                        <div className="col col-md2">
+                                            <button className="btn btn-outline-primary btn-sm" onClick={() => this.viewBills(customer)}>
+                                                Xem lịch sử
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))
+                                }
+                                </div>
                             </div>
+                        </LoadingOverlay>
+                    )}
+
+                    <div className="table-footer">
+                        <div className="total">
+                            <b>Tổng số khách hàng: {total}</b>
                         </div>
 
-                        { filter == "Lọc theo ngày" && (
-                            <div className="col-md-6 row">
-                                <div className="col-md-6">
-                                    <div className="form-group">
-                                        <label className="control-label">Từ ngày</label>
-                                        <DatePicker
-                                            value={from}
-                                            onChange={(from) => {
-                                                this.setState({from}, () => this.getCustomerBills())
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="col-md-6">
-                                    <div className="form-group">
-                                        <label className="control-label">Tới ngày</label>
-                                        <DatePicker
-                                            value={to}
-                                            onChange={(to) => this.setState({to}, () => this.getCustomerBills())}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
+                        { customers && (
+                            <Pagination
+                                value={page || 1}
+                                total={Math.ceil(total / 50) }
+                                onChange={(newPage) => !loading && page != newPage && this.setState({page: newPage}, () => this.getCustomerBills()) }
+                            />
                         )}
                     </div>
 
-                    <div className="form-group">
-                        <Input
-                            value={keyword}
-                            onChange={(e) => this.setState({keyword: e.target.value})}
-                            placeholder="Tìm kiếm"
-                        />
-                    </div>
-
-                    <table className="table table-hover">
-                        <thead>
-                        <tr>
-                            <th scope="col">Khách hàng</th>
-                            <th scope="col">Tổng chi</th>
-                            <th scope="col"/>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        { customers && sortBy(customersFiltered, c => getTotalPay(c._id)).reverse().map((customer, index) => (
-                            <tr key={index}>
-                                <td>
-                                    <div>{customer.name}</div>
-                                    {customer.phone}
-
-                                    <div>
-                                        <b>Số tiền đã chi tại từng cơ sở: </b>
-                                    </div>
-
-                                    { premises.map((p, index) => (
-                                        <div key={index}>
-                                            {p.name}: {formatNumber(getPayOfPremises(customer._id, p._id))}
-                                        </div>
-                                    ))}
-                                </td>
-                                <td>
-                                    {formatNumber(getTotalPay(customer._id, false))}
-
-                                    { getTotalPay(customer._id, true) > 0 && <div className="text-danger">Nợ <b>{formatNumber(getTotalPay(customer._id, true))}</b></div>}
-                                </td>
-
-                                <td>
-                                    <button className="btn btn-outline-primary btn-sm" onClick={() => this.viewBills(customer)}>
-                                        Xem lịch sử
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
 
 
-                    <Pagination
-                        value={this.state.page || 1}
-                        total={Math.ceil(22497 / 50) }
-                        onChange={(newPage) => this.setState({page: newPage}) }
-                    />
+
                 </div>
             </Layout>
         );

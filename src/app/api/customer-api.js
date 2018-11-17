@@ -1,8 +1,8 @@
 import {api} from "./api";
 
 export const customerApi = {
-    getCustomers: () => {
-        return api.get("/api/customers");
+    getCustomers: (data) => {
+        return api.post("/api/customers", data);
     },
     getCustomer: (id) => {
         return api.get(`/api/customer/${id}`)
