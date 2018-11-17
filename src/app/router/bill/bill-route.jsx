@@ -19,6 +19,7 @@ import {BillInfo} from "./bill-info/bill-info";
 import {securityApi} from "../../api/security-api";
 import {userInfo} from "../../security/user-info";
 import {promotionApi} from "../../api/promotion-api";
+import {RComponent} from "../../components/r-component/r-component";
 
 
 const initBill = {
@@ -41,7 +42,7 @@ const initBill = {
     payOwe: false
 }
 
-export class BillRoute extends React.Component {
+export class BillRoute extends RComponent {
 
     constructor(props) {
         super(props);

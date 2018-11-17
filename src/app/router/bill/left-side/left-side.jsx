@@ -4,7 +4,8 @@ import {BillCatalog} from "./catalog/bill-catalog";
 import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
 import {productApi} from "../../../api/product-api";
 import {premisesInfo} from "../../../security/premises-info";
-export class LeftSide extends React.Component {
+import {RComponent} from "../../../components/r-component/r-component";
+export class LeftSide extends RComponent {
 
     constructor(props) {
         super(props);
@@ -17,12 +18,16 @@ export class LeftSide extends React.Component {
             this.setState({catalogs})
         });
 
-        premisesInfo.onChange(() => {
+        let listener = () => {
             this.setState({catalogs: []});
             productApi.get().then((catalogs) => {
                 this.setState({catalogs})
             });
-        })
+        };
+
+        premisesInfo.onChange(listener);
+
+        this.onUnmount(() => premisesInfo.removeListener(listener))
     }
 
     addItem({name, price}) {

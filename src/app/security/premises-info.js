@@ -15,6 +15,9 @@ export const premisesInfo = {
     },
     getActivePremise: () => {
         return premises.find(p => p._id == cache.get("active-premises"));
+    },
+    removeListener: (listener) => {
+        listeners.filter(l => l != listener);
     }
 };
 
