@@ -40,6 +40,35 @@ export const getTotalBill = (bill) => {
 };
 
 
+export const getSalary = (user, bill) => {
+    const billTotal = getTotalBill(bill);
+    let charge = 0;
+
+    if (user.role == "florist") {
+        const found = bill.florists && bill.florists.find(u => u.user_id == user._id);
+        if (found) charge += 3;
+
+        const isSale = bill.sales && bill.sales.find(u => u.user_id == user._id);
+        if (isSale) charge += 0.9;
+    }
+
+    if (user.role == "sale") {
+        charge = 1.8;
+    }
+
+    if (user.role == "ship") {
+        return {
+            money: parseInt(bill.to.shipMoney),
+            percent: null
+        };
+    }
+
+    return {
+        money: billTotal * charge / 100,
+        percent: charge
+    };
+
+};
 
 
 export const getShipFees = (deliverTime, distance) => {

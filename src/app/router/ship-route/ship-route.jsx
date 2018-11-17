@@ -77,39 +77,37 @@ export class ShipRoute extends React.Component {
                     </div>
 
                     <div className="report-header row">
-                        <div className="col-md-6 col-xs-12 row">
-                            <div className="col-md-4">
-                                <div className="form-group">
-                                    <label className="control-label">Từ ngày</label>
-                                    <DatePicker
-                                        value={from}
-                                        onChange={(from) => {
-                                            this.setState({from})
-                                        }}
-                                    />
-                                </div>
+                        <div className="col-md-4">
+                            <div className="form-group">
+                                <label className="control-label">Từ ngày</label>
+                                <DatePicker
+                                    value={from}
+                                    onChange={(from) => {
+                                        this.setState({from})
+                                    }}
+                                />
                             </div>
+                        </div>
 
-                            <div className="col-md-4">
-                                <div className="form-group">
-                                    <label className="control-label">Tới ngày</label>
-                                    <DatePicker
-                                        value={to}
-                                        onChange={(to) => this.setState({to})}
-                                    />
-                                </div>
+                        <div className="col-md-4">
+                            <div className="form-group">
+                                <label className="control-label">Tới ngày</label>
+                                <DatePicker
+                                    value={to}
+                                    onChange={(to) => this.setState({to})}
+                                />
                             </div>
+                        </div>
 
-                            <div className="col-md-4">
-                                <button className="btn btn-primary btn-sm btn-get btn-icon"
-                                        disabled={loading}
-                                        onClick={() => this.getBills()}>
-                                    Xem Đơn
+                        <div className="col-md-4">
+                            <button className="btn btn-primary btn-sm btn-get btn-icon"
+                                    disabled={loading}
+                                    onClick={() => this.getBills()}>
+                                Xem Đơn
 
-                                    {loading &&
-                                    <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
-                                </button>
-                            </div>
+                                {loading &&
+                                <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
+                            </button>
                         </div>
                     </div>
 

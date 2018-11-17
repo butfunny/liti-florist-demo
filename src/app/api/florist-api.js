@@ -6,5 +6,8 @@ export const floristApi = {
     },
     submitBill: (data) => {
         return api.post(`/api/florist/submit-bill`, data);
+    },
+    getMySalary: (data) => {
+        return api.post(`/api/salary`, data)
     }
 };

@@ -42,4 +42,28 @@ module.exports = (app) => {
             res.end();
         })
     });
+
+    app.post("/salary", Security.authorDetails, (req, res) => {
+        BillDao.find({deliverTime: {$gte: req.body.from, $lt: req.body.to}, status: "Done"}, (err, bills) => {
+            res.json(bills.filter(bill => {
+                if (bill.ships && bill.ships.length > 0) {
+                    let found = bill.ships.find(f => f.user_id == req.user._id);
+                    if (found) return true;
+                }
+
+                if (bill.florists && bill.florists.length > 0) {
+                    let found = bill.florists.find(f => f.user_id == req.user._id);
+                    if (found) return true;
+                }
+
+                if (bill.sales && bill.sales.length > 0) {
+                    let found = bill.sales.find(f => f.user_id == req.user._id);
+                    if (found) return true;
+                }
+
+                return false;
+            }))
+        })
+
+    })
 };
