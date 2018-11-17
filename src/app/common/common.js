@@ -139,3 +139,55 @@ export const keysToArray = (obj) => {
 
     return ret;
 };
+
+
+export const resizeImage = (file) => {
+    return new Promise((resolve, reject)=>{
+        resizeImages(file, function(dataUrl) {
+            resolve(dataURItoBlob(dataUrl));
+        });
+    })
+};
+
+function resizeImages(file, complete) {
+    // read file as dataUrl
+    ////////  2. Read the file as a data Url
+    var reader = new FileReader();
+    // file read
+    reader.onload = function(e) {
+        // create img to store data url
+        ////// 3 - 1 Create image object for canvas to use
+        var img = new Image();
+        img.onload = function() {
+            /////////// 3-2 send image objeclt to function for manipulation
+            complete(resizeInCanvas(img));
+        };
+        img.src = e.target.result;
+    };
+    // read file
+    reader.readAsDataURL(file);
+
+}
+
+function resizeInCanvas(img){
+    /////////  3-3 manipulate image
+    var perferedWidth = 750;
+    var ratio = perferedWidth / img.width;
+    var canvas = $("<canvas>")[0];
+    canvas.width = img.width * ratio;
+    canvas.height = img.height * ratio;
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0,0,canvas.width, canvas.height);
+    //////////4. export as dataUrl
+    return canvas.toDataURL();
+}
+
+function dataURItoBlob(dataURI) {
+    var byteString = atob(dataURI.split(',')[1]);
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: 'image/jpeg' });
+}

@@ -58,6 +58,12 @@ module.exports = function(app) {
         })
     });
 
+    app.put("/bill/update-image/:bid", Security.authorDetails, (req, res) => {
+        BillDao.findOneAndUpdate({_id: req.params.bid}, {image: req.body.image}, (err) => {
+            res.end();
+        })
+    })
+
 
     // app.post("/Bills/getReports", Security.authorDetails, function(req, res) {
     //     billDao.find({deliverTime: {$gte: req.body.from, $lt: req.body.to}, oldData: false, base_id: null}, function(err, bills) {

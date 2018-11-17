@@ -102,6 +102,12 @@ export class ReportTableMobile extends React.Component {
 
                         </td>
                         <td>
+
+                            <button className="btn btn-outline-success btn-sm"
+                                    onClick={() => history.push(`/edit-bill/${bill._id}`)}>
+                                <i className="fa fa-camera"/>
+                            </button>
+
                             <button className="btn btn-outline-primary btn-sm"
                                     onClick={() => history.push(`/edit-bill/${bill._id}`)}>
                                 <i className="fa fa-pencil"/>

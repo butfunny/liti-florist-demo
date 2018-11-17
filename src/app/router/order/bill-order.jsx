@@ -7,7 +7,7 @@ import {cache} from "../../common/cache";
 import {responsive} from "../../common/responsive/responsive";
 import {ReportTableMobile} from "./report-table-mobile";
 import moment from "moment";
-import {filteredByKeys, formatNumber, getDates, getTotalBill} from "../../common/common";
+import {filteredByKeys, formatNumber, getDates, getTotalBill, resizeImage} from "../../common/common";
 import {userInfo} from "../../security/user-info";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 import sum from "lodash/sum";
@@ -23,6 +23,7 @@ import omit from "lodash/omit";
 import {Checkbox} from "../../components/checkbox/checkbox";
 import {configApi} from "../../api/config-api";
 import classnames from "classnames";
+import {uploadApi} from "../../api/upload-api";
 
 export class BillOrderRoute extends RComponent {
 
@@ -118,6 +119,19 @@ export class BillOrderRoute extends RComponent {
         })
     }
 
+    handleChange(e) {
+        this.setState({uploading: true});
+        if (e.target.files[0]) {
+            resizeImage(e.target.files[0]).then((file) => {
+                uploadApi.upload(file).then(resp => {
+                    this.setState({uploading: false});
+                    console.log(resp.file);
+                })
+            })
+        }
+    }
+
+
     render() {
 
         let {bills, customers, keyword, from, to, logs, showOwe, max_day_view_report, selectedDate, loading} = this.state;
@@ -159,11 +173,11 @@ export class BillOrderRoute extends RComponent {
         const generateBillItemsText = (items) => {
             let ret = "";
             for (let item of items) {
-                ret += `${item.qty} ${item.name} ${item.discount ? `(${item.discount}%)` : ''}\n`
+                ret += `${item.quantity} ${item.name} ${item.discount ? `(${item.discount}%)` : ''}\n`
             }
             return ret;
         };
-
+        //
         // if (bills) {
         //     for (let bill of billsFiltered) {
         //         let ret = [];
@@ -308,8 +322,8 @@ export class BillOrderRoute extends RComponent {
                                         <td>
                                             {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
                                             <div>Mã đơn hàng: <b>{bill.bill_number}</b></div>
-                                            <div>Sale: <b>{bill.sales.length > 0 ? bill.sales.map(s => s.username).join(", ") : bill.to.saleEmp}</b></div>
-                                            <div>Florist: <b>{bill.florists.length > 0 ? bill.florists.map(s => s.username).join(", ") : bill.to.florist}</b></div>
+                                            <div>Sale: <b>{bill.sales.length > 0 ? bill.sales.map(s => s.username).join(", ") : (bill.to || {}).saleEmp}</b></div>
+                                            <div>Florist: <b>{bill.florists.length > 0 ? bill.florists.map(s => s.username).join(", ") : (bill.to || {}).florist}</b></div>
                                             <div>Nhân viên ship: <b>{bill.ships.length > 0 && bill.ships.map(s => s.username).join(", ")}</b></div>
 
                                             { bill.logs.length > 0 && (
@@ -386,6 +400,18 @@ export class BillOrderRoute extends RComponent {
                                         </td>
 
                                         <td>
+
+                                            <button className="btn btn-outline-success btn-sm"
+                                                    onClick={() => this.inputUpload.click()}>
+                                                <i className="fa fa-camera"/>
+                                            </button>
+
+                                            <input className="input-upload"
+                                                   ref={elem => this.inputUpload = elem}
+                                                   type="file"
+                                                   onChange={(e) => this.handleChange(e)}
+                                            />
+
                                             <button className="btn btn-outline-primary btn-sm"
                                                     onClick={() => history.push(`/edit-bill/${bill._id}`)}>
                                                 <i className="fa fa-pencil"/>

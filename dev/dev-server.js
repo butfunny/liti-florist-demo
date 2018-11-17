@@ -21,6 +21,9 @@ require("../controllers/vip-controller")(router);
 require("../controllers/warehouse-controller")(router);
 require("../controllers/promotion-controller")(router);
 require("../controllers/florist-controller")(router);
+require("../controllers/upload-controller")(router);
+
+app.use("/upload", express.static(__dirname + "/../upload"));
 
 app.get("*", (req, res) => {
     res.sendFile(__dirname + "/index.html");
