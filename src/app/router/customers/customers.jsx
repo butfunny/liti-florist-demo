@@ -11,6 +11,7 @@ import {filteredByKeys, formatNumber, getTotalBill} from "../../common/common";
 import {modals} from "../../components/modal/modals";
 import {CustomerBillModal} from "./customer-bill-modal";
 import {premisesInfo} from "../../security/premises-info";
+import {Pagination} from "../../components/pagination/pagination";
 export class Customers extends React.Component {
 
     constructor(props) {
@@ -192,6 +193,12 @@ export class Customers extends React.Component {
                         </tbody>
                     </table>
 
+
+                    <Pagination
+                        value={this.state.page || 1}
+                        total={Math.ceil(22497 / 50) }
+                        onChange={(newPage) => this.setState({page: newPage}) }
+                    />
                 </div>
             </Layout>
         );

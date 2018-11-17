@@ -1,0 +1,52 @@
+.pagination {
+  .link {
+    float left;
+    color color-green;
+    font-size 12px;
+    cursor pointer;
+    line-height 40px;
+
+    no-select()
+
+    &:hover {
+      color hover-green;
+    }
+  }
+
+  .link.page {
+    margin 0 6px;
+
+    &.active {
+      color: color-blue;
+      font-weight 700;
+
+      position relative;
+
+      &:after {
+        content "";
+        display block;
+        position absolute;
+        bottom: 7px;
+        left: -4px;
+        width: calc(100% + 8px);
+        height: 3px;
+        background color-blue;
+      }
+    }
+  }
+
+  .material-icons {
+    position relative;
+    font-size: 16px;
+    top: 3px;
+    margin: 0 3px;
+  }
+
+  .link-prev {
+    margin-right 19px;
+  }
+
+  .link-next {
+    margin-left 19px;
+  }
+}
