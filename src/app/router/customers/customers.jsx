@@ -91,7 +91,7 @@ export class Customers extends React.Component {
                     </div>
 
                     <Input
-                        onKeyDown={(e) => e.keyCode == 13 && this.setState({page: 1}, () => this.getCustomerBills())}
+                        onKeyDown={(e) => !loading && e.keyCode == 13 && this.setState({page: 1}, () => this.getCustomerBills())}
                         value={keyword}
                         onChange={(e) => this.setState({keyword: e.target.value})}
                         placeholder="Nhấn enter để bắt đầu tìm"
