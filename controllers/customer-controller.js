@@ -41,83 +41,21 @@ module.exports = (app) => {
         });
     });
 
+    app.post("/customers", (req, res) => {
 
-    // app.get("/Customers",Security.authorDetails, function(req, res) {
-    //     customerDao.find(function(err, customers) {
-    //         var customerIds = _.map(customers, "_id");
-    //         billDao.find({customerId: {$in: customerIds}}, function (err, bills) {
-    //             var customersSpend = [];
-    //             for (var i = 0; i < customers.length; i++) {
-    //                 var customer = customers[i];
-    //                 var totalSpend = 0;
-    //                 var totalOwe = 0;
-    //                 for (var j = 0; j < bills.length; j++) {
-    //                     var bill = bills[j];
-    //                     if (customer._id == bill.customerId) {
-    //                         for (var k = 0; k < bill.items.length; k++) {
-    //                             var item = bill.items[k];
-    //                             if (bill.isOwe) {
-    //                                 var owe = item.quantity * item.price - (item.quantity * item.price * (item.sale || 0))/100;
-    //                                 totalOwe += owe + (owe * (item.vat || 0))/100;
-    //                             } else {
-    //                                 var spend = item.quantity * item.price - (item.quantity * item.price * (item.sale || 0))/100;
-    //                                 totalSpend += spend + (spend * (item.vat || 0))/100;
-    //                             }
-    //                         }
-    //                     }
-    //                 }
-    //                 var customerSpend = {
-    //                     _id: customer._id,
-    //                     totalSpend: totalSpend,
-    //                     totalOwe: totalOwe
-    //                 };
-    //                 customersSpend.push(customerSpend);
-    //             }
-    //             res.json({customers: customers, totalSpend: customersSpend});
-    //
-    //         });
-    //     });
-    // });
+        let {skip, keyword} = req.body;
 
-
-
-
-    app.post("/Customers/select",Security.authorDetails, function (req, res) {
-        customerDao.find({_id: {$in: req.body}}, function (err, customers) {
-            res.json(customers);
+        CustomerDao.find({customerPhone: new RegExp(".*" + keyword + ".*")}).skip(skip).limit(50).exec((err, customers) => {
+            CustomerDao.countDocuments({customerPhone: new RegExp(".*" + keyword + ".*")}, (err, count) => {
+                BillDao.find({customerId: {$in: customers.map(c => c._id)}}, (err, bills) => {
+                    res.json({
+                        customers,
+                        bills,
+                        total: count
+                    })
+                })
+            })
         })
     });
 
-    app.get("/Customer-Last-Address/:cid", function (req, res) {
-        billDao.find({customerId: req.params.cid}, null, {sort: '-created'}, function (err, bills) {
-            res.json(bills[0]);
-        })
-    });
-
-
-
-
-    app.get("/customer-total-pay/:cid", Security.authorDetails, function (req, res) {
-        billDao.find({customerId: req.params.cid}, function (err, bills) {
-            var totalSpend = 0;
-            var totalOwe = 0;
-            for (var j = 0; j < bills.length; j++) {
-                var bill = bills[j];
-                for (var k = 0; k < bill.items.length; k++) {
-                    var item = bill.items[k];
-
-                    var price = item.quantity * item.price - (item.quantity * item.price * (item.sale || 0))/100;
-                    price = price + (price * (item.vat || 0))/10;
-
-                    if (bill.isOwe) {
-                        totalOwe += price;
-                    } else {
-                        totalSpend += price;
-                    }
-                }
-            }
-
-            res.json({totalSpend: totalSpend, totalOwe: totalOwe});
-        });
-    })
-}
+};

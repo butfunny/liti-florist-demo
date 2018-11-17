@@ -31,6 +31,9 @@ export const navItems = (premises, user) => {
     }, {
         label: "Khách Hàng",
         child: [{
+            label: "Danh sách Khách Hàng",
+            to: "/customers"
+        }, {
             label: "VIP",
             to: "/vip"
         }],
