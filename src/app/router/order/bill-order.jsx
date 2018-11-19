@@ -359,6 +359,14 @@ export class BillOrderRoute extends RComponent {
                                                     </div>
                                                 ))}
 
+                                                {bill.vipSaleType && (
+                                                    <div>VIP: <b>{bill.vipSaleType}</b></div>
+                                                )}
+
+                                                {bill.promotion && (
+                                                    <span>{bill.promotion.name}: <b>{bill.promotion.discount}%</b></span>
+                                                )}
+
                                                 <div style={{
                                                     marginTop: "10px"
                                                 }}>

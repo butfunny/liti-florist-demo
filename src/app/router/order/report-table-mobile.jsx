@@ -42,6 +42,14 @@ export class ReportTableMobile extends React.Component {
                                 </div>
                             ))}
 
+                            {bill.vipSaleType && (
+                                <div>VIP: <b>{bill.vipSaleType}</b></div>
+                            )}
+
+                            {bill.promotion && (
+                                <span>{bill.promotion.name}: <b>{bill.promotion.discount}%</b></span>
+                            )}
+
                             <div className="margin-top">
                                 {bill.to.paymentType == "Nợ" ? <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> : <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
                             </div>
