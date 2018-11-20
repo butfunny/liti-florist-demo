@@ -25,7 +25,7 @@ export class ReasonDisplayModal extends React.Component {
                     <div className="modal-body">
                         { sortBy(logs, l => l.update_time).reverse().map((log, index) => (
                             <div className="product" key={index}>
-                                <b>{log.user.username} </b> đã cập nhật với lí do <b>{log.reason}</b> vào lúc {moment(log.update_time).format("HH:mm - DD/MM/YYYY")}
+                                <b>{log.user ? log.user.username : log.sale_name} </b> đã cập nhật với lí do <b>{log.reason}</b> vào lúc {moment(log.update_time).format("HH:mm - DD/MM/YYYY")}
                             </div>
                         ))}
 

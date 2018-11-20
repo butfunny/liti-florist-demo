@@ -9,5 +9,9 @@ module.exports = mongoose.model('LogsDao', {
         user_id: String
     },
     "reason": String,
-    created: Date
+    created: Date,
+    user: {
+        username: String,
+        user_id: String
+    }
 }, "logs");

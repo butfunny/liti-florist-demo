@@ -103,7 +103,7 @@ export class BillInfo extends React.Component {
                         <div className="form-group">
                             <label className="control-label">Ngày nhận hàng</label>
                             <DatePicker
-                                value={deliverTime}
+                                value={new Date(deliverTime)}
                                 onChange={(deliverTime) => onChangeDeliverTime(deliverTime)}
                             />
                         </div>
@@ -113,7 +113,7 @@ export class BillInfo extends React.Component {
                         <div className="form-group">
                             <label className="control-label">Giờ nhận hàng</label>
                             <TimePicker
-                                value={deliverTime}
+                                value={new Date(deliverTime)}
                                 onChange={(deliverTime) => {
                                     onChangeDeliverTime(deliverTime);
                                 }}

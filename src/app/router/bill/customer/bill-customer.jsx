@@ -23,6 +23,13 @@ export class BillCustomer extends React.Component {
         }
     }
 
+    componentDidMount() {
+        let {bill} = this.props;
+        if (bill.customerId) {
+            this.getCustomerInfo(bill.customerId)
+        }
+    }
+
     setVipPay(value) {
         this.setState({vipPay: value})
     }
@@ -166,8 +173,8 @@ export class BillCustomer extends React.Component {
                         <div className="form-group">
                             <label className="control-label">Số Điện Thoại</label>
                             <AutoComplete
+                                disabled={editMode || vipPay}
                                 ref={elem => this.phone = elem}
-                                disabled={vipPay}
                                 asyncGet={(phone) => {
                                     onChangeBill({
                                         ...bill, customerInfo: null, payOwe: false, customer: {

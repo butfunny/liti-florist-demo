@@ -17,14 +17,32 @@ import {modals} from "../../components/modal/modals";
 import {UpdateReasonModal} from "./update-reason-modal";
 import {userInfo} from "../../security/user-info";
 import classnames from "classnames";
+import {BillInfo} from "../bill/bill-info/bill-info";
+import {securityApi} from "../../api/security-api";
 export class BillEditRoute extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
             bill: null,
-            saving: false
+            saving: false,
+            locations: []
         };
+
+        securityApi.getSalesAndFlorist().then((users) => {
+
+            const mapItem = (u) => ({
+                user_id: u._id,
+                name: u.name,
+                username: u.username
+            });
+
+            this.setState({
+                sales: users.filter(u => u.role == "sale").map(mapItem),
+                florists: users.filter(u => u.role == "florist").map(mapItem),
+                ships: users.filter(u => u.role == "ship").map(mapItem)
+            })
+        });
 
         billApi.getBillById(props.match.params.id).then(({bill, customer}) => {
             this.setState({bill: {...bill, customer: {...customer, ...bill}}})
@@ -37,17 +55,13 @@ export class BillEditRoute extends React.Component {
         let {bill} = this.state;
 
         const handleUpdate = (reason) => {
-            customerApi.createCustomer(pick(bill.customer, ["phone", "name", "address", "receiver_name", "receiver_place", "receiver_phone"])).then((customer) => {
-                billApi.updateBill(bill._id, {
-                    ...omit(bill.customer, ["phone", "name", "address", "_id", "_v", "total_pay"]),
-                    items: bill.items.map(item => ({...omit(item)})),
-                    customer_id: customer._id,
-                    reason,
-                    update_time: new Date()
-                }).then(() => {
-                    confirmModal.alert("Cập nhật thành công");
-                    history.push("/");
-                })
+            billApi.updateBill(bill._id, {
+                ...bill,
+                reason,
+                update_time: new Date()
+            }).then(() => {
+                confirmModal.alert("Cập nhật thành công");
+                history.push("/");
             })
         };
 
@@ -72,7 +86,7 @@ export class BillEditRoute extends React.Component {
 
     render() {
 
-        let {bill, saving} = this.state;
+        let {bill, saving, florists, sales, ships, locations} = this.state;
 
         const user = userInfo.getUser();
 
@@ -92,20 +106,19 @@ export class BillEditRoute extends React.Component {
 
                     <div className="row">
 
-                        {user.isAdmin && (
-                            <div className="col-md-4">
-                                <LeftSide
-                                    items={bill.items}
-                                    onChangeItems={(items) => this.setState({bill: {...bill, items}})}
-                                />
-                            </div>
-                        )}
-
-                        <div className={classnames(user.isAdmin ? "col-md-8" : "col-md-12")}>
-                            <BillView
+                        <div className="col-md-4">
+                            <LeftSide
                                 items={bill.items}
                                 onChangeItems={(items) => this.setState({bill: {...bill, items}})}
-                                editMode={!user.isAdmin}
+                            />
+                        </div>
+
+                        <div className="col-md-8">
+                            <BillView
+                                editMode
+                                bill={bill}
+                                onChangeBill={(bill) => this.setState({bill})}
+                                onChangeItems={(items) => this.setState({bill: {...bill, items}})}
                             />
 
                             <Form
@@ -114,20 +127,41 @@ export class BillEditRoute extends React.Component {
                                 render={(getInvalidByKey, invalidPaths) => (
                                     <Fragment>
                                         <BillCustomer
+                                            ref={elem => this.billCustomer = elem}
+                                            bill={bill}
+                                            onChangeBill={(bill) => this.setState({bill})}
+                                            onChangeLocations={(locations) => this.setState({locations})}
                                             customer={bill.customer}
                                             onChange={(customer) => {
                                                 this.setState({bill: {...bill, customer}})
                                             }}
-                                            editMode={!user.isAdmin}
+                                            editMode
+                                        />
+
+                                        <BillInfo
+                                            bill={bill}
+                                            onChangeBill={(bill) => this.setState({bill})}
+                                            florists={florists}
+                                            sales={sales}
+                                            ships={ships}
+                                            ref={elem => this.billInfo = elem}
+                                            locations={locations}
+                                            deliverTime={bill.deliverTime}
+                                            onChangeDeliverTime={(deliverTime) => this.setState({
+                                                bill: {
+                                                    ...bill,
+                                                    deliverTime,
+                                                    to: {
+                                                        ...bill.to,
+                                                        shipMoney: this.billInfo.getShipMoney(deliverTime)
+                                                    }
+                                                }
+                                            })}
+                                            to={bill.to}
+                                            onChange={(to) => this.setState({bill: {...bill, to}})}
                                         />
 
                                         <div className="text-right btn-action">
-                                            <button type="button" className="btn btn-info"
-                                                    onClick={() => this.saveCustomer()}
-                                                    disabled={invalidPaths.length > 0}
-                                            >Lưu thông tin khách hàng
-                                            </button>
-
                                             <button type="button"
                                                     disabled={saving || invalidPaths.length > 0 || bill.items.length == 0}
                                                     className="btn btn-primary btn-icon" onClick={() => this.submitBill()}>

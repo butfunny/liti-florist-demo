@@ -37,7 +37,9 @@ module.exports = function(app) {
 
     app.get("/bill/:bid", Security.authorDetails, (req, res) => {
         BillDao.findOne({_id: req.params.bid}, (err, bill) => {
-            res.json(bill);
+            CustomerDao.findOne({_id: bill.customerId}, (err, customer) => {
+                res.json({bill, customer})
+            });
         })
     });
 
@@ -61,6 +63,23 @@ module.exports = function(app) {
     app.put("/bill/update-image/:bid", Security.authorDetails, (req, res) => {
         BillDao.updateOne({_id: req.params.bid}, {image: req.body.file}, (err) => {
             res.end();
+        })
+    });
+
+    app.put("/bill/:bid", Security.authorDetails, (req, res) => {
+        delete req.body._id;
+        BillDao.updateOne({_id: req.params.bid}, req.body, () => {
+            LogsDao.create({
+                bill_id: req.params.bid,
+                user: {
+                    username: req.user.username,
+                    user_id: req.user._id
+                },
+                reason: req.body.reason,
+                created: req.body.created
+            }, () => {
+                res.end();
+            })
         })
     })
 

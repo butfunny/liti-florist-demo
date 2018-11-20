@@ -10,7 +10,7 @@ export class BillView extends React.Component {
 
     render() {
 
-        let {bill, onChangeItems, editMode, activePromotions, onChangeBill} = this.props;
+        let {bill, onChangeItems, editMode, activePromotions = [], onChangeBill} = this.props;
         const items = bill.items;
 
 
@@ -69,7 +69,6 @@ export class BillView extends React.Component {
                                     </button>
 
                                     <InputNumber
-                                        disabled={editMode}
                                         autoSelect
                                         value={item.quantity}
                                         onChange={(quantity) => {
@@ -96,7 +95,6 @@ export class BillView extends React.Component {
                                 <td className="no-padding">
                                     <InputNumber
                                         maxVal={100}
-                                        disabled={editMode}
                                         autoSelect
                                         value={item.sale || ""}
                                         onChange={(sale) => {
@@ -113,7 +111,6 @@ export class BillView extends React.Component {
                                 <td className="no-padding">
                                     <InputNumber
                                         maxVal={100}
-                                        disabled={editMode}
                                         autoSelect
                                         value={item.vat || ""}
                                         onChange={(vat) => {
@@ -128,13 +125,11 @@ export class BillView extends React.Component {
                                 </td>
 
                                 <td className="no-padding">
-                                    {!editMode && (
-                                        <button type="button" className="btn btn-danger btn-sm" onClick={() => {
-                                            onChangeItems(items.filter(i => i.name != item.name))
-                                        }}>
-                                            <i className="fa fa-trash"/>
-                                        </button>
-                                    )}
+                                    <button type="button" className="btn btn-danger btn-sm" onClick={() => {
+                                        onChangeItems(items.filter(i => i.name != item.name))
+                                    }}>
+                                        <i className="fa fa-trash"/>
+                                    </button>
                                 </td>
                             </tr>
                         ))}
@@ -175,6 +170,12 @@ export class BillView extends React.Component {
                                             value={promotion._id}>{promotion.name} - {promotion.discount}%</option>
                                     ))}
                                 </select>
+                            </div>
+                        )}
+
+                        { editMode && bill.promotion && (
+                            <div className="text-right">
+                                {bill.promotion.name}: {bill.promotion.discount}%
                             </div>
                         )}
 

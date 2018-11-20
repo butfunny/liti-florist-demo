@@ -24,7 +24,7 @@ export class UpdateReasonModal extends React.Component {
             <div className="app-modal-box">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title">Đổi Mật Khẩu</h5>
+                        <h5 className="modal-title">Cập Nhật Hoá Đơn</h5>
                         <button type="button" className="close" onClick={() => onDismiss()}>
                             <span aria-hidden="true">×</span>
                         </button>
