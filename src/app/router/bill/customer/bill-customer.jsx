@@ -198,7 +198,7 @@ export class BillCustomer extends React.Component {
                                         onChangeBill({
                                             ...bill, customerInfo: null, payOwe: false, customer: {
                                                 ...customer,
-                                                customerPhone: phone,
+                                                customerPhone: updatedCustomer.customerPhone,
                                                 customerPlace: "",
                                                 email: "",
                                                 customerName: "",

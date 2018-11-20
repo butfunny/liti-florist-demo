@@ -7,7 +7,14 @@ import {cache} from "../../common/cache";
 import {responsive} from "../../common/responsive/responsive";
 import {ReportTableMobile} from "./report-table-mobile";
 import moment from "moment";
-import {filteredByKeys, formatNumber, getDates, getTotalBill, resizeImage} from "../../common/common";
+import {
+    filteredByKeys,
+    formatNumber,
+    getDates,
+    getTotalBill,
+    getTotalBillWithoutVAT,
+    resizeImage
+} from "../../common/common";
 import {userInfo} from "../../security/user-info";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 import sumBy from "lodash/sumBy";
@@ -24,6 +31,7 @@ import {Checkbox} from "../../components/checkbox/checkbox";
 import {configApi} from "../../api/config-api";
 import classnames from "classnames";
 import {uploadApi} from "../../api/upload-api";
+import {getCSVData} from "./excel";
 
 export class BillOrderRoute extends RComponent {
 
@@ -151,63 +159,6 @@ export class BillOrderRoute extends RComponent {
 
         if (showOwe) billsFiltered = billsFiltered.filter(b => b.to.paymentType == "Nợ");
 
-        let csvData =[
-            [
-                'Hoá đơn #',
-                'Ngày đặt hàng',
-                'Ngày giao hàng',
-                "Giờ khách nhận",
-                "Sale",
-                "Florist",
-                "Hình thức thanh toán",
-                "Tên Khách Đặt",
-                "Địa Chỉ Khách Đặt",
-                "Số ĐT",
-                "Tên Khách Nhận",
-                "Địa Chỉ Nhận",
-                "SĐT Khách Nhận",
-                "Nhân viên ship",
-                "Ghi chú",
-                "Nội dung thiệp",
-                "Mặt Hàng",
-                "Tổng Tiền"
-            ]
-        ];
-
-        const generateBillItemsText = (items) => {
-            let ret = "";
-            for (let item of items) {
-                ret += `${item.quantity} ${item.name} ${item.discount ? `(${item.discount}%)` : ''}\n`
-            }
-            return ret;
-        };
-        //
-        // if (bills) {
-        //     for (let bill of billsFiltered) {
-        //         let ret = [];
-        //         ret.push(bill.bill_id);
-        //         ret.push(moment(bill.created).format("DD/MM/YYYY"));
-        //         ret.push(moment(bill.delivery_time).format("DD/MM/YYYY"));
-        //         ret.push(moment(bill.delivery_time).format("HH:mm"));
-        //         ret.push(bill.created_by.username);
-        //         ret.push(bill.florist);
-        //         ret.push(bill.payment_type);
-        //         ret.push(bill.customer.name);
-        //         ret.push(bill.customer.address);
-        //         ret.push(bill.customer.phone);
-        //         ret.push(bill.receiver_name);
-        //         ret.push(bill.receiver_place);
-        //         ret.push(bill.receiver_phone);
-        //         ret.push(bill.ship);
-        //         ret.push(bill.notes);
-        //         ret.push(bill.card);
-        //         ret.push(generateBillItemsText(bill.items));
-        //         ret.push(getTotalBill(bill.items));
-        //
-        //         csvData.push(ret);
-        //     }
-        // }
-
         const user = userInfo.getUser();
 
         let startDay = new Date();
@@ -215,6 +166,14 @@ export class BillOrderRoute extends RComponent {
         startDay.setHours(0, 0, 0, 0);
 
         const dates = getDates(startDay, new Date());
+
+        // [
+        //     ["firstname", "lastname", "email"],
+        //     ["Ahmed", "Tomi", "ah@smthing.co.com"],
+        //     ["Raed", "Labes", "rl@smthing.co.com"],
+        //     ["Yezzi", "Min l3b", "ymin@cocococo.com"]
+        // ]
+
 
         return (
             <Layout
@@ -229,10 +188,14 @@ export class BillOrderRoute extends RComponent {
                     <h6>
                         Tổng Đơn: <b className="text-primary">{bills ? bills.length : 0}</b>
                     </h6>
-                    <h6>Số Đơn Quá Giờ: <b className="text-danger">{bills ? bills.filter(bill => new Date(bill.deliverTime).getTime() < new Date().getTime() + 1800000 && bill.status == "Chờ xử lý").length : 0}</b></h6>
-                    <h6>Số Đơn Nợ: <b className="text-danger">{bills ? bills.filter(bill => bill.to && bill.to.paymentType == "Nợ").length : 0}</b></h6>
+                    <h6>
+                        Khách Mới: <b className="text-primary">{bills ? bills.filter(b => b.isNewCustomer).length : 0}</b>
+                    </h6>
                     <h6>
                         Tổng Thu: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => getTotalBill(b))) : 0}</b>
+                    </h6>
+                    <h6>
+                        Tổng Thu chưa bao gồm VAT: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => getTotalBillWithoutVAT(b))) : 0}</b>
                     </h6>
 
 
@@ -272,13 +235,15 @@ export class BillOrderRoute extends RComponent {
                     </div>
 
 
-                    <CSVLink
-                        data={csvData}
-                        filename={"baocao.csv"}
-                        className="btn btn-primary btn-icon btn-excel btn-sm">
-                        <span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>
-                        <span className="btn-inner--text">Xuất Excel</span>
-                    </CSVLink>
+                    { bills && !loading && (
+                        <CSVLink
+                            data={getCSVData(formattedBills)}
+                            filename={"baocao.csv"}
+                            className="btn btn-primary btn-icon btn-excel btn-sm">
+                            <span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>
+                            <span className="btn-inner--text">Xuất Excel</span>
+                        </CSVLink>
+                    )}
 
                     <div className="form-group">
                         <Input
@@ -355,7 +320,7 @@ export class BillOrderRoute extends RComponent {
                                             <div>
                                                 { bill.items.map((item, index) => (
                                                     <div key={index}>
-                                                        <b>{item.quantity}</b> {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>} {item.vat && <span className="text-primary"> - {item.vat}% VAT</span>}
+                                                        <b>{item.quantity}</b> {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>} {item.vat ? <span className="text-primary"> - {item.vat}% VAT</span> : ""}
                                                     </div>
                                                 ))}
 

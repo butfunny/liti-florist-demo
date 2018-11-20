@@ -39,6 +39,50 @@ export const getTotalBill = (bill) => {
 
 };
 
+export const getTotalBillVAT = (bill) => {
+    return sumBy(bill.items, item => {
+        let price = item.price * item.quantity;
+        if (item.vat) return price * item.vat / 100;
+        return 0
+    });
+
+};
+
+
+export const getTotalBillWithoutVAT = (bill) => {
+
+    let totalBillItems = sumBy(bill.items, item => {
+        let price = item.price * item.quantity;
+        if (item.sale) {
+            price = price - price * item.sale / 100
+        }
+
+        return price;
+    });
+
+    if (bill.payOwe && bill.customerInfo) {
+        totalBillItems += bill.customerInfo.spend.totalOwe
+    }
+
+    let discount = 0;
+
+    if (bill.vipSaleType == "Giảm giá 5%") {
+        discount += 5;
+    }
+
+    if (bill.vipSaleType == "Giảm giá 20%") {
+        discount += 20;
+    }
+
+    if (bill.promotion) {
+        discount += bill.promotion.discount
+    }
+
+    return totalBillItems - totalBillItems * Math.min(discount, 100) / 100
+
+};
+
+
 
 export const getSalary = (user, bill) => {
     const billTotal = getTotalBill(bill);
