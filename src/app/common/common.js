@@ -35,16 +35,16 @@ export const getTotalBill = (bill) => {
         discount += bill.promotion.discount
     }
 
-    return totalBillItems - totalBillItems * Math.min(discount, 100) / 100
+    return Math.ceil(totalBillItems - totalBillItems * Math.min(discount, 100) / 100)
 
 };
 
 export const getTotalBillVAT = (bill) => {
-    return sumBy(bill.items, item => {
+    return Math.ceil(sumBy(bill.items, item => {
         let price = item.price * item.quantity;
         if (item.vat) return price * item.vat / 100;
         return 0
-    });
+    }));
 
 };
 
@@ -78,7 +78,7 @@ export const getTotalBillWithoutVAT = (bill) => {
         discount += bill.promotion.discount
     }
 
-    return totalBillItems - totalBillItems * Math.min(discount, 100) / 100
+    return Math.ceil(totalBillItems - totalBillItems * Math.min(discount, 100) / 100)
 
 };
 
