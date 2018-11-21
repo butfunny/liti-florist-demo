@@ -78,6 +78,22 @@ gulp.task("deploy", (done) => {
     })
 });
 
+gulp.task("build-prod", () => {
+    packageAssets();
+    stylusCompiler.compile("./build/assets/css").then(() => {
+        let hash = makeid();
+        let html = fs.readFileSync("./build/index.html", {encoding: "utf8"});
+        html = html.replace(`"/assets/css/style.css"`, `"/assets/css/style.css?v=${hash}"`);
+        html = html.replace(`"/assets/js/client-loader.js"`, `"/assets/js/client-loader.js?v=${hash}"`);
+        fs.writeFileSync("./build/index.html", html);
+
+        run("webpack --config webpack.config.prod").exec(() => {
+            console.log("Build done");
+        });
+    })
+
+})
+
 gulp.task("create-default-admin", () => {
     const mongoose = require('mongoose');
     mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/payment", {useNewUrlParser: true});
