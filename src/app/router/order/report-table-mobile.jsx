@@ -12,7 +12,7 @@ export class ReportTableMobile extends React.Component {
 
     render() {
 
-        let {bills, history, onRemove, user, onUpdateBill, onShowLog, onRemoveOwe, uploading, onChangeImage} = this.props;
+        let {bills, history, onRemove, user, onUpdateBill, onShowLog, onRemoveOwe, uploading, onChangeImage, onChangeStatus} = this.props;
 
 
         return (
@@ -65,7 +65,14 @@ export class ReportTableMobile extends React.Component {
 
                             <div className="margin-top margin-bottom"><b>Trạng thái: </b></div>
 
-                            {bill.status}
+                            { (bill.status == "Done" || bill.status == "Khiếu Nại") ? (
+                                <select value={bill.status} onChange={(e) => onChangeStatus(bill, e.target.value)}>
+                                    <option value="Done">Done</option>
+                                    <option value="Khiếu Nại">Khiếu Nại</option>
+                                </select>
+                            ) : (
+                                <span>{bill.status}</span>
+                            )}
 
                             <div className="margin-top">
                                 <b>Bên mua:</b>

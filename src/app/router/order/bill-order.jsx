@@ -143,6 +143,11 @@ export class BillOrderRoute extends RComponent {
         }
     }
 
+    handleChangeStatus(bill, value) {
+        this.setState({bills: this.state.bills.map(b => b._id == bill._id ? {...b, status: value} : b)});
+        billApi.updateBillStatus(bill._id, {status: value});
+    }
+
 
     render() {
 
@@ -273,6 +278,7 @@ export class BillOrderRoute extends RComponent {
                                 onRemoveOwe={(bill) => this.removeOwe(bill)}
                                 onChangeImage={(e, bill) => this.handleChange(e, bill)}
                                 uploading={uploading}
+                                onChangeStatus={(bill, value) => this.handleChangeStatus(bill, value)}
 
                             />
                         ) : (
@@ -293,7 +299,7 @@ export class BillOrderRoute extends RComponent {
                                 </thead>
                                 <tbody>
                                 { bills && sortBy(billsFiltered, "lastTime").map((bill, index) => (
-                                    <tr key={index} className={classnames(new Date(bill.deliverTime).getTime() < new Date().getTime() + 1800000 && bill.status == "Chờ xử lý" &&  "text-danger")}>
+                                    <tr key={index} className={classnames(new Date(bill.deliverTime).getTime() < new Date().getTime() + 1800000 && bill.status == "Chờ xử lý" &&  "text-danger", bill.status == "Khiếu Nại" && "text-warning")}>
                                         <td>
                                             {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
                                             <div>Mã đơn hàng: <b>{bill.bill_number}</b></div>
@@ -383,7 +389,14 @@ export class BillOrderRoute extends RComponent {
 
                                         </td>
                                         <td>
-                                            {bill.status}
+                                            { (bill.status == "Done" || bill.status == "Khiếu Nại") ? (
+                                                <select value={bill.status} onChange={(e) => this.handleChangeStatus(bill, e.target.value)}>
+                                                    <option value="Done">Done</option>
+                                                    <option value="Khiếu Nại">Khiếu Nại</option>
+                                                </select>
+                                            ) : (
+                                                <span>{bill.status}</span>
+                                            )}
                                         </td>
 
                                         <td>
