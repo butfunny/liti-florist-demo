@@ -48,7 +48,9 @@ export class BillOrderRoute extends RComponent {
             bills: null,
             keyword: "",
             logs: [],
-            showOwe: false
+            showOwe: false,
+            statusFiltered: "Tất cả",
+            paymentTypeFiltered: "Tất cả"
         };
 
         premisesInfo.onChange(() => {
@@ -151,7 +153,7 @@ export class BillOrderRoute extends RComponent {
 
     render() {
 
-        let {bills, customers, keyword, from, to, logs, showOwe, max_day_view_report, selectedDate, loading, uploading} = this.state;
+        let {bills, customers, keyword, from, to, logs, showOwe, max_day_view_report, statusFiltered, paymentTypeFiltered, loading, uploading} = this.state;
         let {history} = this.props;
 
         const getCustomer = (id) => customers.find(c => c._id == id) || {};
@@ -160,9 +162,17 @@ export class BillOrderRoute extends RComponent {
 
         const formattedBills = bills ? bills.map(b => ({...b, customer: getCustomer(b.customerId), logs: logs.filter(l => l.bill_id == b._id)})) : [];
 
-        let billsFiltered = bills ? filteredByKeys(formattedBills, ["customer.customerName","customer.customerPhone", "bill_number"], keyword) : bills;
+        let billsFiltered = bills ? filteredByKeys(formattedBills, ["customer.customerName","customer.customerPhone", "bill_number"], keyword) : [];
 
-        if (showOwe) billsFiltered = billsFiltered.filter(b => b.to.paymentType == "Nợ");
+        billsFiltered = billsFiltered.filter(b => {
+            if (statusFiltered != "Tất cả") return b.status == statusFiltered;
+            return true;
+        });
+
+        billsFiltered = billsFiltered.filter(b => {
+            if (paymentTypeFiltered != "Tất cả") return b.to.paymentType == paymentTypeFiltered;
+            return true;
+        });
 
         const user = userInfo.getUser();
 
@@ -170,14 +180,9 @@ export class BillOrderRoute extends RComponent {
         startDay.setDate(startDay.getDate() - max_day_view_report);
         startDay.setHours(0, 0, 0, 0);
 
-        const dates = getDates(startDay, new Date());
 
-        // [
-        //     ["firstname", "lastname", "email"],
-        //     ["Ahmed", "Tomi", "ah@smthing.co.com"],
-        //     ["Raed", "Labes", "rl@smthing.co.com"],
-        //     ["Yezzi", "Min l3b", "ymin@cocococo.com"]
-        // ]
+        const status = ["Tất cả", "Chờ xử lý", "Đang xử lý", "Chờ giao", "Done", "Khiếu Nại"];
+        const paymentTypes = ["Tất cả", "Nợ", "Ship", "Shop", "Thẻ", "Chuyển Khoản", "Free"];
 
 
         return (
@@ -242,13 +247,41 @@ export class BillOrderRoute extends RComponent {
 
                     { bills && !loading && (
                         <CSVLink
-                            data={getCSVData(formattedBills)}
+                            data={getCSVData(billsFiltered)}
                             filename={"baocao.csv"}
                             className="btn btn-primary btn-icon btn-excel btn-sm">
                             <span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>
                             <span className="btn-inner--text">Xuất Excel</span>
                         </CSVLink>
                     )}
+
+                    <div className="form-group">
+                        <div className="control-label">
+                            Trạng thái
+                        </div>
+
+                        <select
+                            className="form-control"
+                            value={statusFiltered} onChange={(e) => this.setState({statusFiltered: e.target.value})}>
+                            {status.map((item, index) => (
+                                <option key={index} value={item}>{item}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="form-group">
+                        <div className="control-label">
+                            Hình thức thanh toán
+                        </div>
+
+                        <select
+                            className="form-control"
+                            value={paymentTypeFiltered} onChange={(e) => this.setState({paymentTypeFiltered: e.target.value})}>
+                            {paymentTypes.map((item, index) => (
+                                <option key={index} value={item}>{item}</option>
+                            ))}
+                        </select>
+                    </div>
 
                     <div className="form-group">
                         <Input
@@ -258,13 +291,6 @@ export class BillOrderRoute extends RComponent {
                         />
                     </div>
 
-                    <div className="form-group">
-                        <Checkbox
-                            value={showOwe}
-                            onChange={(showOwe) => this.setState({showOwe})}
-                            label="Lọc nợ"
-                        />
-                    </div>
 
                     <div className="report-body">
                         { isMobile ? (
