@@ -36,6 +36,7 @@ export class OrderDraft extends React.Component {
     render() {
 
         let {bills} = this.state;
+        let {history} = this.props;
 
         return (
             <Layout activeRoute="Đơn Hàng">

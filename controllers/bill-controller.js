@@ -97,7 +97,9 @@ module.exports = function(app) {
 
     app.get("/bill-draft/:bid", Security.authorDetails, (req, res) => {
         BillDraftDao.findOne({_id: req.params.bid}, (err, bill) => {
-            res.json(bill)
+            CustomerDao.findOne({_id: bill.customerId}, (err, customer) => {
+                res.json({bill, customer: customer ? customer : {}})
+            });
         });
     });
 
