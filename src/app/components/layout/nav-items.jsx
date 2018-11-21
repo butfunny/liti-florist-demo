@@ -27,7 +27,13 @@ export const navItems = (premises, user) => {
         to: "/"
     }, {
         label: "Đơn Hàng",
-        to: "/orders"
+        child: [{
+            label: "Đơn Chính",
+            to: "/orders"
+        }, {
+            label: "Đơn Sẵn",
+            to: "/draft"
+        }]
     }, {
         label: "Khách Hàng",
         child: [{

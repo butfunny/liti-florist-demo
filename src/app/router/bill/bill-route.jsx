@@ -238,47 +238,41 @@ export class BillRoute extends RComponent {
             });
         };
 
-
         getCustomerID().then((customerID) => {
-            billApi.getAllBills({from: today, to: endDay}).then((bills) => {
-                billApi.createBill({
-                    ...bill,
-                    bill_number: `${formatValue(today.getDate())}${formatValue(today.getMonth() + 1)}${today.getFullYear()}${formatValue(bills.length + 1)}`,
-                    customerId: customerID,
-                    base_id: getCurrentPremise(),
-                    status: "Chờ xử lý",
-                    created_by: userInfo.getUser().username,
-                    created: new Date(),
-                    isNewCustomer: !bill.customer._id,
-                    isOwe: bill.to.paymentType == "Nợ"
-                }).then(() => {
-                    confirmModal.alert("Lưu thành công");
-
-                    this.setState({
-                        bill: initBill,
-                        savingDraft: false
-                    }, () => {
-                        let {activePromotions} = this.state;
-                        if (activePromotions.length > 0) {
-                            this.setState({
-                                bill: {
-                                    ...this.state.bill,
-                                    promotion: {
-                                        promotion_id: activePromotions[0]._id,
-                                        name: activePromotions[0].name,
-                                        discount: activePromotions[0].discount,
-                                    }
-
+            billApi.createBillDraft({
+                ...bill,
+                customerId: customerID,
+                base_id: getCurrentPremise(),
+                status: "Chờ xử lý",
+                created_by: userInfo.getUser().username,
+                created: new Date(),
+                isNewCustomer: !bill.customer._id,
+                isOwe: bill.to.paymentType == "Nợ"
+            }).then(() => {
+                confirmModal.alert("Lưu thành công");
+                this.setState({
+                    bill: initBill,
+                    savingDraft: false
+                }, () => {
+                    let {activePromotions} = this.state;
+                    if (activePromotions.length > 0) {
+                        this.setState({
+                            bill: {
+                                ...this.state.bill,
+                                promotion: {
+                                    promotion_id: activePromotions[0]._id,
+                                    name: activePromotions[0].name,
+                                    discount: activePromotions[0].discount,
                                 }
-                            })
-                        }
-                    });
 
-                    this.billCustomer.setVipPay(false);
+                            }
+                        })
+                    }
+                });
+                this.billCustomer.setVipPay(false);
 
-
-                })
             })
+
         });
     }
 

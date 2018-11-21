@@ -1,4 +1,5 @@
 import {api} from "./api";
+import {premisesInfo} from "../security/premises-info";
 
 export const billApi = {
     createBill: (bill) => {
@@ -27,5 +28,17 @@ export const billApi = {
     },
     updateBillImage: (billID, file) => {
         return api.put(`/api/bill/update-image/${billID}`, file)
+    },
+    getBillDraftList: () => {
+        return api.get(`/api/bill-draft-list/${premisesInfo.getActivePremise()._id}`)
+    },
+    getBillDraftById: (id) => {
+        return api.get(`/api/bill-draft/${id}`)
+    },
+    updateBillDraft: (id, data) => {
+        return api.put(`/api/bill-draft/${id}`, data)
+    },
+    removeBillDraft: (id) => {
+        return api.delete(`/api/bill-draft/${id}`)
     }
 };
