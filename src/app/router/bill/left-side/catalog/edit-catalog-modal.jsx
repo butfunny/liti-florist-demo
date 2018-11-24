@@ -73,7 +73,7 @@ export class EditCatalogModal extends React.Component {
                                     <button type="button" className="btn btn-link" onClick={() => onDismiss()}>Đóng</button>
                                     <button type="submit"
                                             disabled={saving}
-                                            className="btn btn-primary btn-icon">
+                                            className="btn btn-info btn-icon">
                                         <span className="btn-inner--text">Cập Nhật</span>
                                         { saving && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
                                     </button>

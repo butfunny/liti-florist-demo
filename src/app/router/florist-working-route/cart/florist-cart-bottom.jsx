@@ -59,7 +59,7 @@ export class FloristCartBottom extends React.Component {
                     </div>
 
                     { selectedItems.length > 0 && (
-                        <button className="btn btn-primary" onClick={() => this.submitOrder()}>
+                        <button className="btn btn-info" onClick={() => this.submitOrder()}>
                             <span className="btn-inner--text">Done</span>
                             { saving && (<span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>)}
                         </button>

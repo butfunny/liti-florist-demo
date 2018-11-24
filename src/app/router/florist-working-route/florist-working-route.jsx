@@ -19,7 +19,7 @@ export class FloristWorkingRoute extends React.Component {
             selectedItems: []
         };
 
-        billApi.getBillById(props.match.params.id).then((bill) => {
+        billApi.getBillById(props.match.params.id).then(({bill}) => {
             this.setState({bill})
         });
 

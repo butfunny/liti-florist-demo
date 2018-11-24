@@ -61,7 +61,7 @@ export class ManagePremisesModal extends React.Component {
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-link" onClick={() => onDismiss()}>Đóng</button>
-                                    <button type="submit" className="btn btn-primary">Lưu</button>
+                                    <button type="submit" className="btn btn-info">Lưu</button>
                                 </div>
                             </Fragment>
                         )}

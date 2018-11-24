@@ -3,6 +3,9 @@ import {Input} from "../../../../components/input/input";
 import {InputNumber} from "../../../../components/input-number/input-number";
 import {Form} from "../../../../components/form/form";
 import {minLength, required} from "../../../../components/form/validations";
+import {AutoCompleteNormal} from "../../../../components/auto-complete/auto-complete-normal";
+import {productApi} from "../../../../api/product-api";
+import uniq from "lodash/uniq";
 
 export class BillAddItem extends React.Component {
 
@@ -10,27 +13,43 @@ export class BillAddItem extends React.Component {
         super(props);
         this.state = {
             price: "",
-            name: ""
-        }
+            name: "",
+            type: "",
+            color: "",
+            types: [],
+            colors: []
+        };
+
+        productApi.getTypes().then((types) => {
+            this.setState({types: types.map(t => t.name)})
+        });
+
+        productApi.getColors().then((colors) => {
+            this.setState({colors: colors.map(t => t.name)})
+        })
     }
 
 
     render() {
 
-        let {price, name} = this.state;
+        let {price, name, type, types, colors, color} = this.state;
         let {onChangeItem, onChangeCatalog, saving} = this.props;
 
 
         let validations = [
+            {"type" : [required("Loại")]},
+            {"color" : [required("Màu")]},
             {"price" : [required("Giá")]},
-            {"name": [required("Tên sản phẩm")]}
+            {"name": [required("Chi tiết")]}
         ];
 
         return (
             <Form
                 onSubmit={() => {
-                    onChangeItem({price, name});
-                    this.setState({price: "", name: ""})
+                    onChangeItem({price, name, type, color});
+                    this.setState({price: "", name: "", type: "", color: "", types: types.concat(type), colors: colors.concat(color)});
+                    productApi.createType({name: type});
+                    productApi.createColor({name: color});
                 }}
                 formValue={this.state}
                 validations={validations}
@@ -39,8 +58,26 @@ export class BillAddItem extends React.Component {
                     <Fragment>
                         <b>Thêm sản phẩm</b>
 
+                        <AutoCompleteNormal
+                            placeholder="Loại"
+                            value={type}
+                            onSelect={(type) => this.setState({type})}
+                            onChange={(type) => this.setState({type})}
+                            displayAs={(type) => type}
+                            defaultList={uniq(types)}
+                        />
+
+                        <AutoCompleteNormal
+                            placeholder="Màu"
+                            value={color}
+                            onSelect={(color) => this.setState({color})}
+                            onChange={(color) => this.setState({color})}
+                            displayAs={(color) => color}
+                            defaultList={uniq(colors)}
+                        />
+
                         <Input
-                            placeholder="Tên sản phẩm"
+                            placeholder="Miêu tả"
                             value={name}
                             onChange={(e) => this.setState({name: e.target.value})}
                         />
@@ -52,15 +89,17 @@ export class BillAddItem extends React.Component {
                         />
                         <div className="form-group">
                             <button type="submit"
-                                className="btn btn-primary btn-sm"
+                                className="btn btn-info btn-sm"
                                 disabled={invalidPaths.length > 0}>
                                 Thêm
                             </button>
 
-                            <button className="btn btn-primary btn-sm btn-icon"
+                            <button className="btn btn-info btn-sm btn-icon"
                                     onClick={() => {
-                                        onChangeCatalog({price, name});
-                                        this.setState({price: "", name: ""})
+                                        onChangeCatalog({price, name, type, color});
+                                        this.setState({price: "", name: "", type: "", color: "", types: types.concat(type), colors: colors.concat(color)});
+                                        productApi.createType({name: type});
+                                        productApi.createColor({name: color});
                                     }}
                                     disabled={invalidPaths.length > 0 || saving}>
                                 <span className="btn-inner--text">Thêm danh mục</span>

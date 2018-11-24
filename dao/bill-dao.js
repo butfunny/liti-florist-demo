@@ -7,7 +7,9 @@ module.exports = mongoose.model('BillDao', {
         price: Number,
         quantity: Number,
         sale: Number,
-        vat: Number
+        vat: Number,
+        type: String,
+        color: String
     }],
     vat: Number,
     deliverTime: Date,

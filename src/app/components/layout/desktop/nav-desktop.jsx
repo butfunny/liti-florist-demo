@@ -42,7 +42,7 @@ export class NavDesktop extends RComponent {
 
 
         return (
-            <nav className="navbar navbar-expand-lg navbar-dark bg-gradient-primary nav-desktop">
+            <nav className="navbar navbar-expand-lg navbar-dark bg-gradient-info nav-desktop">
                 <div className="container">
                     <Link className="navbar-brand" to="/">
                         <img src="/assets/img/liti-logo.png" alt=""/>

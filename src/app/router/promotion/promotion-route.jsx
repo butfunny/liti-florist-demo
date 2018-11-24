@@ -84,7 +84,7 @@ export class PromotionRoute extends React.Component {
                     </div>
                     <hr/>
                     <div className="margin-bottom">
-                        <button type="button" className="btn btn-primary" onClick={() => this.addItem()}>
+                        <button type="button" className="btn btn-info" onClick={() => this.addItem()}>
                             Thêm chiến dịch
                         </button>
                     </div>

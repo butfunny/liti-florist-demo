@@ -91,7 +91,7 @@ export class VipCardReaderModal extends React.Component {
                             <div className="modal-footer">
                                 <button type="button"
                                         className="btn btn-link" onClick={() => onDismiss()}>Đóng</button>
-                                <button type="submit" className="btn btn-primary btn-icon">
+                                <button type="submit" className="btn btn-info btn-icon">
                                     <span className="btn-inner--text">Tìm</span>
                                     { saving && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
                                 </button>

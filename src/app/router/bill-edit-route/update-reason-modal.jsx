@@ -47,7 +47,7 @@ export class UpdateReasonModal extends React.Component {
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-link" onClick={() => onDismiss()}>Đóng</button>
                                     <button type="submit"
-                                            className="btn btn-primary btn-icon">
+                                            className="btn btn-info btn-icon">
                                         <span className="btn-inner--text">Cập Nhật</span>
                                     </button>
                                 </div>

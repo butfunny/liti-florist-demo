@@ -87,7 +87,7 @@ export class VipRoute extends React.Component {
                     <hr/>
 
                     <div className="margin-bottom">
-                        <button type="button" className="btn btn-primary" onClick={() => this.addVip()}>Thêm khách VIP</button>
+                        <button type="button" className="btn btn-info" onClick={() => this.addVip()}>Thêm khách VIP</button>
                     </div>
 
                     <div className="form-group">

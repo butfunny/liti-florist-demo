@@ -255,7 +255,7 @@ export class BillDraft extends React.Component {
                                         />
 
                                         <div className="text-right btn-action">
-                                            <button type="button" className="btn btn-info"
+                                            <button type="button" className="btn btn-warning"
                                                     onClick={() => this.saveDraftBill(bill)}
                                                     disabled={bill.items.length == 0 || savingDraft}
                                             >Cập nhật đơn sẵn {savingDraft && <span className="btn-inner--icon"><i
@@ -264,7 +264,7 @@ export class BillDraft extends React.Component {
 
                                             <button type="button"
                                                     disabled={bill.items.length == 0 || saving || bill.sales.length == 0 || bill.florists.length == 0}
-                                                    className="btn btn-primary btn-icon"
+                                                    className="btn btn-info btn-icon"
                                                     onClick={() => this.submitBill(bill)}>
                                                 <span className="btn-inner--text">Bán Hàng</span>
                                                 {saving && <span className="btn-inner--icon"><i

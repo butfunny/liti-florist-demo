@@ -70,7 +70,7 @@ export class FloristItem extends React.Component {
                                     }}
                                 />
 
-                                <button type="button" className="btn btn-primary btn-sm btn-right" onClick={() => {
+                                <button type="button" className="btn btn-info btn-sm btn-right" onClick={() => {
                                     if (getQtyItem(item.key) <= item.value.length) {
                                         this.handleChange(getQtyItem(item.key) + 1, item.key)
                                     }

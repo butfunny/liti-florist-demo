@@ -163,7 +163,7 @@ export class ManageVipModal extends React.Component {
                         <button type="submit"
                                 disabled={!customer._id || vipAlready || saving || cardNumber.toString().length != 8}
                                 onClick={() => this.submit()}
-                                className="btn btn-primary btn-icon">
+                                className="btn btn-info btn-icon">
                             <span className="btn-inner--text">Lưu</span>
                             { saving && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
                         </button>

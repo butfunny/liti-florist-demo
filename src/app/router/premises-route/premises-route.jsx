@@ -106,7 +106,7 @@ export class PremisesRoute extends React.Component {
                     <hr/>
 
                     <div className="margin-bottom">
-                        <button type="button" className="btn btn-primary" onClick={() => this.addPremises()}>Thêm Cơ Sở</button>
+                        <button type="button" className="btn btn-info" onClick={() => this.addPremises()}>Thêm Cơ Sở</button>
                     </div>
 
 

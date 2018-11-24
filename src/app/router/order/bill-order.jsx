@@ -233,7 +233,7 @@ export class BillOrderRoute extends RComponent {
                         </div>
 
                         <div className="col-md-4">
-                            <button className="btn btn-primary btn-sm btn-get btn-icon"
+                            <button className="btn btn-info btn-sm btn-get btn-icon"
                                     disabled={loading}
                                     onClick={() => this.getBills()}>
                                 Xem Hoá Đơn
@@ -249,7 +249,7 @@ export class BillOrderRoute extends RComponent {
                         <CSVLink
                             data={getCSVData(billsFiltered)}
                             filename={"baocao.csv"}
-                            className="btn btn-primary btn-icon btn-excel btn-sm">
+                            className="btn btn-info btn-icon btn-excel btn-sm">
                             <span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>
                             <span className="btn-inner--text">Xuất Excel</span>
                         </CSVLink>

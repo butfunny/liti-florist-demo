@@ -63,11 +63,11 @@ export class BillCatalog extends React.Component {
                 { filteredCatalogs.map((catalog, index) => (
                     <div className="product" key={index} onClick={() => onAddItem(catalog)}>
                         <div className="product-item">
-                            {catalog.name}
+                            {catalog.type} {catalog.name}
                             <span className="badge">{formatNumber(catalog.price)}</span>
                         </div>
                         <div className="product-edit">
-                            <button className="btn btn-primary btn-sm" onClick={(e) => {
+                            <button className="btn btn-info btn-sm" onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
                                 this.editCatalog(catalog)

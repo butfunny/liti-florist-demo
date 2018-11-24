@@ -164,7 +164,7 @@ export class BillEditRoute extends React.Component {
                                         <div className="text-right btn-action">
                                             <button type="button"
                                                     disabled={saving || invalidPaths.length > 0 || bill.items.length == 0}
-                                                    className="btn btn-primary btn-icon" onClick={() => this.submitBill()}>
+                                                    className="btn btn-info btn-icon" onClick={() => this.submitBill()}>
                                                 <span className="btn-inner--text">Cập nhật</span>
                                                 { saving && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
                                             </button>

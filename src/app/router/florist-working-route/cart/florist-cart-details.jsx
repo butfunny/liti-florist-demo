@@ -83,7 +83,7 @@ export class FloristCartDetails extends React.Component {
                                     }}
                                 />
 
-                                <button type="button" className="btn btn-primary btn-sm btn-right" onClick={() => {
+                                <button type="button" className="btn btn-info btn-sm btn-right" onClick={() => {
                                     if (item.value.length <= items.filter(c => c.name == item.key).length) {
                                         this.handleChange(item.value.length + 1, item.key)
                                     }

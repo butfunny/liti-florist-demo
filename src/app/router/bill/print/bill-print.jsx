@@ -93,7 +93,7 @@ export class BillPrint extends React.Component {
                             <th>Nội dung</th>
                             <th className="text-right">SL</th>
                             <th className="text-right">Đơn Giá</th>
-                            <th className="text-right">Giảm giá</th>
+                            <th className="text-right">KM</th>
                             <th className="text-right">VAT</th>
                         </tr>
                     </thead>
@@ -101,7 +101,7 @@ export class BillPrint extends React.Component {
                     <tbody>
                         {bill.items.map((item, index) => (
                             <tr key={index} style={{fontSize: "12px"}}>
-                                <td>{item.name}</td>
+                                <td>{item.type} {item.name}</td>
                                 <td className="text-right">{item.quantity}</td>
                                 <td className="text-right">{formatNumber(item.price)} </td>
                                 <td className="text-right">{item.sale ? item.sale + '%' : 'Không'}</td>

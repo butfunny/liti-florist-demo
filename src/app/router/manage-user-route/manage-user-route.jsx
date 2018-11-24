@@ -130,7 +130,7 @@ export class ManageUserRoute extends React.Component {
                     <hr/>
 
                     <div className="margin-bottom">
-                        <button type="button" className="btn btn-primary" onClick={() => this.addUser()}>Thêm Nhân
+                        <button type="button" className="btn btn-info" onClick={() => this.addUser()}>Thêm Nhân
                             Viên
                         </button>
                     </div>

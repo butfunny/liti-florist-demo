@@ -22,6 +22,7 @@ require("../controllers/warehouse-controller")(router);
 require("../controllers/promotion-controller")(router);
 require("../controllers/florist-controller")(router);
 require("../controllers/upload-controller")(router);
+require("../controllers/product-type-controller")(router);
 
 app.use("/upload", express.static(__dirname + "/../upload"));
 

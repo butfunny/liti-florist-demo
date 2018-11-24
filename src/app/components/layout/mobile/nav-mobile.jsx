@@ -48,7 +48,7 @@ export class NavMobile extends RComponent {
         const activeID = cache.get("active-premises") || premises[0]._id;
 
         return (
-            <nav className="navbar navbar-expand-lg navbar-dark bg-gradient-primary nav-mobile">
+            <nav className="navbar navbar-expand-lg navbar-dark bg-gradient-info nav-mobile">
                 <div className="container">
                     <a className="navbar-brand" href="#"><img src="/assets/img/liti-logo.png" alt=""/> <sup>{getCurrentPremise()}</sup></a>
                     <button className="navbar-toggler" onClick={() => this.setState({show: true})}>

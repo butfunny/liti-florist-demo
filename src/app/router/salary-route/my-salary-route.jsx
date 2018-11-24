@@ -82,7 +82,7 @@ export class MySalaryRoute extends React.Component {
                         </div>
 
                         <div className="col-md-4">
-                            <button className="btn btn-primary btn-sm btn-get btn-icon"
+                            <button className="btn btn-info btn-sm btn-get btn-icon"
                                     disabled={loading}
                                     onClick={() => this.getBills()}>
                                 Xem Doanh Thu

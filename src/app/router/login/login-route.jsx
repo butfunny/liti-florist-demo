@@ -91,7 +91,7 @@ export class LoginRoute extends React.Component {
                                                 <div className="text-center">
                                                     <button
                                                         disabled={submitting}
-                                                        type="submit" className="btn btn-icon btn-3 btn-primary">
+                                                        type="submit" className="btn btn-icon btn-3 btn-info">
                                                         <span className="btn-inner--text">Đăng Nhập</span>
                                                         { submitting && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
                                                     </button>

@@ -31,7 +31,7 @@ export class BillView extends React.Component {
                             <th>Tên</th>
                             <th className="text-right">SL</th>
                             <th className="text-right">Đơn Giá</th>
-                            <th className="text-right">Giảm giá</th>
+                            <th className="text-right">KM</th>
                             <th className="text-right">VAT</th>
                             <th/>
                         </tr>
@@ -49,7 +49,7 @@ export class BillView extends React.Component {
                         {items.map((item, index) => (
                             <tr key={index}>
                                 <td>
-                                    {item.name}
+                                    {item.type} {item.name}
                                 </td>
 
                                 <td className="no-padding col-action">
@@ -79,7 +79,7 @@ export class BillView extends React.Component {
                                         }}
                                     />
 
-                                    <button type="button" className="btn btn-primary btn-sm btn-right" onClick={() => {
+                                    <button type="button" className="btn btn-info btn-sm btn-right" onClick={() => {
                                         onChangeItems(items.map(i => {
                                             if (i.name == item.name) return {...i, quantity: i.quantity + 1};
                                             return i;
