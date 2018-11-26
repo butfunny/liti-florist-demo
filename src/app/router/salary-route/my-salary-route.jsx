@@ -122,7 +122,7 @@ export class MySalaryRoute extends React.Component {
                                     <div>
                                         { bill.items.map((item, index) => (
                                             <div key={index}>
-                                                <b>{item.quantity}</b> {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>}
+                                                <b>{item.quantity}</b> {item.flowerType} {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>}
                                             </div>
                                         ))}
 

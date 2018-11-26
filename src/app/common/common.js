@@ -88,6 +88,32 @@ export const getSalary = (user, bill) => {
     const billTotal = getTotalBill(bill);
     let charge = 0;
 
+    if (bill.status != "Done") {
+        return 0;
+    }
+
+    let discount = 0;
+
+    for (let item of bill.items) {
+        if (item.sale) discount += item.sale
+    }
+
+    if (bill.vipSaleType == "Giảm giá 5%") {
+        discount += 5;
+    }
+
+    if (bill.vipSaleType == "Giảm giá 20%") {
+        discount += 20;
+    }
+
+    if (bill.promotion) {
+        discount += bill.promotion.discount
+    }
+
+    if (discount > 20) {
+        return 0;
+    }
+
     if (user.role == "florist") {
         const found = bill.florists && bill.florists.find(u => u.user_id == user._id);
         if (found) charge += 3;
