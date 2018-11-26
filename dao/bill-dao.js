@@ -8,7 +8,7 @@ module.exports = mongoose.model('BillDao', {
         quantity: Number,
         sale: Number,
         vat: Number,
-        type: String,
+        flowerType: String,
         color: String
     }],
     vat: Number,

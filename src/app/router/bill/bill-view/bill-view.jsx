@@ -49,7 +49,7 @@ export class BillView extends React.Component {
                         {items.map((item, index) => (
                             <tr key={index}>
                                 <td>
-                                    {item.type} {item.name}
+                                    {item.flowerType} {item.name}
                                 </td>
 
                                 <td className="no-padding col-action">

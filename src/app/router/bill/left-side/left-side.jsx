@@ -30,7 +30,7 @@ export class LeftSide extends RComponent {
         this.onUnmount(() => premisesInfo.removeListener(listener))
     }
 
-    addItem({name, price, type, color}) {
+    addItem({name, price, type, flowerType, color}) {
         let {items, onChangeItems} = this.props;
         let found = items.find(item => item.name == name);
         if (found) {
@@ -43,7 +43,7 @@ export class LeftSide extends RComponent {
             }))
         } else {
             onChangeItems(items.concat({
-                name, price, quantity: 1, vat: 0, type, color
+                name, price, quantity: 1, vat: 0, flowerType: type ? type : flowerType, color
             }))
         }
 
@@ -57,7 +57,7 @@ export class LeftSide extends RComponent {
             confirmModal.alert("Sản phẩm đã được thêm rồi");
         } else {
             this.setState({saving: true});
-            productApi.create({name, price, type, color}).then((catalog) => {
+            productApi.create({name, price, flowerType: type, color}).then((catalog) => {
                 this.setState({saving: false});
                 this.setState({catalogs: catalogs.concat(catalog)})
             });

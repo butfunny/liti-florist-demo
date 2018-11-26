@@ -252,10 +252,10 @@ export class BillOrderRoute extends RComponent {
                         Khách Mới: <b className="text-primary">{bills ? bills.filter(b => b.isNewCustomer).length : 0}</b>
                     </h6>
                     <h6>
-                        Tổng Thu: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => getTotalBill(b))) : 0}</b>
+                        Tổng Thu: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBill(b))) : 0}</b>
                     </h6>
                     <h6>
-                        Tổng Thu chưa bao gồm VAT: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => getTotalBillWithoutVAT(b))) : 0}</b>
+                        Tổng Thu chưa bao gồm VAT: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBillWithoutVAT(b))) : 0}</b>
                     </h6>
 
 
@@ -375,7 +375,7 @@ export class BillOrderRoute extends RComponent {
                                 </thead>
                                 <tbody>
                                 { bills && sortBy(billsFiltered, "lastTime").map((bill, index) => (
-                                    <tr key={index} className={classnames(new Date(bill.deliverTime).getTime() < new Date().getTime() + 1800000 && bill.status == "Chờ xử lý" &&  "text-danger", bill.status == "Khiếu Nại" && "text-warning")}>
+                                    <tr key={index} className={classnames(new Date(bill.deliverTime).getTime() < new Date().getTime() + 1800000 && bill.status == "Chờ xử lý" &&  "text-danger", (bill.status == "Khiếu Nại" || bill.status == "Huỷ Đơn") && "text-warning")}>
                                         <td>
                                             {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
                                             <div>Mã đơn hàng: <b>{bill.bill_number}</b></div>
@@ -402,7 +402,7 @@ export class BillOrderRoute extends RComponent {
                                             <div>
                                                 { bill.items.map((item, index) => (
                                                     <div key={index}>
-                                                        <b>{item.quantity}</b> {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>} {item.vat ? <span className="text-primary"> - {item.vat}% VAT</span> : ""}
+                                                        <b>{item.quantity}</b> {item.flowerType} {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>} {item.vat ? <span className="text-primary"> - {item.vat}% VAT</span> : ""}
                                                     </div>
                                                 ))}
 

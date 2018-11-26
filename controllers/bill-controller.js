@@ -42,7 +42,7 @@ module.exports = function(app) {
         })
     });
 
-    app.post("/bills/:base_id", Security.authorDetails, (req, res) => {
+    app.post("/bills-report/:base_id", Security.authorDetails, (req, res) => {
         BillDao.find({deliverTime: {$gte: req.body.from, $lt: req.body.to}, base_id: req.params.base_id}, function(err, bills) {
             LogsDao.find({bill_id: {$in: bills.map(b => b._id)}}, function (err, logs) {
                 CustomerDao.find({_id: {$in: bills.map(b => b.customerId)}}, (err, customers) => {

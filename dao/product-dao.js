@@ -4,6 +4,6 @@ module.exports = mongoose.model('ProductDao', {
     name: String,
     price: Number,
     base_id: String,
-    type: String,
+    flowerType: String,
     color: String
 }, "products");

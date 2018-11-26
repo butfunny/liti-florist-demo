@@ -9,7 +9,7 @@ export const billApi = {
         return api.post(`/api/bill-draft`, bill)
     },
     getBills: (id, time) => {
-        return api.post(`/api/bills/${id}`, time)
+        return api.post(`/api/bills-report/${id}`, time)
     },
     getAllBills: (time) => {
         return api.post(`/api/bills-all`, time)

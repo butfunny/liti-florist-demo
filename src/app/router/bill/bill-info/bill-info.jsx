@@ -139,9 +139,9 @@ export class BillInfo extends React.Component {
                                 displayAs={(location) => location}
                                 defaultList={
                                     uniq(!bill.customerInfo ? []
-                                        : bill.customerInfo.locations)
+                                        : bill.customerInfo.locations
                                             .filter(l => l.receiverPlace != null && l.receiverPlace.length > 0 && l.receiverPhone && l.receiverPhone.indexOf(to.receiverPhone) > -1)
-                                            .map(l => l.receiverPlace)}
+                                            .map(l => l.receiverPlace))}
                                 info={error ? "Không tính được khoảng cách vui lòng tư tính tiền ship" : distance ? `Khoảng cách ${distance.text}` : ""}
                             />
                         </div>
