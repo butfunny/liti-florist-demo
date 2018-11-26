@@ -19,6 +19,7 @@ import {ShipRoute} from "./ship-route/ship-route";
 import {MySalaryRoute} from "./salary-route/my-salary-route";
 import {OrderDraft} from "./draft/order-draft";
 import {BillDraft} from "./draft/bill-draft";
+import {RequestWareHouse} from "./warehouse/request-warehouse/request-warehouse";
 export class AppRouter extends React.Component {
 
     constructor(props) {
@@ -64,6 +65,7 @@ export class AppRouter extends React.Component {
                         <Route exact path="/salary" component={requireAuthen(MySalaryRoute)} />
                         <Route exact path="/draft" component={requireAuthen(OrderDraft)} />
                         <Route exact path="/edit-bill-draft/:id" component={requireAuthen(BillDraft)} />
+                        <Route exact path="/request-item" component={requireAuthen(RequestWareHouse)} />
                     </Switch>
                 </BrowserRouter>
                 <ModalsRegistry />

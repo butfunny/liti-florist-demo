@@ -50,7 +50,22 @@ export const navItems = (premises, user) => {
         hide: () => false
     }, {
         label: "Kho",
-        to: "/warehouse"
+        child: [{
+            to: "/warehouse",
+            label: "Quản lí kho"
+        }, {
+            to: "/list-request-item",
+            label: "Phiếu yêu cầu xuất kho"
+        }, {
+            to: "/list-return-item",
+            label: "Phiếu yêu cầu trả kho"
+        }, {
+            to: "/request-item",
+            label: "Phiếu xuất kho"
+        }, {
+            to: "/return-item",
+            label: "Phiếu trả kho"
+        }]
     }, {
         label: "Cơ Sở",
         child: [{
