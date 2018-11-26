@@ -137,7 +137,11 @@ export class BillInfo extends React.Component {
                                     this.getDistance(value)
                                 }}
                                 displayAs={(location) => location}
-                                defaultList={uniq(!bill.customerInfo ? [] : bill.customerInfo.locations.map(l => l.receiverPlace)).filter(l => l != null && l.length > 0)}
+                                defaultList={
+                                    uniq(!bill.customerInfo ? []
+                                        : bill.customerInfo.locations)
+                                            .filter(l => l.receiverPlace != null && l.receiverPlace.length > 0 && l.receiverPhone && l.receiverPhone.indexOf(to.receiverPhone) > -1)
+                                            .map(l => l.receiverPlace)}
                                 info={error ? "Không tính được khoảng cách vui lòng tư tính tiền ship" : distance ? `Khoảng cách ${distance.text}` : ""}
                             />
                         </div>
