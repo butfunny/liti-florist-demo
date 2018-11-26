@@ -54,7 +54,7 @@ export class BillInfo extends React.Component {
 
         let {to, onChange, deliverTime, onChangeDeliverTime, bill, onChangeBill, sales, florists, ships} = this.props;
         let {error, distance} = this.state;
-        const paymentTypes = ["Ship", "Shop", "Thẻ", "Chuyển Khoản", "Nợ"];
+        const paymentTypes = ["Ship", "Shop", "Thẻ", "Chuyển Khoản", "Paypal", "Nợ"];
 
 
         return (

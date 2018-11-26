@@ -182,7 +182,7 @@ export class BillOrderRoute extends RComponent {
 
 
         const status = ["Tất cả", "Chờ xử lý", "Đang xử lý", "Chờ giao", "Done", "Khiếu Nại"];
-        const paymentTypes = ["Tất cả", "Nợ", "Ship", "Shop", "Thẻ", "Chuyển Khoản", "Free"];
+        const paymentTypes = ["Tất cả", "Nợ", "Ship", "Shop", "Thẻ", "Chuyển Khoản", "Free", "Paypal"];
 
 
         return (
