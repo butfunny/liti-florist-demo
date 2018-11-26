@@ -160,6 +160,7 @@ export class BillOrderRoute extends RComponent {
                     "Khách cần gấp ko kịp đợi làm ",
                     "Order trước nhưng đến hôm đó ko có hoa như mẫu khách thích",
                     "Khách ok ảnh hoa nhưng ship đến KH không nhận do ảnh đẹp còn thực tế xấu",
+                    "Giá cao",
                     "Khác"
                 ]
             }, {
