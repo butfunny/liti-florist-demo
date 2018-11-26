@@ -15,5 +15,9 @@ export const warehouseApi = {
     },
     getItemsById: (baseID) => {
         return api.get(`/api/warehouse/list-by-id/${baseID}`);
-    }
+    },
+    createRequest: (items) => {
+        return api.post(`/api/request-warehouse/create`, items)
+    },
+
 };

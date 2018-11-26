@@ -2,91 +2,92 @@
   padding 0 !important;
   height: calc(100vh - 55px);
 
-  .florist-working-route {
+}
 
-    height 100%;
-    position relative;
+.florist-working-route {
 
-    .catalog-list {
-      padding 10px 15px;
-      text-transform uppercase;
-      display: flex;
-      overflow-x: auto;
-      flex-wrap: nowrap;
-      -webkit-overflow-scrolling: touch;
-      font-size 13px;
+  height 100%;
+  position relative;
 
-      .catalog-item {
-        flex: 0 0 auto;
-        padding-right 10px;
-        cursor pointer;
-      }
+  .catalog-list {
+    padding 10px 15px;
+    text-transform uppercase;
+    display: flex;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    font-size 13px;
 
+    .catalog-item {
+      flex: 0 0 auto;
+      padding-right 10px;
+      cursor pointer;
     }
 
-    .search-item {
+  }
 
-      padding 0 15px;
-      padding-bottom 10px;
-      border-bottom: 1px solid #edeef3;
+  .search-item {
 
-      .form-control {
-        padding 10px;
-        font-size 13px;
-        height: 30px;
-        border-radius 0;
-      }
-    }
+    padding 0 15px;
+    padding-bottom 10px;
+    border-bottom: 1px solid #edeef3;
 
-    .product-list {
+    .form-control {
+      padding 10px;
       font-size 13px;
-      overflow scroll;
-      -webkit-overflow-scrolling: touch;
-      max-height: calc(100% - 140px);
+      height: 30px;
+      border-radius 0;
+    }
+  }
 
-      .product-item {
+  .product-list {
+    font-size 13px;
+    overflow scroll;
+    -webkit-overflow-scrolling: touch;
+    max-height: calc(100% - 140px);
 
-        .product-title {
-          background #fafafa;
+    .product-item {
+
+      .product-title {
+        background #fafafa;
+        padding 10px 15px;
+      }
+
+      .product-item-wrapper {
+        border-top: 1px solid #edeef3;
+
+        .product {
+          border-bottom: 1px solid #edeef3;
           padding 10px 15px;
-        }
+          position relative;
 
-        .product-item-wrapper {
-          border-top: 1px solid #edeef3;
-
-          .product {
-            border-bottom: 1px solid #edeef3;
-            padding 10px 15px;
-            position relative;
-
-            .action {
-              position absolute;
-              top: 50%;
-              right 15px;
-              transform translate(0, -50%);
+          .action {
+            position absolute;
+            top: 50%;
+            right 15px;
+            transform translate(0, -50%);
 
 
-              .form-group {
-                margin-bottom 0 !important;
-                margin-right: .5rem;
-                display inline-block;
+            .form-group {
+              margin-bottom 0 !important;
+              margin-right: .5rem;
+              display inline-block;
 
-                .form-control {
-                  width: 50px;
-                  font-size: 11px;
-                  padding: 0 12px;
-                  height: 30px;
-                  text-align center;
-                }
-
+              .form-control {
+                width: 50px;
+                font-size: 11px;
+                padding: 0 12px;
+                height: 30px;
+                text-align center;
               }
 
             }
 
-            .title {
-              font-size 16px;
-              font-weight bold;
-            }
+          }
+
+          .title {
+            font-size 16px;
+            font-weight bold;
           }
         }
       }

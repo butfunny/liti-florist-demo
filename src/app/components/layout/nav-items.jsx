@@ -55,16 +55,10 @@ export const navItems = (premises, user) => {
             label: "Quản lí kho"
         }, {
             to: "/list-request-item",
-            label: "Phiếu yêu cầu xuất kho"
-        }, {
-            to: "/list-return-item",
-            label: "Phiếu yêu cầu trả kho"
+            label: "Phiếu xuất nhập kho"
         }, {
             to: "/request-item",
-            label: "Phiếu xuất kho"
-        }, {
-            to: "/return-item",
-            label: "Phiếu trả kho"
+            label: "Phiếu yêu cầu xuất nhập kho"
         }]
     }, {
         label: "Cơ Sở",
