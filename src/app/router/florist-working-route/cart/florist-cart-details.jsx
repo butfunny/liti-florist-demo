@@ -3,6 +3,7 @@ import {InputNumber} from "../../../components/input-number/input-number";
 import {formatNumber, keysToArray} from "../../../common/common";
 import groupBy from "lodash/groupBy";
 import sortBy from "lodash/sortBy";
+import classnames from "classnames";
 export class FloristCartDetails extends React.Component {
 
     constructor(props) {
@@ -29,14 +30,19 @@ export class FloristCartDetails extends React.Component {
                     </div>
                 </div>
 
-                <div className="cart-body">
+                <div className={classnames("cart-body", bill.image && "has-image")}>
+
                     <div className="bill-info bg-secondary">
                         { bill.items.map((item, index) => (
                             <div key={index}>
-                                <b>{item.quantity}</b> {item.name}
+                                <b>{item.quantity}</b> {item.flowerType} {item.name}
                             </div>
                         ))}
                     </div>
+
+                    {bill.image && (
+                        <img src={bill.image} alt=""/>
+                    )}
 
 
                     { sortBy(sortBy(keysToArray(groupBy(selectedItems, i => i.name)), i => i.key), i => {
