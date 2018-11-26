@@ -5,6 +5,8 @@ import classnames from "classnames";
 import {FloristItem} from "../../florist-working-route/florist-item";
 import {premisesInfo} from "../../../security/premises-info";
 import {PreviewRequest} from "./preview-request";
+import {Input} from "../../../components/input/input";
+import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
 export class RequestWareHouse extends React.Component {
 
     constructor(props) {
@@ -14,7 +16,9 @@ export class RequestWareHouse extends React.Component {
             filter: "All",
             keyword: "",
             selectedItems: [],
-            noteType: "Xuất kho"
+            noteType: "Xuất kho",
+            requestName: "",
+            receivedName: ""
         };
 
         warehouseApi.getItems().then((items) => {
@@ -23,12 +27,27 @@ export class RequestWareHouse extends React.Component {
     }
 
     submit(selectedItems) {
-
+        let {noteType, requestName, receivedName} = this.state;
+        const activePremise = premisesInfo.getActivePremise();
+        warehouseApi.createRequest({
+            items: selectedItems,
+            toWarehouse: noteType == "Xuất kho" ? activePremise._id : null,
+            requestName,
+            receivedName,
+            created: new Date()
+        }).then(() => {
+            confirmModal.alert("Gửi phiếu thành công");
+            this.setState({
+                selectedItems: [],
+                requestName: "",
+                receivedName: ""
+            })
+        })
     }
 
     render() {
 
-        let {items, filter, keyword, selectedItems, noteType} = this.state;
+        let {items, filter, keyword, selectedItems, noteType, requestName, receivedName} = this.state;
         const catalogs = ["All", "Hoa Chính", "Hoa Lá Phụ/Lá", "Phụ Kiện", "Cost"];
         const activePremise = premisesInfo.getActivePremise();
 
@@ -99,8 +118,20 @@ export class RequestWareHouse extends React.Component {
                                 onChange={(selectedItems) => this.setState({selectedItems})}
                             />
 
+                            <Input
+                                value={requestName}
+                                onChange={(e) => this.setState({requestName: e.target.value})}
+                                label="Người lập phiếu"
+                            />
+
+                            <Input
+                                value={receivedName}
+                                onChange={(e) => this.setState({receivedName: e.target.value})}
+                                label="Người xác nhận phiếu"
+                            />
+
                             <button type="button"
-                                    disabled={selectedItems.length == 0}
+                                    disabled={selectedItems.length == 0 || requestName.length == 0 || receivedName.length == 0}
                                     className="btn btn-info btn-icon"
                                     onClick={() => this.submit(selectedItems)}>
                                 <span className="btn-inner--text">Xác Nhận</span>
