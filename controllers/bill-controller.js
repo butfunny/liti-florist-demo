@@ -66,7 +66,7 @@ module.exports = function(app) {
     });
 
     app.put("/bill-update-status/:bid", Security.authorDetails, (req, res) => {
-        BillDao.updateOne({_id: req.params.bid}, {status: req.body.status}, (err) => {
+        BillDao.updateOne({_id: req.params.bid}, {status: req.body.status, reason: req.body.reason}, (err) => {
             res.end();
         })
     });

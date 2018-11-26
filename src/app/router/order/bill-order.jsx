@@ -32,6 +32,7 @@ import {configApi} from "../../api/config-api";
 import classnames from "classnames";
 import {uploadApi} from "../../api/upload-api";
 import {getCSVData} from "./excel";
+import {ReportBillModal} from "./report-bill-modal";
 
 export class BillOrderRoute extends RComponent {
 
@@ -146,8 +147,57 @@ export class BillOrderRoute extends RComponent {
     }
 
     handleChangeStatus(bill, value) {
-        this.setState({bills: this.state.bills.map(b => b._id == bill._id ? {...b, status: value} : b)});
-        billApi.updateBillStatus(bill._id, {status: value});
+        if (value == "Huỷ Đơn" || value == "Khiếu Nại") {
+            const reasons = [{
+                type: "Huỷ Đơn",
+                value: [
+                    "Muốn giao hoa từ sớm khoảng 6h nhưng cửa hàng không giao được.",
+                    "Khách order nhưng ko qua lấy, boom cửa hàng",
+                    "Khách không có nhà, người nhận không nhận hoa",
+                    "Khách ko muốn nhận vì giá cao mà ít hoa",
+                    "Khách đặt hoa nhầm ngày",
+                    "Hoa xấu, muộn giờ",
+                    "Khách cần gấp ko kịp đợi làm ",
+                    "Order trước nhưng đến hôm đó ko có hoa như mẫu khách thích",
+                    "Khách ok ảnh hoa nhưng ship đến KH không nhận do ảnh đẹp còn thực tế xấu",
+                    "Khác"
+                ]
+            }, {
+                type: "Khiếu Nại",
+                value: [
+                    "Chất lượng hoa",
+                    "Giá thành hoa",
+                    "Sai sót chủ quan từ sale",
+                    "Sai sót chủ quan từ florist",
+                    "Sai sót chủ quan từ Ship nội bộ",
+                    "Sai sót từ ship ngoài",
+                    "Sai sót từ vận hành/SM",
+                    "Lỗi khách quan",
+                    "Khác"
+                ]
+            }];
+
+            const modal = modals.openModal({
+                content: (
+                    <ReportBillModal
+                        type={value}
+                        list={reasons.find(r => r.type == value).value}
+                        onDismiss={() => modal.close()}
+                        onClose={(reasons) => {
+                            this.setState({bills: this.state.bills.map(b => b._id == bill._id ? {...b, status: value} : b)});
+                            billApi.updateBillStatus(bill._id, {status: value, reason: reasons.join(", ")});
+                            modal.close();
+                        }}
+                    />
+                )
+            })
+
+        } else {
+            this.setState({bills: this.state.bills.map(b => b._id == bill._id ? {...b, status: value} : b)});
+            billApi.updateBillStatus(bill._id, {status: value});
+        }
+
+
     }
 
 
@@ -181,7 +231,7 @@ export class BillOrderRoute extends RComponent {
         startDay.setHours(0, 0, 0, 0);
 
 
-        const status = ["Tất cả", "Chờ xử lý", "Đang xử lý", "Chờ giao", "Done", "Khiếu Nại"];
+        const status = ["Tất cả", "Chờ xử lý", "Đang xử lý", "Chờ giao", "Done", "Khiếu Nại", "Huỷ Đơn"];
         const paymentTypes = ["Tất cả", "Nợ", "Ship", "Shop", "Thẻ", "Chuyển Khoản", "Free", "Paypal"];
 
 
@@ -415,10 +465,11 @@ export class BillOrderRoute extends RComponent {
 
                                         </td>
                                         <td>
-                                            { (bill.status == "Done" || bill.status == "Khiếu Nại") ? (
+                                            { (bill.status == "Done" || bill.status == "Khiếu Nại" || bill.status == "Huỷ Đơn") ? (
                                                 <select value={bill.status} onChange={(e) => this.handleChangeStatus(bill, e.target.value)}>
                                                     <option value="Done">Done</option>
                                                     <option value="Khiếu Nại">Khiếu Nại</option>
+                                                    <option value="Huỷ Đơn">Huỷ Đơn</option>
                                                 </select>
                                             ) : (
                                                 <span>{bill.status}</span>
