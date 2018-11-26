@@ -4,6 +4,7 @@ import {warehouseApi} from "../../../api/warehouse-api";
 import classnames from "classnames";
 import {FloristItem} from "../../florist-working-route/florist-item";
 import {premisesInfo} from "../../../security/premises-info";
+import {PreviewRequest} from "./preview-request";
 export class RequestWareHouse extends React.Component {
 
     constructor(props) {
@@ -19,6 +20,10 @@ export class RequestWareHouse extends React.Component {
         warehouseApi.getItems().then((items) => {
             this.setState({items: items})
         })
+    }
+
+    submit(selectedItems) {
+
     }
 
     render() {
@@ -38,7 +43,7 @@ export class RequestWareHouse extends React.Component {
 
                     <div className="form-group">
                         <select className="form-control" value={noteType} onChange={(e) => {
-                            this.setState({noteType: e.target.value})
+                            this.setState({noteType: e.target.value, selectedItems: []})
                         }}>
                             <option value="Xuất kho">Xuất kho</option>
                             <option value="Nhập kho">Nhập kho</option>
@@ -88,7 +93,18 @@ export class RequestWareHouse extends React.Component {
                         </div>
 
                         <div className="col col-md-6">
-                            1213
+                            <PreviewRequest
+                                items={items.filter(i =>  noteType == "Xuất kho" ? !i.warehouseID : i.warehouseID == activePremise._id)}
+                                selectedItems={selectedItems}
+                                onChange={(selectedItems) => this.setState({selectedItems})}
+                            />
+
+                            <button type="button"
+                                    disabled={selectedItems.length == 0}
+                                    className="btn btn-info btn-icon"
+                                    onClick={() => this.submit(selectedItems)}>
+                                <span className="btn-inner--text">Xác Nhận</span>
+                            </button>
                         </div>
                     </div>
                 </div>
