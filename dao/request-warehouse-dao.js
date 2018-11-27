@@ -5,5 +5,7 @@ module.exports = mongoose.model('RequestWarehouseDao', {
     toWarehouse: String,
     requestName: String,
     receivedName: String,
-    created: Date
+    created: Date,
+    status: String,
+    reason: String
 }, "request_warehouse");

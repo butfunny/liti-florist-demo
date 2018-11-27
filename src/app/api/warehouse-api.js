@@ -19,5 +19,8 @@ export const warehouseApi = {
     createRequest: (items) => {
         return api.post(`/api/request-warehouse/create`, items)
     },
+    getRequests: () => {
+        return api.get(`/api/request-warehouse/list`);
+    }
 
 };
