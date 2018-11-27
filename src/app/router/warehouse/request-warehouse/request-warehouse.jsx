@@ -7,7 +7,8 @@ import {premisesInfo} from "../../../security/premises-info";
 import {PreviewRequest} from "./preview-request";
 import {Input} from "../../../components/input/input";
 import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
-export class RequestWareHouse extends React.Component {
+import {RComponent} from "../../../components/r-component/r-component";
+export class RequestWareHouse extends RComponent {
 
     constructor(props) {
         super(props);
@@ -20,6 +21,10 @@ export class RequestWareHouse extends React.Component {
             requestName: "",
             receivedName: ""
         };
+
+        premisesInfo.onChange(() => {
+            this.setState({selectedItems: []});
+        });
 
         warehouseApi.getItems().then((items) => {
             this.setState({items: items})
