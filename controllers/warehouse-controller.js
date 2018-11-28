@@ -71,13 +71,16 @@ module.exports = (app) => {
     app.post("/accept-request/:id", Security.authorDetails, (req, res) => {
         RequestWarehouseDao.findOne({_id: req.params.id}, (err, request) => {
             WareHouseDao.find({}, (err, items) => {
-                let requestNames = items.filter(i => request.items.indexOf(i._id) > -1);
+                let requestNames = items.filter(i => request.items.indexOf(i._id) > -1).map(i => i.name);
                 let updatedIds = [];
                 for (let name of requestNames) {
-                    updatedIds.push(items.find(i => i.name == name && !i.warehouseID && updatedIds.indexOf(i._id) > -1))
+                    let found = items.find(i => i.name == name && !i.warehouseID && updatedIds.indexOf(i._id) == -1);
+                    if (found) {
+                        updatedIds.push(found._id);
+                    }
                 }
 
-                WareHouseDao.update({_id: {$in: updatedIds}}, {warehouseID: request.toWarehouse, warehouseName: req.body.warehouseName}, {multi: true}, () => {
+                WareHouseDao.updateMany({_id: {$in: updatedIds}}, {warehouseID: request.toWarehouse, warehouseName: req.body.warehouseName}, {multi: true}, () => {
                     RequestWarehouseDao.updateOne({_id: req.params.id}, {status: "Xác nhận"}, () => {
                         res.end();
                     });
@@ -90,13 +93,16 @@ module.exports = (app) => {
     app.post("/accept-return/:id", Security.authorDetails, (req, res) => {
         RequestWarehouseDao.findOne({_id: req.params.id}, (err, request) => {
             WareHouseDao.find({}, (err, items) => {
-                let requestNames = items.filter(i => request.items.indexOf(i._id) > -1);
+                let requestNames = items.filter(i => request.items.indexOf(i._id) > -1).map(i => i.name);
                 let updatedIds = [];
                 for (let name of requestNames) {
-                    updatedIds.push(items.find(i => i.name == name && i.warehouseID == request.toWarehouse && updatedIds.indexOf(i._id) > -1))
+                    let found = items.find(i => i.name == name && i.warehouseID == request.fromWarehouse && updatedIds.indexOf(i._id) == -1);
+                    if (found) {
+                        updatedIds.push(found._id);
+                    }
                 }
 
-                WareHouseDao.update({_id: {$in: updatedIds}}, {warehouseID: null, warehouseName: null}, {multi: true}, () => {
+                WareHouseDao.updateMany({_id: {$in: updatedIds}}, {warehouseID: null, warehouseName: null}, {multi: true}, (err) => {
                     RequestWarehouseDao.updateOne({_id: req.params.id}, {status: "Xác nhận"}, () => {
                         res.end();
                     });

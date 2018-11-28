@@ -39,6 +39,7 @@ export class RequestWareHouse extends RComponent {
             toWarehouse: noteType == "Xuất kho" ? activePremise._id : null,
             requestName,
             receivedName,
+            fromWarehouse: noteType == "Xuất kho" ? null : activePremise._id,
             created: new Date()
         }).then(() => {
             confirmModal.alert("Gửi phiếu thành công");

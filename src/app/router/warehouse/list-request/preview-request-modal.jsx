@@ -12,7 +12,8 @@ export class PreviewRequestModal extends React.Component {
         super(props);
         this.state = {
             reason: props.request.reason || "",
-            showError: false
+            showError: false,
+            saving: false
         }
     }
 
@@ -24,9 +25,24 @@ export class PreviewRequestModal extends React.Component {
         })
     }
 
+    submit() {
+        let {request, onClose} = this.props;
+        const premises = premisesInfo.getPremises();
+        this.setState({saving: true});
+        if (request.toWarehouse) {
+            warehouseApi.acceptRequest(request._id, {warehouseName: premises.find(p => p._id == request.toWarehouse).name}).then(() => {
+                onClose({...request, status: "Xác nhận"})
+            })
+        } else {
+            warehouseApi.acceptReturn(request._id, ).then(() => {
+                onClose({...request, status: "Xác nhận"})
+            })
+        }
+    }
+
     render() {
         let {items, request} = this.props;
-        let {reason, showError} = this.state;
+        let {reason, showError, saving} = this.state;
         const premises = premisesInfo.getPremises();
         const getItems = (ids) => items.filter(i => ids.indexOf(i._id) > -1);
 
@@ -109,8 +125,9 @@ export class PreviewRequestModal extends React.Component {
                         }}>
                             Từ Chối
                         </button>
-                        <button className="btn btn-outline-primary btn-sm" onClick={() => this.submit()}>
-                            Xác Nhận
+                        <button className="btn btn-outline-primary btn-sm btn-icon" onClick={() => this.submit()}>
+                            <span className="btn-inner--text">Xác Nhận</span>
+                            { saving && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
                         </button>
                     </div>
                 )}

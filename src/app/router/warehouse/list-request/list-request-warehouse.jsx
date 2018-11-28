@@ -38,8 +38,10 @@ export class ListRequestWarehouse extends React.Component {
                     items={items}
                     onClose={(updatedRequest) => {
                         let {requests} = this.state;
-                        this.setState({requests: requests.map(r => r._id == updatedRequest._id ? updatedRequest: r)});
-                        modal.close();
+                        warehouseApi.getItems().then((items) => {
+                            this.setState({requests: requests.map(r => r._id == updatedRequest._id ? updatedRequest: r), items});
+                            modal.close();
+                        })
                     }}
                     onDismiss={() => modal.close()}
                 />
@@ -85,7 +87,7 @@ export class ListRequestWarehouse extends React.Component {
                                         </span>
                                     ) : (
                                         <span>
-                                            Kho {premises.find(p => p._id == items.find(i => i._id == request.items[0]).warehouseID).name} <i className="fa fa-arrow-right text-danger"/> Kho tổng
+                                            Kho {premises.find(p => p._id == request.fromWarehouse).name} <i className="fa fa-arrow-right text-danger"/> Kho tổng
                                         </span>
                                     )}
                                 </td>
