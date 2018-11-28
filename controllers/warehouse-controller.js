@@ -61,6 +61,49 @@ module.exports = (app) => {
     });
 
 
+    app.post("/reject-request/:id", Security.authorDetails, (req, res) => {
+        RequestWarehouseDao.updateOne({_id: req.params.id}, {status: "Từ chối", reason: req.body.reason}, () => {
+            res.end();
+        })
+    });
 
+
+    app.post("/accept-request/:id", Security.authorDetails, (req, res) => {
+        RequestWarehouseDao.findOne({_id: req.params.id}, (err, request) => {
+            WareHouseDao.find({}, (err, items) => {
+                let requestNames = items.filter(i => request.items.indexOf(i._id) > -1);
+                let updatedIds = [];
+                for (let name of requestNames) {
+                    updatedIds.push(items.find(i => i.name == name && !i.warehouseID && updatedIds.indexOf(i._id) > -1))
+                }
+
+                WareHouseDao.update({_id: {$in: updatedIds}}, {warehouseID: request.toWarehouse, warehouseName: req.body.warehouseName}, {multi: true}, () => {
+                    RequestWarehouseDao.updateOne({_id: req.params.id}, {status: "Xác nhận"}, () => {
+                        res.end();
+                    });
+                })
+
+            })
+        })
+    });
+
+    app.post("/accept-return/:id", Security.authorDetails, (req, res) => {
+        RequestWarehouseDao.findOne({_id: req.params.id}, (err, request) => {
+            WareHouseDao.find({}, (err, items) => {
+                let requestNames = items.filter(i => request.items.indexOf(i._id) > -1);
+                let updatedIds = [];
+                for (let name of requestNames) {
+                    updatedIds.push(items.find(i => i.name == name && i.warehouseID == request.toWarehouse && updatedIds.indexOf(i._id) > -1))
+                }
+
+                WareHouseDao.update({_id: {$in: updatedIds}}, {warehouseID: null, warehouseName: null}, {multi: true}, () => {
+                    RequestWarehouseDao.updateOne({_id: req.params.id}, {status: "Xác nhận"}, () => {
+                        res.end();
+                    });
+                })
+
+            })
+        })
+    })
 
 };

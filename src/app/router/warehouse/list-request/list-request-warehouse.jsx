@@ -36,6 +36,12 @@ export class ListRequestWarehouse extends React.Component {
                 <PreviewRequestModal
                     request={request}
                     items={items}
+                    onClose={(updatedRequest) => {
+                        let {requests} = this.state;
+                        this.setState({requests: requests.map(r => r._id == updatedRequest._id ? updatedRequest: r)});
+                        modal.close();
+                    }}
+                    onDismiss={() => modal.close()}
                 />
             )
         })
@@ -91,7 +97,8 @@ export class ListRequestWarehouse extends React.Component {
                                     ))}
                                 </td>
                                 <td>
-                                    {request.status ? request.status : "Chờ xử lý"}
+                                    {request.status ? <span className={classnames(request.status == "Từ chối" && "text-danger", request.status == "Xác nhận" && "text-success")}>{request.status}</span> : "Chờ xử lý"}
+                                    {request.status == "Từ chối" && <div className="text-danger">{request.reason}</div>}
                                 </td>
                                 <td>
                                     <button className="btn btn-outline-primary btn-sm"

@@ -5,18 +5,28 @@ import {keysToArray} from "../../../common/common";
 import groupBy from "lodash/groupBy";
 import classnames from "classnames";
 import {Input} from "../../../components/input/input";
+import {warehouseApi} from "../../../api/warehouse-api";
 export class PreviewRequestModal extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            reason: ""
+            reason: props.request.reason || "",
+            showError: false
         }
+    }
+
+    reject() {
+        let {request, onClose} = this.props;
+        let {reason} = this.state;
+        warehouseApi.rejectRequest(request._id, {reason}).then(() => {
+            onClose({...request, status: "Từ chối", reason});
+        })
     }
 
     render() {
         let {items, request} = this.props;
-        let {reason} = this.state;
+        let {reason, showError} = this.state;
         const premises = premisesInfo.getPremises();
         const getItems = (ids) => items.filter(i => ids.indexOf(i._id) > -1);
 
@@ -83,20 +93,27 @@ export class PreviewRequestModal extends React.Component {
                     </table>
 
                     <Input
+                        disabled={request.status}
                         label="Lí do (Nếu từ chối)"
                         value={reason}
                         onChange={(e) => this.setState({reason: e.target.value})}
+                        error={showError && reason.length == 0 ? "Lí do không được để trống khi từ chối" : ""}
                     />
                 </div>
 
-                <div className="modal-footer">
-                    <button className="btn btn-outline-danger btn-sm">
-                        Từ Chối
-                    </button>
-                    <button className="btn btn-outline-primary btn-sm">
-                        Xác Nhận
-                    </button>
-                </div>
+                { !request.status && (
+                    <div className="modal-footer">
+                        <button className="btn btn-outline-danger btn-sm" onClick={() => {
+                            this.setState({showError: true});
+                            reason.length > 0 && this.reject();
+                        }}>
+                            Từ Chối
+                        </button>
+                        <button className="btn btn-outline-primary btn-sm" onClick={() => this.submit()}>
+                            Xác Nhận
+                        </button>
+                    </div>
+                )}
             </div>
         );
     }

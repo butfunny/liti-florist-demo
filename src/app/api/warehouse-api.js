@@ -21,6 +21,15 @@ export const warehouseApi = {
     },
     getRequests: () => {
         return api.get(`/api/request-warehouse/list`);
+    },
+    rejectRequest: (id, data) => {
+        return api.post(`/api/reject-request/${id}`, data);
+    },
+    acceptRequest: (id, data) => {
+        return api.post(`/api/accept-request/${id}`, data)
+    },
+    acceptReturn: (id) => {
+        return api.post(`/api/accept-return/${id}`)
     }
 
 };
