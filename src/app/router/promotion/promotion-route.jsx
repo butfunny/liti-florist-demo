@@ -20,10 +20,16 @@ export class PromotionRoute extends React.Component {
     }
 
     addItem() {
+
+        let startDate = new Date();
+        startDate.setHours(0,0,0,0);
+        let endDate = new Date();
+        endDate.setHours(23,59,59,0);
+
         const modal = modals.openModal({
             content: (
                 <ManagePromotionModal
-                    promotion={{dates: [new Date()], name: "", discount: 0}}
+                    promotion={{from: startDate, to: endDate, name: "", discount: 0}}
                     onDismiss={() => modal.close()}
                     onClose={(promotion) => {
                         let {promotions} = this.state;
@@ -93,7 +99,7 @@ export class PromotionRoute extends React.Component {
                         <thead>
                         <tr>
                             <th scope="col">Thông Tin</th>
-                            <th scope="col">Các Ngày Áp Dụng</th>
+                            <th scope="col">Ngày Áp Dụng</th>
                             <th scope="col">Tác Vụ</th>
                         </tr>
                         </thead>
@@ -107,11 +113,7 @@ export class PromotionRoute extends React.Component {
                                     </div>
                                 </td>
                                 <td>
-                                    <ul>
-                                        { item.dates.map((date, index) => (
-                                            <li key={index}>{moment(date).format("DD/MM/YYYY")}</li>
-                                        ))}
-                                    </ul>
+                                    {moment(item.from).format("DD/MM/YYYY")} - {moment(item.to).format("DD/MM/YYYY")}
                                 </td>
                                 <td>
                                     <button className="btn btn-outline-primary btn-sm"

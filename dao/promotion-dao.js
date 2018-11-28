@@ -2,6 +2,7 @@ let mongoose = require('mongoose');
 
 module.exports = mongoose.model('PromotionDao', {
     name: String,
-    dates: [Date],
+    from: Date,
+    to: Date,
     discount: Number
 }, "promotion");

@@ -22,11 +22,16 @@ export class ManagePromotionModal extends React.Component {
         const validations = [
             {"name" : [required("Tên chiến dịch")]},
             {"discount" : [required("Giảm Giá"), minVal("Giảm Giá", 0), maxVal("Giảm Giá", 100)]},
-            {"dates" : [(val) => ({
-                    text: "Phải chọn ít nhất 1 ngày",
-                    valid: val.length > 0
+            {"from" : [(val) => ({
+                    text: "Ngày bắt đầu phải nhỏ hơn ngày kết thúc",
+                    valid: val.getTime() <= promotion.to.getTime()
                 })
             ]},
+            {"to" : [(val) => ({
+                    text: "Ngày kết thúc phải lớn hơn ngày bắt đầu thúc",
+                    valid: val.getTime() >= promotion.from.getTime()
+                })
+            ]}
         ];
 
         return (
@@ -65,35 +70,31 @@ export class ManagePromotionModal extends React.Component {
 
                                     <div className="form-group">
                                         <label className="control-label">
-                                            Áp dụng cho những ngày
+                                            Từ Ngày
                                         </label>
 
-                                        { promotion.dates.map((date, index) => (
-                                            <div className="row"
-                                                 key={index}
-                                            >
-                                                <div className="col-md-10">
-                                                    <DatePicker
-                                                        value={new Date(date)}
-                                                        onChange={(date) => this.setState({promotion: {...promotion, dates: promotion.dates.map((a, i) => i == index ? date : a)}})}
-                                                    />
-                                                </div>
-
-                                                <div className="col-md-2">
-                                                    <button className="btn btn-outline-danger btn-sm"
-                                                            onClick={() => this.setState({promotion: {...promotion, dates: promotion.dates.filter((a, i) => i != index)}})}>
-                                                        <i className="fa fa-trash"/>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ))}
+                                        <DatePicker
+                                            value={new Date(promotion.from)}
+                                            onChange={(date) => this.setState({promotion: {...promotion, from: date}})}
+                                        />
 
                                         <div className="text-danger add-date">
-                                            {getInvalidByKey("dates")}
+                                            {getInvalidByKey("from")}
                                         </div>
+                                    </div>
 
-                                        <div>
-                                            <b className="text-primary add-date" onClick={() =>  this.setState({promotion: {...promotion, dates: promotion.dates.concat(new Date())}})}>Thêm ngày</b>
+                                    <div className="form-group">
+                                        <label className="control-label">
+                                            Tới Ngày
+                                        </label>
+
+                                        <DatePicker
+                                            value={new Date(promotion.to)}
+                                            onChange={(date) => this.setState({promotion: {...promotion, to: date}})}
+                                        />
+
+                                        <div className="text-danger add-date">
+                                            {getInvalidByKey("to")}
                                         </div>
                                     </div>
                                 </div>

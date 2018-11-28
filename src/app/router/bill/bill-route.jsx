@@ -76,12 +76,7 @@ export class BillRoute extends RComponent {
         promotionApi.get().then((promotions) => {
             let activePromotions = [];
             for (let promotion of promotions) {
-                let isHave = promotion.dates.find((d) => {
-                    let date = new Date(d);
-                    const today = new Date();
-                    return date.getDate() == today.getDate() && date.getMonth() == today.getMonth() && date.getFullYear() == today.getFullYear()
-                });
-
+                let isHave = new Date(promotion.from).getTime() < new Date().getTime() && new Date().getTime() < new Date(promotion.to).getTime();
                 if (isHave) activePromotions.push(promotion)
             }
 
