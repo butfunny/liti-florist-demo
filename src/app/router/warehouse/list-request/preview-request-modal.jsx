@@ -131,7 +131,7 @@ export class PreviewRequestModal extends React.Component {
                         error={showError && reason.length == 0 ? "Lí do không được để trống khi từ chối" : ""}
                     />
 
-                    {isError() && (
+                    {isError() && !request.status && (
                         <div className="text-danger">
                             Số lượng trong kho không đủ để thực hiện.
                         </div>
