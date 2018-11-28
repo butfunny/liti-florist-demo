@@ -10,18 +10,18 @@ export class EditWareHouseItemModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: props.updatedItems[0].name,
+            name: props.defaultItem.name,
             qty: props.updatedItems.length,
-            catalog: props.updatedItems[0].catalog,
+            catalog: props.defaultItem.catalog,
             saving: false,
-            oriPrice: props.updatedItems[0].oriPrice,
-            price: props.updatedItems[0].price
+            oriPrice: props.defaultItem.oriPrice,
+            price: props.defaultItem.price
         }
     }
 
 
     submit() {
-        let {updatedItems} = this.props;
+        let {updatedItems, defaultItem} = this.props;
         let items = [...this.props.items];
         let {name, catalog, oriPrice, price, qty} = this.state;
 
@@ -29,7 +29,7 @@ export class EditWareHouseItemModal extends React.Component {
             ids: updatedItems.map(i => i._id),
             update: {name, catalog, oriPrice, price}
         }).then(() => {
-            items = items.map(i => i.name == updatedItems[0].name ? {...i, name, catalog, oriPrice, price} : i);
+            items = items.map(i => i.name == defaultItem.name ? {...i, name, catalog, oriPrice, price} : i);
             if (qty > updatedItems.length) {
                 warehouseApi.createItem(generateDatas({name, catalog, oriPrice, price}, qty - updatedItems.length)).then((createdItems) => {
                     this.props.onClose(items.concat(createdItems))
@@ -51,13 +51,15 @@ export class EditWareHouseItemModal extends React.Component {
 
     render() {
 
-        let {items, onDismiss, updatedItems} = this.props;
+        let {items, onDismiss, defaultItem} = this.props;
         let {name, qty, catalog, saving, oriPrice, price} = this.state;
+
+
 
         const validations = [{
             name: [required("Tên sản phẩm"), (val) => ({
                 text: "Tên đã trùng",
-                valid: items.filter(i => i.name != updatedItems[0].name).map(i => i.name.trim()).indexOf(val.trim()) == -1
+                valid: items.filter(i => i.name != defaultItem.name).map(i => i.name.trim()).indexOf(val.trim()) == -1
             })
             ],
             qty: [minVal("Số lượng", 1)],
@@ -71,7 +73,7 @@ export class EditWareHouseItemModal extends React.Component {
             <div className="app-modal-box">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title">Sửa {updatedItems[0].name}</h5>
+                        <h5 className="modal-title">Sửa {defaultItem.name}</h5>
                     </div>
 
                     <Form

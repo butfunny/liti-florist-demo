@@ -16,14 +16,18 @@ export class WareHouseFullView extends React.Component {
     editItem(updatedItems) {
         let {items, onChange} = this.props;
 
+        let selectedItems = updatedItems.filter(i => !i.warehouseID);
+
         const modal = modals.openModal({
             content: (
                 <EditWareHouseItemModal
-                    updatedItems={updatedItems}
+                    updatedItems={selectedItems}
+                    defaultItem={updatedItems[0]}
                     items={items}
-                    onClose={(updatedItems) => {
-                        onChange(updatedItems);
-                        modal.close();
+                    onClose={() => {
+                        onChange().then(() => {
+                            modal.close();
+                        });
                     }}
                     onDismiss={() => modal.close()}
                 />
@@ -40,46 +44,6 @@ export class WareHouseFullView extends React.Component {
             const removedIds = removedItems.map(i => i._id);
             onChange(items.filter(p => removedIds.indexOf(p._id) == -1));
             warehouseApi.removeItems({ids: removedIds})
-        })
-    }
-
-    transferItem(transferItems) {
-        const modal = modals.openModal({
-            content: (
-                <TransferItemModal
-                    items={transferItems}
-                    onDismiss={() => modal.close()}
-                    onClose={(updatedItems) => {
-                        let {items, onChange} = this.props;
-                        onChange(items.map(i => {
-                            let updatedItem = updatedItems.find(item => item._id == i._id);
-                            if (updatedItem) return updatedItem;
-                            return i;
-                        }));
-                        modal.close();
-                    }}
-                />
-            )
-        })
-    }
-
-    returnItem(returnItems) {
-        const modal = modals.openModal({
-            content: (
-                <ReturnItemModal
-                    items={returnItems}
-                    onDismiss={() => modal.close()}
-                    onClose={(updatedItems) => {
-                        let {items, onChange} = this.props;
-                        onChange(items.map(i => {
-                            let updatedItem = updatedItems.find(item => item._id == i._id);
-                            if (updatedItem) return updatedItem;
-                            return i;
-                        }));
-                        modal.close();
-                    }}
-                />
-            )
         })
     }
 
@@ -133,7 +97,7 @@ export class WareHouseFullView extends React.Component {
                         </td>
                         <td>
                             <button className="btn btn-outline-primary btn-sm"
-                                    onClick={() => this.editItem(item.value.filter(i => !i.warehouseID))}>
+                                    onClick={() => this.editItem(item.value)}>
                                 <i className="fa fa-pencil"/>
                             </button>
                             <button className="btn btn-outline-danger btn-sm"

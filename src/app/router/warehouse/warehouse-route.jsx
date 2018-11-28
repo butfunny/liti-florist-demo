@@ -25,6 +25,13 @@ export class WarehouseRoute extends React.Component {
     }
 
 
+    refresh() {
+        return warehouseApi.getItems().then((items) => {
+            this.setState({items});
+            return Promise.resolve();
+        });
+    }
+
     addItem() {
         let {items} = this.state;
 
@@ -105,11 +112,8 @@ export class WarehouseRoute extends React.Component {
                     ) : (
                         <WareHouseFullView
                             items={itemsFiltered}
-                            onChange={(updatedItems) => this.setState({items: items.map(i => {
-                                    let updatedItem = updatedItems.find(item => item._id == i._id);
-                                    if (updatedItem) return updatedItem;
-                                    return i;
-                            })})}
+                            onChange={() => this.refresh()}
+
                         />
                     )}
 
