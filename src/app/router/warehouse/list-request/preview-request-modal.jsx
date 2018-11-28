@@ -45,7 +45,20 @@ export class PreviewRequestModal extends React.Component {
         let {reason, showError, saving} = this.state;
         const premises = premisesInfo.getPremises();
         const getItems = (ids) => items.filter(i => ids.indexOf(i._id) > -1);
+        const isError = () => {
+            let selectedItems = keysToArray(groupBy(getItems(request.items), i => i.name));
+            for (let item of selectedItems) {
+                if (request.toWarehouse) {
+                    if (item.value.length > items.filter(i => i.name == item.key && !i.warehouseID).length) {
+                        return true;
+                    }
+                } else {
+                    if (item.value.length > items.filter(i => i.name == item.key && i.warehouseID && i.warehouseID == premises.find(p => p._id == request.fromWarehouse)._id).length) return true;
+                }
+            }
 
+            return false;
+        };
 
         return (
             <div className="preview-request-modal app-modal-box">
@@ -61,7 +74,7 @@ export class PreviewRequestModal extends React.Component {
                             </span>
                         ) : (
                             <span>
-                                Kho {premises.find(p => p._id == items.find(i => i._id == request.items[0]).warehouseID).name} <i className="fa fa-arrow-right text-danger"/> Kho tổng
+                                Kho {premises.find(p => p._id == request.fromWarehouse).name} <i className="fa fa-arrow-right text-danger"/> Kho tổng
                             </span>
                         )}
                     </div>
@@ -99,7 +112,9 @@ export class PreviewRequestModal extends React.Component {
                                             <span className={classnames(item.value.length > items.filter(i => i.name == item.key && !i.warehouseID).length && "text-danger")}>{items.filter(i => i.name == item.key && !i.warehouseID).length}</span>
                                         ) :
                                         (
-                                            <span className={classnames(item.value.length > items.filter(i => i.name == item.key && i.warehouseID && i.warehouseID == premises.find(p => p._id == items.find(i => i._id == request.items[0]).warehouseID)._id).length && "text-danger")}>{items.filter(i => i.name == item.key && i.warehouseID && i.warehouseID == premises.find(p => p._id == items.find(i => i._id == request.items[0]).warehouseID)._id).length}</span>
+                                            <span className={classnames(item.value.length > items.filter(i => i.name == item.key && i.warehouseID && i.warehouseID == premises.find(p => p._id == request.fromWarehouse)._id).length && "text-danger")}>
+                                                {items.filter(i => i.name == item.key && i.warehouseID && i.warehouseID == premises.find(p => p._id == request.fromWarehouse)._id).length}
+                                                </span>
                                         )
                                     }
                                 </td>
@@ -115,7 +130,14 @@ export class PreviewRequestModal extends React.Component {
                         onChange={(e) => this.setState({reason: e.target.value})}
                         error={showError && reason.length == 0 ? "Lí do không được để trống khi từ chối" : ""}
                     />
+
+                    {isError() && (
+                        <div className="text-danger">
+                            Số lượng trong kho không đủ để thực hiện.
+                        </div>
+                    )}
                 </div>
+
 
                 { !request.status && (
                     <div className="modal-footer">
@@ -125,10 +147,15 @@ export class PreviewRequestModal extends React.Component {
                         }}>
                             Từ Chối
                         </button>
-                        <button className="btn btn-outline-primary btn-sm btn-icon" onClick={() => this.submit()}>
-                            <span className="btn-inner--text">Xác Nhận</span>
-                            { saving && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
-                        </button>
+
+                        { !isError() && (
+                            <button className="btn btn-outline-primary btn-sm btn-icon" onClick={() => this.submit()}>
+                                <span className="btn-inner--text">Xác Nhận</span>
+                                { saving && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
+                            </button>
+                        )}
+
+
                     </div>
                 )}
             </div>

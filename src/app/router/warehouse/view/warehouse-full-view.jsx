@@ -116,12 +116,6 @@ export class WareHouseFullView extends React.Component {
                                                 className="padding-left"
                                                 key={index}>
                                                 <b>{warehouseItem.value[0].warehouseName}: {warehouseItem.value.length}</b>
-
-                                                <button className="btn btn-outline-danger btn-sm"
-                                                        style={{marginLeft: "10px"}}
-                                                        onClick={() => this.returnItem(warehouseItem.value)}>
-                                                    <i className="fa fa-share"/>
-                                                </button>
                                             </li>
                                         ))}
                                     </ul>
@@ -138,10 +132,6 @@ export class WareHouseFullView extends React.Component {
                             {formatNumber(item.value[0].price)}
                         </td>
                         <td>
-                            <button className="btn btn-outline-success btn-sm"
-                                    onClick={() => this.transferItem(item.value.filter(i => !i.warehouseID))}>
-                                <i className="fa fa-truck"/>
-                            </button>
                             <button className="btn btn-outline-primary btn-sm"
                                     onClick={() => this.editItem(item.value.filter(i => !i.warehouseID))}>
                                 <i className="fa fa-pencil"/>

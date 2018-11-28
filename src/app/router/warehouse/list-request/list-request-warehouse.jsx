@@ -75,7 +75,7 @@ export class ListRequestWarehouse extends React.Component {
                         </tr>
                         </thead>
                         <tbody>
-                        { requests.map((request, index) => (
+                        { requests.reverse().map((request, index) => (
                             <tr key={index}>
                                 <td>
                                     {moment(request.created).format("DD/MM/YYYY HH:mm")}

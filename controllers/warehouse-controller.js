@@ -17,7 +17,7 @@ module.exports = (app) => {
     });
 
     app.put("/warehouse/update", Security.authorDetails, function (req, res) {
-        WareHouseDao.update({_id: {$in: req.body.ids}}, req.body.update, {multi: true}, () => {
+        WareHouseDao.updateMany({_id: {$in: req.body.ids}}, req.body.update, {multi: true}, () => {
             res.end();
         })
     });
@@ -73,6 +73,7 @@ module.exports = (app) => {
             WareHouseDao.find({}, (err, items) => {
                 let requestNames = items.filter(i => request.items.indexOf(i._id) > -1).map(i => i.name);
                 let updatedIds = [];
+
                 for (let name of requestNames) {
                     let found = items.find(i => i.name == name && !i.warehouseID && updatedIds.indexOf(i._id) == -1);
                     if (found) {
