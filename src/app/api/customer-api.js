@@ -15,5 +15,8 @@ export const customerApi = {
     },
     updateCustomer: (id, customer) => {
         return api.put(`/api/customer/${id}`, customer)
+    },
+    getCustomerBirthDate: () => {
+        return api.get(`/api//customers-birthday`);
     }
 };

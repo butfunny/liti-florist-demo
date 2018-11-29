@@ -7,6 +7,8 @@ import countBy from "lodash/countBy";
 import {formatNumber, getTotalBill, getTotalBillWithoutVAT, keysToArray} from "../../../common/common";
 import sumBy from "lodash/sumBy";
 import sortBy from "lodash/sortBy";
+import {customerApi} from "../../../api/customer-api";
+import moment from "moment";
 export class ReportCustomerRoute extends React.Component {
 
     constructor(props) {
@@ -20,8 +22,13 @@ export class ReportCustomerRoute extends React.Component {
             bills: [],
             customers: [],
             vips: [],
-            viewType: "Khách Hàng"
+            viewType: "Khách Hàng",
+            customersBirth: null
         };
+
+        customerApi.getCustomerBirthDate().then((customersBirth) => {
+            this.setState({customersBirth})
+        })
     }
 
     componentDidMount() {
@@ -38,7 +45,7 @@ export class ReportCustomerRoute extends React.Component {
 
     render() {
 
-        let {loading, from, to, bills, vips} = this.state;
+        let {loading, from, to, bills, vips, customersBirth} = this.state;
 
         let groupedBills = keysToArray(groupBy(bills, "customerId"));
 
@@ -133,6 +140,34 @@ export class ReportCustomerRoute extends React.Component {
                                 </tr>
                                 </tbody>
                             </table>
+
+                            <div className="form-group">
+                                <table className="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Khách sinh nhật trong tháng</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    { !customersBirth && (
+                                        <tr>
+                                            <td>Đang tải....</td>
+                                        </tr>
+                                    )}
+
+                                    { customersBirth && customersBirth.map((customer, index) => (
+                                        <tr key={index}>
+                                            <td>
+                                                {customer.customerPhone} - {customer.customerPhone}
+                                                <div>
+                                                    Sinh nhật: <b>{moment(customer.birthDate).format("DD/MM/YYYY")}</b>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     )}
 

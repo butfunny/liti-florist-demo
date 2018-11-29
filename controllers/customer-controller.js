@@ -42,9 +42,7 @@ module.exports = (app) => {
     });
 
     app.post("/customers", (req, res) => {
-
         let {skip, keyword} = req.body;
-
         CustomerDao.find({customerPhone: new RegExp(".*" + keyword + ".*")}).skip(skip).limit(50).exec((err, customers) => {
             CustomerDao.countDocuments({customerPhone: new RegExp(".*" + keyword + ".*")}, (err, count) => {
                 BillDao.find({customerId: {$in: customers.map(c => c._id)}}, (err, bills) => {
@@ -57,5 +55,22 @@ module.exports = (app) => {
             })
         })
     });
+
+    app.get("/customers-birthday", (req, res) => {
+        CustomerDao.find({}, (err, customers) => {
+            let ret = [];
+            for (let customer of customers) {
+                if (customer.birthDate) {
+                    let dobMonth = new Date(customer.birthDate).getMonth();
+                    if (dobMonth == new Date().getMonth()) {
+                        ret.push(customer);
+                    }
+                }
+            }
+
+            res.json(ret);
+
+        })
+    })
 
 };
