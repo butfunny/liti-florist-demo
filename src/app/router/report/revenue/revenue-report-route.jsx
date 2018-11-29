@@ -2,7 +2,7 @@ import React, {Fragment} from "react";
 import {Layout} from "../../../components/layout/layout";
 import {DatePicker} from "../../../components/date-picker/date-picker";
 import {billApi} from "../../../api/bill-api";
-import {formatNumber, getTotalBill, getTotalBillWithoutVAT} from "../../../common/common";
+import {formatNumber, getStartAndLastDayOfWeek, getTotalBill, getTotalBillWithoutVAT} from "../../../common/common";
 import sumBy from "lodash/sumBy";
 import {RevenueReportCustomer} from "./revenue-report-customer";
 import {RevenueReportBill} from "./revenue-report-bill";
@@ -10,11 +10,11 @@ export class RevenueReportRoute extends React.Component {
 
     constructor(props) {
         super(props);
-        let date = new Date(), y = date.getFullYear(), m = date.getMonth();
+        let {from, to} = getStartAndLastDayOfWeek();
 
         this.state = {
-            from: new Date(y, m, 1),
-            to: new Date(y, m + 1, 0),
+            from,
+            to,
             loading: true,
             bills: [],
             customers: [],

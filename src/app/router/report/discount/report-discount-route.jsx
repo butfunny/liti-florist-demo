@@ -3,16 +3,16 @@ import {Layout} from "../../../components/layout/layout";
 import {DatePicker} from "../../../components/date-picker/date-picker";
 import {billApi} from "../../../api/bill-api";
 import sumBy from "lodash/sumBy";
-import {formatNumber, getTotalBill, getTotalBillWithouDiscount} from "../../../common/common";
+import {formatNumber, getStartAndLastDayOfWeek, getTotalBill, getTotalBillWithouDiscount} from "../../../common/common";
 export class ReportDiscountRoute extends React.Component {
 
     constructor(props) {
         super(props);
-        let date = new Date(), y = date.getFullYear(), m = date.getMonth();
+        let {from, to} = getStartAndLastDayOfWeek();
 
         this.state = {
-            from: new Date(y, m, 1),
-            to: new Date(y, m + 1, 0),
+            from,
+            to,
             loading: true,
             bills: [],
             customers: [],

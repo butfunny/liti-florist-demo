@@ -8,20 +8,21 @@ import {securityApi} from "../../../api/security-api";
 import {ReportEmployee} from "./report-employee";
 import {ReportNotSuccessBill} from "./report-not-success-bill";
 import {ReportBillFrom} from "./report-bill-from";
+import {getStartAndLastDayOfWeek} from "../../../common/common";
 export class ReportBillRoute extends React.Component {
 
     constructor(props) {
         super(props);
-        let date = new Date(), y = date.getFullYear(), m = date.getMonth();
+        let {from, to} = getStartAndLastDayOfWeek();
 
         this.state = {
-            from: new Date(y, m, 1),
-            to: new Date(y, m + 1, 0),
+            from,
+            to,
             loading: true,
             bills: [],
             customers: [],
             vips: [],
-            viewType: "Sản Phẩm",
+            viewType: "Nhân Viên",
             types: [],
             colors: [],
             sales: [],
@@ -151,7 +152,6 @@ export class ReportBillRoute extends React.Component {
                                 value={viewType}
                                 onChange={(e) => this.setState({viewType: e.target.value})}
                         >
-                            <option value="Sản Phẩm">Sản Phẩm</option>
                             <option value="Nhân Viên">Nhân Viên</option>
                             <option value="Đơn Huỷ">Đơn Huỷ</option>
                             <option value="Đơn Khiếu Nại">Đơn Khiếu Nại</option>

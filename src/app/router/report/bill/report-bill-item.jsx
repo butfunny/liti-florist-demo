@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Fragment} from "react";
 import sortBy from "lodash/sortBy";
 import sumBy from "lodash/sumBy";
 import {formatNumber} from "../../../common/common";
@@ -41,9 +41,8 @@ export class ReportBillItem extends React.Component {
 
 
         return (
-            <div className="report-bill-item">
-
-                <div className="form-group">
+            <Fragment>
+                <div className="form-group col-md-6">
                     <table className="table table-hover">
                         <thead>
                         <tr>
@@ -67,28 +66,30 @@ export class ReportBillItem extends React.Component {
                     </table>
                 </div>
 
-                <table className="table table-hover">
-                    <thead>
-                    <tr>
-                        <th scope="col">Màu</th>
-                        <th scope="col">Số Lượng</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    { sortBy(itemsColor, c => -c.total).map((item, index) => (
-                        <tr key={index}>
-                            <td>
-                                <div>{item.name}</div>
-                            </td>
-
-                            <td>
-                                {formatNumber(item.total)}
-                            </td>
+                <div className="col-md-6">
+                    <table className="table table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col">Màu</th>
+                            <th scope="col">Số Lượng</th>
                         </tr>
-                    ))}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                        { sortBy(itemsColor, c => -c.total).map((item, index) => (
+                            <tr key={index}>
+                                <td>
+                                    <div>{item.name}</div>
+                                </td>
+
+                                <td>
+                                    {formatNumber(item.total)}
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                </div>
+            </Fragment>
         );
     }
 }

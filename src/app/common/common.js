@@ -316,4 +316,16 @@ function dataURItoBlob(dataURI) {
         ia[i] = byteString.charCodeAt(i);
     }
     return new Blob([ab], { type: 'image/jpeg' });
+};
+
+export function getStartAndLastDayOfWeek() {
+    let curr = new Date; // get current date
+    let first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
+    let last = first + 6; // last day is the first day + 6
+    let from = new Date(curr.setDate(first));
+    let to = new Date(curr.setDate(last));
+
+    return {
+        from, to
+    }
 }

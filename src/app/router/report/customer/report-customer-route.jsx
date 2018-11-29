@@ -4,20 +4,28 @@ import {billApi} from "../../../api/bill-api";
 import {DatePicker} from "../../../components/date-picker/date-picker";
 import groupBy from "lodash/groupBy";
 import countBy from "lodash/countBy";
-import {formatNumber, getTotalBill, getTotalBillWithoutVAT, keysToArray} from "../../../common/common";
+import {
+    formatNumber,
+    getStartAndLastDayOfWeek,
+    getTotalBill,
+    getTotalBillWithoutVAT,
+    keysToArray
+} from "../../../common/common";
 import sumBy from "lodash/sumBy";
 import sortBy from "lodash/sortBy";
 import {customerApi} from "../../../api/customer-api";
 import moment from "moment";
+import {ReportBillItem} from "../bill/report-bill-item";
+import {productApi} from "../../../api/product-api";
 export class ReportCustomerRoute extends React.Component {
 
     constructor(props) {
         super(props);
-        let date = new Date(), y = date.getFullYear(), m = date.getMonth();
+        let {from, to} = getStartAndLastDayOfWeek();
 
         this.state = {
-            from: new Date(y, m, 1),
-            to: new Date(y, m + 1, 0),
+            from,
+            to,
             loading: true,
             bills: [],
             customers: [],
@@ -25,6 +33,14 @@ export class ReportCustomerRoute extends React.Component {
             viewType: "Khách Hàng",
             customersBirth: null
         };
+
+        productApi.getTypes().then((types) => {
+            this.setState({types: types.map(t => t.name)})
+        });
+
+        productApi.getColors().then((colors) => {
+            this.setState({colors: colors.map(t => t.name)})
+        });
 
         customerApi.getCustomerBirthDate().then((customersBirth) => {
             this.setState({customersBirth})
@@ -45,7 +61,7 @@ export class ReportCustomerRoute extends React.Component {
 
     render() {
 
-        let {loading, from, to, bills, vips, customersBirth} = this.state;
+        let {loading, from, to, bills, vips, customersBirth, types, colors} = this.state;
 
         let groupedBills = keysToArray(groupBy(bills, "customerId"));
 
@@ -106,68 +122,82 @@ export class ReportCustomerRoute extends React.Component {
                             </b>
                             </h6>
 
-                            <table className="table table-hover">
-                                <thead>
-                                <tr>
-                                    <th scope="col">Số lần mua hàng</th>
-                                    <th scope="col">Số khách</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>0 - 2</td>
-                                    <td>{groupedBills.filter(b => b.value.length <= 2).length}</td>
-                                </tr>
-
-                                <tr>
-                                    <td>3 - 6</td>
-                                    <td>{groupedBills.filter(b => b.value.length <= 6 && b.value.length >= 3).length}</td>
-                                </tr>
-
-                                <tr>
-                                    <td>7 - 10</td>
-                                    <td>{groupedBills.filter(b => b.value.length <= 10 && b.value.length >= 7).length}</td>
-                                </tr>
-
-                                <tr>
-                                    <td>11 - 12</td>
-                                    <td>{groupedBills.filter(b => b.value.length <= 11 && b.value.length >= 12).length}</td>
-                                </tr>
-
-                                <tr>
-                                    <td>13+</td>
-                                    <td>{groupedBills.filter(b => b.value.length >= 13).length}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-
-                            <div className="form-group">
-                                <table className="table table-hover">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col">Khách sinh nhật trong tháng</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    { !customersBirth && (
+                            <div className="row">
+                                <div className="col-md-6">
+                                    <table className="table table-hover">
+                                        <thead>
                                         <tr>
-                                            <td>Đang tải....</td>
+                                            <th scope="col">Số lần mua hàng</th>
+                                            <th scope="col">Số khách</th>
                                         </tr>
-                                    )}
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>0 - 2</td>
+                                            <td>{groupedBills.filter(b => b.value.length <= 2).length}</td>
+                                        </tr>
 
-                                    { customersBirth && customersBirth.map((customer, index) => (
-                                        <tr key={index}>
-                                            <td>
-                                                {customer.customerName} - {customer.customerPhone}
-                                                <div>
-                                                    Sinh nhật: <b>{moment(customer.birthDate).format("DD/MM/YYYY")}</b>
-                                                </div>
-                                            </td>
+                                        <tr>
+                                            <td>3 - 6</td>
+                                            <td>{groupedBills.filter(b => b.value.length <= 6 && b.value.length >= 3).length}</td>
                                         </tr>
-                                    ))}
-                                    </tbody>
-                                </table>
+
+                                        <tr>
+                                            <td>7 - 10</td>
+                                            <td>{groupedBills.filter(b => b.value.length <= 10 && b.value.length >= 7).length}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>11 - 12</td>
+                                            <td>{groupedBills.filter(b => b.value.length <= 11 && b.value.length >= 12).length}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>13+</td>
+                                            <td>{groupedBills.filter(b => b.value.length >= 13).length}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <ReportBillItem
+                                    bills={bills}
+                                    types={types}
+                                    colors={colors}
+                                />
+
+                                <div className="form-group col-md-6">
+                                    <table className="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Khách sinh nhật trong tháng {new Date().getMonth() + 1}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        { !customersBirth && (
+                                            <tr>
+                                                <td>Đang tải....</td>
+                                            </tr>
+                                        )}
+
+                                        { customersBirth && customersBirth.map((customer, index) => (
+                                            <tr key={index}>
+                                                <td>
+                                                    {customer.customerName} - {customer.customerPhone}
+                                                    <div>
+                                                        Sinh nhật: <b>{moment(customer.birthDate).format("DD/MM/YYYY")}</b>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
+
+
+
+
                         </div>
                     )}
 
