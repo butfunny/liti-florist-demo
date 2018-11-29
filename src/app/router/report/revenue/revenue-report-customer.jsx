@@ -45,7 +45,10 @@ export class RevenueReportCustomer extends React.Component {
 
         const getPayOfPremises = (customerId, premises_id) => {
             const customerBills = bills.filter(b => b.customerId == customerId && b.base_id == premises_id);
-            return sum(customerBills.map(b => getTotalBill(b)))
+            return {
+                pay: sum(customerBills.map(b => getTotalBill(b))),
+                total: customerBills.length
+            }
         };
 
         let premises = premisesInfo.getPremises();
@@ -75,13 +78,14 @@ export class RevenueReportCustomer extends React.Component {
                                 <div>{customer.customerName}</div>
                                 {customer.customerPhone}
 
+
                                 <div>
                                     <b>Số tiền đã chi tại từng cơ sở: </b>
                                 </div>
 
                                 { premises.map((p, index) => (
                                     <div key={index}>
-                                        {p.name}: {formatNumber(getPayOfPremises(customer._id, p._id))}
+                                        {p.name}: {formatNumber(getPayOfPremises(customer._id, p._id).pay)} - {getPayOfPremises(customer._id, p._id).total} lần
                                     </div>
                                 ))}
                             </td>
