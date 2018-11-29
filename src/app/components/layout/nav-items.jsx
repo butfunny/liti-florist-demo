@@ -35,6 +35,22 @@ export const navItems = (premises, user) => {
             to: "/draft"
         }]
     }, {
+        label: "Báo Cáo",
+        child: [{
+            label: "Doanh Thu",
+            to: "/report-revenue"
+        }, {
+            label: "Đơn Hàng",
+            to: "/report-bill"
+        }, {
+            label: "Khách Hàng",
+            to: "/report-customer"
+        }, {
+            label: "Khuyến Mại",
+            to: "/report-discount"
+        }],
+        hide: () => false
+    }, {
         label: "Khách Hàng",
         child: [{
             label: "Danh sách Khách Hàng",
