@@ -132,9 +132,9 @@ export class BillOrderRoute extends RComponent {
     }
 
     handleChange(e, bill) {
-        this.setState({uploading: bill._id});
         if (e.target.files[0]) {
             resizeImage(e.target.files[0]).then((file) => {
+                this.setState({uploading: bill._id});
                 uploadApi.upload(file).then(resp => {
                     this.setState({uploading: false});
                     billApi.updateBillImage(bill._id, {file: resp.file}).then(() => {
