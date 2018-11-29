@@ -4,6 +4,8 @@ import {DatePicker} from "../../../components/date-picker/date-picker";
 import {billApi} from "../../../api/bill-api";
 import {productApi} from "../../../api/product-api";
 import {ReportBillItem} from "./report-bill-item";
+import {securityApi} from "../../../api/security-api";
+import {ReportEmployee} from "./report-employee";
 export class ReportBillRoute extends React.Component {
 
     constructor(props) {
@@ -19,7 +21,10 @@ export class ReportBillRoute extends React.Component {
             vips: [],
             viewType: "Sản Phẩm",
             types: [],
-            colors: []
+            colors: [],
+            sales: [],
+            florists: [],
+            ships: []
         };
 
         productApi.getTypes().then((types) => {
@@ -28,6 +33,21 @@ export class ReportBillRoute extends React.Component {
 
         productApi.getColors().then((colors) => {
             this.setState({colors: colors.map(t => t.name)})
+        });
+
+        securityApi.getSalesAndFlorist().then((users) => {
+            const mapItem = (u) => ({
+                user_id: u._id,
+                name: u.name,
+                username: u.username,
+                role: u.role
+            });
+
+            this.setState({
+                sales: users.filter(u => u.role == "sale").map(mapItem),
+                florists: users.filter(u => u.role == "florist").map(mapItem),
+                ships: users.filter(u => u.role == "ship").map(mapItem)
+            })
         })
     }
 
@@ -44,7 +64,7 @@ export class ReportBillRoute extends React.Component {
     }
 
     render() {
-        let {loading, from, to, bills, viewType, types, colors} = this.state;
+        let {loading, from, to, bills, viewType, types, colors, sales, florists, ships} = this.state;
 
         return (
             <Layout activeRoute="Báo Cáo">
@@ -102,11 +122,18 @@ export class ReportBillRoute extends React.Component {
                         </select>
                     </div>
 
-                    <ReportBillItem
+                    <ReportEmployee
                         bills={bills}
-                        types={types}
-                        colors={colors}
+                        sales={sales}
+                        florists={florists}
+                        ships={ships}
                     />
+
+                    {/*<ReportBillItem*/}
+                        {/*bills={bills}*/}
+                        {/*types={types}*/}
+                        {/*colors={colors}*/}
+                    {/*/>*/}
                 </div>
             </Layout>
         );
