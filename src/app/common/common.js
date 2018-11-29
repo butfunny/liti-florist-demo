@@ -116,14 +116,36 @@ export const getSalary = (user, bill) => {
 
     if (user.role == "florist") {
         const found = bill.florists && bill.florists.find(u => u.user_id == user._id);
-        if (found) charge += 3;
+        if (found) charge += 3 / bill.florists.length;
 
         const isSale = bill.sales && bill.sales.find(u => u.user_id == user._id);
-        if (isSale) charge += 0.9;
+        if (isSale) {
+            if (user.username.indexOf("onl") > -1) {
+                charge += 0.9 * 60 / 100;
+            } else {
+                let isHaveSaleOnl = bill.sales.find(u => u.username.indexOf("onl") > -1);
+                if (isHaveSaleOnl) {
+                    charge += (0.9 - (0.9 * 60 / 100)) / bill.sales.length - 1
+                } else {
+                    charge += 0.9 / (bill.sales.length)
+                }
+            }
+        }
     }
 
+
     if (user.role == "sale") {
-        charge = 1.8;
+
+        if (user.username.indexOf("onl") > -1) {
+            charge += 1.8 * 60 / 100;
+        } else {
+            let isHaveSaleOnl = bill.sales.find(u => u.username.indexOf("onl") > -1);
+            if (isHaveSaleOnl) {
+                charge += (1.8 - (1.8 * 60 / 100)) / (bill.sales.length - 1);
+            } else {
+                charge += 1.8 / (bill.sales.length)
+            }
+        }
     }
 
     if (user.role == "ship") {

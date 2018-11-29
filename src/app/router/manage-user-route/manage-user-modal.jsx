@@ -21,8 +21,7 @@ export class ManageUserModal extends React.Component {
                     text: "Tên tài khoản đã trùng",
                     valid: user._id ? true : usernames.indexOf(val) == -1
                 })
-            ]},
-            {"name" : [required("Tên nhân viên")]}
+            ]}
         ];
 
         if (!user._id) validations.push({"password" : [required("Mật khẩu"), minLength(6, "Mật khẩu")]},);
@@ -82,12 +81,12 @@ export class ManageUserModal extends React.Component {
                                         error={getInvalidByKey("username")}
                                     />
 
-                                    <Input
-                                        value={user.name}
-                                        onChange={(e) => this.setState({user: {...user, name: e.target.value}})}
-                                        placeholder="Tên Nhân Viên"
-                                        error={getInvalidByKey("name")}
-                                    />
+                                    {/*<Input*/}
+                                        {/*value={user.name}*/}
+                                        {/*onChange={(e) => this.setState({user: {...user, name: e.target.value}})}*/}
+                                        {/*placeholder="Tên Nhân Viên"*/}
+                                        {/*error={getInvalidByKey("name")}*/}
+                                    {/*/>*/}
 
                                     <div className="form-group">
                                         <select className="form-control" value={user.role}

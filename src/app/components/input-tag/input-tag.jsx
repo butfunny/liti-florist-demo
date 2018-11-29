@@ -152,7 +152,7 @@ export class InputTag extends React.Component {
                                        this.setState({value: ""});
                                    }}
                                    key={index}>
-                                    {item.username} - {item.name}
+                                    {item.username}
                                 </a>
                             ))}
                         </div>
