@@ -158,7 +158,7 @@ export class ReportCustomerRoute extends React.Component {
                                     { customersBirth && customersBirth.map((customer, index) => (
                                         <tr key={index}>
                                             <td>
-                                                {customer.customerPhone} - {customer.customerPhone}
+                                                {customer.customerName} - {customer.customerPhone}
                                                 <div>
                                                     Sinh nhật: <b>{moment(customer.birthDate).format("DD/MM/YYYY")}</b>
                                                 </div>
