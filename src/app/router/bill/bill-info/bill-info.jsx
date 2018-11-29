@@ -179,7 +179,7 @@ export class BillInfo extends React.Component {
                             <select className="form-control"
                                     value={to.buyerFrom}
                                     onChange={(e) => onChange({...to, buyerFrom: e.target.value})}>
-                                { viaTypes.slice(1).map((type, index) => (
+                                { viaTypes.map((type, index) => (
                                     <option value={type} key={index}>{type}</option>
                                 ))}
                             </select>

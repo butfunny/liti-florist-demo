@@ -7,6 +7,7 @@ import {ReportBillItem} from "./report-bill-item";
 import {securityApi} from "../../../api/security-api";
 import {ReportEmployee} from "./report-employee";
 import {ReportNotSuccessBill} from "./report-not-success-bill";
+import {ReportBillFrom} from "./report-bill-from";
 export class ReportBillRoute extends React.Component {
 
     constructor(props) {
@@ -94,6 +95,11 @@ export class ReportBillRoute extends React.Component {
                     bills={bills.filter(b => b.status == "Khiếu Nại")}
                     customers={customers}
                 />
+            ),
+            "Kênh Mua Hàng": (
+                <ReportBillFrom
+                    bills={bills}
+                />
             )
         };
 
@@ -149,6 +155,7 @@ export class ReportBillRoute extends React.Component {
                             <option value="Nhân Viên">Nhân Viên</option>
                             <option value="Đơn Huỷ">Đơn Huỷ</option>
                             <option value="Đơn Khiếu Nại">Đơn Khiếu Nại</option>
+                            <option value="Kênh Mua Hàng">Kênh Mua Hàng</option>
                         </select>
                     </div>
 
