@@ -5,6 +5,7 @@ const BillDraftDao = require("../dao/bill-draft");
 const LogsDao = require("../dao/logs-dao");
 const CustomerDao = require("../dao/customer-dao");
 const VipDao = require("../dao/vip-dao");
+const WareHouseDao = require("../dao/warehouse-dao");
 
 module.exports = function(app) {
     app.post("/bill",Security.authorDetails, function(req, res) {
@@ -56,11 +57,15 @@ module.exports = function(app) {
 
     app.post("/bills-report-all", Security.authorDetails, (req, res) => {
         BillDao.find({deliverTime: {$gte: req.body.from, $lt: req.body.to}}, function(err, bills) {
-            CustomerDao.find({_id: {$in: bills.map(b => b.customerId)}}, (err, customers) => {
-                VipDao.find({_id: {$in: bills.map(b => b.customerId)}}, (err, vips) => {
-                    res.json({bills, customers, vips});
+            WareHouseDao.find({billID: {$in: bills.map(b => b.customerId)}}, (err, items) => {
+                CustomerDao.find({_id: {$in: bills.map(b => b.customerId)}}, (err, customers) => {
+                    VipDao.find({_id: {$in: bills.map(b => b.customerId)}}, (err, vips) => {
+                        res.json({bills, customers, vips, items});
+                    });
                 });
             });
+
+
         });
     });
 

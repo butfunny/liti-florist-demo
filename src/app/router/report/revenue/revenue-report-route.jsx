@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Fragment} from "react";
 import {Layout} from "../../../components/layout/layout";
 import {DatePicker} from "../../../components/date-picker/date-picker";
 import {billApi} from "../../../api/bill-api";
@@ -15,7 +15,7 @@ export class RevenueReportRoute extends React.Component {
         this.state = {
             from: new Date(y, m, 1),
             to: new Date(y, m + 1, 0),
-            loading: false,
+            loading: true,
             bills: [],
             customers: [],
             vips: [],
@@ -29,18 +29,17 @@ export class RevenueReportRoute extends React.Component {
     }
 
     getReport() {
-        this.setState({loading: true});
+        this.setState({loading: true, bills: [], customers: [], vips: []});
         let {from, to} = this.state;
-        billApi.getReportAll({from, to}).then(({bills, customers, vips}) => {
-            this.setState({bills, customers, vips, loading: false})
+        billApi.getReportAll({from, to}).then(({bills, customers, vips, items}) => {
+            this.setState({bills, customers, vips, items, loading: false})
         })
     }
 
 
 
     render() {
-        let {loading, from, to, bills, viewType, customers} = this.state;
-
+        let {loading, from, to, bills, viewType, customers, items} = this.state;
         return (
             <Layout activeRoute="Báo Cáo">
                 <div className="report-route bill-report-route">
@@ -83,41 +82,49 @@ export class RevenueReportRoute extends React.Component {
 
                     </div>
 
-                    <div className="form-group">
-                        <h6>
-                            Tổng Đơn: <b className="text-primary">{bills ? bills.length : 0}</b>
-                        </h6>
-                        <h6>
-                            Khách Mới: <b className="text-primary">{bills ? bills.filter(b => b.isNewCustomer).length : 0}</b>
-                        </h6>
-                        <h6>
-                            Tổng Thu: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBill(b))) : 0}</b>
-                        </h6>
-                        <h6>
-                            Tổng Thu chưa bao gồm VAT: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBillWithoutVAT(b))) : 0}</b>
-                        </h6>
-                    </div>
+                    { !loading && (
+                        <Fragment>
+                            <div className="form-group">
+                                <h6>
+                                    Tổng Đơn: <b className="text-primary">{bills ? bills.length : 0}</b>
+                                </h6>
+                                <h6>
+                                    Khách Mới: <b className="text-primary">{bills ? bills.filter(b => b.isNewCustomer).length : 0}</b>
+                                </h6>
+                                <h6>
+                                    Tổng Thu: <b className="text-primary">{formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBill(b)))}</b>
+                                </h6>
+                                <h6>
+                                    Tổng Thu chưa bao gồm VAT: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBillWithoutVAT(b))) : 0}</b>
+                                </h6>
 
-                    <div className="form-group">
-                        <label>Báo cáo theo</label>
-                        <select className="form-control"
-                                value={viewType}
-                                onChange={(e) => this.setState({viewType: e.target.value})}
-                        >
-                            <option value="Khách Hàng">Khách Hàng</option>
-                            <option value="Cửa Hàng">Cửa Hàng</option>
-                        </select>
-                    </div>
+                                <h6>
+                                    Lợi Nhuận:<b className="text-primary">{formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBill(b)) - sumBy(items, b => b.price))}</b>
+                                </h6>
+                            </div>
 
-                    { viewType == "Cửa Hàng" ? (
-                        <RevenueReportBill
-                            bills={bills}
-                        />
-                    ) : (
-                        <RevenueReportCustomer
-                            bills={bills}
-                            customers={customers}
-                        />
+                            <div className="form-group">
+                                <label>Báo cáo theo</label>
+                                <select className="form-control"
+                                        value={viewType}
+                                        onChange={(e) => this.setState({viewType: e.target.value})}
+                                >
+                                    <option value="Khách Hàng">Khách Hàng</option>
+                                    <option value="Cửa Hàng">Cửa Hàng</option>
+                                </select>
+                            </div>
+
+                            { viewType == "Cửa Hàng" ? (
+                                <RevenueReportBill
+                                    bills={bills}
+                                />
+                            ) : (
+                                <RevenueReportCustomer
+                                    bills={bills}
+                                    customers={customers}
+                                />
+                            )}
+                        </Fragment>
                     )}
 
 
