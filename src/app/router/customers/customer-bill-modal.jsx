@@ -2,6 +2,7 @@ import React, {Fragment} from "react";
 import sortBy from "lodash/sortBy";
 import moment from "moment";
 import {formatNumber, getTotalBill} from "../../common/common";
+import {premisesInfo} from "../../security/premises-info";
 export class CustomerBillModal extends React.Component {
 
     constructor(props) {
@@ -30,6 +31,7 @@ export class CustomerBillModal extends React.Component {
                 })
             }
         }
+        let premises = premisesInfo.getPremises();
 
         return (
             <div className="app-modal-box customer-bill-modal">
@@ -59,7 +61,9 @@ export class CustomerBillModal extends React.Component {
                                             <div className="timeline-item ng-scope" key={index}>
                                                 <span className="time ng-binding"><i className="fa fa-clock-o"/> {moment(bill.created).format("HH:mm")}</span>
 
+
                                                 <div className="timeline-body">
+                                                    <b>{premises.find(p => p._id == bill.base_id).name}</b>
                                                     { bill.items.map((item, index) => (
                                                         <div key={index}>
                                                             <b>{item.quantity}</b> {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>}

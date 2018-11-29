@@ -40,5 +40,8 @@ export const billApi = {
     },
     removeBillDraft: (id) => {
         return api.delete(`/api/bill-draft/${id}`)
+    },
+    getReportAll: (data) => {
+        return api.post(`/api/bills-report-all`, data)
     }
 };
