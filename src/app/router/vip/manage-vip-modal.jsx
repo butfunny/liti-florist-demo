@@ -4,6 +4,7 @@ import {customerApi} from "../../api/customer-api";
 import {AutoComplete} from "../../components/auto-complete/auto-complete";
 import {vipApi} from "../../api/vip-api";
 import moment from "moment";
+import {DatePicker} from "../../components/date-picker/date-picker";
 export class ManageVipModal extends React.Component {
 
     constructor(props) {
@@ -32,23 +33,26 @@ export class ManageVipModal extends React.Component {
     submit() {
         let {customer, cardNumber, isVFamily} = this.state;
         this.setState({saving: true});
-        vipApi.createVip({
-            customerId: customer._id,
-            cardId: cardNumber,
-            isVFamily
-        }).then((resp) => {
-            if (resp.error) {
-                this.setState({errorCreate: true, saving: false})
-            } else {
-                this.props.onClose({
-                    vip: {
-                        customerId: customer._id,
-                        cardId: cardNumber,
-                        isVFamily
-                    },
-                    customer
-                })
-            }
+
+        customerApi.updateCustomer(customer._id, customer).then(() => {
+            vipApi.createVip({
+                customerId: customer._id,
+                cardId: cardNumber,
+                isVFamily
+            }).then((resp) => {
+                if (resp.error) {
+                    this.setState({errorCreate: true, saving: false})
+                } else {
+                    this.props.onClose({
+                        vip: {
+                            customerId: customer._id,
+                            cardId: cardNumber,
+                            isVFamily
+                        },
+                        customer
+                    })
+                }
+            })
         })
     }
 
@@ -99,8 +103,13 @@ export class ManageVipModal extends React.Component {
                                     <div>
                                         Địa chỉ: <b>{customer.customerPlace}</b>
                                     </div>
-                                    <div>
-                                        Ngày sinh: <b>{moment(customer.birthDate).format("DD/MM/YYYY")}</b>
+                                    <div className="form-group">
+                                        <label className="control-label">Ngày sinh:</label>
+
+                                        <DatePicker
+                                            value={customer.birthDate ? new Date(customer.birthDate) : new Date()}
+                                            onChange={(birthDate) => this.setState({customer: {...customer, birthDate}})}
+                                        />
                                     </div>
                                 </div>
 
