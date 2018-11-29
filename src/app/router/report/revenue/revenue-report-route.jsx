@@ -5,6 +5,7 @@ import {billApi} from "../../../api/bill-api";
 import {formatNumber, getTotalBill, getTotalBillWithoutVAT} from "../../../common/common";
 import sumBy from "lodash/sumBy";
 import {RevenueReportCustomer} from "./revenue-report-customer";
+import {RevenueReportBill} from "./revenue-report-bill";
 export class RevenueReportRoute extends React.Component {
 
     constructor(props) {
@@ -34,6 +35,8 @@ export class RevenueReportRoute extends React.Component {
             this.setState({bills, customers, vips, loading: false})
         })
     }
+
+
 
     render() {
         let {loading, from, to, bills, viewType, customers} = this.state;
@@ -106,10 +109,18 @@ export class RevenueReportRoute extends React.Component {
                         </select>
                     </div>
 
-                    <RevenueReportCustomer
-                        bills={bills}
-                        customers={customers}
-                    />
+                    { viewType == "Cửa Hàng" ? (
+                        <RevenueReportBill
+                            bills={bills}
+                        />
+                    ) : (
+                        <RevenueReportCustomer
+                            bills={bills}
+                            customers={customers}
+                        />
+                    )}
+
+
                 </div>
             </Layout>
         );

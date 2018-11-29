@@ -53,7 +53,7 @@ export class RevenueReportCustomer extends React.Component {
         const customerFiltered = customerMapped.filter((c) => (c.customerName || "").indexOf(keyword) > -1 || (c.customerPhone || "").indexOf(keyword) > -1);
 
         return (
-            <div className="revenue-report-customer ">
+            <div className="revenue-report-customer">
                 <Input
                     value={keyword}
                     onChange={(e) => this.setState({keyword: e.target.value})}
