@@ -1,30 +1,28 @@
 import React from "react";
+import sortBy from "lodash/sortBy";
+import {formatNumber, getTotalBill} from "../../../common/common";
 import moment from "moment";
-import {formatNumber, getTotalBill} from "../../common/common";
-import {UploadBtn} from "./bill-order";
-
-export class ReportTableMobile extends React.Component {
+export class ReportNotSuccessBill extends React.Component {
 
     constructor(props) {
         super(props);
     }
 
-
     render() {
-
-        let {bills, history, onRemove, user, onUpdateBill, onShowLog, onRemoveOwe, uploading, onChangeImage, onChangeStatus} = this.props;
-
+        let {bills, customers} = this.props;
+        const getCustomer = (id) => customers.find(c => c._id == id) || {};
+        const formattedBills = bills ? bills.map(b => ({...b, customer: getCustomer(b.customerId)})) : [];
 
         return (
             <table className="table table-hover">
                 <thead>
                 <tr>
                     <th scope="col">Thông Tin Đơn</th>
-                    <th scope="col" style={{width: "30%"}}/>
+                    <th scope="col">Lí Do</th>
                 </tr>
                 </thead>
                 <tbody>
-                {bills && bills.map((bill, index) => (
+                { sortBy(formattedBills, "created").reverse().map((bill, index) => (
                     <tr key={index}>
                         <td>
                             Thời gian: <b>{moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}</b>
@@ -62,17 +60,6 @@ export class ReportTableMobile extends React.Component {
                                 Nội dung thiệp: {bill.to.cardContent}
                             </div>
 
-                            <div className="margin-top margin-bottom"><b>Trạng thái: </b></div>
-
-                            { (bill.status == "Done" || bill.status == "Khiếu Nại") ? (
-                                <select value={bill.status} onChange={(e) => onChangeStatus(bill, e.target.value)}>
-                                    <option value="Done">Done</option>
-                                    <option value="Khiếu Nại">Khiếu Nại</option>
-                                </select>
-                            ) : (
-                                <span>{bill.status}</span>
-                            )}
-
                             <div className="margin-top">
                                 <b>Bên mua:</b>
 
@@ -100,43 +87,18 @@ export class ReportTableMobile extends React.Component {
                                 </div>
                             </div>
 
-
-                            {bill.logs.length > 0 && (
-                                <div>
-                                    <span className="text-danger">(Đã chỉnh sửa)</span>
-                                    <div>
-                                        <span className="text-primary" style={{cursor: "pointer"}}
-                                              onClick={() => onShowLog(bill.logs)}>
-                                            Chi tiết
-                                        </span>
-                                    </div>
-                                </div>
-                            )}
-
                             { bill.image && (
                                 <img src={bill.image} className="bill-image" alt=""/>
                             )}
 
                         </td>
+
                         <td>
-
-                            <UploadBtn
-                                uploading={uploading}
-                                bill={bill}
-                                onChange={(e) => onChangeImage(e, bill)}
-                            />
-
-                            <button className="btn btn-outline-primary btn-sm"
-                                    onClick={() => history.push(`/edit-bill/${bill._id}`)}>
-                                <i className="fa fa-pencil"/>
-                            </button>
-
-                            {user.role == "admin" && (
-                                <button className="btn btn-outline-danger btn-sm"
-                                        onClick={() => onRemove(bill)}>
-                                    <i className="fa fa-trash"/>
-                                </button>
-                            )}
+                            {bill.reason.split(", ").map((reason, index) => (
+                                <div key={index}>
+                                    - {reason}
+                                </div>
+                            ))}
                         </td>
                     </tr>
                 ))}

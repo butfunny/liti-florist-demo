@@ -6,6 +6,7 @@ import {productApi} from "../../../api/product-api";
 import {ReportBillItem} from "./report-bill-item";
 import {securityApi} from "../../../api/security-api";
 import {ReportEmployee} from "./report-employee";
+import {ReportNotSuccessBill} from "./report-not-success-bill";
 export class ReportBillRoute extends React.Component {
 
     constructor(props) {
@@ -64,7 +65,37 @@ export class ReportBillRoute extends React.Component {
     }
 
     render() {
-        let {loading, from, to, bills, viewType, types, colors, sales, florists, ships} = this.state;
+        let {loading, from, to, bills, viewType, types, colors, sales, florists, ships, customers} = this.state;
+
+        const components = {
+            "Sản Phẩm": (
+                <ReportBillItem
+                    bills={bills}
+                    types={types}
+                    colors={colors}
+                />
+            ),
+            "Nhân Viên": (
+                <ReportEmployee
+                    bills={bills}
+                    sales={sales}
+                    florists={florists}
+                    ships={ships}
+                />
+            ),
+            "Đơn Huỷ": (
+                <ReportNotSuccessBill
+                    bills={bills.filter(b => b.status == "Huỷ Đơn")}
+                    customers={customers}
+                />
+            ),
+            "Đơn Khiếu Nại": (
+                <ReportNotSuccessBill
+                    bills={bills.filter(b => b.status == "Khiếu Nại")}
+                    customers={customers}
+                />
+            )
+        };
 
         return (
             <Layout activeRoute="Báo Cáo">
@@ -116,24 +147,14 @@ export class ReportBillRoute extends React.Component {
                         >
                             <option value="Sản Phẩm">Sản Phẩm</option>
                             <option value="Nhân Viên">Nhân Viên</option>
-                            <option value="Trạng Thái Đơn Hàng">Trạng Thái Đơn Hàng</option>
-                            <option value="Kênh Mua Hàng">Kênh Mua Hàng</option>
-                            <option value="Kho Ảnh">Kho Ảnh</option>
+                            <option value="Đơn Huỷ">Đơn Huỷ</option>
+                            <option value="Đơn Khiếu Nại">Đơn Khiếu Nại</option>
                         </select>
                     </div>
 
-                    <ReportEmployee
-                        bills={bills}
-                        sales={sales}
-                        florists={florists}
-                        ships={ships}
-                    />
+                    { components[viewType]}
 
-                    {/*<ReportBillItem*/}
-                        {/*bills={bills}*/}
-                        {/*types={types}*/}
-                        {/*colors={colors}*/}
-                    {/*/>*/}
+
                 </div>
             </Layout>
         );
