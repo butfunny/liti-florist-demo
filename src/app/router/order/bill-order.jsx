@@ -33,6 +33,7 @@ import classnames from "classnames";
 import {uploadApi} from "../../api/upload-api";
 import {getCSVData} from "./excel";
 import {ReportBillModal} from "./report-bill-modal";
+import {paymentTypes} from "../../common/constance";
 
 export class BillOrderRoute extends RComponent {
 
@@ -233,7 +234,6 @@ export class BillOrderRoute extends RComponent {
 
 
         const status = ["Tất cả", "Chờ xử lý", "Đang xử lý", "Chờ giao", "Done", "Khiếu Nại", "Huỷ Đơn"];
-        const paymentTypes = ["Tất cả", "Nợ", "Ship", "Shop", "Thẻ", "Chuyển Khoản", "Free", "Paypal"];
 
 
         return (

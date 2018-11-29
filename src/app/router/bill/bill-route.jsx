@@ -33,7 +33,8 @@ const initBill = {
         cardContent: "",
         notes: "",
         paymentType: "Shop",
-        shipMoney: 0
+        shipMoney: 0,
+        buyerFrom: "Đến Shop"
     },
     deliverTime: new Date(),
     sales: [],

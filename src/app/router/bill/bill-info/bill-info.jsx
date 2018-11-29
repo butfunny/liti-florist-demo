@@ -13,6 +13,8 @@ import debounce from "lodash/debounce";
 import {InputNumber} from "../../../components/input-number/input-number";
 import {InputTag} from "../../../components/input-tag/input-tag";
 import uniq from "lodash/uniq"
+import {paymentTypes, viaTypes} from "../../../common/constance";
+
 export class BillInfo extends React.Component {
 
     constructor(props) {
@@ -54,7 +56,6 @@ export class BillInfo extends React.Component {
 
         let {to, onChange, deliverTime, onChangeDeliverTime, bill, onChangeBill, sales, florists, ships} = this.props;
         let {error, distance} = this.state;
-        const paymentTypes = ["Ship", "Shop", "Thẻ", "Chuyển Khoản", "Paypal", "Nợ"];
 
 
         return (
@@ -159,6 +160,42 @@ export class BillInfo extends React.Component {
                     </div>
 
 
+                    <div className="col-lg-6">
+                        <div className="form-group">
+                            <label className="control-label">Hình thức thanh toán</label>
+                            <select className="form-control"
+                                    value={to.paymentType}
+                                    onChange={(e) => onChange({...to, paymentType: e.target.value})}>
+                                { paymentTypes.slice(1).map((type, index) => (
+                                    <option value={type} key={index}>{type}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="col-lg-6">
+                        <div className="form-group">
+                            <label className="control-label">Kênh mua hàng</label>
+                            <select className="form-control"
+                                    value={to.buyerFrom}
+                                    onChange={(e) => onChange({...to, buyerFrom: e.target.value})}>
+                                { viaTypes.slice(1).map((type, index) => (
+                                    <option value={type} key={index}>{type}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="col-lg-6">
+                        <div className="form-group">
+                            <label className="control-label">Sale</label>
+                            <InputTag
+                                tags={bill.sales}
+                                onChange={(sales) => onChangeBill({...bill, sales})}
+                                list={sales.concat(florists)}
+                            />
+                        </div>
+                    </div>
 
                     <div className="col-lg-6">
                         <div className="form-group">
@@ -183,42 +220,14 @@ export class BillInfo extends React.Component {
                     </div>
 
                     <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Hình thức thanh toán</label>
-                            <select className="form-control"
-                                    value={to.paymentType}
-                                    onChange={(e) => onChange({...to, paymentType: e.target.value})}>
-                                { paymentTypes.map((type, index) => (
-                                    <option value={type} key={index}>{type}</option>
-                                ))}
-                            </select>
-                        </div>
+                        <Input
+                            label="Ghi Chú"
+                            value={to.notes}
+                            onChange={(e) => onChange({...to, notes: e.target.value})}
+                        />
                     </div>
 
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Sale</label>
-                            <InputTag
-                                tags={bill.sales}
-                                onChange={(sales) => onChangeBill({...bill, sales})}
-                                list={sales.concat(florists)}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Ghi Chú</label>
-                            <textarea
-                                rows="3"
-                                className="form-control no-height"
-                                value={to.notes}
-                                onChange={(e) => onChange({...to, notes: e.target.value})}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="col-lg-6">
+                    <div className="col-lg-12">
                         <div className="form-group">
                             <label className="control-label">Nội dung thiệp</label>
                             <textarea
