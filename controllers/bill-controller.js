@@ -130,6 +130,12 @@ module.exports = function(app) {
         BillDraftDao.deleteOne({_id: req.params.bid}, () => {
             res.end();
         })
+    });
+
+    app.get("/bill-images", Security.authorDetails, (req, res) => {
+        BillDao.find({image: {$exists: true}}, (err, bills) => {
+            res.json(bills)
+        })
     })
 
 };

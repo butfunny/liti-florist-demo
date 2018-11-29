@@ -43,5 +43,8 @@ export const billApi = {
     },
     getReportAll: (data) => {
         return api.post(`/api/bills-report-all`, data)
+    },
+    getBillImages: () => {
+        return api.get("/api/bill-images")
     }
 };

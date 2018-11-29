@@ -48,6 +48,9 @@ export const navItems = (premises, user) => {
         }, {
             label: "Khuyến Mại",
             to: "/report-discount"
+        }, {
+            label: "Kho Ảnh",
+            to: "/gallery"
         }],
         hide: () => false
     }, {
