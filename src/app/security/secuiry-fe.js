@@ -2,7 +2,27 @@ import {userInfo} from "./user-info";
 import {securityApi} from "../api/security-api";
 import {cache} from "../common/cache";
 import {shopApi} from "../api/shop-api";
-import {premisesAllInfo, premisesInfo} from "./premises-info";
+import {permissionInfo, premisesAllInfo, premisesInfo} from "./premises-info";
+import {permissions} from "../common/constance";
+
+const initPermission = {
+    "admin": permissions.map(p => p.value),
+    "mkt": [],
+    "tch": [],
+    "dvkh": [],
+    "bpmh": [],
+    "sale": [],
+    "salemanager": [],
+    "florist": [],
+    "ship": [],
+    "ns": [],
+    "ktt": [],
+    "kt": [],
+    "nl": [],
+    "khotong": [],
+};
+
+
 export let security = {
     login: (data) => {
         return new Promise((resolve, reject)=>{
@@ -14,7 +34,19 @@ export let security = {
                     premisesAllInfo.updatePremises(shops);
                     premisesInfo.updatePremises(shops);
                     userInfo.setUser(user);
-                    resolve();
+
+                    securityApi.getPermission().then((permission) => {
+                        if (!permission) {
+                            securityApi.upsertPermission(initPermission);
+                            permissionInfo.updatePermission(initPermission);
+                        } else {
+                            permissionInfo.updateNormal(permission)
+                        }
+
+                        resolve();
+
+                    });
+
                 });
             }, (err) => {
                 reject(err);
@@ -28,7 +60,17 @@ export let security = {
                 shopApi.get().then(content => {
                     premisesAllInfo.updatePremises(content);
                     premisesInfo.updatePremises(content);
-                    resolve();
+
+                    securityApi.getPermission().then((permission) => {
+                        if (!permission) {
+                            permissionInfo.updatePermission(initPermission);
+                        } else {
+                            permissionInfo.updateNormal(permission)
+                        }
+
+                        resolve();
+
+                    });
                 });
 
             }, () => {

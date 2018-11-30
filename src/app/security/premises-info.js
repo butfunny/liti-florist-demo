@@ -1,4 +1,5 @@
 import {cache} from "../common/cache";
+import {securityApi} from "../api/security-api";
 
 let premises = null;
 let listeners = [];
@@ -28,5 +29,18 @@ export const premisesAllInfo = {
     getPremises: () => premisesAll,
     updatePremises: (content) => {
         premisesAll = content;
+    }
+};
+
+let permission = null;
+
+export const permissionInfo = {
+    getPermission: () => permission,
+    updatePermission: (_permission) => {
+        permission = _permission;
+        securityApi.upsertPermission(permission);
+    },
+    updateNormal: (_permission) => {
+        permission = _permission;
     }
 };

@@ -5,41 +5,17 @@ import {permissions, roles} from "../../common/constance";
 import groupBy from "lodash/groupBy";
 import {formatNumber, keysToArray} from "../../common/common";
 import {Checkbox} from "../../components/checkbox/checkbox";
+import {permissionInfo} from "../../security/premises-info";
 
 
-const initPermission = [{
-    "admin": permissions.map(p => p.value),
-    "mkt": [],
-    "tch": [],
-    "dvkh": [],
-    "bpmh": [],
-    "sale": [],
-    "salemanager": [],
-    "florist": [],
-    "ship": [],
-    "ns": [],
-    "ktt": [],
-    "kt": [],
-    "nl": [],
-    "khotong": [],
-}];
 
 export class ManageRole extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            permission: initPermission[0]
+            permission: permissionInfo.getPermission()
         };
-
-
-        securityApi.getPermission().then((permission) => {
-            if (!permission) {
-                securityApi.upsertPermission(initPermission)
-            } else {
-                this.setState({permission: permission})
-            }
-        })
     }
 
     render() {
@@ -111,13 +87,13 @@ export class ManageRole extends React.Component {
                                                                 let _permission = {...permission};
                                                                 _permission[r.value] = _permission[r.value].concat(p.value);
                                                                 this.setState({permission: _permission});
-                                                                securityApi.upsertPermission(_permission);
+                                                                permissionInfo.updatePermission(_permission);
 
                                                             } else {
                                                                 let _permission = {...permission};
                                                                 _permission[r.value] = _permission[r.value].filter(_p => _p != p.value);
                                                                 this.setState({permission: _permission});
-                                                                securityApi.upsertPermission(_permission);
+                                                                permissionInfo.updatePermission(_permission);
                                                             }
                                                         }}
                                                     />

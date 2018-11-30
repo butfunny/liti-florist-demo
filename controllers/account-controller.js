@@ -86,7 +86,7 @@ module.exports = (app) => {
                     res.end()
                 })
             } else {
-                PermissionDao.updateOne({_id: permission[0]._id}, {permission: JSON.stringify(req.body)}, () => {
+                PermissionDao.updateOne({_id: permission[0]._id}, {permission: JSON.stringify(req.body)}, (err) => {
                     res.end();
                 })
             }
