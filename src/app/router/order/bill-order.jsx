@@ -2,7 +2,7 @@ import React, {Fragment} from "react";
 import {Layout} from "../../components/layout/layout";
 import {DatePicker} from "../../components/date-picker/date-picker";
 import {billApi} from "../../api/bill-api";
-import {premisesInfo} from "../../security/premises-info";
+import {permissionInfo, premisesInfo} from "../../security/premises-info";
 import {cache} from "../../common/cache";
 import {responsive} from "../../common/responsive/responsive";
 import {ReportTableMobile} from "./report-table-mobile";
@@ -235,6 +235,7 @@ export class BillOrderRoute extends RComponent {
 
         const status = ["Tất cả", "Chờ xử lý", "Đang xử lý", "Chờ giao", "Done", "Khiếu Nại", "Huỷ Đơn"];
 
+        const permission = permissionInfo.getPermission();
 
         return (
             <Layout
@@ -296,7 +297,7 @@ export class BillOrderRoute extends RComponent {
                     </div>
 
 
-                    { bills && !loading && (
+                    { bills && !loading && permission[user.role].indexOf("bill.excel") > -1 && (
                         <CSVLink
                             data={getCSVData(billsFiltered)}
                             filename={"baocao.csv"}
@@ -485,18 +486,20 @@ export class BillOrderRoute extends RComponent {
                                                 onChange={(e) => this.handleChange(e, bill)}
                                             />
 
+                                            {permission[user.role].indexOf("bill.edit") > -1 && (
+                                                <button className="btn btn-outline-primary btn-sm"
+                                                        onClick={() => history.push(`/edit-bill/${bill._id}`)}>
+                                                    <i className="fa fa-pencil"/>
+                                                </button>
+                                            )}
 
-                                            <button className="btn btn-outline-primary btn-sm"
-                                                    onClick={() => history.push(`/edit-bill/${bill._id}`)}>
-                                                <i className="fa fa-pencil"/>
-                                            </button>
 
                                             <button className="btn btn-outline-dark btn-sm"
                                                     onClick={() => this.print(bill)}>
                                                 <i className="fa fa-print"/>
                                             </button>
 
-                                            {user.role == "admin" && (
+                                            {permission[user.role].indexOf("bill.delete") > -1 && (
                                                 <button className="btn btn-outline-danger btn-sm"
                                                         onClick={() => this.remove(bill)}>
                                                     <i className="fa fa-trash"/>

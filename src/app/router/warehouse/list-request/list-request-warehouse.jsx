@@ -6,10 +6,11 @@ import classnames from "classnames";
 import moment from "moment";
 import {formatNumber, getTotalBill, keysToArray} from "../../../common/common";
 import {UploadBtn} from "../../order/bill-order";
-import {premisesInfo} from "../../../security/premises-info";
+import {permissionInfo, premisesInfo} from "../../../security/premises-info";
 import groupBy from "lodash/groupBy";
 import {modals} from "../../../components/modal/modals";
 import {PreviewRequestModal} from "./preview-request-modal";
+import {userInfo} from "../../../security/user-info";
 export class ListRequestWarehouse extends React.Component {
 
     constructor(props) {
@@ -54,6 +55,7 @@ export class ListRequestWarehouse extends React.Component {
         let {items, requests} = this.state;
         const premises = premisesInfo.getPremises();
         const getItems = (ids) => items.filter(i => ids.indexOf(i._id) > -1);
+
 
         return (
             <Layout

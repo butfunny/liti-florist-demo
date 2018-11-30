@@ -1,12 +1,13 @@
-import React from "react";
+import React, {Fragment} from "react";
 import {Layout} from "../../components/layout/layout";
 import {warehouseApi} from "../../api/warehouse-api";
 import {modals} from "../../components/modal/modals";
 import {ManageWarehouseItemModal} from "./modals/manage-warehouse-item";
 import {WareHouseFullView} from "./view/warehouse-full-view";
-import {premisesInfo} from "../../security/premises-info";
+import {permissionInfo, premisesInfo} from "../../security/premises-info";
 import {SubWareHouseView} from "./view/sub-warehouse-view";
 import {Input} from "../../components/input/input";
+import {userInfo} from "../../security/user-info";
 
 export class WarehouseRoute extends React.Component {
 
@@ -58,6 +59,8 @@ export class WarehouseRoute extends React.Component {
         const premises = premisesInfo.getPremises();
 
         const itemsFiltered = items.filter(i => i.name.toLowerCase().indexOf(keyword.toLowerCase()) > -1);
+        const permission = permissionInfo.getPermission();
+        const user = userInfo.getUser();
 
         return (
             <Layout
@@ -70,51 +73,60 @@ export class WarehouseRoute extends React.Component {
                         </div>
                     </div>
                     <hr/>
-                    <div className="margin-bottom">
-                        <button type="button" className="btn btn-info" onClick={() => this.addItem()}>
-                            Thêm Sản Phẩm
-                        </button>
-                    </div>
 
-                    <div className="form-group">
-                        <select
-                            className="form-control"
-                            value={viewType}
-                            onChange={(e) => this.setState({viewType: e.target.value})}
-                        >
-                            <option value="">Kho Tổng</option>
-                            { premises.map((p, index) => (
-                                <option key={index} value={p._id}>Kho {p.name}</option>
-                            ))}
+                    { permission[user.role].indexOf("warehouse.create") > -1 && (
+                        <div className="margin-bottom">
+                            <button type="button" className="btn btn-info" onClick={() => this.addItem()}>
+                                Thêm Sản Phẩm
+                            </button>
+                        </div>
+                    )}
 
-                        </select>
-                    </div>
 
-                    <div className="form-group">
-                        <Input
-                            value={keyword}
-                            onChange={(e) => this.setState({keyword: e.target.value})}
-                            placeholder="Tìm kiếm theo tên"
-                        />
-                    </div>
 
-                    { viewType.length > 0 ? (
-                        <SubWareHouseView
-                            items={itemsFiltered.filter(i => i.warehouseID == viewType)}
-                            onChange={(updatedItems) => {
-                                this.setState({items: items.map(i => {
-                                        let updatedItem = updatedItems.find(item => item._id == i._id);
-                                        if (updatedItem) return updatedItem;
-                                        return i;
-                                })})
-                            }}
-                        />
-                    ) : (
-                        <WareHouseFullView
-                            items={itemsFiltered}
-                            onChange={() => this.refresh()}
+                    { permission[user.role].indexOf("warehouse.view") > -1 && (
+                        <Fragment>
+                            <div className="form-group">
+                                <select
+                                    className="form-control"
+                                    value={viewType}
+                                    onChange={(e) => this.setState({viewType: e.target.value})}
+                                >
+                                    <option value="">Kho Tổng</option>
+                                    { premises.map((p, index) => (
+                                        <option key={index} value={p._id}>Kho {p.name}</option>
+                                    ))}
 
-                        />
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <Input
+                                    value={keyword}
+                                    onChange={(e) => this.setState({keyword: e.target.value})}
+                                    placeholder="Tìm kiếm theo tên"
+                                />
+                            </div>
+
+                            { viewType.length > 0 ? (
+                                <SubWareHouseView
+                                    items={itemsFiltered.filter(i => i.warehouseID == viewType)}
+                                    onChange={(updatedItems) => {
+                                        this.setState({items: items.map(i => {
+                                                let updatedItem = updatedItems.find(item => item._id == i._id);
+                                                if (updatedItem) return updatedItem;
+                                                return i;
+                                            })})
+                                    }}
+                                />
+                            ) : (
+                                <WareHouseFullView
+                                    items={itemsFiltered}
+                                    onChange={() => this.refresh()}
+
+                                />
+                            )}
+                        </Fragment>
                     )}
 
 

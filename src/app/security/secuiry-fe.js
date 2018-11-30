@@ -33,7 +33,6 @@ export let security = {
                 shopApi.get().then(shops => {
                     premisesAllInfo.updatePremises(shops);
                     premisesInfo.updatePremises(shops);
-                    userInfo.setUser(user);
 
                     securityApi.getPermission().then((permission) => {
                         if (!permission) {
@@ -42,7 +41,7 @@ export let security = {
                         } else {
                             permissionInfo.updateNormal(permission)
                         }
-
+                        userInfo.setUser(user);
                         resolve();
 
                     });

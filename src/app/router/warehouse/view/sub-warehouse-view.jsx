@@ -42,7 +42,6 @@ export class SubWareHouseView extends React.Component {
                     <th scope="col">Danh Mục</th>
                     <th scope="col">Giá Gốc</th>
                     <th scope="col">Giá Bán</th>
-                    <th scope="col">Trả Hàng</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -59,13 +58,6 @@ export class SubWareHouseView extends React.Component {
                         </td>
                         <td>
                             {formatNumber(item.value[0].price)}
-                        </td>
-                        <td>
-                            <button className="btn btn-outline-danger btn-sm"
-                                    style={{marginLeft: "10px"}}
-                                    onClick={() => this.returnItem(item.value)}>
-                                <i className="fa fa-share"/>
-                            </button>
                         </td>
                     </tr>
                 ))}

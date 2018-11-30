@@ -93,7 +93,7 @@ module.exports = (app) => {
         })
     });
 
-    app.get("/permission", Security.isAdmin, (req, res) => {
+    app.get("/permission", Security.authorDetails, (req, res) => {
         PermissionDao.find({}, (err, permission) => {
             if (permission.length == 0) {
                 res.json(null)

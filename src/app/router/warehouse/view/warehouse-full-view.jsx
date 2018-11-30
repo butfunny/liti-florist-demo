@@ -7,6 +7,8 @@ import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
 import {warehouseApi} from "../../../api/warehouse-api";
 import {TransferItemModal} from "../modals/transfer-item-modal";
 import {ReturnItemModal} from "../modals/return-item-modal";
+import {permissionInfo} from "../../../security/premises-info";
+import {userInfo} from "../../../security/user-info";
 export class WareHouseFullView extends React.Component {
 
     constructor(props) {
@@ -50,6 +52,8 @@ export class WareHouseFullView extends React.Component {
     render() {
 
         let {items} = this.props;
+        const permission = permissionInfo.getPermission();
+        const user = userInfo.getUser();
 
         return (
             <table className="table table-hover">
@@ -96,14 +100,21 @@ export class WareHouseFullView extends React.Component {
                             {formatNumber(item.value[0].price)}
                         </td>
                         <td>
-                            <button className="btn btn-outline-primary btn-sm"
-                                    onClick={() => this.editItem(item.value)}>
-                                <i className="fa fa-pencil"/>
-                            </button>
-                            <button className="btn btn-outline-danger btn-sm"
-                                    onClick={() => this.removeItem(item.value)}>
-                                <i className="fa fa-trash"/>
-                            </button>
+
+                            { permission[user.role].indexOf("warehouse.edit") > -1 && (
+                                <button className="btn btn-outline-primary btn-sm"
+                                        onClick={() => this.editItem(item.value)}>
+                                    <i className="fa fa-pencil"/>
+                                </button>
+                            )}
+
+                            { permission[user.role].indexOf("warehouse.remove") > -1 && (
+                                <button className="btn btn-outline-danger btn-sm"
+                                        onClick={() => this.removeItem(item.value)}>
+                                    <i className="fa fa-trash"/>
+                                </button>
+                            )}
+
                         </td>
                     </tr>
                 ))}

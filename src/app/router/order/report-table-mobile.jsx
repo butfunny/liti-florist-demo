@@ -2,6 +2,8 @@ import React from "react";
 import moment from "moment";
 import {formatNumber, getTotalBill} from "../../common/common";
 import {UploadBtn} from "./bill-order";
+import {userInfo} from "../../security/user-info";
+import {permissionInfo} from "../../security/premises-info";
 
 export class ReportTableMobile extends React.Component {
 
@@ -13,6 +15,8 @@ export class ReportTableMobile extends React.Component {
     render() {
 
         let {bills, history, onRemove, user, onUpdateBill, onShowLog, onRemoveOwe, uploading, onChangeImage, onChangeStatus} = this.props;
+
+        const permission = permissionInfo.getPermission();
 
 
         return (
@@ -126,17 +130,21 @@ export class ReportTableMobile extends React.Component {
                                 onChange={(e) => onChangeImage(e, bill)}
                             />
 
-                            <button className="btn btn-outline-primary btn-sm"
-                                    onClick={() => history.push(`/edit-bill/${bill._id}`)}>
-                                <i className="fa fa-pencil"/>
-                            </button>
 
-                            {user.role == "admin" && (
+                            {permission[user.role].indexOf("bill.edit") > -1 && (
+                                <button className="btn btn-outline-primary btn-sm"
+                                        onClick={() => history.push(`/edit-bill/${bill._id}`)}>
+                                    <i className="fa fa-pencil"/>
+                                </button>
+                            )}
+
+                            {permission[user.role].indexOf("bill.delete") > -1 && (
                                 <button className="btn btn-outline-danger btn-sm"
-                                        onClick={() => onRemove(bill)}>
+                                        onClick={() => this.remove(bill)}>
                                     <i className="fa fa-trash"/>
                                 </button>
                             )}
+
                         </td>
                     </tr>
                 ))}

@@ -1,11 +1,12 @@
 import React from "react";
-import {premisesInfo} from "../../../security/premises-info";
+import {permissionInfo, premisesInfo} from "../../../security/premises-info";
 import moment from "moment";
 import {keysToArray} from "../../../common/common";
 import groupBy from "lodash/groupBy";
 import classnames from "classnames";
 import {Input} from "../../../components/input/input";
 import {warehouseApi} from "../../../api/warehouse-api";
+import {userInfo} from "../../../security/user-info";
 export class PreviewRequestModal extends React.Component {
 
     constructor(props) {
@@ -59,6 +60,9 @@ export class PreviewRequestModal extends React.Component {
 
             return false;
         };
+
+        const permission = permissionInfo.getPermission();
+        const user = userInfo.getUser();
 
         return (
             <div className="preview-request-modal app-modal-box">
@@ -139,7 +143,7 @@ export class PreviewRequestModal extends React.Component {
                 </div>
 
 
-                { !request.status && (
+                { !request.status && permission[user.role].indexOf("warehouse.request.edit") > -1 &&  (
                     <div className="modal-footer">
                         <button className="btn btn-outline-danger btn-sm" onClick={() => {
                             this.setState({showError: true});

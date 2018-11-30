@@ -1,5 +1,5 @@
 import {cache} from "../../common/cache";
-import {premisesInfo} from "../../security/premises-info";
+import {permissionInfo, premisesInfo} from "../../security/premises-info";
 import {security} from "../../security/secuiry-fe";
 import {modals} from "../modal/modals";
 import {ChangePasswordModal} from "./change-password-modal";
@@ -22,69 +22,98 @@ export const navItems = (premises, user) => {
         to: `/sub-warehouse/${p._id}`
     }));
 
+    const permission = permissionInfo.getPermission();
+
     return [{
         label: "Hoá Đơn",
-        to: "/"
+        to: "/",
+        hide: () => permission[user.role].indexOf("bill.create") == -1
     }, {
         label: "Đơn Hàng",
         child: [{
             label: "Đơn Chính",
-            to: "/orders"
+            to: "/orders",
+            hide: () => permission[user.role].indexOf("bill.view") == -1
         }, {
             label: "Đơn Sẵn",
-            to: "/draft"
-        }]
+            to: "/draft",
+            hide: () => permission[user.role].indexOf("bill.view") == -1
+        }, {
+            label: "Đơn Hàng Của Tôi",
+            to: "/florist",
+            hide: () => user.role != "florist"
+        }, {
+            label: "Đơn Hàng Của Tôi",
+            to: "/ship",
+            hide: () => user.role != "ship"
+        }, {
+            label: "Doanh Thu Của Tôi",
+            to: "/salary",
+            hide: () => user.role != "ship" && user.role != "florist" && user.role != "sale"
+        }],
+        hide: () => user.role != "ship" && user.role != "florist" && user.role != "sale" && !permission[user.role].find(r => r.indexOf("bill") > -1)
     }, {
         label: "Báo Cáo",
         child: [{
             label: "Doanh Thu",
-            to: "/report-revenue"
+            to: "/report-revenue",
+            hide: () => permission[user.role].indexOf("report.report-revenue") == -1
         }, {
             label: "Đơn Hàng",
-            to: "/report-bill"
+            to: "/report-bill",
+            hide: () => permission[user.role].indexOf("report.report-bill") == -1
         }, {
             label: "Khách Hàng",
-            to: "/report-customer"
+            to: "/report-customer",
+            hide: () => permission[user.role].indexOf("report.report-customer") == -1
         }, {
             label: "Khuyến Mại",
-            to: "/report-discount"
+            to: "/report-discount",
+            hide: () => permission[user.role].indexOf("report.report-promotion") == -1
         }, {
             label: "Kho Ảnh",
-            to: "/gallery"
+            to: "/gallery",
+            hide: () => permission[user.role].indexOf("report.gallery") == -1
         }],
-        hide: () => false
+        hide: () => !permission[user.role].find(r => r.indexOf("report") > -1)
     }, {
         label: "Khách Hàng",
         child: [{
             label: "Danh sách Khách Hàng",
-            to: "/customers"
+            to: "/customers",
+            hide: () => permission[user.role].indexOf("customer.list") == -1
         }, {
             label: "VIP",
-            to: "/vip"
+            to: "/vip",
+            hide: () => (permission[user.role].indexOf("customer.vip.create") == -1 && permission[user.role].indexOf("customer.vip.view") == -1)
         }],
-        hide: () => false
+        hide: () => !permission[user.role].find(r => r.indexOf("customer") > -1)
     }, {
         label: "Khuyến Mại",
         to: "/promotion",
-        hide: () => false
+        hide: () => !permission[user.role].find(r => r.indexOf("promotion") == 0)
     }, {
         label: "Kho",
         child: [{
             to: "/warehouse",
-            label: "Quản lí kho"
+            label: "Quản lí kho",
+            hide: () => (permission[user.role].indexOf("warehouse.view") == -1 && permission[user.role].indexOf("warehouse.create") == -1) && permission[user.role].indexOf("warehouse.edit") == -1 && permission[user.role].indexOf("warehouse.edit") == -1
         }, {
             to: "/list-request-item",
-            label: "Phiếu xuất nhập kho"
+            label: "Phiếu xuất nhập kho",
+            hide: () => permission[user.role].indexOf("warehouse.request.view") == -1
         }, {
             to: "/request-item",
-            label: "Phiếu yêu cầu xuất nhập kho"
-        }]
+            label: "Phiếu yêu cầu xuất nhập kho",
+            hide: () => permission[user.role].indexOf("warehouse.request.create") == -1
+        }],
+        hide: () => !permission[user.role].find(r => r.indexOf("warehouse") > -1)
     }, {
         label: "Cơ Sở",
         child: [{
             label: "Quản Lý Cơ Sở",
             to: "/manage-premises",
-            hide: () => false
+            hide: () => user.role != "admin"
         }, ..._premises],
     }, {
         label: "Tài Khoản",
@@ -106,11 +135,11 @@ export const navItems = (premises, user) => {
         }, {
             label: "Quản Lý Nhân Viên",
             to: "/manage-user",
-            hide: () => false
+            hide: () => user.role != "admin"
         },{
             label: "Phân Quyền",
             to: "/manage-role",
-            hide: () => false
+            hide: () => user.role != "admin"
         }, {
             label: "Thoát",
             click: () => {
