@@ -43,7 +43,7 @@ module.exports = mongoose.model('BillDao', {
         username: String,
         name: String
     }],
-    base_id: String,
+    base_id: Object,
     vipSaleType: String,
     created: {type: Date, default: Date.now},
     created_by: String,
