@@ -24,5 +24,11 @@ export const securityApi = {
     },
     getSalesAndFlorist: () => {
         return api.get("/api//get-sales-florist-account")
+    },
+    upsertPermission: (permission) => {
+        return api.post(`/api/permission`, permission)
+    },
+    getPermission: () => {
+        return api.get(`/api/permission`)
     }
 };

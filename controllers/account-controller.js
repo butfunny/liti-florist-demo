@@ -1,5 +1,6 @@
 const UserDao = require("../dao/user-dao");
 const Security = require("../security/security-be");
+const PermissionDao = require("../dao/permission-dao");
 const crypto = require("crypto");
 const _ = require("lodash");
 
@@ -74,6 +75,31 @@ module.exports = (app) => {
     app.get("/get-sales-florist-account", Security.authorDetails, (req, res) => {
         UserDao.find({$or: [{role: "sale"}, {role: "florist"}, {role: "ship"}]}, (err, users) => {
             res.send(users)
+        })
+    });
+
+
+    app.post("/permission", Security.isAdmin, (req, res) => {
+        PermissionDao.find({}, (err, permission) => {
+            if (permission.length == 0) {
+                PermissionDao.create({permission: JSON.stringify(req.body)}, (err) => {
+                    res.end()
+                })
+            } else {
+                PermissionDao.updateOne({_id: permission[0]._id}, {permission: JSON.stringify(req.body)}, () => {
+                    res.end();
+                })
+            }
+        })
+    });
+
+    app.get("/permission", Security.isAdmin, (req, res) => {
+        PermissionDao.find({}, (err, permission) => {
+            if (permission.length == 0) {
+                res.json(null)
+            } else {
+                res.json(JSON.parse(permission[0].permission));
+            }
         })
     })
 

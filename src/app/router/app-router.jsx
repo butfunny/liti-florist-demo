@@ -79,6 +79,7 @@ export class AppRouter extends React.Component {
                         <Route exact path="/report-bill" component={requireAuthen(ReportBillRoute)} />
                         <Route exact path="/gallery" component={requireAuthen(GalleryRoute)} />
                         <Route exact path="/manage-role" component={requireAuthenAdmin(ManageRole)} />
+                        <Route exact path="/list-request-item" component={requireAuthenAdmin(ListRequestWarehouse)} />
                     </Switch>
                 </BrowserRouter>
                 <ModalsRegistry />

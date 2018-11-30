@@ -1,0 +1,72 @@
+.manage-role {
+  .table-permission {
+    padding-left 250px;
+    font-size 11px;
+    position relative;
+    width 100%;
+    margin-bottom 50px;
+
+    .column-fixed {
+      font-weight bold;
+      width 250px;
+      position absolute;
+      left 0;
+
+      .column-item {
+        padding 5px;
+        border-top: 1px solid #dedede;
+        border-right: 1px solid #dedede;
+        border-left: 1px solid #dedede;
+
+        &:last-child {
+          border-bottom: 1px solid #dedede;
+        }
+
+        &.no-bold {
+          padding-left 15px;
+          font-weight normal;
+        }
+      }
+    }
+
+    .column-scrollable {
+      max-width 100%;
+      overflow scroll;
+
+      .column-item {
+        display flex;
+
+        .role-item {
+          font-weight bold;
+          min-width: 120px;
+          white-space: nowrap;
+          padding 5px;
+          border 1px solid #dedede;
+          border-left: 0;
+          border-bottom: 0;
+          min-height 27px;
+          position relative;
+          text-align center;
+
+
+          .checkbox {
+            position absolute;
+            top: 0;
+            left 50%;
+            transform translate(-50%, 0);
+          }
+        }
+
+        &:last-child {
+          .role-item {
+            border-bottom 1px solid #dedede;
+          }
+        }
+      }
+
+
+    }
+
+
+  }
+}
