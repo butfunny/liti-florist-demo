@@ -74,7 +74,7 @@ export class Customers extends React.Component {
 
 
         const getPayOfPremises = (customerId, premises_id) => {
-            const customerBills = bills.filter(b => b.customerId == customerId && b.base_id == premises_id);
+            const customerBills = bills.filter(b => b.customerId == customerId && b.premises_id == premises_id);
             return sum(customerBills.map(b => getTotalBill(b)))
         };
 

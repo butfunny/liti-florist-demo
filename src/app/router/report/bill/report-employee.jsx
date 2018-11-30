@@ -161,7 +161,7 @@ class SalaryModal extends React.Component {
 
 
                                                 <div className="timeline-body">
-                                                    <b>{premises.find(p => p._id == bill.base_id).name}</b>
+                                                    <b>{premises.find(p => p._id == bill.premises_id).name}</b>
                                                     { bill.items.map((item, index) => (
                                                         <div key={index}>
                                                             <b>{item.quantity}</b> {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>}

@@ -17,7 +17,7 @@ export class RevenueReportBill extends React.Component {
         const modal = modals.openModal({
             content: (
                 <CustomerBillModal
-                    bills={bills.filter(b => b.base_id == premise._id)}
+                    bills={bills.filter(b => b.premises_id == premise._id)}
                     onClose={() => modal.close()}
                 />
             )
@@ -31,8 +31,8 @@ export class RevenueReportBill extends React.Component {
         let premises = premisesInfo.getPremises();
         premises = premises.map(p => ({
             ...p,
-            totalGet: sumBy(bills, b => b.base_id == p._id ? getTotalBill(b) : 0),
-            totalBill: bills.filter(b => b.base_id == p._id).length
+            totalGet: sumBy(bills, b => b.premises_id == p._id ? getTotalBill(b) : 0),
+            totalBill: bills.filter(b => b.premises_id == p._id).length
         }));
 
 

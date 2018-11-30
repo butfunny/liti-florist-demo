@@ -151,7 +151,7 @@ export class BillDraft extends React.Component {
                     ...bill,
                     bill_number: `${formatValue(today.getDate())}${formatValue(today.getMonth() + 1)}${today.getFullYear()}${formatValue(bills.length + 1)}`,
                     customerId: customerID,
-                    base_id: getCurrentPremise(),
+                    premises_id: getCurrentPremise(),
                     status: "Chờ xử lý",
                     created_by: userInfo.getUser().username,
                     created: new Date(),
