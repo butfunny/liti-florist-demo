@@ -107,6 +107,10 @@ export const navItems = (premises, user) => {
             label: "Quản Lý Nhân Viên",
             to: "/manage-user",
             hide: () => false
+        },{
+            label: "Phân Quyền",
+            to: "/manage-role",
+            hide: () => false
         }, {
             label: "Thoát",
             click: () => {

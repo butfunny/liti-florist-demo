@@ -26,6 +26,7 @@ import {ReportCustomerRoute} from "./report/customer/report-customer-route";
 import {ReportDiscountRoute} from "./report/discount/report-discount-route";
 import {ReportBillRoute} from "./report/bill/report-bill-route";
 import {GalleryRoute} from "./gallery-route/gallery-route";
+import {ManageRole} from "./manage-role/manage-role";
 export class AppRouter extends React.Component {
 
     constructor(props) {
@@ -77,6 +78,7 @@ export class AppRouter extends React.Component {
                         <Route exact path="/report-discount" component={requireAuthen(ReportDiscountRoute)} />
                         <Route exact path="/report-bill" component={requireAuthen(ReportBillRoute)} />
                         <Route exact path="/gallery" component={requireAuthen(GalleryRoute)} />
+                        <Route exact path="/manage-role" component={requireAuthenAdmin(ManageRole)} />
                     </Switch>
                 </BrowserRouter>
                 <ModalsRegistry />

@@ -2,6 +2,7 @@ import React, {Fragment} from "react";
 import {Form} from "../../components/form/form";
 import {Input} from "../../components/input/input";
 import {minLength, required} from "../../components/form/validations";
+import {roles} from "../../common/constance";
 export class ManageUserModal extends React.Component {
 
     constructor(props) {
@@ -25,33 +26,6 @@ export class ManageUserModal extends React.Component {
         ];
 
         if (!user._id) validations.push({"password" : [required("Mật khẩu"), minLength(6, "Mật khẩu")]},);
-
-
-        const roles = [{
-            value: "admin",
-            label: "Ban Giám Đốc"
-        }, {
-            value: "mkt",
-            label: "Marketing"
-        }, {
-            value: "dvkh",
-            label: "Dịch Vụ Khách Hàng"
-        }, {
-            value: "sale",
-            label: "Sale"
-        }, {
-            value: "florist",
-            label: "Florist"
-        }, {
-            value: "ship",
-            label: "Ship"
-        }, {
-            value: "ns",
-            label: "Nhân Sự"
-        }, {
-            value: "kt",
-            label: "Kế Toán"
-        }];
 
         return (
             <div className="app-modal-box ">
