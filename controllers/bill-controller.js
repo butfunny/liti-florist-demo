@@ -44,8 +44,8 @@ module.exports = function(app) {
         })
     });
 
-    app.post("/bills-report/:base_id", Security.authorDetails, (req, res) => {
-        BillDao.find({deliverTime: {$gte: req.body.from, $lt: req.body.to}, base_id: req.params.base_id}, function(err, bills) {
+    app.post("/bills-report/:premises_id", Security.authorDetails, (req, res) => {
+        BillDao.find({deliverTime: {$gte: req.body.from, $lt: req.body.to}, premises_id: req.params.premises_id}, function(err, bills) {
             LogsDao.find({bill_id: {$in: bills.map(b => b._id)}}, function (err, logs) {
                 CustomerDao.find({_id: {$in: bills.map(b => b.customerId)}}, (err, customers) => {
                     res.json({bills, logs, customers});
@@ -105,7 +105,7 @@ module.exports = function(app) {
     });
 
     app.get("/bill-draft-list/:pid", Security.authorDetails, (req, res) => {
-        BillDraftDao.find({base_id: req.params.pid}, (err, bills) => {
+        BillDraftDao.find({premises_id: req.params.pid}, (err, bills) => {
             res.send(bills);
         })
     });

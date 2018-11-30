@@ -143,7 +143,7 @@ gulp.task("update-bill-with-premies", () => {
 
     const updateBill = (baseID, id) => {
         return new Promise((resolve, reject)=>{
-            BillDao.update({base_id: baseID}, {base_id: id}, {multi: true}, (err) =>{
+            BillDao.update({base_id: baseID}, {premises_id: id}, {multi: true}, (err) =>{
                 console.log("updated: " + baseID);
                 resolve();
             })
