@@ -17,6 +17,9 @@ import {customerApi} from "../../../api/customer-api";
 import moment from "moment";
 import {ReportBillItem} from "../bill/report-bill-item";
 import {productApi} from "../../../api/product-api";
+import {userInfo} from "../../../security/user-info";
+import {permissionInfo} from "../../../security/premises-info";
+import {PermissionDenie} from "../revenue/revenue-report-route";
 export class ReportCustomerRoute extends React.Component {
 
     constructor(props) {
@@ -64,6 +67,17 @@ export class ReportCustomerRoute extends React.Component {
         let {loading, from, to, bills, vips, customersBirth, types, colors} = this.state;
 
         let groupedBills = keysToArray(groupBy(bills, "customerId"));
+
+        const user = userInfo.getUser();
+        const permission = permissionInfo.getPermission();
+
+        if (permission[user.role].indexOf("report.report-customer") == -1) {
+            return (
+                <Layout activeRoute="Báo Cáo">
+                    <PermissionDenie />
+                </Layout>
+            )
+        }
 
         return (
             <Layout activeRoute="Báo Cáo">

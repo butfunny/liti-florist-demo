@@ -7,6 +7,8 @@ import moment from "moment";
 import {formatNumber, getTotalBill} from "../../common/common";
 import {UploadBtn} from "../order/bill-order";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
+import {permissionInfo} from "../../security/premises-info";
+import {userInfo} from "../../security/user-info";
 export class OrderDraft extends React.Component {
 
     constructor(props) {
@@ -38,88 +40,97 @@ export class OrderDraft extends React.Component {
         let {bills} = this.state;
         let {history} = this.props;
 
+
+        const permission = permissionInfo.getPermission();
+        const user = userInfo.getUser();
+
         return (
             <Layout activeRoute="Đơn Hàng">
-                <div className="order-draft">
-                    <div className="ct-page-title">
-                        <h1 className="ct-title">Đơn Sẵn</h1>
+                { permission[user.role].indexOf("bill.view") == -1 ? (
+                    <div>
+                        Bạn không có quyền truy cập vào trang này vui lòng chọn những trang bạn có quyền trên thanh nav
                     </div>
+                ) : (
+                    <div className="order-draft">
+                        <div className="ct-page-title">
+                            <h1 className="ct-title">Đơn Sẵn</h1>
+                        </div>
 
-                    <table className="table table-hover">
-                        <thead>
-                        <tr>
-                            <th scope="col"
-                                style={{width: "200px"}}
-                            >Thời gian</th>
-                            <th scope="col">Thông Tin Đơn</th>
-                            <th
-                                style={{width: "200px"}}
-                                scope="col"/>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        { bills && bills.map((bill, index) => (
-                            <tr key={index}>
-                                <td>
-                                    {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
-                                    <div>Sale: <b>{bill.sales.length > 0 ? bill.sales.map(s => s.username).join(", ") : (bill.to || {}).saleEmp}</b></div>
-                                    <div>Florist: <b>{bill.florists.length > 0 ? bill.florists.map(s => s.username).join(", ") : (bill.to || {}).florist}</b></div>
-                                    <div>Nhân viên ship: <b>{bill.ships.length > 0 && bill.ships.map(s => s.username).join(", ")}</b></div>
-
-                                </td>
-                                <td>
-                                    <div>
-                                        { bill.items.map((item, index) => (
-                                            <div key={index}>
-                                                <b>{item.quantity}</b> {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>} {item.vat ? <span className="text-primary"> - {item.vat}% VAT</span> : ""}
-                                            </div>
-                                        ))}
-
-                                        {bill.vipSaleType && (
-                                            <div>VIP: <b>{bill.vipSaleType}</b></div>
-                                        )}
-
-                                        {bill.promotion && (
-                                            <span>{bill.promotion.name}: <b>{bill.promotion.discount}%</b></span>
-                                        )}
-
-                                        <div style={{
-                                            marginTop: "10px"
-                                        }}>
-                                            {bill.to.paymentType == "Nợ" ? <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> : <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
-                                        </div>
-
-                                        <div>Hình thức thanh toán: {bill.to.paymentType}</div>
-
-                                        <div>
-                                            Ghi chú: {bill.to.notes}
-                                        </div>
-
-                                        <div>
-                                            Nội dung thiệp: {bill.to.cardContent}
-                                        </div>
-                                    </div>
-
-
-                                </td>
-
-                                <td>
-
-                                    <button className="btn btn-outline-primary btn-sm"
-                                            onClick={() => history.push(`/edit-bill-draft/${bill._id}`)}>
-                                        <i className="fa fa-pencil"/>
-                                    </button>
-
-                                    <button className="btn btn-outline-danger btn-sm"
-                                            onClick={() => this.remove(bill)}>
-                                        <i className="fa fa-trash"/>
-                                    </button>
-                                </td>
+                        <table className="table table-hover">
+                            <thead>
+                            <tr>
+                                <th scope="col"
+                                    style={{width: "200px"}}
+                                >Thời gian</th>
+                                <th scope="col">Thông Tin Đơn</th>
+                                <th
+                                    style={{width: "200px"}}
+                                    scope="col"/>
                             </tr>
-                        ))}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                            { bills && bills.map((bill, index) => (
+                                <tr key={index}>
+                                    <td>
+                                        {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
+                                        <div>Sale: <b>{bill.sales.length > 0 ? bill.sales.map(s => s.username).join(", ") : (bill.to || {}).saleEmp}</b></div>
+                                        <div>Florist: <b>{bill.florists.length > 0 ? bill.florists.map(s => s.username).join(", ") : (bill.to || {}).florist}</b></div>
+                                        <div>Nhân viên ship: <b>{bill.ships.length > 0 && bill.ships.map(s => s.username).join(", ")}</b></div>
+
+                                    </td>
+                                    <td>
+                                        <div>
+                                            { bill.items.map((item, index) => (
+                                                <div key={index}>
+                                                    <b>{item.quantity}</b> {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>} {item.vat ? <span className="text-primary"> - {item.vat}% VAT</span> : ""}
+                                                </div>
+                                            ))}
+
+                                            {bill.vipSaleType && (
+                                                <div>VIP: <b>{bill.vipSaleType}</b></div>
+                                            )}
+
+                                            {bill.promotion && (
+                                                <span>{bill.promotion.name}: <b>{bill.promotion.discount}%</b></span>
+                                            )}
+
+                                            <div style={{
+                                                marginTop: "10px"
+                                            }}>
+                                                {bill.to.paymentType == "Nợ" ? <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> : <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
+                                            </div>
+
+                                            <div>Hình thức thanh toán: {bill.to.paymentType}</div>
+
+                                            <div>
+                                                Ghi chú: {bill.to.notes}
+                                            </div>
+
+                                            <div>
+                                                Nội dung thiệp: {bill.to.cardContent}
+                                            </div>
+                                        </div>
+
+
+                                    </td>
+
+                                    <td>
+                                        <button className="btn btn-outline-primary btn-sm"
+                                                onClick={() => history.push(`/edit-bill-draft/${bill._id}`)}>
+                                            <i className="fa fa-pencil"/>
+                                        </button>
+
+                                        <button className="btn btn-outline-danger btn-sm"
+                                                onClick={() => this.remove(bill)}>
+                                            <i className="fa fa-trash"/>
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </Layout>
         );
     }

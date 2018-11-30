@@ -3,6 +3,9 @@ import {Layout} from "../../components/layout/layout";
 import {billApi} from "../../api/bill-api";
 import {formatNumber} from "../../common/common";
 import {productApi} from "../../api/product-api";
+import {userInfo} from "../../security/user-info";
+import {permissionInfo} from "../../security/premises-info";
+import {PermissionDenie} from "../report/revenue/revenue-report-route";
 export class GalleryRoute extends React.Component {
 
     constructor(props) {
@@ -32,6 +35,17 @@ export class GalleryRoute extends React.Component {
 
         let {bills} = this.state;
         let {colors, types, typeSelected, colorSelected} = this.state;
+
+        const user = userInfo.getUser();
+        const permission = permissionInfo.getPermission();
+
+        if (permission[user.role].indexOf("report.gallery") == -1) {
+            return (
+                <Layout activeRoute="Báo Cáo">
+                    <PermissionDenie />
+                </Layout>
+            )
+        }
 
 
         let billFiltered = bills.filter(bill => {

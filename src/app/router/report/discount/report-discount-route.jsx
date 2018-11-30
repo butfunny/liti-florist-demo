@@ -4,6 +4,9 @@ import {DatePicker} from "../../../components/date-picker/date-picker";
 import {billApi} from "../../../api/bill-api";
 import sumBy from "lodash/sumBy";
 import {formatNumber, getStartAndLastDayOfWeek, getTotalBill, getTotalBillWithouDiscount} from "../../../common/common";
+import {userInfo} from "../../../security/user-info";
+import {permissionInfo} from "../../../security/premises-info";
+import {PermissionDenie} from "../revenue/revenue-report-route";
 export class ReportDiscountRoute extends React.Component {
 
     constructor(props) {
@@ -40,6 +43,17 @@ export class ReportDiscountRoute extends React.Component {
 
         let {loading, from, to, bills} = this.state;
 
+        const user = userInfo.getUser();
+        const permission = permissionInfo.getPermission();
+
+        if (permission[user.role].indexOf("report.report-promotion") == -1) {
+            return (
+                <Layout activeRoute="Báo Cáo">
+                    <PermissionDenie />
+                </Layout>
+            )
+        }
+
         let billsMapped = [];
         for (let bill of bills) {
             if (bill.promotion) {
@@ -54,6 +68,8 @@ export class ReportDiscountRoute extends React.Component {
                 }
             }
         }
+
+
 
         return (
             <Layout activeRoute="Báo Cáo">

@@ -6,6 +6,15 @@ import {formatNumber, getStartAndLastDayOfWeek, getTotalBill, getTotalBillWithou
 import sumBy from "lodash/sumBy";
 import {RevenueReportCustomer} from "./revenue-report-customer";
 import {RevenueReportBill} from "./revenue-report-bill";
+import {userInfo} from "../../../security/user-info";
+import {permissionInfo} from "../../../security/premises-info";
+
+export const PermissionDenie = () => (
+    <div>
+        Bạn không có quyền truy cập vào trang này vui lòng chọn những trang bạn có quyền trên thanh nav
+    </div>
+)
+
 export class RevenueReportRoute extends React.Component {
 
     constructor(props) {
@@ -40,6 +49,18 @@ export class RevenueReportRoute extends React.Component {
 
     render() {
         let {loading, from, to, bills, viewType, customers, items} = this.state;
+
+        const user = userInfo.getUser();
+        const permission = permissionInfo.getPermission();
+
+        if (permission[user.role].indexOf("report.report-revenue") == -1) {
+            return (
+                <Layout activeRoute="Báo Cáo">
+                    <PermissionDenie />
+                </Layout>
+            )
+        }
+
         return (
             <Layout activeRoute="Báo Cáo">
                 <div className="report-route bill-report-route">

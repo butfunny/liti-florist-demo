@@ -90,12 +90,8 @@ export const permissions = [{
     label: "Danh sách khách hàng",
     father: "Khách Hàng"
 }, {
-    value: "customer.vip.create",
-    label: "Tạo Khách VIP",
-    father: "Khách Hàng"
-}, {
     value: "customer.vip.view",
-    label: "Xem Khách VIP",
+    label: "Xem hoặc tạo khách VIP",
     father: "Khách Hàng"
 }, {
     value: "promotion.view",

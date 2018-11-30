@@ -85,7 +85,7 @@ export const navItems = (premises, user) => {
         }, {
             label: "VIP",
             to: "/vip",
-            hide: () => (permission[user.role].indexOf("customer.vip.create") == -1 && permission[user.role].indexOf("customer.vip.view") == -1)
+            hide: () => permission[user.role].indexOf("customer.vip.view") == -1
         }],
         hide: () => !permission[user.role].find(r => r.indexOf("customer") > -1)
     }, {

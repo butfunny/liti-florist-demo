@@ -44,10 +44,10 @@ export class NavDesktop extends RComponent {
         return (
             <nav className="navbar navbar-expand-lg navbar-dark bg-gradient-info nav-desktop">
                 <div className="container">
-                    <Link className="navbar-brand" to="/">
+                    <span className="navbar-brand">
                         <img src="/assets/img/liti-logo.png" alt=""/>
                         <sup>{getCurrentPremise()}</sup>
-                    </Link>
+                    </span>
                     <ul className="navbar-nav ml-lg-auto">
                         { navItems(premises.filter(p => p._id != activeID), user).filter(n =>  (n.hide ? !n.hide() : true) &&  (n.child ? n.child.filter(c => !c.hide || !c.hide()).length > 0 : true)).map((navItem, index) => (
                             <li className="nav-item" key={index}>

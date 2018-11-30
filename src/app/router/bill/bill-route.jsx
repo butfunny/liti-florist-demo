@@ -8,7 +8,7 @@ import {customerApi} from "../../api/customer-api";
 import pick from "lodash/pick";
 import omit from "lodash/omit";
 import {formatValue} from "../../common/common";
-import {premisesInfo} from "../../security/premises-info";
+import {permissionInfo, premisesInfo} from "../../security/premises-info";
 import {Form} from "../../components/form/form";
 import {minLength, required} from "../../components/form/validations";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
@@ -276,95 +276,103 @@ export class BillRoute extends RComponent {
 
         let {bill, saving, locations, florists, sales, ships, savingDraft, activePromotions, selectedPromotion} = this.state;
 
+        const permission = permissionInfo.getPermission();
+        const user = userInfo.getUser();
 
         return (
             <Layout
                 activeRoute="Hoá Đơn"
             >
-                <div className="bill-route">
+                { permission[user.role].indexOf("bill.create") > -1 ? (
+                    <div className="bill-route">
 
-                    <div className="ct-page-title">
-                        <h1 className="ct-title">Hoá Đơn Bán Hàng</h1>
-                    </div>
-
-                    <div className="row">
-                        <div className="col-md-4">
-                            <LeftSide
-                                items={bill.items}
-                                onChangeItems={(items) => this.setState({bill: {...bill, items}})}
-                            />
+                        <div className="ct-page-title">
+                            <h1 className="ct-title">Hoá Đơn Bán Hàng</h1>
                         </div>
 
-                        <div className="col-md-8">
-                            <BillView
-                                activePromotions={activePromotions}
-                                bill={bill}
-                                onChangeBill={(bill) => this.setState({bill})}
-                                onChangeItems={(items) => this.setState({bill: {...bill, items}})}
-                            />
+                        <div className="row">
+                            <div className="col-md-4">
+                                <LeftSide
+                                    items={bill.items}
+                                    onChangeItems={(items) => this.setState({bill: {...bill, items}})}
+                                />
+                            </div>
 
-                            <Form
-                                formValue={bill.customer}
-                                validations={[]}
-                                render={(getInvalidByKey, invalidPaths) => (
-                                    <Fragment>
-                                        <BillCustomer
-                                            ref={elem => this.billCustomer = elem}
-                                            bill={bill}
-                                            onChangeBill={(bill) => this.setState({bill})}
-                                            onChangeLocations={(locations) => this.setState({locations})}
-                                            customer={bill.customer}
-                                            onChange={(customer) => {
-                                                this.setState({bill: {...bill, customer}})
-                                            }}
-                                        />
+                            <div className="col-md-8">
+                                <BillView
+                                    activePromotions={activePromotions}
+                                    bill={bill}
+                                    onChangeBill={(bill) => this.setState({bill})}
+                                    onChangeItems={(items) => this.setState({bill: {...bill, items}})}
+                                />
 
-                                        <BillInfo
-                                            bill={bill}
-                                            onChangeBill={(bill) => this.setState({bill})}
-                                            florists={florists}
-                                            sales={sales}
-                                            ships={ships}
-                                            ref={elem => this.billInfo = elem}
-                                            locations={locations}
-                                            deliverTime={bill.deliverTime}
-                                            onChangeDeliverTime={(deliverTime) => this.setState({
-                                                bill: {
-                                                    ...bill,
-                                                    deliverTime,
-                                                    to: {
-                                                        ...bill.to,
-                                                        shipMoney: this.billInfo.getShipMoney(deliverTime)
+                                <Form
+                                    formValue={bill.customer}
+                                    validations={[]}
+                                    render={(getInvalidByKey, invalidPaths) => (
+                                        <Fragment>
+                                            <BillCustomer
+                                                ref={elem => this.billCustomer = elem}
+                                                bill={bill}
+                                                onChangeBill={(bill) => this.setState({bill})}
+                                                onChangeLocations={(locations) => this.setState({locations})}
+                                                customer={bill.customer}
+                                                onChange={(customer) => {
+                                                    this.setState({bill: {...bill, customer}})
+                                                }}
+                                            />
+
+                                            <BillInfo
+                                                bill={bill}
+                                                onChangeBill={(bill) => this.setState({bill})}
+                                                florists={florists}
+                                                sales={sales}
+                                                ships={ships}
+                                                ref={elem => this.billInfo = elem}
+                                                locations={locations}
+                                                deliverTime={bill.deliverTime}
+                                                onChangeDeliverTime={(deliverTime) => this.setState({
+                                                    bill: {
+                                                        ...bill,
+                                                        deliverTime,
+                                                        to: {
+                                                            ...bill.to,
+                                                            shipMoney: this.billInfo.getShipMoney(deliverTime)
+                                                        }
                                                     }
-                                                }
-                                            })}
-                                            to={bill.to}
-                                            onChange={(to) => this.setState({bill: {...bill, to}})}
-                                        />
+                                                })}
+                                                to={bill.to}
+                                                onChange={(to) => this.setState({bill: {...bill, to}})}
+                                            />
 
-                                        <div className="text-right btn-action">
-                                            <button type="button" className="btn btn-warning"
-                                                    onClick={() => this.saveDraftBill(bill)}
-                                                    disabled={bill.items.length == 0 || savingDraft}
-                                            >Lưu đơn sẵn {savingDraft && <span className="btn-inner--icon"><i
-                                                className="fa fa-spinner fa-pulse"/></span>}
-                                            </button>
-
-                                            <button type="button"
-                                                    disabled={bill.items.length == 0 || saving || bill.sales.length == 0 || bill.florists.length == 0}
-                                                    className="btn btn-info btn-icon"
-                                                    onClick={() => this.submitBill(bill)}>
-                                                <span className="btn-inner--text">Bán Hàng</span>
-                                                {saving && <span className="btn-inner--icon"><i
+                                            <div className="text-right btn-action">
+                                                <button type="button" className="btn btn-warning"
+                                                        onClick={() => this.saveDraftBill(bill)}
+                                                        disabled={bill.items.length == 0 || savingDraft}
+                                                >Lưu đơn sẵn {savingDraft && <span className="btn-inner--icon"><i
                                                     className="fa fa-spinner fa-pulse"/></span>}
-                                            </button>
-                                        </div>
-                                    </Fragment>
-                                )}
-                            />
+                                                </button>
+
+                                                <button type="button"
+                                                        disabled={bill.items.length == 0 || saving || bill.sales.length == 0 || bill.florists.length == 0}
+                                                        className="btn btn-info btn-icon"
+                                                        onClick={() => this.submitBill(bill)}>
+                                                    <span className="btn-inner--text">Bán Hàng</span>
+                                                    {saving && <span className="btn-inner--icon"><i
+                                                        className="fa fa-spinner fa-pulse"/></span>}
+                                                </button>
+                                            </div>
+                                        </Fragment>
+                                    )}
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
+                ) : (
+                    <div>
+                        Bạn không có quyền truy cập vào trang này vui lòng chọn những trang bạn có quyền trên thanh nav
+                    </div>
+                )}
             </Layout>
         );
     }

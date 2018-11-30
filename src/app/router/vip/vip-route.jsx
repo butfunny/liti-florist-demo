@@ -8,6 +8,11 @@ import {Input} from "../../components/input/input";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 import {securityApi} from "../../api/security-api";
 import {Checkbox} from "../../components/checkbox/checkbox";
+import {userInfo} from "../../security/user-info";
+import {permissionInfo} from "../../security/premises-info";
+import {LoadingOverlay} from "../../components/loading-overlay/loading-overlay";
+import {formatNumber} from "../../common/common";
+import {Pagination} from "../../components/pagination/pagination";
 export class VipRoute extends React.Component {
 
     constructor(props) {
@@ -73,81 +78,91 @@ export class VipRoute extends React.Component {
             customer.customerPhone.toLowerCase().indexOf(keyword.toLowerCase()) > - 1
         });
 
+        const user = userInfo.getUser();
+        const permission = permissionInfo.getPermission();
+
         return (
             <Layout
                 activeRoute="Khách Hàng"
             >
-                <div className="manage-premises-route manage-user-route">
-                    <div className="ct-page-title">
-                        <h1 className="ct-title">Quản lý khách hàng VIP</h1>
-                        <div className="avatar-group mt-3">
+                { permission[user.role].indexOf("customer.vip.view") == -1 ? (
+                    <div>
+                        Bạn không có quyền truy cập vào trang này vui lòng chọn những trang bạn có quyền trên thanh nav
+                    </div>
+                ) : (
+                    <div className="manage-premises-route manage-user-route">
+                        <div className="ct-page-title">
+                            <h1 className="ct-title">Quản lý khách hàng VIP</h1>
+                            <div className="avatar-group mt-3">
+                            </div>
                         </div>
-                    </div>
 
-                    <hr/>
+                        <hr/>
 
-                    <div className="margin-bottom">
-                        <button type="button" className="btn btn-info" onClick={() => this.addVip()}>Thêm khách VIP</button>
-                    </div>
+                        <div className="margin-bottom">
+                            <button type="button" className="btn btn-info" onClick={() => this.addVip()}>Thêm khách VIP</button>
+                        </div>
 
-                    <div className="form-group">
-                        <Input
-                            value={keyword}
-                            onChange={(e) => this.setState({keyword: e.target.value})}
-                            placeholder="Tìm kiếm theo tên, sđt và số thẻ"
+                        <div className="form-group">
+                            <Input
+                                value={keyword}
+                                onChange={(e) => this.setState({keyword: e.target.value})}
+                                placeholder="Tìm kiếm theo tên, sđt và số thẻ"
+                            />
+                        </div>
+
+                        <Checkbox
+                            label="Lọc khách VIP có sinh nhật trong tháng"
+                            value={filterBirthDay}
+                            onChange={(filterBirthDay) => this.setState({filterBirthDay})}
                         />
+
+                        <table className="table table-hover">
+                            <thead>
+                            <tr>
+                                <th scope="col">Thông Tin Khách</th>
+                                <th scope="col">Loại VIP</th>
+                                <th scope="col">Tác Vụ</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {vips && vipsFiltered.map((item, index) => {
+
+                                let customer = getCustomer(item.customerId);
+
+                                return (
+                                    <tr key={index}>
+                                        <td>
+                                            <div>Tên: <b>{customer.customerName}</b></div>
+                                            <div>Số Điện Thoại: <b>{customer.customerPhone}</b></div>
+                                            <div>Địa chỉ: <b>{customer.customerPlace}</b></div>
+                                            { customer.birthDate && <div>Ngày Sinh: <b>{moment(new Date(customer.birthDate)).format("DD/MM/YYYY")}</b></div>}
+                                            <div>Số Thẻ: <b>6666 {item.cardId.toString().substr(0, 4) + " " + item.cardId.toString().substr(4, 7)}</b></div>
+
+                                        </td>
+
+                                        <td
+                                            style={{minWidth: "200px"}}
+                                        >
+                                            {item.isVFamily ? "VFamily" : "VIP Thường"}
+                                        </td>
+                                        <td
+                                            style={{minWidth: "150px"}}
+                                        >
+                                            <button className="btn btn-outline-danger btn-sm"
+                                                    onClick={() => this.remove(item)}>
+                                                <i className="fa fa-trash"/>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
+                            </tbody>
+                        </table>
+
                     </div>
+                )}
 
-                    <Checkbox
-                        label="Lọc khách VIP có sinh nhật trong tháng"
-                        value={filterBirthDay}
-                        onChange={(filterBirthDay) => this.setState({filterBirthDay})}
-                    />
-
-                    <table className="table table-hover">
-                        <thead>
-                        <tr>
-                            <th scope="col">Thông Tin Khách</th>
-                            <th scope="col">Loại VIP</th>
-                            <th scope="col">Tác Vụ</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {vips && vipsFiltered.map((item, index) => {
-
-                            let customer = getCustomer(item.customerId);
-
-                            return (
-                                <tr key={index}>
-                                    <td>
-                                        <div>Tên: <b>{customer.customerName}</b></div>
-                                        <div>Số Điện Thoại: <b>{customer.customerPhone}</b></div>
-                                        <div>Địa chỉ: <b>{customer.customerPlace}</b></div>
-                                        { customer.birthDate && <div>Ngày Sinh: <b>{moment(new Date(customer.birthDate)).format("DD/MM/YYYY")}</b></div>}
-                                        <div>Số Thẻ: <b>6666 {item.cardId.toString().substr(0, 4) + " " + item.cardId.toString().substr(4, 7)}</b></div>
-
-                                    </td>
-
-                                    <td
-                                        style={{minWidth: "200px"}}
-                                    >
-                                        {item.isVFamily ? "VFamily" : "VIP Thường"}
-                                    </td>
-                                    <td
-                                        style={{minWidth: "150px"}}
-                                    >
-                                        <button className="btn btn-outline-danger btn-sm"
-                                                onClick={() => this.remove(item)}>
-                                            <i className="fa fa-trash"/>
-                                        </button>
-                                    </td>
-                                </tr>
-                            )
-                        })}
-                        </tbody>
-                    </table>
-
-                </div>
             </Layout>
         );
     }

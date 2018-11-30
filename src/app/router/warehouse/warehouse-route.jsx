@@ -8,6 +8,8 @@ import {permissionInfo, premisesInfo} from "../../security/premises-info";
 import {SubWareHouseView} from "./view/sub-warehouse-view";
 import {Input} from "../../components/input/input";
 import {userInfo} from "../../security/user-info";
+import {Checkbox} from "../../components/checkbox/checkbox";
+import moment from "moment";
 
 export class WarehouseRoute extends React.Component {
 
@@ -66,72 +68,79 @@ export class WarehouseRoute extends React.Component {
             <Layout
                 activeRoute="Kho"
             >
-                <div className="warehouse-route manage-premises-route">
-                    <div className="ct-page-title">
-                        <h1 className="ct-title">Quản Lý Kho</h1>
-                        <div className="avatar-group mt-3">
-                        </div>
+                { (permission[user.role].indexOf("warehouse.view") == -1 && permission[user.role].indexOf("warehouse.create") == -1) && permission[user.role].indexOf("warehouse.edit") == -1 && permission[user.role].indexOf("warehouse.edit") == -1 ? (
+                    <div>
+                        Bạn không có quyền truy cập vào trang này vui lòng chọn những trang bạn có quyền trên thanh nav
                     </div>
-                    <hr/>
-
-                    { permission[user.role].indexOf("warehouse.create") > -1 && (
-                        <div className="margin-bottom">
-                            <button type="button" className="btn btn-info" onClick={() => this.addItem()}>
-                                Thêm Sản Phẩm
-                            </button>
+                ) : (
+                    <div className="warehouse-route manage-premises-route">
+                        <div className="ct-page-title">
+                            <h1 className="ct-title">Quản Lý Kho</h1>
+                            <div className="avatar-group mt-3">
+                            </div>
                         </div>
-                    )}
+                        <hr/>
 
-
-
-                    { permission[user.role].indexOf("warehouse.view") > -1 && (
-                        <Fragment>
-                            <div className="form-group">
-                                <select
-                                    className="form-control"
-                                    value={viewType}
-                                    onChange={(e) => this.setState({viewType: e.target.value})}
-                                >
-                                    <option value="">Kho Tổng</option>
-                                    { premises.map((p, index) => (
-                                        <option key={index} value={p._id}>Kho {p.name}</option>
-                                    ))}
-
-                                </select>
+                        { permission[user.role].indexOf("warehouse.create") > -1 && (
+                            <div className="margin-bottom">
+                                <button type="button" className="btn btn-info" onClick={() => this.addItem()}>
+                                    Thêm Sản Phẩm
+                                </button>
                             </div>
-
-                            <div className="form-group">
-                                <Input
-                                    value={keyword}
-                                    onChange={(e) => this.setState({keyword: e.target.value})}
-                                    placeholder="Tìm kiếm theo tên"
-                                />
-                            </div>
-
-                            { viewType.length > 0 ? (
-                                <SubWareHouseView
-                                    items={itemsFiltered.filter(i => i.warehouseID == viewType)}
-                                    onChange={(updatedItems) => {
-                                        this.setState({items: items.map(i => {
-                                                let updatedItem = updatedItems.find(item => item._id == i._id);
-                                                if (updatedItem) return updatedItem;
-                                                return i;
-                                            })})
-                                    }}
-                                />
-                            ) : (
-                                <WareHouseFullView
-                                    items={itemsFiltered}
-                                    onChange={() => this.refresh()}
-
-                                />
-                            )}
-                        </Fragment>
-                    )}
+                        )}
 
 
 
-                </div>
+                        { permission[user.role].indexOf("warehouse.view") > -1 && (
+                            <Fragment>
+                                <div className="form-group">
+                                    <select
+                                        className="form-control"
+                                        value={viewType}
+                                        onChange={(e) => this.setState({viewType: e.target.value})}
+                                    >
+                                        <option value="">Kho Tổng</option>
+                                        { premises.map((p, index) => (
+                                            <option key={index} value={p._id}>Kho {p.name}</option>
+                                        ))}
+
+                                    </select>
+                                </div>
+
+                                <div className="form-group">
+                                    <Input
+                                        value={keyword}
+                                        onChange={(e) => this.setState({keyword: e.target.value})}
+                                        placeholder="Tìm kiếm theo tên"
+                                    />
+                                </div>
+
+                                { viewType.length > 0 ? (
+                                    <SubWareHouseView
+                                        items={itemsFiltered.filter(i => i.warehouseID == viewType)}
+                                        onChange={(updatedItems) => {
+                                            this.setState({items: items.map(i => {
+                                                    let updatedItem = updatedItems.find(item => item._id == i._id);
+                                                    if (updatedItem) return updatedItem;
+                                                    return i;
+                                                })})
+                                        }}
+                                    />
+                                ) : (
+                                    <WareHouseFullView
+                                        items={itemsFiltered}
+                                        onChange={() => this.refresh()}
+
+                                    />
+                                )}
+                            </Fragment>
+                        )}
+
+
+
+                    </div>
+                )}
+
             </Layout>
         );
     }

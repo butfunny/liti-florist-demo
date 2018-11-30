@@ -8,6 +8,8 @@ import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 import {securityApi} from "../../api/security-api";
 import {permissionInfo} from "../../security/premises-info";
 import {userInfo} from "../../security/user-info";
+import {Input} from "../../components/input/input";
+import {Checkbox} from "../../components/checkbox/checkbox";
 export class PromotionRoute extends React.Component {
 
     constructor(props) {
@@ -87,68 +89,75 @@ export class PromotionRoute extends React.Component {
         return (
             <Layout
                 activeRoute="Khuyến Mại">
-                <div className="promotion-route manage-premises-route">
-                    <div className="ct-page-title">
-                        <h1 className="ct-title">Chiến dịch quảng cáo</h1>
-                        <div className="avatar-group mt-3">
-                        </div>
+                { !permission[user.role].find(r => r.indexOf("promotion") == 0) ? (
+                    <div>
+                        Bạn không có quyền truy cập vào trang này vui lòng chọn những trang bạn có quyền trên thanh nav
                     </div>
-                    <hr/>
-                    { permission[user.role].indexOf("promotion.create") > -1 && (
-                        <div className="margin-bottom">
-                            <button type="button" className="btn btn-info" onClick={() => this.addItem()}>
-                                Thêm chiến dịch
-                            </button>
+                ) : (
+                    <div className="promotion-route manage-premises-route">
+                        <div className="ct-page-title">
+                            <h1 className="ct-title">Chiến dịch quảng cáo</h1>
+                            <div className="avatar-group mt-3">
+                            </div>
                         </div>
-                    )}
+                        <hr/>
+                        { permission[user.role].indexOf("promotion.create") > -1 && (
+                            <div className="margin-bottom">
+                                <button type="button" className="btn btn-info" onClick={() => this.addItem()}>
+                                    Thêm chiến dịch
+                                </button>
+                            </div>
+                        )}
 
-                    { permission[user.role].indexOf("promotion.view") > -1 && (
-                        <table className="table table-hover">
-                            <thead>
-                            <tr>
-                                <th scope="col">Thông Tin</th>
-                                <th scope="col">Ngày Áp Dụng</th>
-                                <th scope="col">Tác Vụ</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {promotions && promotions.map((item, index) => (
-                                <tr key={index}>
-                                    <td>
-                                        <b>{item.name}</b>
-                                        <div className="text-danger">
-                                            Giảm: {item.discount}%
-                                        </div>
-                                    </td>
-                                    <td>
-                                        {moment(item.from).format("DD/MM/YYYY")} - {moment(item.to).format("DD/MM/YYYY")}
-                                    </td>
-                                    <td>
-
-                                        { permission[user.role].indexOf("promotion.edit") > -1 && (
-                                            <button className="btn btn-outline-primary btn-sm"
-                                                    onClick={() => this.edit(item)}>
-                                                <i className="fa fa-pencil"/>
-                                            </button>
-                                        )}
-
-                                        { permission[user.role].indexOf("promotion.remove") > -1 && (
-                                            <button className="btn btn-outline-danger btn-sm"
-                                                    onClick={() => this.remove(item)}>
-                                                <i className="fa fa-trash"/>
-                                            </button>
-                                        )}
-
-                                    </td>
+                        { permission[user.role].indexOf("promotion.view") > -1 && (
+                            <table className="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Thông Tin</th>
+                                    <th scope="col">Ngày Áp Dụng</th>
+                                    <th scope="col">Tác Vụ</th>
                                 </tr>
-                            ))}
-                            </tbody>
-                        </table>
-                    )}
+                                </thead>
+                                <tbody>
+                                {promotions && promotions.map((item, index) => (
+                                    <tr key={index}>
+                                        <td>
+                                            <b>{item.name}</b>
+                                            <div className="text-danger">
+                                                Giảm: {item.discount}%
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {moment(item.from).format("DD/MM/YYYY")} - {moment(item.to).format("DD/MM/YYYY")}
+                                        </td>
+                                        <td>
+
+                                            { permission[user.role].indexOf("promotion.edit") > -1 && (
+                                                <button className="btn btn-outline-primary btn-sm"
+                                                        onClick={() => this.edit(item)}>
+                                                    <i className="fa fa-pencil"/>
+                                                </button>
+                                            )}
+
+                                            { permission[user.role].indexOf("promotion.remove") > -1 && (
+                                                <button className="btn btn-outline-danger btn-sm"
+                                                        onClick={() => this.remove(item)}>
+                                                    <i className="fa fa-trash"/>
+                                                </button>
+                                            )}
+
+                                        </td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+                        )}
 
 
 
-                </div>
+                    </div>
+                )}
+
             </Layout>
         );
     }

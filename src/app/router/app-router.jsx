@@ -62,7 +62,7 @@ export class AppRouter extends React.Component {
                         <Route exact path="/manage-user" component={requireAuthenAdmin(ManageUserRoute)} />
                         <Route exact path="/orders" component={requireAuthen(BillOrderRoute)} />
                         <Route exact path="/edit-bill/:id" component={requireAuthen(BillEditRoute)} />
-                        <Route exact path="/customers" component={requireAuthenAdmin(Customers)} />
+                        <Route exact path="/customers" component={requireAuthen(Customers)} />
                         <Route exact path="/vip" component={requireAuthen(VipRoute)} />
                         <Route exact path="/warehouse" component={requireAuthen(WarehouseRoute)} />
                         <Route exact path="/promotion" component={requireAuthen(PromotionRoute)} />
@@ -79,7 +79,7 @@ export class AppRouter extends React.Component {
                         <Route exact path="/report-bill" component={requireAuthen(ReportBillRoute)} />
                         <Route exact path="/gallery" component={requireAuthen(GalleryRoute)} />
                         <Route exact path="/manage-role" component={requireAuthenAdmin(ManageRole)} />
-                        <Route exact path="/list-request-item" component={requireAuthenAdmin(ListRequestWarehouse)} />
+                        <Route exact path="/list-request-item" component={requireAuthen(ListRequestWarehouse)} />
                     </Switch>
                 </BrowserRouter>
                 <ModalsRegistry />
