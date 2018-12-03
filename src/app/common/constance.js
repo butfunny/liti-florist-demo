@@ -43,6 +43,9 @@ export const roles = [{
 }, {
     value: "khotong",
     label: "Kho Tổng"
+}, {
+    value: "guest",
+    label: "Khách"
 }];
 
 export const permissions = [{
