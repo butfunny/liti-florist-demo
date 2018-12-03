@@ -61,6 +61,14 @@ export const permissions = [{
     label: "Xoá Đơn",
     father: "Hoá Đơn",
 }, {
+    value: "bill.editProductType",
+    father: "Hoá Đơn",
+    label: "Xoá loại sản phẩm"
+}, {
+    value: "bill.editProductColor",
+    father: "Hoá Đơn",
+    label: "Xoá màu sản phẩm"
+}, {
     value: "bill.view",
     label: "Xem Đơn Hàng",
     father: "Hoá Đơn"

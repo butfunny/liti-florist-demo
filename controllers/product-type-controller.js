@@ -22,6 +22,12 @@ module.exports = function(app) {
         })
     });
 
+    app.put("/product-type", Security.authorDetails, (req, res) => {
+        ProductTypeDao.deleteOne({name: req.body.name}, () => {
+            res.end();
+        })
+    });
+
 
     app.post("/product-color",Security.authorDetails, function (req, res) {
         ProductColorDao.findOne({name: req.body.name}, (err, type) => {
@@ -40,5 +46,13 @@ module.exports = function(app) {
             res.json(types);
         })
     });
+
+
+    app.put("/product-color", Security.authorDetails, (req, res) => {
+        ProductColorDao.deleteOne({name: req.body.name}, () => {
+            res.end();
+        })
+    });
+
 };
 

@@ -66,7 +66,7 @@ export class AutoCompleteNormal extends React.Component {
 
     render() {
 
-        let {onSelect, displayAs, onChange, noPopup, defaultList, value} = this.props;
+        let {onSelect, displayAs, onChange, noPopup, defaultList, value, allowRemove, onRemove} = this.props;
         let {selected, selectedIndex} = this.state;
         const list = defaultList.filter(item => item.toLowerCase().indexOf(value.toLowerCase()) > -1);
 
@@ -99,6 +99,17 @@ export class AutoCompleteNormal extends React.Component {
                                }}
                                key={index}>
                                 {displayAs(item)}
+
+                                { allowRemove && (
+                                    <button className="btn btn-danger btn-sm"
+                                            onMouseDown={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                onRemove(item);
+                                            }}>
+                                        <i className="fa fa-trash"/>
+                                    </button>
+                                )}
                             </a>
                         ))}
                     </div>

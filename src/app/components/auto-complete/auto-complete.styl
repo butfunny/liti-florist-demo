@@ -11,12 +11,22 @@
 
   .dropdown-menu {
     width 100%;
+    position relative;
+
 
     .dropdown-item {
       cursor pointer;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      position relative;
+
+      .btn-danger {
+        position absolute;
+        right: 20px;
+        transform translate(0, -50%);
+        top: 50%;
+      }
 
       &.active {
         color: #fff;

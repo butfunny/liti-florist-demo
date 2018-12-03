@@ -30,5 +30,11 @@ export const productApi = {
     },
     createColor: (data) => {
         return api.post("/api/product-color", data)
+    },
+    removeType: (name) => {
+        return api.put("/api/product-type", {name});
+    },
+    removeColor: (name) => {
+        return api.put("/api/product-color", {name});
     }
 };

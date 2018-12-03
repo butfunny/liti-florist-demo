@@ -6,6 +6,8 @@ import {minLength, required} from "../../../../components/form/validations";
 import {AutoCompleteNormal} from "../../../../components/auto-complete/auto-complete-normal";
 import {productApi} from "../../../../api/product-api";
 import uniq from "lodash/uniq";
+import {permissionInfo} from "../../../../security/premises-info";
+import {userInfo} from "../../../../security/user-info";
 
 export class BillAddItem extends React.Component {
 
@@ -43,6 +45,9 @@ export class BillAddItem extends React.Component {
             {"name": [required("Chi tiết")]}
         ];
 
+        const permission = permissionInfo.getPermission();
+        const user = userInfo.getUser();
+
         return (
             <Form
                 onSubmit={() => {
@@ -65,6 +70,11 @@ export class BillAddItem extends React.Component {
                             onChange={(type) => this.setState({type})}
                             displayAs={(type) => type}
                             defaultList={uniq(types)}
+                            allowRemove={permission[user.role].indexOf("bill.editProductType") > -1}
+                            onRemove={(item) => {
+                                productApi.removeType(item);
+                                this.setState({types: types.filter(t => t != item)})
+                            }}
                         />
 
                         <AutoCompleteNormal
@@ -74,6 +84,12 @@ export class BillAddItem extends React.Component {
                             onChange={(color) => this.setState({color})}
                             displayAs={(color) => color}
                             defaultList={uniq(colors)}
+                            allowRemove={permission[user.role].indexOf("bill.editProductColor") > -1}
+                            onRemove={(item) => {
+                                productApi.removeColor(item);
+                                this.setState({colors: colors.filter(t => t != item)})
+                            }}
+
                         />
 
                         <Input
