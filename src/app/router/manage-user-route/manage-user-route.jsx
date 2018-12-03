@@ -136,9 +136,8 @@ export class ManageUserRoute extends React.Component {
                         {users && users.map((item, index) => (
                             <tr key={index}>
                                 <td>
-                                    <div>Tên tài khoản: <b>{item.username}</b></div>
-                                    <div>{item.name &&
-                                    <span>{item.name} - </span>}<b>{roles[item.role]}</b></div>
+                                    <div><b>{item.username}</b></div>
+                                    <div>Chức vụ: <b>{roles.find(r => r.value == item.role).label}</b></div>
                                 </td>
                                 <td>
                                     <button className="btn btn-outline-primary btn-sm"
