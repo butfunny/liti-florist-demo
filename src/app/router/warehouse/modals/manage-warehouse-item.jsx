@@ -30,7 +30,7 @@ export class ManageWarehouseItemModal extends React.Component {
     render() {
 
         let {items, onDismiss} = this.props;
-        let {name, qty, catalog, saving, oriPrice, price} = this.state;
+        let {name, qty, catalog, saving, oriPrice, price, productId, unit} = this.state;
 
         const validations = [{
             name: [required("Tên sản phẩm"), (val) => ({
@@ -41,6 +41,8 @@ export class ManageWarehouseItemModal extends React.Component {
             qty: [minVal("Số lượng", 1)],
             oriPrice: [minVal("Giá Gốc", 0)],
             price: [minVal("Giá Bán", 0)],
+            productId: [minVal("Mã sản phẩm", 0)],
+            unit: [minVal("Đơn Vị Tính", 0)],
         }];
 
         const catalogs = ["Hoa Chính", "Hoa Lá Phụ/Lá", "Phụ Kiện", "Cost"];
@@ -67,6 +69,13 @@ export class ManageWarehouseItemModal extends React.Component {
                                         value={name}
                                         onChange={(e) => this.setState({name: e.target.value})}
                                         error={getInvalidByKey("name")}
+                                    />
+
+                                    <Input
+                                        label="Mã sản phẩm"
+                                        value={productId}
+                                        onChange={(e) => this.setState({productId: e.target.value})}
+                                        error={getInvalidByKey("productId")}
                                     />
 
 
@@ -101,6 +110,13 @@ export class ManageWarehouseItemModal extends React.Component {
                                         value={price}
                                         onChange={(e) => this.setState({price: e})}
                                         error={getInvalidByKey("price")}
+                                    />
+
+                                    <Input
+                                        label="Đơn vị tính"
+                                        value={unit}
+                                        onChange={(e) => this.setState({unit: e.target.value})}
+                                        error={getInvalidByKey("unit")}
                                     />
 
                                 </div>

@@ -42,22 +42,26 @@ export class SubWareHouseView extends React.Component {
                     <th scope="col">Danh Mục</th>
                     <th scope="col">Giá Gốc</th>
                     <th scope="col">Giá Bán</th>
+                    <th scope="col">Đơn Vị Tính</th>
                 </tr>
                 </thead>
                 <tbody>
                 {items && keysToArray(groupBy(items, i => i.name)).map((item, index) => (
                     <tr key={index}>
                         <td>
-                            {item.key} - {item.value.length}
+                            {item.key} - {item.value[0].productId} - {item.value.length}
                         </td>
                         <td>
                             {item.value[0].catalog}
                         </td>
                         <td>
-                            {formatNumber(item.value[0].oriPrice)}
+                            {formatNumber(Math.floor(item.value[0].oriPrice))}
                         </td>
                         <td>
-                            {formatNumber(item.value[0].price)}
+                            {formatNumber(Math.floor(item.value[0].price))}
+                        </td>
+                        <td>
+                            {formatNumber(Math.floor(item.value[0].unit))}
                         </td>
                     </tr>
                 ))}

@@ -4,6 +4,9 @@ export const warehouseApi = {
     createItem: (items) => {
         return api.post(`/api/warehouse/create`, items)
     },
+    createItemViaUpload: (items) => {
+        return api.post(`/api/warehouse-upload/create`, items)
+    },
     getItems: () => {
         return api.get(`/api/warehouse/list/`)
     },

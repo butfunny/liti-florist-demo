@@ -10,7 +10,12 @@ import {Input} from "../../components/input/input";
 import {userInfo} from "../../security/user-info";
 import {Checkbox} from "../../components/checkbox/checkbox";
 import moment from "moment";
-
+import {CSVLink} from "react-csv";
+import readXlsxFile from 'read-excel-file'
+import {confirmModal} from "../../components/confirm-modal/confirm-modal";
+import isEqual from "lodash/isEqual"
+import {generateDatas} from "../../common/common";
+import {uploadApi} from "../../api/upload-api";
 export class WarehouseRoute extends React.Component {
 
     constructor(props) {
@@ -18,11 +23,12 @@ export class WarehouseRoute extends React.Component {
         this.state = {
             items: [],
             viewType: "",
-            keyword: ""
+            keyword: "",
+            loading: true
         };
 
         warehouseApi.getItems().then((items) => {
-            this.setState({items})
+            this.setState({items, loading: false})
         })
 
     }
@@ -54,10 +60,46 @@ export class WarehouseRoute extends React.Component {
     }
 
 
+    handleChangeInput(e) {
+        if (e.target.files[0]) {
+            readXlsxFile(e.target.files[0]).then((rows) => {
+                if (rows[0] && isEqual(["Mã", "Tên hàng", "Danh mục", "Đơn vị tính", "Số lượng", "Giá gốc", "Giá bán"], rows[0])) {
+                    this.setState({uploading: true});
+
+                    const upload = (index) => {
+                        if (index == rows.length - 1) {
+                            this.setState({uploading: false});
+                            confirmModal.alert(`Thêm thành công ${rows.length - 1} sản phẩm`);
+                            warehouseApi.getItems().then((items) => {
+                                this.setState({items})
+                            })
+                        } else {
+                            let item = rows[index];
+                            warehouseApi.createItem(generateDatas({
+                                productId: item[0],
+                                name: item[1],
+                                catalog: item[2],
+                                unit: item[3],
+                                oriPrice: item[5],
+                                price: item[6]
+                            }, item[4])).then(() => {
+                                upload(index + 1)
+                            })
+                        }
+                    };
+
+                    upload(1);
+
+                } else {
+                    confirmModal.alert("Sai định dạng file");
+                }
+            })
+        }
+    }
 
     render() {
 
-        let {items, viewType, keyword} = this.state;
+        let {items, viewType, keyword, uploading, loading} = this.state;
         const premises = premisesInfo.getPremises();
 
         const itemsFiltered = items.filter(i => i.name.toLowerCase().indexOf(keyword.toLowerCase()) > -1);
@@ -83,12 +125,26 @@ export class WarehouseRoute extends React.Component {
 
                         { permission[user.role].indexOf("warehouse.create") > -1 && (
                             <div className="margin-bottom">
-                                <button type="button" className="btn btn-info" onClick={() => this.addItem()}>
+                                <button type="button" className="btn btn-info btn-sm"  onClick={() => this.addItem()}>
                                     Thêm Sản Phẩm
                                 </button>
+
+                                <button
+                                    disabled={uploading}
+                                    onClick={() => this.excel.click()}
+                                    className="btn btn-primary btn-icon btn-excel btn-sm">
+                                    <span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>
+                                    <span className="btn-inner--text">Thêm Bằng File Excel</span>
+                                    { uploading && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
+                                </button>
+
+                                <input type="file"
+                                       accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                       ref={input => this.excel = input}
+                                       onChange={(e) => this.handleChangeInput(e)}
+                                       style={{display: "none"}} />
                             </div>
                         )}
-
 
 
                         { permission[user.role].indexOf("warehouse.view") > -1 && (
@@ -114,6 +170,8 @@ export class WarehouseRoute extends React.Component {
                                         placeholder="Tìm kiếm theo tên"
                                     />
                                 </div>
+
+                                { loading && "Đang tải...."}
 
                                 { viewType.length > 0 ? (
                                     <SubWareHouseView

@@ -63,6 +63,7 @@ export class WareHouseFullView extends React.Component {
                     <th scope="col">Danh Mục</th>
                     <th scope="col">Giá Gốc</th>
                     <th scope="col">Giá Bán</th>
+                    <th scope="col">Đơn Vị Tính</th>
                     <th scope="col">Tác Vụ</th>
                 </tr>
                 </thead>
@@ -70,7 +71,7 @@ export class WareHouseFullView extends React.Component {
                 {items && keysToArray(groupBy(items, i => i.name)).map((item, index) => (
                     <tr key={index}>
                         <td>
-                            {item.key}
+                            {item.key} - {item.value[0].productId}
 
                             <div className="text-small">
                                 <span className="text-danger">*Tồn kho:</span>
@@ -94,10 +95,14 @@ export class WareHouseFullView extends React.Component {
                             {item.value[0].catalog}
                         </td>
                         <td>
-                            {formatNumber(item.value[0].oriPrice)}
+                            {formatNumber(Math.floor(item.value[0].oriPrice))}
                         </td>
                         <td>
-                            {formatNumber(item.value[0].price)}
+                            {formatNumber(Math.floor(item.value[0].price))}
+                        </td>
+
+                        <td>
+                            {item.value[0].unit}
                         </td>
                         <td>
 
@@ -114,7 +119,6 @@ export class WareHouseFullView extends React.Component {
                                     <i className="fa fa-trash"/>
                                 </button>
                             )}
-
                         </td>
                     </tr>
                 ))}
