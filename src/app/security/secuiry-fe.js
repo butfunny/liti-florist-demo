@@ -20,6 +20,7 @@ const initPermission = {
     "kt": [],
     "nl": [],
     "khotong": [],
+    "guest": []
 };
 
 
