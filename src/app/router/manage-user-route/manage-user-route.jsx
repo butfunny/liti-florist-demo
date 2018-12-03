@@ -7,6 +7,7 @@ import {ManageUserModal} from "./manage-user-modal";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 import {premisesInfo} from "../../security/premises-info";
 import {shopApi} from "../../api/shop-api";
+import {roles} from "../../common/constance";
 
 export class ManageUserRoute extends React.Component {
 
@@ -100,17 +101,6 @@ export class ManageUserRoute extends React.Component {
 
         let {users} = this.state;
         const user = userInfo.getUser();
-
-        const roles = {
-            "admin": "Ban Giám Đốc",
-            "mkt": "Marketing",
-            "dvkh": "Dịch Vụ Khách Hàng",
-            "sale": "Sale",
-            "florist": "Florist",
-            "ship": "Ship",
-            "ns": "Nhân Sự",
-            "kt": "Kế Toán"
-        };
 
         return (
             <Layout
