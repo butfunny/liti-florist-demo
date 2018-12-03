@@ -39,6 +39,51 @@ export const getTotalBill = (bill) => {
 
 };
 
+export const getTotalBillItems = (bill) => {
+    return Math.ceil(sumBy(bill.items, item => {
+        return item.price * item.quantity
+    }));
+
+};
+
+export const getTotalBillDiscount = (bill) => {
+    let totalBillItems = sumBy(bill.items, item => {
+        let price = item.price * item.quantity;
+        if (item.sale) {
+            price = price - price * item.sale / 100
+        }
+
+        if (item.vat) {
+            price = price + price * item.vat / 100
+        }
+
+        return price;
+    });
+
+    let totalDiscount = sumBy(bill.items, item => {
+        let price = item.price * item.quantity;
+        if (item.sale)  return price * item.sale / 100;
+        return 0;
+    });
+
+    let discount = 0;
+
+    if (bill.vipSaleType == "Giảm giá 5%") {
+        discount += 5;
+    }
+
+    if (bill.vipSaleType == "Giảm giá 20%") {
+        discount += 20;
+    }
+
+    if (bill.promotion) {
+        discount += bill.promotion.discount
+    };
+
+    return Math.ceil(totalDiscount + totalBillItems * Math.min(discount, 100) / 100)
+};
+
+
 export const getTotalBillVAT = (bill) => {
     return Math.ceil(sumBy(bill.items, item => {
         let price = item.price * item.quantity;

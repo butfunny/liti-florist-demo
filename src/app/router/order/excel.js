@@ -1,5 +1,11 @@
 import moment from "moment";
-import {getTotalBill, getTotalBillVAT, getTotalBillWithoutVAT} from "../../common/common";
+import {
+    getTotalBill,
+    getTotalBillDiscount,
+    getTotalBillItems,
+    getTotalBillVAT,
+    getTotalBillWithoutVAT
+} from "../../common/common";
 
 export const getCSVData = (bills) => {
 
@@ -29,6 +35,8 @@ export const getCSVData = (bills) => {
             "Ghi chú",
             "Nội dung thiệp",
             "Mặt Hàng",
+            "Tiền Hàng",
+            "Tiền Chiết Khấu",
             "Tổng VAT",
             "Tổng Tiền",
         ]
@@ -86,9 +94,10 @@ export const getCSVData = (bills) => {
             ret.push(bill.to.notes || "");
             ret.push(bill.to.cardContent || "");
             ret.push(generateBillItemsText(bill.items));
+            ret.push(getTotalBillItems(bill));
+            ret.push(getTotalBillDiscount(bill));
             ret.push(getTotalBillVAT(bill));
             ret.push(getTotalBill(bill));
-
             csvData.push(ret);
         }
     }
