@@ -9,6 +9,7 @@ import {Input} from "../../../components/input/input";
 import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
 import {RComponent} from "../../../components/r-component/r-component";
 import {userInfo} from "../../../security/user-info";
+import {LoadingOverlay} from "../../../components/loading-overlay/loading-overlay";
 export class RequestWareHouse extends RComponent {
 
     constructor(props) {
@@ -20,7 +21,8 @@ export class RequestWareHouse extends RComponent {
             selectedItems: [],
             noteType: "Xuất kho",
             requestName: "",
-            receivedName: ""
+            receivedName: "",
+            loading: true
         };
 
         premisesInfo.onChange(() => {
@@ -28,7 +30,7 @@ export class RequestWareHouse extends RComponent {
         });
 
         warehouseApi.getItems().then((items) => {
-            this.setState({items: items})
+            this.setState({items: items, loading: false})
         })
     }
 
@@ -54,12 +56,13 @@ export class RequestWareHouse extends RComponent {
 
     render() {
 
-        let {items, filter, keyword, selectedItems, noteType, requestName, receivedName} = this.state;
+        let {items, filter, keyword, selectedItems, noteType, requestName, receivedName, loading} = this.state;
         const catalogs = ["All", "Hoa Chính", "Hoa Lá Phụ/Lá", "Phụ Kiện", "Cost"];
         const activePremise = premisesInfo.getActivePremise();
 
         const user = userInfo.getUser();
         const permission = permissionInfo.getPermission();
+        console.log(loading);
 
         return (
             <Layout
@@ -109,19 +112,23 @@ export class RequestWareHouse extends RComponent {
                                 </div>
 
                                 <div className="product-list">
+                                    {loading && <span>Đang lấy dữ liệu kho tổng, do quá nhiều nên chờ 1 chút...</span>}
 
-                                    { catalogs.slice(1).filter(c => filter == "All" ? true : c == filter).map((c, index) => (
-                                        <FloristItem
-                                            selectedItems={selectedItems}
-                                            onChange={(selectedItems) => this.setState({selectedItems})}
-                                            keyword={keyword}
-                                            key={index}
-                                            label={c}
-                                            items={items.filter(i => i.catalog == c && (noteType == "Xuất kho" ? !i.warehouseID : i.warehouseID == activePremise._id))}
-                                        />
-                                    ))}
-
+                                    <div>
+                                        { catalogs.slice(1).filter(c => filter == "All" ? true : c == filter).map((c, index) => (
+                                            <FloristItem
+                                                selectedItems={selectedItems}
+                                                onChange={(selectedItems) => this.setState({selectedItems})}
+                                                keyword={keyword}
+                                                key={index}
+                                                label={c}
+                                                items={items.filter(i => i.catalog == c && (noteType == "Xuất kho" ? !i.warehouseID : i.warehouseID == activePremise._id))}
+                                            />
+                                        ))}
+                                    </div>
                                 </div>
+
+
 
 
                             </div>
