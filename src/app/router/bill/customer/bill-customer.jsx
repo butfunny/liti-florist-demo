@@ -251,7 +251,7 @@ export class BillCustomer extends React.Component {
                         <div className="form-group">
                             <label className="control-label">Ngày Sinh</label>
                             <DatePicker
-                                value={customer.birthDate ? new Date(customer.birthDate) : new Date()}
+                                value={customer.birthDate ? new Date(customer.birthDate) : new Date(1976, 0, 1)}
                                 onChange={(value) => onChange({...customer, birthDate: value})}
                             />
                         </div>

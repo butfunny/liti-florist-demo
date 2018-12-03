@@ -259,7 +259,10 @@ export class BillOrderRoute extends RComponent {
                             Khách Mới: <b className="text-primary">{bills ? bills.filter(b => b.isNewCustomer).length : 0}</b>
                         </h6>
                         <h6>
-                            Tổng Thu: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBill(b))) : 0}</b>
+                            Tổng Cộng: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBill(b))) : 0}</b>
+                        </h6>
+                        <h6>
+                            Tổng Thu: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => (b.status != "Done" || b.isOwe) ? 0 : getTotalBill(b))) : 0}</b>
                         </h6>
                         <h6>
                             Tổng Thu chưa bao gồm VAT: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBillWithoutVAT(b))) : 0}</b>
@@ -269,7 +272,7 @@ export class BillOrderRoute extends RComponent {
                         <div className="report-header row">
                             <div className="col-md-4">
                                 <div className="form-group">
-                                    <label className="control-label">Từ ngày</label>
+                                    <label className="control-label"><b>Từ ngày</b></label>
                                     <DatePicker
                                         value={from}
                                         onChange={(from) => {
@@ -281,7 +284,7 @@ export class BillOrderRoute extends RComponent {
 
                             <div className="col-md-4">
                                 <div className="form-group">
-                                    <label className="control-label">Tới ngày</label>
+                                    <label className="control-label"><b>Tới ngày</b></label>
                                     <DatePicker
                                         value={to}
                                         onChange={(to) => this.setState({to})}
@@ -385,7 +388,7 @@ export class BillOrderRoute extends RComponent {
                                         <tr key={index} className={classnames(new Date(bill.deliverTime).getTime() < new Date().getTime() + 1800000 && bill.status == "Chờ xử lý" &&  "text-danger", (bill.status == "Khiếu Nại" || bill.status == "Huỷ Đơn") && "text-warning")}>
                                             <td>
                                                 {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
-                                                <div>Mã đơn hàng: <b>{bill.bill_number}</b></div>
+                                                <div><b>{bill.bill_number}</b></div>
                                                 <div>Sale: <b>{bill.sales.length > 0 ? bill.sales.map(s => s.username).join(", ") : (bill.to || {}).saleEmp}</b></div>
                                                 <div>Florist: <b>{bill.florists.length > 0 ? bill.florists.map(s => s.username).join(", ") : (bill.to || {}).florist}</b></div>
                                                 <div>Nhân viên ship: <b>{bill.ships.length > 0 && bill.ships.map(s => s.username).join(", ")}</b></div>
@@ -424,48 +427,52 @@ export class BillOrderRoute extends RComponent {
                                                     <div style={{
                                                         marginTop: "10px"
                                                     }}>
-                                                        {bill.to.paymentType == "Nợ" ? <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> : <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
+                                                        {bill.isOwe ? <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> : <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
                                                     </div>
 
-                                                    <div>Hình thức thanh toán: {bill.to.paymentType}</div>
+                                                    <div>Hình thức thanh toán: <b>{bill.to.paymentType}</b></div>
 
                                                     <div>
-                                                        Ghi chú: {bill.to.notes}
+                                                        Ghi chú: <b>{bill.to.notes}</b>
                                                     </div>
 
                                                     <div>
-                                                        Nội dung thiệp: {bill.to.cardContent}
+                                                        Nội dung thiệp: <b>{bill.to.cardContent}</b>
                                                     </div>
 
                                                     <div style={{
                                                         marginTop: "10px"
                                                     }}>
-                                                        <b>Bên mua:</b>
+                                                        Bên mua:
 
-                                                        <div>
-                                                            {bill.customer.customerName}
-                                                        </div>
-                                                        <div>
-                                                            {bill.customer.customerPhone}
-                                                        </div>
-                                                        <div>
-                                                            {bill.customer.customerPlace}
-                                                        </div>
+                                                        <b>
+                                                            <div>
+                                                                {bill.customer.customerName}
+                                                            </div>
+                                                            <div>
+                                                                {bill.customer.customerPhone}
+                                                            </div>
+                                                            <div>
+                                                                {bill.customer.customerPlace}
+                                                            </div>
+                                                        </b>
                                                     </div>
 
                                                     <div style={{
                                                         marginTop: "10px"
                                                     }}>
-                                                        <b>Bên nhận: </b>
-                                                        <div>
-                                                            {bill.to.receiverName}
-                                                        </div>
-                                                        <div>
-                                                            {bill.to.receiverPhone}
-                                                        </div>
-                                                        <div>
-                                                            {bill.to.receiverPlace}
-                                                        </div>
+                                                        Bên nhận:
+                                                        <b>
+                                                            <div>
+                                                                {bill.to.receiverName}
+                                                            </div>
+                                                            <div>
+                                                                {bill.to.receiverPhone}
+                                                            </div>
+                                                            <div>
+                                                                {bill.to.receiverPlace}
+                                                            </div>
+                                                        </b>
                                                     </div>
                                                 </div>
 
