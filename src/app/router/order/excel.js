@@ -91,8 +91,6 @@ export const getCSVData = (bills) => {
             ret.push(getTotalBillItems(bill));
             ret.push(getTotalBillVAT(bill));
             ret.push(getTotalBill(bill));
-
-            console.log(ret);
             csvData.push(ret);
         }
     }
