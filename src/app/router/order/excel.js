@@ -6,41 +6,37 @@ import {
     getTotalBillVAT,
     getTotalBillWithoutVAT
 } from "../../common/common";
+import {premisesInfo} from "../../security/premises-info";
 
 export const getCSVData = (bills) => {
 
 
-    let csvData =[
-        [
-            'Hoá đơn #',
-            'Ngày đặt hàng',
-            'Ngày giao hàng',
-            "Giờ nhận",
-            "Sale 1",
-            "Sale 2",
-            "Sale 3",
-            "Sale 4",
-            "Florist 1",
-            "Florist 2",
-            "Florist 3",
-            "Florist 4",
-            "Ship",
-            "Hình thức thanh toán",
-            "Tên Khách Đặt",
-            "Địa Chỉ Khách Đặt",
-            "Số ĐT",
-            "Tên Khách Nhận",
-            "Địa Chỉ Nhận",
-            "SĐT Khách Nhận",
-            "Ghi chú",
-            "Nội dung thiệp",
-            "Mặt Hàng",
-            "Tiền Hàng",
-            "Tiền Chiết Khấu",
-            "Tổng VAT",
-            "Tổng Tiền",
-        ]
+    let csvData = [["Ngày bán hàng",
+        "Mã đơn hàng",
+        "Nội dung đơn hàng",
+        "Họ và tên khách hàng",
+        "Giá trị đơn hàng chưa bao gồm thuế",
+        "Tên cửa hàng",
+        "Hình thức thanh toán",
+        "Chiết khấu",
+        "Ship",
+        "Sale 1",
+        "Sale 2",
+        "Sale 3",
+        "Sale 4",
+        "Florist 1",
+        "Florist 2",
+        "Florist 3",
+        "Florist 4",
+        'Ngày giao hàng',
+        "Giờ nhận",
+        "Ghi chú",
+        "Nội dung thiệp",
+        "Tiền Hàng",
+        "Tổng VAT",
+        "Tổng Tiền",]
     ];
+
 
     const generateBillItemsText = (items) => {
         let ret = "";
@@ -50,13 +46,19 @@ export const getCSVData = (bills) => {
         return ret;
     };
 
+
     if (bills) {
         for (let bill of bills) {
             let ret = [];
-            ret.push(bill.bill_number);
             ret.push(moment(bill.created).format("DD/MM/YYYY"));
-            ret.push(moment(bill.deliverTime).format("DD/MM/YYYY"));
-            ret.push(moment(bill.deliverTime).format("HH:mm"));
+            ret.push(bill.bill_number);
+            ret.push(generateBillItemsText(bill.items));
+            ret.push(bill.customer.customerName || "");
+            ret.push(getTotalBillWithoutVAT(bill));
+            ret.push(premisesInfo.getActivePremise().name);
+            ret.push(bill.to.paymentType || "");
+            ret.push(getTotalBillDiscount(bill));
+            ret.push(bill.ships && bill.ships[0] ? bill.ships[0].username : "");
             if (bill.sales) {
                 ret.push(bill.sales[0] ? bill.sales[0].username : "");
                 ret.push(bill.sales[1] ? bill.sales[1].username : "");
@@ -81,23 +83,16 @@ export const getCSVData = (bills) => {
                 ret.push("");
                 ret.push("");
                 ret.push("");
-            }
-            ret.push(bill.ships && bill.ships[0] ? bill.ships[0].username : "");
-            ret.push(bill.to.paymentType || "");
-            ret.push(bill.customer.customerName || "");
-            ret.push(bill.customer.customerPlace || "");
-            ret.push(bill.customer.customerPhone || "");
-            ret.push(bill.to.receiverName || "");
-            ret.push(bill.to.receiverPlace || "");
-            ret.push(bill.to.receiverPhone || "");
-
+            };
+            ret.push(moment(bill.deliverTime).format("DD/MM/YYYY"));
+            ret.push(moment(bill.deliverTime).format("HH:mm"));
             ret.push(bill.to.notes || "");
             ret.push(bill.to.cardContent || "");
-            ret.push(generateBillItemsText(bill.items));
             ret.push(getTotalBillItems(bill));
-            ret.push(getTotalBillDiscount(bill));
             ret.push(getTotalBillVAT(bill));
             ret.push(getTotalBill(bill));
+
+            console.log(ret);
             csvData.push(ret);
         }
     }
