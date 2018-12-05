@@ -3,6 +3,7 @@ import {InputNumber} from "../../../components/input-number/input-number";
 import {formatNumber, getTotalBill, keysToArray} from "../../../common/common";
 import sortBy from "lodash/sortBy";
 import groupBy from "lodash/groupBy";
+import sumBy from "lodash/sumBy";
 export class PreviewRequest extends React.Component {
 
     constructor(props) {
@@ -59,6 +60,10 @@ export class PreviewRequest extends React.Component {
                         </tbody>
 
                     </table>
+
+                    <div className="text-right">
+                        Tổng tiền: {formatNumber(sumBy(selectedItems, i => i.price))}
+                    </div>
 
                 </div>
 
