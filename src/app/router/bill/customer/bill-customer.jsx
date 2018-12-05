@@ -90,7 +90,7 @@ export class BillCustomer extends React.Component {
 
     render() {
 
-        let {customer, onChange, editMode, bill, onChangeBill} = this.props;
+        let {customer, onChange, editMode, bill, onChangeBill, infoComponent} = this.props;
         let {isNotVip, vipPay} = this.state;
 
 
@@ -294,6 +294,8 @@ export class BillCustomer extends React.Component {
                             </div>
                         </div>
                     )}
+
+                    { infoComponent()}
                 </div>
             </div>
         );

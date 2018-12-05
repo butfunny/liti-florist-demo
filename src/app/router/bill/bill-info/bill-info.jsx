@@ -59,184 +59,178 @@ export class BillInfo extends React.Component {
 
 
         return (
-            <div className="bill-customer">
-                <div className="panel-header">
-                    <b>Thông tin đơn</b>
-                </div>
+            <div className="row">
 
-                <div className="row">
-
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Tên Khách Nhận</label>
-                            <AutoCompleteNormal
-                                value={to.receiverName}
-                                onSelect={(location) => {
-                                    onChange({...to, receiverName: location});
-                                }}
-                                onChange={(value) => {
-                                    onChange({...to, receiverName: value})
-                                }}
-                                displayAs={(location) => location}
-                                defaultList={uniq(!bill.customerInfo ? [] : bill.customerInfo.locations.map(l => l.receiverName)).filter(l => l != null && l.length > 0)}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Số Điện Thoại Nhận</label>
-                            <AutoCompleteNormal
-                                value={to.receiverPhone}
-                                onSelect={(location) => {
-                                    onChange({...to, receiverPhone: location});
-                                }}
-                                onChange={(value) => {
-                                    onChange({...to, receiverPhone: value})
-                                }}
-                                displayAs={(location) => location}
-                                defaultList={uniq(!bill.customerInfo ? [] : bill.customerInfo.locations.map(l => l.receiverPhone)).filter(l => l != null && l.length > 0)}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Ngày nhận hàng</label>
-                            <DatePicker
-                                value={new Date(deliverTime)}
-                                onChange={(deliverTime) => onChangeDeliverTime(deliverTime)}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Giờ nhận hàng</label>
-                            <TimePicker
-                                value={new Date(deliverTime)}
-                                onChange={(deliverTime) => {
-                                    onChangeDeliverTime(deliverTime);
-                                }}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Nơi Nhận</label>
-                            <AutoCompleteNormal
-                                value={to.receiverPlace}
-                                onSelect={(location) => {
-                                    onChange({...to, receiverPlace: location});
-                                    this.setState({error: false, distance: null});
-                                    this.getDistance(location);
-                                }}
-                                onChange={(value) => {
-                                    onChange({...to, receiverPlace: value});
-                                    this.setState({error: false, distance: null});
-                                    this.getDistance(value)
-                                }}
-                                displayAs={(location) => location}
-                                defaultList={
-                                    uniq(!bill.customerInfo ? []
-                                        : bill.customerInfo.locations
-                                            .filter(l => l.receiverPlace != null && l.receiverPlace.length > 0 && l.receiverPhone && l.receiverPhone.indexOf(to.receiverPhone) > -1)
-                                            .map(l => l.receiverPlace))}
-                                info={error ? "Không tính được khoảng cách vui lòng tư tính tiền ship" : distance ? `Khoảng cách ${distance.text}` : ""}
-                            />
-                        </div>
-                    </div>
-
-
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Phí Ship</label>
-                            <InputNumber
-                                value={to.shipMoney}
-                                onChange={(value) => onChange({...to, shipMoney: value})}
-                            />
-                        </div>
-                    </div>
-
-
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Hình thức thanh toán</label>
-                            <select className="form-control"
-                                    value={to.paymentType}
-                                    onChange={(e) => onChange({...to, paymentType: e.target.value})}>
-                                { paymentTypes.slice(1).map((type, index) => (
-                                    <option value={type} key={index}>{type}</option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Kênh mua hàng</label>
-                            <select className="form-control"
-                                    value={to.buyerFrom}
-                                    onChange={(e) => onChange({...to, buyerFrom: e.target.value})}>
-                                { viaTypes.map((type, index) => (
-                                    <option value={type} key={index}>{type}</option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Sale</label>
-                            <InputTag
-                                tags={bill.sales}
-                                onChange={(sales) => onChangeBill({...bill, sales})}
-                                list={sales.concat(florists)}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Florist</label>
-                            <InputTag
-                                tags={bill.florists}
-                                onChange={(florists) => onChangeBill({...bill, florists})}
-                                list={florists}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="col-lg-6">
-                        <div className="form-group">
-                            <label className="control-label">Nhân viên ship</label>
-                            <InputTag
-                                tags={bill.ships}
-                                onChange={(ships) => onChangeBill({...bill, ships})}
-                                list={ships}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="col-lg-6">
-                        <Input
-                            label="Ghi Chú"
-                            value={to.notes}
-                            onChange={(e) => onChange({...to, notes: e.target.value})}
+                <div className="col-lg-6">
+                    <div className="form-group">
+                        <label className="control-label">Tên Khách Nhận</label>
+                        <AutoCompleteNormal
+                            value={to.receiverName}
+                            onSelect={(location) => {
+                                onChange({...to, receiverName: location});
+                            }}
+                            onChange={(value) => {
+                                onChange({...to, receiverName: value})
+                            }}
+                            displayAs={(location) => location}
+                            defaultList={uniq(!bill.customerInfo ? [] : bill.customerInfo.locations.map(l => l.receiverName)).filter(l => l != null && l.length > 0)}
                         />
                     </div>
+                </div>
 
-                    <div className="col-lg-12">
-                        <div className="form-group">
-                            <label className="control-label">Nội dung thiệp</label>
-                            <textarea
-                                rows="3"
-                                className="form-control no-height"
-                                value={to.cardContent}
-                                onChange={(e) => onChange({...to, cardContent: e.target.value})}
-                            />
-                        </div>
+                <div className="col-lg-6">
+                    <div className="form-group">
+                        <label className="control-label">Số Điện Thoại Nhận</label>
+                        <AutoCompleteNormal
+                            value={to.receiverPhone}
+                            onSelect={(location) => {
+                                onChange({...to, receiverPhone: location});
+                            }}
+                            onChange={(value) => {
+                                onChange({...to, receiverPhone: value})
+                            }}
+                            displayAs={(location) => location}
+                            defaultList={uniq(!bill.customerInfo ? [] : bill.customerInfo.locations.map(l => l.receiverPhone)).filter(l => l != null && l.length > 0)}
+                        />
+                    </div>
+                </div>
+
+                <div className="col-lg-6">
+                    <div className="form-group">
+                        <label className="control-label">Ngày nhận hàng</label>
+                        <DatePicker
+                            value={new Date(deliverTime)}
+                            onChange={(deliverTime) => onChangeDeliverTime(deliverTime)}
+                        />
+                    </div>
+                </div>
+
+                <div className="col-lg-6">
+                    <div className="form-group">
+                        <label className="control-label">Giờ nhận hàng</label>
+                        <TimePicker
+                            value={new Date(deliverTime)}
+                            onChange={(deliverTime) => {
+                                onChangeDeliverTime(deliverTime);
+                            }}
+                        />
+                    </div>
+                </div>
+
+                <div className="col-lg-6">
+                    <div className="form-group">
+                        <label className="control-label">Nơi Nhận</label>
+                        <AutoCompleteNormal
+                            value={to.receiverPlace}
+                            onSelect={(location) => {
+                                onChange({...to, receiverPlace: location});
+                                this.setState({error: false, distance: null});
+                                this.getDistance(location);
+                            }}
+                            onChange={(value) => {
+                                onChange({...to, receiverPlace: value});
+                                this.setState({error: false, distance: null});
+                                this.getDistance(value)
+                            }}
+                            displayAs={(location) => location}
+                            defaultList={
+                                uniq(!bill.customerInfo ? []
+                                    : bill.customerInfo.locations
+                                        .filter(l => l.receiverPlace != null && l.receiverPlace.length > 0 && l.receiverPhone && l.receiverPhone.indexOf(to.receiverPhone) > -1)
+                                        .map(l => l.receiverPlace))}
+                            info={error ? "Không tính được khoảng cách vui lòng tư tính tiền ship" : distance ? `Khoảng cách ${distance.text}` : ""}
+                        />
+                    </div>
+                </div>
+
+
+                <div className="col-lg-6">
+                    <div className="form-group">
+                        <label className="control-label">Phí Ship</label>
+                        <InputNumber
+                            value={to.shipMoney}
+                            onChange={(value) => onChange({...to, shipMoney: value})}
+                        />
+                    </div>
+                </div>
+
+
+                <div className="col-lg-6">
+                    <div className="form-group">
+                        <label className="control-label">Hình thức thanh toán</label>
+                        <select className="form-control"
+                                value={to.paymentType}
+                                onChange={(e) => onChange({...to, paymentType: e.target.value})}>
+                            { paymentTypes.slice(1).map((type, index) => (
+                                <option value={type} key={index}>{type}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
+                <div className="col-lg-6">
+                    <div className="form-group">
+                        <label className="control-label">Kênh mua hàng</label>
+                        <select className="form-control"
+                                value={to.buyerFrom}
+                                onChange={(e) => onChange({...to, buyerFrom: e.target.value})}>
+                            { viaTypes.map((type, index) => (
+                                <option value={type} key={index}>{type}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
+                <div className="col-lg-6">
+                    <div className="form-group">
+                        <label className="control-label">Sale</label>
+                        <InputTag
+                            tags={bill.sales}
+                            onChange={(sales) => onChangeBill({...bill, sales})}
+                            list={sales.concat(florists)}
+                        />
+                    </div>
+                </div>
+
+                <div className="col-lg-6">
+                    <div className="form-group">
+                        <label className="control-label">Florist</label>
+                        <InputTag
+                            tags={bill.florists}
+                            onChange={(florists) => onChangeBill({...bill, florists})}
+                            list={florists}
+                        />
+                    </div>
+                </div>
+
+                <div className="col-lg-6">
+                    <div className="form-group">
+                        <label className="control-label">Nhân viên ship</label>
+                        <InputTag
+                            tags={bill.ships}
+                            onChange={(ships) => onChangeBill({...bill, ships})}
+                            list={ships}
+                        />
+                    </div>
+                </div>
+
+                <div className="col-lg-6">
+                    <Input
+                        label="Ghi Chú"
+                        value={to.notes}
+                        onChange={(e) => onChange({...to, notes: e.target.value})}
+                    />
+                </div>
+
+                <div className="col-lg-12">
+                    <div className="form-group">
+                        <label className="control-label">Nội dung thiệp</label>
+                        <textarea
+                            rows="3"
+                            className="form-control no-height"
+                            value={to.cardContent}
+                            onChange={(e) => onChange({...to, cardContent: e.target.value})}
+                        />
                     </div>
                 </div>
             </div>
