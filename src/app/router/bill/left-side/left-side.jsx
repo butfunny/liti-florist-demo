@@ -101,21 +101,22 @@ export class LeftSide extends RComponent {
                     onChangeCatalogs={(catalogs) => this.setState({catalogs})}
                     onAddItem={(item) => this.addItem(item)}
                 />
-'
 
                 { permission[user.role].indexOf("bill.editProductType") > -1 && (
-                    <Fragment>
-                        <BillAddType
-                            types={types}
-                            onChange={(types) => this.setState({types})}
-                        />
-
-                        <BillAddColor
-                            types={colors}
-                            onChange={(colors) => this.setState({colors})}
-                        />
-                    </Fragment>
+                    <BillAddType
+                        types={types}
+                        onChange={(types) => this.setState({types})}
+                    />
                 )}
+
+                { permission[user.role].indexOf("bill.editProductColor") > -1 && (
+                    <BillAddColor
+                        types={colors}
+                        onChange={(colors) => this.setState({colors})}
+                    />
+                )}
+
+
 
 
             </Fragment>
