@@ -31,6 +31,7 @@ export class FloristCartBottom extends React.Component {
 
         let {bill, selectedItems, onChange, items} = this.props;
         let {open, saving} = this.state;
+        const isDisabled = sumBy(selectedItems, (p) => p.price) > (getTotalBill(bill) + (getTotalBill(bill) * 10 / 100));
 
         return (
             <Fragment>
@@ -55,11 +56,13 @@ export class FloristCartBottom extends React.Component {
                         <b>{bill.bill_number}</b> <span className="text-info">Chi tiết</span>
                     </div>
                     <div className="cart-price">
-                        <span className={classnames(sumBy(selectedItems, (p) => p.price) > getTotalBill(bill) && "text-danger")}>{formatNumber(sumBy(selectedItems, (p) => p.price))}đ</span> / {formatNumber(getTotalBill(bill))}đ
+                        <span className={classnames(sumBy(selectedItems, (p) => p.price) > getTotalBill(bill) && "text-warning")}>{formatNumber(sumBy(selectedItems, (p) => p.price))}đ</span> / {formatNumber(getTotalBill(bill))}đ
                     </div>
 
                     { selectedItems.length > 0 && (
-                        <button className="btn btn-info" onClick={() => this.submitOrder()}>
+                        <button
+                            disabled={isDisabled}
+                            className="btn btn-info" onClick={() => this.submitOrder()}>
                             <span className="btn-inner--text">Done</span>
                             { saving && (<span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>)}
                         </button>

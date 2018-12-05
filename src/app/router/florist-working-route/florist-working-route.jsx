@@ -34,7 +34,7 @@ export class FloristWorkingRoute extends React.Component {
         let {bill, items, keyword, filter, selectedItems} = this.state;
         let {history} = this.props;
 
-        const catalogs = ["All", "Hoa Chính", "Hoa Lá Phụ/Lá", "Phụ Kiện", "Cost"];
+        const catalogs = ["All", "Cost", "Hoa Chính", "Hoa Lá Phụ/Lá", "Phụ Kiện"];
 
         return (
             <Layout
