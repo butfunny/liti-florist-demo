@@ -18,24 +18,16 @@ export class BillAddItem extends React.Component {
             name: "",
             type: "",
             color: "",
-            types: [],
-            colors: []
         };
 
-        productApi.getTypes().then((types) => {
-            this.setState({types: types.map(t => t.name)})
-        });
 
-        productApi.getColors().then((colors) => {
-            this.setState({colors: colors.map(t => t.name)})
-        })
     }
 
 
     render() {
 
-        let {price, name, type, types, colors, color} = this.state;
-        let {onChangeItem, onChangeCatalog, saving} = this.props;
+        let {price, name, type, color} = this.state;
+        let {onChangeItem, onChangeCatalog, saving, types, colors} = this.props;
 
 
         let validations = [
@@ -52,9 +44,7 @@ export class BillAddItem extends React.Component {
             <Form
                 onSubmit={() => {
                     onChangeItem({price, name, type, color});
-                    this.setState({price: "", name: "", type: "", color: "", types: types.concat(type), colors: colors.concat(color)});
-                    productApi.createType({name: type});
-                    productApi.createColor({name: color});
+                    this.setState({price: "", name: "", type: "", color: ""});
                 }}
                 formValue={this.state}
                 validations={validations}
@@ -63,34 +53,33 @@ export class BillAddItem extends React.Component {
                     <Fragment>
                         <b>Thêm sản phẩm</b>
 
-                        <AutoCompleteNormal
-                            placeholder="Loại"
-                            value={type}
-                            onSelect={(type) => this.setState({type})}
-                            onChange={(type) => this.setState({type})}
-                            displayAs={(type) => type}
-                            defaultList={uniq(types)}
-                            allowRemove={permission[user.role].indexOf("bill.editProductType") > -1}
-                            onRemove={(item) => {
-                                productApi.removeType(item);
-                                this.setState({types: types.filter(t => t != item)})
-                            }}
-                        />
+                        <select className="form-control"
+                                style={{
+                                    marginBottom: "5px",
+                                    color: "black"
+                                }}
+                                value={type} onChange={(e) => this.setState({type: e.target.value})}>
+                            <option value="" disabled>Loại</option>
+                            { types.map((t, index) => (
+                                <option value={t} key={index}>
+                                    {t}
+                                </option>
+                            ))}
+                        </select>
 
-                        <AutoCompleteNormal
-                            placeholder="Màu"
-                            value={color}
-                            onSelect={(color) => this.setState({color})}
-                            onChange={(color) => this.setState({color})}
-                            displayAs={(color) => color}
-                            defaultList={uniq(colors)}
-                            allowRemove={permission[user.role].indexOf("bill.editProductColor") > -1}
-                            onRemove={(item) => {
-                                productApi.removeColor(item);
-                                this.setState({colors: colors.filter(t => t != item)})
-                            }}
-
-                        />
+                        <select className="form-control"
+                                style={{
+                                    marginBottom: "5px",
+                                    color: "black"
+                                }}
+                                value={color} onChange={(e) => this.setState({color: e.target.value})}>
+                            <option value="" disabled>Màu</option>
+                            { colors.map((t, index) => (
+                                <option value={t} key={index}>
+                                    {t}
+                                </option>
+                            ))}
+                        </select>
 
                         <Input
                             placeholder="Miêu tả"

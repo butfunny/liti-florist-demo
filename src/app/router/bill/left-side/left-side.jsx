@@ -3,16 +3,29 @@ import {BillAddItem} from "./add/bill-add-item";
 import {BillCatalog} from "./catalog/bill-catalog";
 import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
 import {productApi} from "../../../api/product-api";
-import {premisesInfo} from "../../../security/premises-info";
+import {permissionInfo, premisesInfo} from "../../../security/premises-info";
 import {RComponent} from "../../../components/r-component/r-component";
+import {BillAddType} from "./type/bill-add-type";
+import {BillAddColor} from "./type/bill-add-color";
+import {userInfo} from "../../../security/user-info";
 export class LeftSide extends RComponent {
 
     constructor(props) {
         super(props);
         this.state = {
             saving: false,
-            catalogs: []
+            catalogs: [],
+            types: [],
+            colors: []
         };
+
+        productApi.getTypes().then((types) => {
+            this.setState({types: types})
+        });
+
+        productApi.getColors().then((colors) => {
+            this.setState({colors: colors})
+        });
 
         productApi.get().then((catalogs) => {
             this.setState({catalogs})
@@ -66,7 +79,12 @@ export class LeftSide extends RComponent {
 
     render() {
 
-        let {saving, catalogs} = this.state;
+        let {saving, catalogs, types, colors} = this.state;
+
+        const permission = permissionInfo.getPermission();
+        const user = userInfo.getUser();
+
+
 
         return (
             <Fragment>
@@ -74,6 +92,8 @@ export class LeftSide extends RComponent {
                     onChangeItem={(item) => this.addItem(item)}
                     onChangeCatalog={(catalog) => this.addCatalog(catalog)}
                     saving={saving}
+                    types={types.map(t => t.name)}
+                    colors={colors.map(t => t.name)}
                 />
 
                 <BillCatalog
@@ -81,6 +101,23 @@ export class LeftSide extends RComponent {
                     onChangeCatalogs={(catalogs) => this.setState({catalogs})}
                     onAddItem={(item) => this.addItem(item)}
                 />
+'
+
+                { permission[user.role].indexOf("bill.editProductType") > -1 && (
+                    <Fragment>
+                        <BillAddType
+                            types={types}
+                            onChange={(types) => this.setState({types})}
+                        />
+
+                        <BillAddColor
+                            types={colors}
+                            onChange={(colors) => this.setState({colors})}
+                        />
+                    </Fragment>
+                )}
+
+
             </Fragment>
         );
     }
