@@ -20,14 +20,14 @@ export const getCSVData = (bills) => {
         "Hình thức thanh toán",
         "Chiết khấu",
         "Ship",
-        "Sale 1",
-        "Sale 2",
-        "Sale 3",
-        "Sale 4",
         "Florist 1",
         "Florist 2",
         "Florist 3",
         "Florist 4",
+        "Sale 1",
+        "Sale 2",
+        "Sale 3",
+        "Sale 4",
         'Ngày giao hàng',
         "Giờ nhận",
         "Ghi chú",
@@ -59,18 +59,7 @@ export const getCSVData = (bills) => {
             ret.push(bill.to.paymentType || "");
             ret.push(getTotalBillDiscount(bill));
             ret.push(bill.ships && bill.ships[0] ? bill.ships[0].username : "");
-            if (bill.sales) {
-                ret.push(bill.sales[0] ? bill.sales[0].username : "");
-                ret.push(bill.sales[1] ? bill.sales[1].username : "");
-                ret.push(bill.sales[2] ? bill.sales[2].username : "");
-                ret.push(bill.sales[3] ? bill.sales[3].username : "");
 
-            } else {
-                ret.push(bill.to.saleEmp);
-                ret.push("");
-                ret.push("");
-                ret.push("");
-            }
 
             if (bill.florists) {
                 ret.push(bill.florists[0] ? bill.florists[0].username : "");
@@ -83,7 +72,22 @@ export const getCSVData = (bills) => {
                 ret.push("");
                 ret.push("");
                 ret.push("");
+            }
+
+            if (bill.sales) {
+                ret.push(bill.sales[0] ? bill.sales[0].username : "");
+                ret.push(bill.sales[1] ? bill.sales[1].username : "");
+                ret.push(bill.sales[2] ? bill.sales[2].username : "");
+                ret.push(bill.sales[3] ? bill.sales[3].username : "");
+
+            } else {
+                ret.push(bill.to.saleEmp);
+                ret.push("");
+                ret.push("");
+                ret.push("");
             };
+
+
             ret.push(moment(bill.deliverTime).format("DD/MM/YYYY"));
             ret.push(moment(bill.deliverTime).format("HH:mm"));
             ret.push(bill.to.notes || "");
