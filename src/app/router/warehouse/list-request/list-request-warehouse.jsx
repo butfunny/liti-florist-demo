@@ -11,6 +11,7 @@ import groupBy from "lodash/groupBy";
 import {modals} from "../../../components/modal/modals";
 import {PreviewRequestModal} from "./preview-request-modal";
 import {userInfo} from "../../../security/user-info";
+import sumBy from "lodash/sumBy";
 
 export class ListRequestWarehouse extends React.Component {
 
@@ -117,6 +118,8 @@ export class ListRequestWarehouse extends React.Component {
                                                     {item.value.length} {item.key}
                                                 </div>
                                             ))}
+
+                                            Tổng giá trị: <b>{formatNumber(sumBy(getItems(request.items), "price"))}</b>
                                         </td>
                                         <td>
                                             {request.status ? <span
