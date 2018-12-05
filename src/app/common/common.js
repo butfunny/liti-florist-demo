@@ -229,7 +229,7 @@ export const getSalary = (user, bill) => {
 
     if (user.role == "ship") {
         return {
-            money: parseInt(bill.to.shipMoney),
+            money: bill.to.shipMoney ? parseInt(bill.to.shipMoney) : 0,
             percent: null
         };
     }
