@@ -9,30 +9,12 @@ export class SubWareHouseView extends React.Component {
         super(props);
     }
 
-    returnItem(returnItems) {
-        const modal = modals.openModal({
-            content: (
-                <ReturnItemModal
-                    items={returnItems}
-                    onDismiss={() => modal.close()}
-                    onClose={(updatedItems) => {
-                        let {items, onChange} = this.props;
-                        onChange(items.map(i => {
-                            let updatedItem = updatedItems.find(item => item._id == i._id);
-                            if (updatedItem) return updatedItem;
-                            return i;
-                        }));
-                        modal.close();
-                    }}
-                />
-            )
-        })
-    }
+
 
 
     render() {
 
-        let {items} = this.props;
+        let {items, warehouseItems} = this.props;
 
         return (
             <table className="table table-hover">
@@ -46,25 +28,30 @@ export class SubWareHouseView extends React.Component {
                 </tr>
                 </thead>
                 <tbody>
-                {items && keysToArray(groupBy(items, i => i.name)).map((item, index) => (
-                    <tr key={index}>
-                        <td>
-                            {item.key} - {item.value[0].productId} - {item.value.length}
-                        </td>
-                        <td>
-                            {item.value[0].catalog}
-                        </td>
-                        <td>
-                            {formatNumber(Math.floor(item.value[0].oriPrice))}
-                        </td>
-                        <td>
-                            {formatNumber(Math.floor(item.value[0].price))}
-                        </td>
-                        <td>
-                            {formatNumber(Math.floor(item.value[0].unit))}
-                        </td>
-                    </tr>
-                ))}
+                {items && items.map((item, index) => {
+
+                    let itemFound = warehouseItems.find(i => i._id == item.itemID);
+
+                    return (
+                        <tr key={index}>
+                            <td>
+                                {itemFound.name} - {itemFound.productId} - {item.quantity}
+                            </td>
+                            <td>
+                                {itemFound.catalog}
+                            </td>
+                            <td>
+                                {formatNumber(Math.floor(itemFound.oriPrice))}
+                            </td>
+                            <td>
+                                {formatNumber(Math.floor(itemFound.price))}
+                            </td>
+                            <td>
+                                {itemFound.unit}
+                            </td>
+                        </tr>
+                    )
+                })}
                 </tbody>
             </table>
         );

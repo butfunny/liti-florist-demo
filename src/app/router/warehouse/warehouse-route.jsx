@@ -176,14 +176,8 @@ export class WarehouseRoute extends React.Component {
 
                                 { viewType.length > 0 ? (
                                     <SubWareHouseView
-                                        items={itemsFiltered.filter(i => i.warehouseID == viewType)}
-                                        onChange={(updatedItems) => {
-                                            this.setState({items: items.map(i => {
-                                                    let updatedItem = updatedItems.find(item => item._id == i._id);
-                                                    if (updatedItem) return updatedItem;
-                                                    return i;
-                                                })})
-                                        }}
+                                        warehouseItems={items}
+                                        items={subWarehouseItems.filter(i => i.warehouseID == viewType)}
                                     />
                                 ) : (
                                     <WareHouseFullView
