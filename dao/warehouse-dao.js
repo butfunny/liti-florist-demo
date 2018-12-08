@@ -7,5 +7,5 @@ module.exports = mongoose.model('WarehouseDao', {
     catalog: String,
     productId: String,
     unit: String,
-    quantity: String
+    quantity: Number
 }, "warehouse");

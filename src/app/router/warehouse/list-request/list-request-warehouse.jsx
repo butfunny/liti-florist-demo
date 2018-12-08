@@ -22,8 +22,8 @@ export class ListRequestWarehouse extends React.Component {
             requests: []
         };
 
-        warehouseApi.getItems().then((items) => {
-            this.setState({items});
+        warehouseApi.getItems().then(({warehouseItems, subWarehouseItems}) => {
+            this.setState({items: warehouseItems, subWarehouseItems});
             warehouseApi.getRequests().then((requests) => {
                 this.setState({requests})
             });
@@ -32,19 +32,21 @@ export class ListRequestWarehouse extends React.Component {
 
     view(request) {
 
-        let {items} = this.state;
+        let {items, subWarehouseItems} = this.state;
 
         const modal = modals.openModal({
             content: (
                 <PreviewRequestModal
                     request={request}
                     items={items}
+                    subWarehouseItems={subWarehouseItems}
                     onClose={(updatedRequest) => {
                         let {requests} = this.state;
-                        warehouseApi.getItems().then((items) => {
+                        warehouseApi.getItems().then(({warehouseItems, subWarehouseItems}) => {
                             this.setState({
                                 requests: requests.map(r => r._id == updatedRequest._id ? updatedRequest : r),
-                                items
+                                items: warehouseItems,
+                                subWarehouseItems
                             });
                             modal.close();
                         })
@@ -57,13 +59,23 @@ export class ListRequestWarehouse extends React.Component {
 
     render() {
 
-        let {items, requests} = this.state;
+        let {items, requests, subWarehouseItems} = this.state;
         const premises = premisesInfo.getPremises();
         const getItems = (ids) => items.filter(i => ids.indexOf(i._id) > -1);
 
 
         const user = userInfo.getUser();
         const permission = permissionInfo.getPermission();
+
+        const getTotal = (selectedItems) => {
+            let price = 0;
+            for (let item of selectedItems) {
+                let itemFound = items.find(i => i._id == item.itemID);
+                price += itemFound.price * item.quantity;
+            }
+
+            return price;
+        };
 
         return (
             <Layout
@@ -113,13 +125,17 @@ export class ListRequestWarehouse extends React.Component {
                                             )}
                                         </td>
                                         <td>
-                                            {keysToArray(groupBy(getItems(request.items), i => i.name)).map((item, index) => (
-                                                <div key={index}>
-                                                    {item.value.length} {item.key}
-                                                </div>
-                                            ))}
+                                            {request.items.map((item, index) => {
+                                                let itemFound = items.find(i => i._id == item.itemID);
 
-                                            Tổng giá trị: <b>{formatNumber(sumBy(getItems(request.items), "price"))}</b>
+                                                return (
+                                                    <div key={index}>
+                                                        {item.quantity} {itemFound.name}
+                                                    </div>
+                                                )
+                                            })}
+
+                                            Tổng giá trị: <b>{formatNumber(getTotal(request.items))}</b>
                                         </td>
                                         <td>
                                             {request.status ? <span

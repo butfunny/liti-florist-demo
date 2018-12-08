@@ -4,4 +4,4 @@ module.exports = mongoose.model('SubWareHouseDao', {
     itemID: String,
     warehouseID: String,
     quantity: Number
-}, "subwarehouse");
+}, "sub-warehouse");

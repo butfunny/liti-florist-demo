@@ -1,7 +1,7 @@
 import React from "react";
 import {permissionInfo, premisesInfo} from "../../../security/premises-info";
 import moment from "moment";
-import {keysToArray} from "../../../common/common";
+import {formatNumber, keysToArray} from "../../../common/common";
 import groupBy from "lodash/groupBy";
 import classnames from "classnames";
 import {Input} from "../../../components/input/input";
@@ -42,19 +42,18 @@ export class PreviewRequestModal extends React.Component {
     }
 
     render() {
-        let {items, request} = this.props;
+        let {items, request, subWarehouseItems} = this.props;
         let {reason, showError, saving} = this.state;
         const premises = premisesInfo.getPremises();
-        const getItems = (ids) => items.filter(i => ids.indexOf(i._id) > -1);
         const isError = () => {
-            let selectedItems = keysToArray(groupBy(getItems(request.items), i => i.name));
-            for (let item of selectedItems) {
+            for (let item of request.items) {
+                let itemFound = items.find(i => i._id == item.itemID);
                 if (request.toWarehouse) {
-                    if (item.value.length > items.filter(i => i.name == item.key && !i.warehouseID).length) {
+                    if (item.quantity > itemFound.quantity) {
                         return true;
                     }
                 } else {
-                    if (item.value.length > items.filter(i => i.name == item.key && i.warehouseID && i.warehouseID == premises.find(p => p._id == request.fromWarehouse)._id).length) return true;
+                    if (item.quantity > subWarehouseItems.find(i => i.itemID == item.itemID && i.warehouseID == premises.find(p => p._id == request.fromWarehouse)).quantity) return true;
                 }
             }
 
@@ -63,6 +62,16 @@ export class PreviewRequestModal extends React.Component {
 
         const permission = permissionInfo.getPermission();
         const user = userInfo.getUser();
+
+        const getTotal = (selectedItems) => {
+            let price = 0;
+            for (let item of selectedItems) {
+                let itemFound = items.find(i => i._id == item.itemID);
+                price += itemFound.price * item.quantity;
+            }
+
+            return price;
+        };
 
         return (
             <div className="preview-request-modal app-modal-box">
@@ -101,31 +110,35 @@ export class PreviewRequestModal extends React.Component {
                             </tr>
                         </thead>
                         <tbody>
-                        { keysToArray(groupBy(getItems(request.items), i => i.name)).map((item, index) => (
-                            <tr key={index}>
-                                <td>
-                                    {item.key}
-                                </td>
-                                <td>
-                                    {item.value.length}
-                                </td>
+                        { request.items.map((item, index) => {
 
-                                <td>
-                                    { request.toWarehouse ?
-                                        (
-                                            <span className={classnames(item.value.length > items.filter(i => i.name == item.key && !i.warehouseID).length && "text-danger")}>{items.filter(i => i.name == item.key && !i.warehouseID).length}</span>
-                                        ) :
-                                        (
-                                            <span className={classnames(item.value.length > items.filter(i => i.name == item.key && i.warehouseID && i.warehouseID == premises.find(p => p._id == request.fromWarehouse)._id).length && "text-danger")}>
-                                                {items.filter(i => i.name == item.key && i.warehouseID && i.warehouseID == premises.find(p => p._id == request.fromWarehouse)._id).length}
+                            let itemFound = items.find(i => i._id == item.itemID);
+
+                            return (
+                                <tr key={index}>
+                                    <td>
+                                        {itemFound.name}
+                                    </td>
+                                    <td>
+                                        {item.quantity}
+                                    </td>
+
+                                    <td>
+                                        { request.toWarehouse ?
+                                                <span className={classnames(item.quantity > itemFound.quantity && "text-danger")}>{itemFound.quantity}</span>
+                                            :
+                                                <span className={classnames(item.quantity > subWarehouseItems.find(i => i.itemID == item.itemID && i.warehouseID == premises.find(p => p._id == request.fromWarehouse)).quantity && "text-danger")}>
+                                                    {subWarehouseItems.find(i => i.itemID == item.itemID && i.warehouseID == premises.find(p => p._id == request.fromWarehouse)).quantity}
                                                 </span>
-                                        )
-                                    }
-                                </td>
-                            </tr>
-                        ))}
+                                        }
+                                    </td>
+                                </tr>
+                            )
+                        })}
                         </tbody>
                     </table>
+
+                    Tổng tiền: <b>{formatNumber(getTotal(request.items))}</b>
 
                     <Input
                         disabled={request.status}

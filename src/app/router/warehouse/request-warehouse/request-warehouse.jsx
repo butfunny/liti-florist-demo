@@ -76,6 +76,8 @@ export class RequestWareHouse extends RComponent {
 
         };
 
+
+
         return (
             <Layout
                 activeRoute="Kho"

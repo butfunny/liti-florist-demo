@@ -82,22 +82,42 @@ module.exports = (app) => {
 
     app.post("/accept-request/:id", Security.authorDetails, (req, res) => {
         RequestWarehouseDao.findOne({_id: req.params.id}, (err, request) => {
-            WareHouseDao.find({}, (err, items) => {
-                let requestNames = items.filter(i => request.items.indexOf(i._id) > -1).map(i => i.name);
-                let updatedIds = [];
+            WareHouseDao.find({_id: {$in: request.items.map(i => i.itemID)}}, (err, items) => {
+                let promises = [];
 
-                for (let name of requestNames) {
-                    let found = items.find(i => i.name == name && !i.warehouseID && updatedIds.indexOf(i._id) == -1);
-                    if (found) {
-                        updatedIds.push(found._id);
+                const updateWarehouse = (itemID, warehouseQty, subWarehouseQty, warehouseID) => {
+                    return new Promise((resolve, reject) =>{
+                        WareHouseDao.updateOne({_id: itemID}, {quantity: warehouseQty}, () => {
+                            SubWareHouseDao.findOne({itemID, warehouseID}, (err, found) => {
+                                if (found) {
+                                    SubWareHouseDao.updateOne({_id: found._id}, {quantity: found.quantity + subWarehouseQty}, () => {
+                                        resolve();
+                                    })
+                                } else {
+                                    SubWareHouseDao.create({itemID, quantity: subWarehouseQty, warehouseID}, (err, item) => {
+                                        resolve();
+                                    })
+                                }
+                            })
+                        })
+                    })
+                };
+
+                for (let requestItem of request.items) {
+                    let itemFound = items.find(i => i._id == requestItem.itemID);
+                    if (itemFound.quantity >= requestItem.quantity) {
+                        promises.push(updateWarehouse(itemFound._id, itemFound.quantity - requestItem.quantity, requestItem.quantity, request.toWarehouse))
+                    } else {
+                        res.send({error: true});
+                        return;
                     }
                 }
 
-                WareHouseDao.updateMany({_id: {$in: updatedIds}}, {warehouseID: request.toWarehouse, warehouseName: req.body.warehouseName}, {multi: true}, () => {
+                Promise.all(promises).then(() => {
                     RequestWarehouseDao.updateOne({_id: req.params.id}, {status: "Xác nhận"}, () => {
                         res.end();
                     });
-                })
+                });
 
             })
         })
