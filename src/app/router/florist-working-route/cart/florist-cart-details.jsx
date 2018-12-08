@@ -10,16 +10,29 @@ export class FloristCartDetails extends React.Component {
         super(props);
     }
 
-    handleChange(qty, name) {
-        let {selectedItems, items, onChange} = this.props;
-        const ret = selectedItems.filter(s => s.name != name);
-        onChange(ret.concat(items.filter(c => c.name == name).slice(0, qty)))
+    handleChange(qty, id) {
+        let {selectedItems, onChange} = this.props;
+        let ret = [...selectedItems];
+
+        let found = ret.find(s => s.itemID == id);
+        if (!found) onChange(ret.concat({itemID: id, quantity: qty}));
+        else {
+            found.quantity = qty;
+            onChange(ret);
+        }
     }
 
     render() {
 
         let {onClose, bill, selectedItems, items} = this.props;
 
+        const getQtyItem = (id) => {
+            let found = selectedItems.find(s => s.itemID == id);
+            if (found) return found.quantity;
+            return selectedItems.filter(s => s.name == name).length
+        };
+
+        const getMaxQtyItem = (id) => items.find(i => i._id == id).quantity;
         return (
             <div className="florist-cart-details">
                 <div className="cart-title bg-gradient-primary">
@@ -45,53 +58,50 @@ export class FloristCartDetails extends React.Component {
                     )}
 
 
-                    { sortBy(sortBy(keysToArray(groupBy(selectedItems, i => i.name)), i => i.key), i => {
-                        if (i.value[0].catalog == "Hoa Chính") return 1;
-                        if (i.value[0].catalog == "Hoa Lá Phụ/Lá") return 2;
-                        if (i.value[0].catalog == "Phụ Kiện") return 3;
-                        if (i.value[0].catalog == "Cost") return 4;
-                    }).map((item, index) => (
+                    { selectedItems.map((item, index) => (
                         <div className="product" key={index}>
                             <div className="title">
-                                {item.key}
+                                {item.name}
                             </div>
 
                             <div className="price">
-                                {formatNumber(item.value[0].price)}đ
+                                {formatNumber(item.price)}đ
                             </div>
 
                             <div className="qty">
-                                Tồn kho: <b>{items.filter(c => c.name == item.key).length}</b>
+                                Tồn kho: <b>{getMaxQtyItem(item.itemID)}</b>
                             </div>
 
                             <div className="action">
                                 <button type="button" className="btn btn-danger btn-sm" onClick={() => {
-                                    this.handleChange(item.value.length - 1, item.key);
+                                    if (getQtyItem(item.itemID) > 0) {
+                                        this.handleChange(getQtyItem(item.itemID) - 1, item.itemID)
+                                    }
                                 }}>
                                     <i className="fa fa-minus"/>
                                 </button>
 
                                 <InputNumber
                                     autoSelect
-                                    value={item.value.length}
+                                    value={getQtyItem(item.itemID)}
                                     onChange={(qty) => {
-                                        if (qty > items.filter(c => c.name == item.key).length) {
-                                            this.handleChange(items.filter(c => c.name == item.key).length, item.key);
+                                        if (qty > getMaxQtyItem(item.itemID)) {
+                                            this.handleChange(getMaxQtyItem(item.itemID), item.itemID);
                                             return;
                                         }
 
-                                        if (qty <= 0) {
-                                            this.handleChange(0, item.key);
+                                        if (qty < 0) {
+                                            this.handleChange(0, item.itemID);
                                             return;
                                         }
 
-                                        this.handleChange(qty, item.key);
+                                        this.handleChange(qty, item.itemID);
                                     }}
                                 />
 
                                 <button type="button" className="btn btn-info btn-sm btn-right" onClick={() => {
-                                    if (item.value.length <= items.filter(c => c.name == item.key).length) {
-                                        this.handleChange(item.value.length + 1, item.key)
+                                    if (getQtyItem(item.itemID) <= getMaxQtyItem(item.itemID)) {
+                                        this.handleChange(getQtyItem(item.itemID) + 1, item.itemID)
                                     }
                                 }}>
                                     <i className="fa fa-plus"/>

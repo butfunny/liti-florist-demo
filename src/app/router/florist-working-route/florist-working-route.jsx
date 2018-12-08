@@ -16,7 +16,8 @@ export class FloristWorkingRoute extends React.Component {
             items: [],
             keyword: "",
             filter: "All",
-            selectedItems: []
+            selectedItems: [],
+            subItems: []
         };
 
         billApi.getBillById(props.match.params.id).then(({bill}) => {
@@ -24,17 +25,27 @@ export class FloristWorkingRoute extends React.Component {
         });
 
 
-        warehouseApi.getItemsById(premisesInfo.getActivePremise()._id).then((items) => {
-            this.setState({items})
+        warehouseApi.getItemsById(premisesInfo.getActivePremise()._id).then(({items, subItems}) => {
+            this.setState({items, subItems})
         })
     }
 
     render() {
 
-        let {bill, items, keyword, filter, selectedItems} = this.state;
+        let {bill, items, keyword, filter, selectedItems, subItems} = this.state;
         let {history} = this.props;
 
+
         const catalogs = ["All", "Cost", "Hoa Chính", "Hoa Lá Phụ/Lá", "Phụ Kiện"];
+
+        const itemsWrapped = (c) => {
+            let ret = subItems.map((item => ({
+                ...items.find(i => i._id == item.itemID),
+                quantity: item.quantity
+            })));
+
+            return ret.filter(r => r.catalog == c)
+        };
 
         return (
             <Layout
@@ -70,7 +81,7 @@ export class FloristWorkingRoute extends React.Component {
                                 keyword={keyword}
                                 key={index}
                                 label={c}
-                                items={items.filter(i => i.catalog == c)}
+                                items={itemsWrapped(c)}
                             />
                         ))}
 
