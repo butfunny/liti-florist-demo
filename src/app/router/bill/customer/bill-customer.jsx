@@ -147,7 +147,7 @@ export class BillCustomer extends React.Component {
 
                     <div className="col-lg-6">
                         <div className="form-group">
-                            <label className="control-label">Tên Khách Đặt</label>
+                            <label className="control-label">Người Đặt Hàng</label>
                             <Input
                                 disabled={vipPay}
                                 value={customer.customerName}

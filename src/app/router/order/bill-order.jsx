@@ -431,6 +431,7 @@ export class BillOrderRoute extends RComponent {
                                                     </div>
 
                                                     <div>Hình thức thanh toán: <b>{bill.to.paymentType}</b></div>
+                                                    {bill.to.mcc && <div>MCC: <b>{bill.to.mcc}</b></div>}
 
                                                     <div>
                                                         Ghi chú: <b>{bill.to.notes}</b>

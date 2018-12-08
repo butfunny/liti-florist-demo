@@ -26,7 +26,8 @@ module.exports = mongoose.model('BillDao', {
         notes: String,
         paymentType: String,
         shipMoney: String,
-        buyerFrom: String
+        buyerFrom: String,
+        mcc: String
     },
     sales: [{
         user_id: String,
@@ -56,5 +57,5 @@ module.exports = mongoose.model('BillDao', {
     },
     image: String,
     reason: String,
-    selectedFlower: [JSON]
+    selectedFlower: [JSON],
 }, "bills");

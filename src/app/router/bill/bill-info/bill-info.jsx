@@ -63,7 +63,7 @@ export class BillInfo extends React.Component {
 
                 <div className="col-lg-6">
                     <div className="form-group">
-                        <label className="control-label">Tên Khách Nhận</label>
+                        <label className="control-label">Người Nhận Hàng</label>
                         <AutoCompleteNormal
                             value={to.receiverName}
                             onSelect={(location) => {
@@ -165,6 +165,14 @@ export class BillInfo extends React.Component {
                                 <option value={type} key={index}>{type}</option>
                             ))}
                         </select>
+
+                        { to.paymentType == "Thẻ" && (
+                            <Input
+                                placeholder="MCC"
+                                value={to.mcc}
+                                onChange={(e) => onChange({...to, mcc: e.target.value})}
+                            />
+                        )}
                     </div>
                 </div>
 
