@@ -12,7 +12,17 @@ export class PreviewRequest extends React.Component {
 
     render() {
 
-        let {selectedItems} = this.props;
+        let {selectedItems, items} = this.props;
+
+        const getTotal = () => {
+            let price = 0;
+            for (let item of selectedItems) {
+                let itemFound = items.find(i => i._id == item.itemID);
+                price += itemFound.price * item.quantity;
+            }
+
+            return price;
+        };
 
         return (
             <div className="panel panel-default bill-view">
@@ -35,34 +45,32 @@ export class PreviewRequest extends React.Component {
                                 </tr>
                             )}
 
-                            { sortBy(sortBy(keysToArray(groupBy(selectedItems, i => i.name)), i => i.key), i => {
-                                if (i.value[0].catalog == "Hoa Chính") return 1;
-                                if (i.value[0].catalog == "Hoa Lá Phụ/Lá") return 2;
-                                if (i.value[0].catalog == "Phụ Kiện") return 3;
-                                if (i.value[0].catalog == "Cost") return 4;
-                            }).map((item, index) => (
-                                <tr key={index}>
-                                    <td className="title">
-                                        {item.key}
-                                    </td>
+                            { selectedItems.map((item, index) => {
+                                const itemFound = items.find(i => i._id == item.itemID);
+                                return (
+                                    <tr key={index}>
+                                        <td className="title">
+                                            {itemFound.name}
+                                        </td>
 
-                                    <td className="price text-right">
-                                        {formatNumber(item.value[0].price)}đ
-                                    </td>
+                                        <td className="price text-right">
+                                            {formatNumber(itemFound.price)}đ
+                                        </td>
 
 
-                                    <td className="no-padding col-action text-right">
-                                        {item.value.length}
-                                    </td>
-                                </tr>
-                            ))}
+                                        <td className="no-padding col-action text-right">
+                                            {item.quantity}
+                                        </td>
+                                    </tr>
+                                )
+                            })}
 
                         </tbody>
 
                     </table>
 
                     <div className="text-right">
-                        Tổng tiền: {formatNumber(sumBy(selectedItems, i => i.price))}
+                        Tổng tiền: {formatNumber(getTotal())}
                     </div>
 
                 </div>

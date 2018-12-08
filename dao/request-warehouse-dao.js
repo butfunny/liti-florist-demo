@@ -1,7 +1,7 @@
 let mongoose = require('mongoose');
 
 module.exports = mongoose.model('RequestWarehouseDao', {
-    items: [String],
+    items: [JSON],
     toWarehouse: String,
     fromWarehouse: String,
     requestName: String,

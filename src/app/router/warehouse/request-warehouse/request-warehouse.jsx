@@ -29,8 +29,8 @@ export class RequestWareHouse extends RComponent {
             this.setState({selectedItems: []});
         });
 
-        warehouseApi.getItems().then((items) => {
-            this.setState({items: items, loading: false})
+        warehouseApi.getItems().then(({warehouseItems, subWarehouseItems}) => {
+            this.setState({items: warehouseItems, subWarehouseItems, loading: false})
         })
     }
 
@@ -56,13 +56,25 @@ export class RequestWareHouse extends RComponent {
 
     render() {
 
-        let {items, filter, keyword, selectedItems, noteType, requestName, receivedName, loading} = this.state;
+        let {items, filter, keyword, selectedItems, noteType, requestName, receivedName, loading, subWarehouseItems} = this.state;
         const catalogs = ["All", "Hoa Chính", "Hoa Lá Phụ/Lá", "Phụ Kiện", "Cost"];
         const activePremise = premisesInfo.getActivePremise();
 
         const user = userInfo.getUser();
         const permission = permissionInfo.getPermission();
-        console.log(loading);
+
+        const itemsWrapped = (c) => {
+            let ret = items;
+            if (noteType == "Nhập kho") {
+                ret = subWarehouseItems.filter(i => i.warehouseID == activePremise._id).map((item => ({
+                    ...items.find(i => i._id == item.itemID),
+                    quantity: item.quantity
+                })));
+            }
+
+            return ret.filter(r => r.catalog == c)
+
+        };
 
         return (
             <Layout
@@ -122,7 +134,7 @@ export class RequestWareHouse extends RComponent {
                                                 keyword={keyword}
                                                 key={index}
                                                 label={c}
-                                                items={items.filter(i => i.catalog == c && (noteType == "Xuất kho" ? !i.warehouseID : i.warehouseID == activePremise._id))}
+                                                items={itemsWrapped(c)}
                                             />
                                         ))}
                                     </div>
@@ -135,9 +147,8 @@ export class RequestWareHouse extends RComponent {
 
                             <div className="col col-md-6">
                                 <PreviewRequest
-                                    items={items.filter(i =>  noteType == "Xuất kho" ? !i.warehouseID : i.warehouseID == activePremise._id)}
                                     selectedItems={selectedItems}
-                                    onChange={(selectedItems) => this.setState({selectedItems})}
+                                    items={items}
                                 />
 
                                 <Input
