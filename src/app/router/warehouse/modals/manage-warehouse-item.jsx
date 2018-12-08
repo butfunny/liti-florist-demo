@@ -30,18 +30,16 @@ export class ManageWarehouseItemModal extends React.Component {
         let {items, onDismiss} = this.props;
         let {name, quantity, catalog, saving, oriPrice, price, productId, unit} = this.state;
 
-        const validations = [{
-            name: [required("Tên sản phẩm"), (val) => ({
-                text: "Tên đã trùng",
-                valid: items.map(i => i.name.trim()).indexOf(val.trim()) == -1
-            })
-            ],
-            quantity: [minVal("Số lượng", 1)],
-            oriPrice: [minVal("Giá Gốc", 0)],
-            price: [minVal("Giá Bán", 0)],
-            productId: [minVal("Mã sản phẩm", 0)],
-            unit: [minVal("Đơn Vị Tính", 0)],
-        }];
+        const validations = [
+            {"productId": [required("Mã sản phẩm"), (val) => ({
+                    text: "Mã trùng",
+                    valid: items.map(i => i.productId.trim()).indexOf(val.trim()) == -1
+                })]},
+            {"name": [required("Tên sản phẩm")]},
+            {"quantity": [minVal("Số lượng", 1)]},
+            {"oriPrice": [minVal("Giá Gốc", 0)]},
+            {"price": [minVal("Giá Bán", 0)]},
+            {"unit": [required("Đơn vị")]}];
 
         const catalogs = ["Hoa Chính", "Hoa Lá Phụ/Lá", "Phụ Kiện", "Cost"];
 

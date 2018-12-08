@@ -24,7 +24,7 @@ export const isNumber = (path) => (val) => {
 export const minVal = (path, minVal) => (val) => {
     return {
         text: `${path} phải lớn hơn hoặc bằng ${minVal}`,
-        valid: val >= minVal
+        valid: val != "" && val >= minVal
     }
 };
 

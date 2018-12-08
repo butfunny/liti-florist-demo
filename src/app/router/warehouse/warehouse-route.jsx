@@ -35,8 +35,8 @@ export class WarehouseRoute extends React.Component {
 
 
     refresh() {
-        return warehouseApi.getItems().then((items) => {
-            this.setState({items});
+        return warehouseApi.getItems().then(({warehouseItems, subWarehouseItems}) => {
+            this.setState({items: warehouseItems, subWarehouseItems});
             return Promise.resolve();
         });
     }

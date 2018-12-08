@@ -15,16 +15,12 @@ export class WareHouseFullView extends React.Component {
         super(props);
     }
 
-    editItem(updatedItems) {
-        let {items, onChange} = this.props;
-
-        let selectedItems = updatedItems.filter(i => !i.warehouseID);
-
+    editItem(item) {
+        let {onChange, items} = this.props;
         const modal = modals.openModal({
             content: (
                 <EditWareHouseItemModal
-                    updatedItems={selectedItems}
-                    defaultItem={updatedItems[0]}
+                    item={item}
                     items={items}
                     onClose={() => {
                         onChange().then(() => {

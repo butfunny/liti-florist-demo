@@ -10,7 +10,7 @@ export const warehouseApi = {
     getItems: () => {
         return api.get(`/api/warehouse/list/`)
     },
-    updateItems: (id, item) => {
+    updateItem: (id, item) => {
         return api.put(`/api/warehouse/${id}`, item)
     },
     removeItems: (id) => {

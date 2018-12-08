@@ -5,67 +5,44 @@ import {Input} from "../../../components/input/input";
 import {InputNumber} from "../../../components/input-number/input-number";
 import {warehouseApi} from "../../../api/warehouse-api";
 import {generateDatas} from "../../../common/common";
+
 export class EditWareHouseItemModal extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            name: props.defaultItem.name,
-            qty: props.updatedItems.length,
-            catalog: props.defaultItem.catalog,
+            ...props.item,
             saving: false,
-            oriPrice: props.defaultItem.oriPrice,
-            price: props.defaultItem.price
         }
     }
 
 
     submit() {
-        let {updatedItems, defaultItem} = this.props;
-        let items = [...this.props.items];
-        let {name, catalog, oriPrice, price, qty} = this.state;
-
-        warehouseApi.updateItems({
-            ids: updatedItems.map(i => i._id),
-            update: {name, catalog, oriPrice, price}
-        }).then(() => {
-            items = items.map(i => i.name == defaultItem.name ? {...i, name, catalog, oriPrice, price} : i);
-            if (qty > updatedItems.length) {
-                warehouseApi.createItem(generateDatas({name, catalog, oriPrice, price}, qty - updatedItems.length)).then((createdItems) => {
-                    this.props.onClose(items.concat(createdItems))
-                })
-            }
-
-            if (qty < updatedItems.length) {
-                const removedIds = updatedItems.slice(0, updatedItems.length - qty).map(i => i._id);
-                warehouseApi.removeItems({ids: removedIds}).then(() => {
-                    this.props.onClose(items.filter(i => removedIds.indexOf(i._id) == -1))
-                })
-            }
-
-            if (qty == updatedItems.length) {
-                this.props.onClose(items)
-            }
+        let {item} = this.props;
+        warehouseApi.updateItem(item._id, this.state).then(() => {
+            this.props.onClose({
+                _id: item._id,
+                ...this.state
+            });
         })
     }
 
     render() {
 
-        let {items, onDismiss, defaultItem} = this.props;
-        let {name, qty, catalog, saving, oriPrice, price} = this.state;
+        let {item, onDismiss, items} = this.props;
+        let {name, quantity, catalog, saving, oriPrice, price, unit, productId} = this.state;
 
 
-
-        const validations = [{
-            name: [required("Tên sản phẩm"), (val) => ({
-                text: "Tên đã trùng",
-                valid: items.filter(i => i.name != defaultItem.name).map(i => i.name.trim()).indexOf(val.trim()) == -1
-            })
-            ],
-            qty: [minVal("Số lượng", 1)],
-            oriPrice: [minVal("Giá Gốc", 0)],
-            price: [minVal("Giá Bán", 0)],
-        }];
+        const validations = [
+            {"productId": [required("Mã sản phẩm"), (val) => ({
+                text: "Mã trùng",
+                valid: items.filter(i => i.productId != item.productId).map(i => i.productId.trim()).indexOf(val.trim()) == -1
+            })]},
+            {"name": [required("Tên sản phẩm")]},
+            {"quantity": [minVal("Số lượng", 1)]},
+            {"oriPrice": [minVal("Giá Gốc", 0)]},
+            {"price": [minVal("Giá Bán", 0)]},
+            {"unit": [required("Đơn vị")]}];
 
         const catalogs = ["Hoa Chính", "Hoa Lá Phụ/Lá", "Phụ Kiện", "Cost"];
 
@@ -73,7 +50,7 @@ export class EditWareHouseItemModal extends React.Component {
             <div className="app-modal-box">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title">Sửa {defaultItem.name}</h5>
+                        <h5 className="modal-title">Sửa {item.name}</h5>
                     </div>
 
                     <Form
@@ -93,6 +70,13 @@ export class EditWareHouseItemModal extends React.Component {
                                         error={getInvalidByKey("name")}
                                     />
 
+                                    <Input
+                                        label="Mã sản phẩm"
+                                        value={productId}
+                                        onChange={(e) => this.setState({productId: e.target.value})}
+                                        error={getInvalidByKey("productId")}
+                                    />
+
 
                                     <div className="form-group">
 
@@ -100,17 +84,17 @@ export class EditWareHouseItemModal extends React.Component {
 
                                         <select className="form-control" value={catalog}
                                                 onChange={(e) => this.setState({catalog: e.target.value})}>
-                                            { catalogs.map((item, index) => (
+                                            {catalogs.map((item, index) => (
                                                 <option value={item} key={index}>{item}</option>
                                             ))}
                                         </select>
                                     </div>
 
-                                    <Input
+                                    <InputNumber
                                         label="Số Lượng"
-                                        value={qty}
-                                        onChange={(e) => this.setState({qty: e.target.value})}
-                                        error={getInvalidByKey("qty")}
+                                        value={quantity}
+                                        onChange={(e) => this.setState({quantity: e})}
+                                        error={getInvalidByKey("quantity")}
                                     />
 
                                     <InputNumber
@@ -127,12 +111,21 @@ export class EditWareHouseItemModal extends React.Component {
                                         error={getInvalidByKey("price")}
                                     />
 
+                                    <Input
+                                        label="Đơn vị tính"
+                                        value={unit}
+                                        onChange={(e) => this.setState({unit: e.target.value})}
+                                        error={getInvalidByKey("unit")}
+                                    />
+
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-link" onClick={() => onDismiss()}>Đóng</button>
+                                    <button type="button" className="btn btn-link" onClick={() => onDismiss()}>Đóng
+                                    </button>
                                     <button type="submit" className="btn btn-info btn-icon">
                                         <span className="btn-inner--text">Lưu</span>
-                                        { saving && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
+                                        {saving && <span className="btn-inner--icon"><i
+                                            className="fa fa-spinner fa-pulse"/></span>}
                                     </button>
                                 </div>
                             </Fragment>
