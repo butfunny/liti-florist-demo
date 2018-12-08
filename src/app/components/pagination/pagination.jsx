@@ -6,8 +6,8 @@ export class Pagination extends React.Component {
 
         let total = this.props.total;
         let r = {
-            from: Math.floor((this.props.value - 1) / 10) * 10 + 1,
-            to  : Math.min(total, Math.floor((this.props.value - 1) / 10) * 10 + 10)
+            from: Math.round((this.props.value - 1) / 10) * 10 + 1,
+            to  : Math.min(total, Math.round((this.props.value - 1) / 10) * 10 + 10)
         };
         if (this.props.value != 1 && this.props.value == r.from) {
             r.from--;

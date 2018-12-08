@@ -29,10 +29,10 @@ export class BillInfo extends React.Component {
     getDistance = debounce((to) => {
         googleMapsApi.getDistance({from: premisesInfo.getActivePremise().address, to}).then((distance) => {
             this.setState({distance});
-            let {deliverTime, onChange, to} = this.props;
-            onChange({...to, shipMoney: getShipFees(deliverTime, distance.value / 1000)})
+            let {deliverTime, onChange, to, bill} = this.props;
+            onChange({...to, shipMoney: getShipFees(bill, distance.value / 1000), distance: distance.value / 1000})
         }, () => {
-            this.setState({error: true})
+            this.setState({error: true, distance: 0})
         })
     }, 800);
 

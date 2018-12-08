@@ -102,10 +102,10 @@ export class WareHouseFullView extends React.Component {
                             {item.catalog}
                         </td>
                         <td>
-                            {formatNumber(Math.floor(item.oriPrice))}
+                            {formatNumber(Math.round(item.oriPrice))}
                         </td>
                         <td>
-                            {formatNumber(Math.floor(item.price))}
+                            {formatNumber(Math.round(item.price))}
                         </td>
 
                         <td>

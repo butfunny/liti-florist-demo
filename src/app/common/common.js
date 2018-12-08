@@ -35,12 +35,12 @@ export const getTotalBill = (bill) => {
         discount += bill.promotion.discount
     }
 
-    return Math.ceil(totalBillItems - totalBillItems * Math.min(discount, 100) / 100)
+    return Math.round(totalBillItems - totalBillItems * Math.min(discount, 100) / 100)
 
 };
 
 export const getTotalBillItems = (bill) => {
-    return Math.ceil(sumBy(bill.items, item => {
+    return Math.round(sumBy(bill.items, item => {
         return item.price * item.quantity
     }));
 
@@ -80,12 +80,12 @@ export const getTotalBillDiscount = (bill) => {
         discount += bill.promotion.discount
     };
 
-    return Math.ceil(totalDiscount + totalBillItems * Math.min(discount, 100) / 100)
+    return Math.round(totalDiscount + totalBillItems * Math.min(discount, 100) / 100)
 };
 
 
 export const getTotalBillVAT = (bill) => {
-    return Math.ceil(sumBy(bill.items, item => {
+    return Math.round(sumBy(bill.items, item => {
         let price = item.price * item.quantity;
         if (item.vat) return price * item.vat / 100;
         return 0
@@ -123,7 +123,7 @@ export const getTotalBillWithoutVAT = (bill) => {
         discount += bill.promotion.discount
     }
 
-    return Math.ceil(totalBillItems - totalBillItems * Math.min(discount, 100) / 100)
+    return Math.round(totalBillItems - totalBillItems * Math.min(discount, 100) / 100)
 
 };
 
@@ -156,7 +156,7 @@ export const getTotalBillWithouDiscount = (bill) => {
         discount += 20;
     }
 
-    return Math.ceil(totalBillItems - totalBillItems * Math.min(discount, 100) / 100)
+    return Math.round(totalBillItems - totalBillItems * Math.min(discount, 100) / 100)
 
 };
 
@@ -242,16 +242,32 @@ export const getSalary = (user, bill) => {
 };
 
 
-export const getShipFees = (deliverTime, distance) => {
-    if (new Date(deliverTime).getHours() >= 18 && new Date(deliverTime).getMinutes() >= 30) {
-        return 30000
+export const getShipFees = (bill, distance) => {
+
+    const billTotal = getTotalBill(bill);
+
+    if (billTotal >= 600000) {
+        if (bill.vipSaleType) {
+            if (distance <= 8) return 0;
+            return 5000 * Math.round(distance);
+        } else {
+            if (distance <= 5) return 0;
+            return 5000 *  Math.round(distance);
+        }
+    } else {
+        return 5000 *  Math.round(distance)
     }
 
-    if (distance < 10) {
-        return 15000;
-    }
 
-    return 20000;
+    // if (new Date(deliverTime).getHours() >= 18 && new Date(deliverTime).getMinutes() >= 30) {
+    //     return 30000
+    // }
+    //
+    // if (distance < 10) {
+    //     return 15000;
+    // }
+    //
+    // return 20000;
 };
 
 export const formatValue = (value) => {

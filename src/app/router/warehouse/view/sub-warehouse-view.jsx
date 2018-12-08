@@ -41,10 +41,10 @@ export class SubWareHouseView extends React.Component {
                                 {itemFound.catalog}
                             </td>
                             <td>
-                                {formatNumber(Math.floor(itemFound.oriPrice))}
+                                {formatNumber(Math.round(itemFound.oriPrice))}
                             </td>
                             <td>
-                                {formatNumber(Math.floor(itemFound.price))}
+                                {formatNumber(Math.round(itemFound.price))}
                             </td>
                             <td>
                                 {itemFound.unit}

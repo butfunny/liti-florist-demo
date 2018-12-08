@@ -166,7 +166,7 @@ export class Customers extends React.Component {
                             { customers && (
                                 <Pagination
                                     value={page || 1}
-                                    total={Math.ceil(total / 50) }
+                                    total={Math.round(total / 50) }
                                     onChange={(newPage) => !loading && page != newPage && this.setState({page: newPage}, () => this.getCustomerBills()) }
                                 />
                             )}
