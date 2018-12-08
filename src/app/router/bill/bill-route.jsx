@@ -156,19 +156,6 @@ export class BillRoute extends RComponent {
                     isOwe: bill.to.paymentType == "Nợ"
                 }).then(() => {
 
-                    PrintService.printBill({
-                        body: (
-                            <BillPrint
-                                bill={{
-                                    ...bill,
-                                    bill_number: `${formatValue(today.getDate())}${formatValue(today.getMonth() + 1)}${today.getFullYear()}${formatValue(bills.length + 1)}`,
-                                    isOwe: bill.to.paymentType == "Nợ",
-                                    created_by: userInfo.getUser().username
-                                }}
-                            />
-                        )
-                    });
-
                     this.setState({
                         bill: initBill,
                         saving: false
@@ -188,9 +175,20 @@ export class BillRoute extends RComponent {
                             })
                         }
                     });
-
                     this.billCustomer.setVipPay(false);
 
+                    PrintService.printBill({
+                        body: (
+                            <BillPrint
+                                bill={{
+                                    ...bill,
+                                    bill_number: `${formatValue(today.getDate())}${formatValue(today.getMonth() + 1)}${today.getFullYear()}${formatValue(bills.length + 1)}`,
+                                    isOwe: bill.to.paymentType == "Nợ",
+                                    created_by: userInfo.getUser().username
+                                }}
+                            />
+                        )
+                    });
 
                 })
             })
