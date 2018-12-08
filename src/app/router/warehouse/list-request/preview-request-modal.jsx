@@ -31,11 +31,17 @@ export class PreviewRequestModal extends React.Component {
         const premises = premisesInfo.getPremises();
         this.setState({saving: true});
         if (request.toWarehouse) {
-            warehouseApi.acceptRequest(request._id, {warehouseName: premises.find(p => p._id == request.toWarehouse).name}).then(() => {
+            warehouseApi.acceptRequest(request._id, {warehouseName: premises.find(p => p._id == request.toWarehouse).name}).then(({error}) => {
+                if (error) {
+                    this.setState({error: true});
+                }
                 onClose({...request, status: "Xác nhận"})
             })
         } else {
-            warehouseApi.acceptReturn(request._id, ).then(() => {
+            warehouseApi.acceptReturn(request._id, ).then(({error}) => {
+                if (error) {
+                    this.setState({error: true});
+                }
                 onClose({...request, status: "Xác nhận"})
             })
         }
@@ -43,17 +49,18 @@ export class PreviewRequestModal extends React.Component {
 
     render() {
         let {items, request, subWarehouseItems} = this.props;
-        let {reason, showError, saving} = this.state;
+        let {reason, showError, saving, error} = this.state;
         const premises = premisesInfo.getPremises();
         const isError = () => {
             for (let item of request.items) {
                 let itemFound = items.find(i => i._id == item.itemID);
+                let subWarehouseItem = subWarehouseItems.find(i => i.itemID == item.itemID && i.warehouseID == request.fromWarehouse);
                 if (request.toWarehouse) {
                     if (item.quantity > itemFound.quantity) {
                         return true;
                     }
                 } else {
-                    if (item.quantity > subWarehouseItems.find(i => i.itemID == item.itemID && i.warehouseID == premises.find(p => p._id == request.fromWarehouse)).quantity) return true;
+                    if (item.quantity > subWarehouseItem.quantity) return true;
                 }
             }
 
@@ -113,6 +120,7 @@ export class PreviewRequestModal extends React.Component {
                         { request.items.map((item, index) => {
 
                             let itemFound = items.find(i => i._id == item.itemID);
+                            let subWarehouseItem = subWarehouseItems.find(i => i.itemID == item.itemID && i.warehouseID == request.fromWarehouse);
 
                             return (
                                 <tr key={index}>
@@ -127,8 +135,8 @@ export class PreviewRequestModal extends React.Component {
                                         { request.toWarehouse ?
                                                 <span className={classnames(item.quantity > itemFound.quantity && "text-danger")}>{itemFound.quantity}</span>
                                             :
-                                                <span className={classnames(item.quantity > subWarehouseItems.find(i => i.itemID == item.itemID && i.warehouseID == premises.find(p => p._id == request.fromWarehouse)).quantity && "text-danger")}>
-                                                    {subWarehouseItems.find(i => i.itemID == item.itemID && i.warehouseID == premises.find(p => p._id == request.fromWarehouse)).quantity}
+                                                <span className={classnames(item.quantity > subWarehouseItem.quantity && "text-danger")}>
+                                                    {subWarehouseItem.quantity}
                                                 </span>
                                         }
                                     </td>
@@ -151,6 +159,12 @@ export class PreviewRequestModal extends React.Component {
                     {isError() && !request.status && (
                         <div className="text-danger">
                             Số lượng trong kho không đủ để thực hiện.
+                        </div>
+                    )}
+
+                    { error && (
+                        <div className="text-danger">
+                            Lỗi khi gửi yêu cầu, vui lòng tải lại trang và thực hiện lại
                         </div>
                     )}
                 </div>
