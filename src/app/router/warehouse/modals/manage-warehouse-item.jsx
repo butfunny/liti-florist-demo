@@ -11,7 +11,7 @@ export class ManageWarehouseItemModal extends React.Component {
         super(props);
         this.state = {
             name: "",
-            qty: 1,
+            quantity: 1,
             catalog: "Hoa Chính",
             saving: false,
             oriPrice: 0,
@@ -20,9 +20,7 @@ export class ManageWarehouseItemModal extends React.Component {
     }
 
     submit() {
-        let {name, qty, catalog, oriPrice, price} = this.state;
-
-        warehouseApi.createItem(generateDatas({name, catalog, oriPrice, price}, qty)).then((items) => {
+        warehouseApi.createItem(this.state).then((items) => {
             this.props.onClose(items)
         })
     }
@@ -30,7 +28,7 @@ export class ManageWarehouseItemModal extends React.Component {
     render() {
 
         let {items, onDismiss} = this.props;
-        let {name, qty, catalog, saving, oriPrice, price, productId, unit} = this.state;
+        let {name, quantity, catalog, saving, oriPrice, price, productId, unit} = this.state;
 
         const validations = [{
             name: [required("Tên sản phẩm"), (val) => ({
@@ -38,7 +36,7 @@ export class ManageWarehouseItemModal extends React.Component {
                 valid: items.map(i => i.name.trim()).indexOf(val.trim()) == -1
             })
             ],
-            qty: [minVal("Số lượng", 1)],
+            quantity: [minVal("Số lượng", 1)],
             oriPrice: [minVal("Giá Gốc", 0)],
             price: [minVal("Giá Bán", 0)],
             productId: [minVal("Mã sản phẩm", 0)],
@@ -93,9 +91,9 @@ export class ManageWarehouseItemModal extends React.Component {
 
                                     <Input
                                         label="Số Lượng"
-                                        value={qty}
-                                        onChange={(e) => this.setState({qty: e.target.value})}
-                                        error={getInvalidByKey("qty")}
+                                        value={quantity}
+                                        onChange={(e) => this.setState({quantity: e.target.value})}
+                                        error={getInvalidByKey("quantity")}
                                     />
 
                                     <InputNumber

@@ -7,7 +7,7 @@ import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
 import {warehouseApi} from "../../../api/warehouse-api";
 import {TransferItemModal} from "../modals/transfer-item-modal";
 import {ReturnItemModal} from "../modals/return-item-modal";
-import {permissionInfo} from "../../../security/premises-info";
+import {permissionInfo, premisesInfo} from "../../../security/premises-info";
 import {userInfo} from "../../../security/user-info";
 export class WareHouseFullView extends React.Component {
 
@@ -51,9 +51,20 @@ export class WareHouseFullView extends React.Component {
 
     render() {
 
-        let {items} = this.props;
+        let {items, subWarehouseItems} = this.props;
         const permission = permissionInfo.getPermission();
         const user = userInfo.getUser();
+        const premises = premisesInfo.getPremises();
+
+        const getSubItem = (item) => {
+            let subItems =  subWarehouseItems.filter(i => i.itemID == item._id);
+            const premiseActive = premises.filter(p => subItems.map(s => s.warehouseID).indexOf(p._id) > -1);
+            return premiseActive.map(p => ({
+                name: p.name,
+                quantity: subItems.find(i => i.warehouseID == p._id).quantity
+            }))
+        };
+
 
         return (
             <table className="table table-hover">
@@ -68,23 +79,23 @@ export class WareHouseFullView extends React.Component {
                 </tr>
                 </thead>
                 <tbody>
-                {items && keysToArray(groupBy(items, i => i.name)).map((item, index) => (
+                {items && items.map((item, index) => (
                     <tr key={index}>
                         <td>
-                            {item.key} - {item.value[0].productId}
+                            {item.name} - {item.productId}
 
                             <div className="text-small">
                                 <span className="text-danger">*Tồn kho:</span>
 
                                 <div className="text-primary">
-                                    <b>Kho tổng: {item.value.filter(i => !i.warehouseID).length}</b>
+                                    <b>Kho tổng: {item.quantity}</b>
 
                                     <ul>
-                                        { keysToArray(groupBy(item.value.filter(i => i.warehouseID), "warehouseID")).map((warehouseItem, index) => (
+                                        { getSubItem(item).map((warehouseItem, index) => (
                                             <li
                                                 className="padding-left"
                                                 key={index}>
-                                                <b>{warehouseItem.value[0].warehouseName}: {warehouseItem.value.length}</b>
+                                                <b>{warehouseItem.name}: {warehouseItem.quantity}</b>
                                             </li>
                                         ))}
                                     </ul>
@@ -92,33 +103,33 @@ export class WareHouseFullView extends React.Component {
                             </div>
                         </td>
                         <td>
-                            {item.value[0].catalog}
+                            {item.catalog}
                         </td>
                         <td>
-                            {formatNumber(Math.floor(item.value[0].oriPrice))}
+                            {formatNumber(Math.floor(item.oriPrice))}
                         </td>
                         <td>
-                            {formatNumber(Math.floor(item.value[0].price))}
+                            {formatNumber(Math.floor(item.price))}
                         </td>
 
                         <td>
-                            {item.value[0].unit}
+                            {item.unit}
                         </td>
                         <td>
 
                             { permission[user.role].indexOf("warehouse.edit") > -1 && (
                                 <button className="btn btn-outline-primary btn-sm"
-                                        onClick={() => this.editItem(item.value)}>
+                                        onClick={() => this.editItem(item)}>
                                     <i className="fa fa-pencil"/>
                                 </button>
                             )}
 
-                            { permission[user.role].indexOf("warehouse.remove") > -1 && (
-                                <button className="btn btn-outline-danger btn-sm"
-                                        onClick={() => this.removeItem(item.value)}>
-                                    <i className="fa fa-trash"/>
-                                </button>
-                            )}
+                            {/*{ permission[user.role].indexOf("warehouse.remove") > -1 && (*/}
+                                {/*<button className="btn btn-outline-danger btn-sm"*/}
+                                        {/*onClick={() => this.removeItem(item)}>*/}
+                                    {/*<i className="fa fa-trash"/>*/}
+                                {/*</button>*/}
+                            {/*)}*/}
                         </td>
                     </tr>
                 ))}

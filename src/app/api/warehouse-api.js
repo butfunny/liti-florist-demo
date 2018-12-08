@@ -1,8 +1,8 @@
 import {api} from "./api";
 
 export const warehouseApi = {
-    createItem: (items) => {
-        return api.post(`/api/warehouse/create`, items)
+    createItem: (item) => {
+        return api.post(`/api/warehouse/create`, item)
     },
     createItemViaUpload: (items) => {
         return api.post(`/api/warehouse-upload/create`, items)
@@ -10,11 +10,11 @@ export const warehouseApi = {
     getItems: () => {
         return api.get(`/api/warehouse/list/`)
     },
-    updateItems: (items) => {
-        return api.put(`/api/warehouse/update/`, items)
+    updateItems: (id, item) => {
+        return api.put(`/api/warehouse/${id}`, item)
     },
-    removeItems: (items) => {
-        return api.post(`/api/warehouse/remove-multiple`, items)
+    removeItems: (id) => {
+        return api.post(`/api/warehouse/${id}`)
     },
     getItemsById: (baseID) => {
         return api.get(`/api/warehouse/list-by-id/${baseID}`);

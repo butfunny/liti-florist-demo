@@ -1,27 +1,39 @@
 const _ = require('lodash');
 const Security = require("../security/security-be");
 const WareHouseDao = require("../dao/warehouse-dao");
+const SubWareHouseDao = require("../dao/subwarehouse-dao");
 const RequestWarehouseDao = require("../dao/request-warehouse-dao");
 
 module.exports = (app) => {
     app.post("/warehouse/create", Security.authorDetails, function (req, res) {
-        WareHouseDao.create(req.body, (err, items) => {
-            res.json(items)
+        WareHouseDao.create(req.body, (err, item) => {
+            res.json(item)
         });
     });
 
     app.get("/warehouse/list", Security.authorDetails, function (req, res) {
-        WareHouseDao.find({billID: null}, (err, items) => {
-            res.json(items)
+        WareHouseDao.find({}, (err, items) => {
+            SubWareHouseDao.find({}, (err, subItems) => {
+                res.json({warehouseItems: items, subWarehouseItems: subItems});
+            });
         })
     });
 
-    app.put("/warehouse/update", Security.authorDetails, function (req, res) {
-        WareHouseDao.updateMany({_id: {$in: req.body.ids}}, req.body.update, {multi: true}, () => {
+    app.put("/warehouse/:id", Security.authorDetails, function (req, res) {
+        delete req.body._id;
+        WareHouseDao.updateOne({_id: req.params.id}, req.body, () => {
             res.end();
         })
     });
 
+
+    app.delete("/warehouse/:id", Security.authorDetails, (req, res) => {
+        WareHouseDao.remove({_id: req.params.id}, (err) => {
+            res.end()
+        })
+    });
+
+    
 
     app.post("/warehouse/remove-multiple", Security.authorDetails, (req, res) => {
         WareHouseDao.remove({_id: {$in: req.body.ids}}, () => {

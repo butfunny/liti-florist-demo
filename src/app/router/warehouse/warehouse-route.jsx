@@ -27,8 +27,8 @@ export class WarehouseRoute extends React.Component {
             loading: true
         };
 
-        warehouseApi.getItems().then((items) => {
-            this.setState({items, loading: false})
+        warehouseApi.getItems().then(({warehouseItems, subWarehouseItems}) => {
+            this.setState({items: warehouseItems, subWarehouseItems, loading: false})
         })
 
     }
@@ -75,14 +75,15 @@ export class WarehouseRoute extends React.Component {
                             })
                         } else {
                             let item = rows[index];
-                            warehouseApi.createItem(generateDatas({
+                            warehouseApi.createItem({
                                 productId: item[0],
                                 name: item[1],
                                 catalog: item[2],
                                 unit: item[3],
                                 oriPrice: item[5],
-                                price: item[6]
-                            }, item[4])).then(() => {
+                                price: item[6],
+                                quantity: item[4]
+                            }).then(() => {
                                 upload(index + 1)
                             })
                         }
@@ -99,7 +100,7 @@ export class WarehouseRoute extends React.Component {
 
     render() {
 
-        let {items, viewType, keyword, uploading, loading} = this.state;
+        let {items, viewType, keyword, uploading, loading, subWarehouseItems} = this.state;
         const premises = premisesInfo.getPremises();
 
         const itemsFiltered = items.filter(i => i.name.toLowerCase().indexOf(keyword.toLowerCase()) > -1);
@@ -188,7 +189,7 @@ export class WarehouseRoute extends React.Component {
                                     <WareHouseFullView
                                         items={itemsFiltered}
                                         onChange={() => this.refresh()}
-
+                                        subWarehouseItems={subWarehouseItems}
                                     />
                                 )}
                             </Fragment>
