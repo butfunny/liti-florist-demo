@@ -7,7 +7,9 @@ module.exports = mongoose.model('BillDraftDao', {
         price: Number,
         quantity: Number,
         sale: Number,
-        vat: Number
+        vat: Number,
+        flowerType: String,
+        color: String
     }],
     vat: Number,
     deliverTime: Date,
@@ -24,6 +26,9 @@ module.exports = mongoose.model('BillDraftDao', {
         notes: String,
         paymentType: String,
         shipMoney: String,
+        buyerFrom: String,
+        mcc: String,
+        distance: {type: Number, default: 0}
     },
     sales: [{
         user_id: String,
@@ -40,8 +45,18 @@ module.exports = mongoose.model('BillDraftDao', {
         username: String,
         name: String
     }],
-    base_id: String,
+    base_id: Number,
+    premises_id: String,
     vipSaleType: String,
     created: {type: Date, default: Date.now},
     created_by: String,
+    isNewCustomer: Boolean,
+    promotion: {
+        name: String,
+        discount: Number,
+        promotion_id: String
+    },
+    image: String,
+    reason: String,
+    selectedFlower: [JSON],
 }, "bills_draft");
