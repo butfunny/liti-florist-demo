@@ -134,7 +134,21 @@ module.exports = function(app) {
 
     app.get("/bill-images", Security.authorDetails, (req, res) => {
         BillDao.find({image: {$exists: true}}, (err, bills) => {
-            res.json(bills)
+            const flowers = bills.map(b => b.selectedFlower);
+            let ret = [];
+            for (let flower of flowers) {
+                for (let item of flower) {
+                    ret.push(item.itemID);
+                }
+            }
+
+            WareHouseDao.find({_id: {$in: ret}}, (err, items) => {
+                res.json({
+                    bills,
+                    items
+                })
+            });
+
         })
     })
 

@@ -18,8 +18,8 @@ export class GalleryRoute extends React.Component {
             colorSelected: "Tất cả"
         };
 
-        billApi.getBillImages().then((bills) => {
-            this.setState({bills})
+        billApi.getBillImages().then(({bills, items}) => {
+            this.setState({bills, items})
         });
 
         productApi.getTypes().then((types) => {
@@ -34,7 +34,7 @@ export class GalleryRoute extends React.Component {
     render() {
 
         let {bills} = this.state;
-        let {colors, types, typeSelected, colorSelected} = this.state;
+        let {colors, types, typeSelected, colorSelected, items} = this.state;
 
         const user = userInfo.getUser();
         const permission = permissionInfo.getPermission();
@@ -121,6 +121,16 @@ export class GalleryRoute extends React.Component {
                                                 {item.flowerType} {item.name} - <b>{formatNumber(item.price)}</b>
                                             </div>
                                         ))}
+
+                                        <div>
+                                            <b>Nguyên liệu: </b>
+
+                                            {bill.selectedFlower.map((b, index) => (
+                                                <div key={index}>
+                                                    {b.quantity} - {items.find(item => b.itemID == item._id).name} - {formatNumber(b.price)}
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
