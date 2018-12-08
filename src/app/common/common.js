@@ -228,8 +228,21 @@ export const getSalary = (user, bill) => {
     }
 
     if (user.role == "ship") {
+
+        const getSalary = () => {
+            if (new Date(bill.to.deliverTime).getHours() >= 18 && new Date(bill.to.deliverTime).getMinutes() >= 30) {
+                return 30000
+            }
+
+            if ((bill.to.distance || 0) < 10) {
+                return 15000;
+            }
+
+            return 20000;
+        };
+
         return {
-            money: bill.to.shipMoney ? parseInt(bill.to.shipMoney) : 0,
+            money: getSalary(),
             percent: null
         };
     }
@@ -259,15 +272,7 @@ export const getShipFees = (bill, distance) => {
     }
 
 
-    // if (new Date(deliverTime).getHours() >= 18 && new Date(deliverTime).getMinutes() >= 30) {
-    //     return 30000
-    // }
-    //
-    // if (distance < 10) {
-    //     return 15000;
-    // }
-    //
-    // return 20000;
+
 };
 
 export const formatValue = (value) => {
