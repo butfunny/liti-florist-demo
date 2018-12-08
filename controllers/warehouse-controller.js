@@ -6,9 +6,18 @@ const RequestWarehouseDao = require("../dao/request-warehouse-dao");
 
 module.exports = (app) => {
     app.post("/warehouse/create", Security.authorDetails, function (req, res) {
-        WareHouseDao.create(req.body, (err, item) => {
-            res.json(item)
-        });
+        WareHouseDao.findOne({productId: req.body.productId}, (err, found) => {
+            if (found) {
+                WareHouseDao.updateOne({productId: req.body.productId}, {quantity: found.quantity + req.body.quantity}, () => {
+                    res.end()
+                })
+            } else {
+                WareHouseDao.create(req.body, (err, item) => {
+                    res.json(item)
+                });
+            }
+        })
+
     });
 
     app.get("/warehouse/list", Security.authorDetails, function (req, res) {

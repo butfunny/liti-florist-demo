@@ -70,8 +70,8 @@ export class WarehouseRoute extends React.Component {
                         if (index == rows.length - 1) {
                             this.setState({uploading: false});
                             confirmModal.alert(`Thêm thành công ${rows.length - 1} sản phẩm`);
-                            warehouseApi.getItems().then((items) => {
-                                this.setState({items})
+                            warehouseApi.getItems().then(({warehouseItems, subWarehouseItems}) => {
+                                this.setState({items: warehouseItems, subWarehouseItems, loading: false})
                             })
                         } else {
                             let item = rows[index];
