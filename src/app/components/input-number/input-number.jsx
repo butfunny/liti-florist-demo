@@ -27,7 +27,7 @@ export class InputNumber extends React.Component {
                     let value = e.target.value.replace(/,/g, "");
                     if (!isNaN(value)) {
                         if (maxVal) {
-                            if (!value || parseInt(value) < maxVal ) {
+                            if (!value || parseInt(value) <= maxVal ) {
                                 this.setState({value: formatNumber(value)});
                                 this.props.onChange(value ? parseInt(value) : "")
                             }
