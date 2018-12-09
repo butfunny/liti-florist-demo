@@ -95,13 +95,22 @@ export class BillEditRoute extends React.Component {
 
         if (!bill) return null;
 
+        const isCanEditBill = (bill) => {
+            if (["Chờ xử lý", "Đang xử lý", "Chờ giao"].indexOf(bill.status) > -1) {
+                return permission[user.role].indexOf("bill.edit") > -1
+            }
+
+            return permission[user.role].indexOf("bill.editDoneBill") > -1
+
+        };
+
         const permission = permissionInfo.getPermission();
 
         return (
             <Layout
                 activeRoute="Hoá Đơn"
             >
-                { permission[user.role].indexOf("bill.edit") == -1 ? (
+                { !isCanEditBill(bill) ? (
                     <div>
                         Bạn không có quyền truy cập vào trang này vui lòng chọn những trang bạn có quyền trên thanh nav
                     </div>

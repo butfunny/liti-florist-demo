@@ -237,6 +237,14 @@ export class BillOrderRoute extends RComponent {
 
         const permission = permissionInfo.getPermission();
 
+        const isCanEditBill = (bill) => {
+            if (["Chờ xử lý", "Đang xử lý", "Chờ giao"].indexOf(bill.status) > -1) {
+                return permission[user.role].indexOf("bill.edit") > -1
+            }
+            return permission[user.role].indexOf("bill.editDoneBill") > -1
+
+        };
+
         return (
             <Layout
                 activeRoute="Đơn Hàng"
@@ -365,6 +373,7 @@ export class BillOrderRoute extends RComponent {
                                     onChangeImage={(e, bill) => this.handleChange(e, bill)}
                                     uploading={uploading}
                                     onChangeStatus={(bill, value) => this.handleChangeStatus(bill, value)}
+                                    isCanEditBill={isCanEditBill}
 
                                 />
                             ) : (
@@ -499,7 +508,7 @@ export class BillOrderRoute extends RComponent {
                                                     onChange={(e) => this.handleChange(e, bill)}
                                                 />
 
-                                                {permission[user.role].indexOf("bill.edit") > -1 && (
+                                                {isCanEditBill(bill) && (
                                                     <button className="btn btn-outline-primary btn-sm"
                                                             onClick={() => history.push(`/edit-bill/${bill._id}`)}>
                                                         <i className="fa fa-pencil"/>

@@ -14,7 +14,7 @@ export class ReportTableMobile extends React.Component {
 
     render() {
 
-        let {bills, history, onRemove, user, onUpdateBill, onShowLog, onRemoveOwe, uploading, onChangeImage, onChangeStatus} = this.props;
+        let {bills, history, onRemove, user, onUpdateBill, onShowLog, onRemoveOwe, uploading, onChangeImage, onChangeStatus, isCanEditBill} = this.props;
 
         const permission = permissionInfo.getPermission();
 
@@ -131,7 +131,7 @@ export class ReportTableMobile extends React.Component {
                             />
 
 
-                            {permission[user.role].indexOf("bill.edit") > -1 && (
+                            {isCanEditBill(bill)  && (
                                 <button className="btn btn-outline-primary btn-sm"
                                         onClick={() => history.push(`/edit-bill/${bill._id}`)}>
                                     <i className="fa fa-pencil"/>
