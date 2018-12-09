@@ -20,6 +20,7 @@ import {productApi} from "../../../api/product-api";
 import {userInfo} from "../../../security/user-info";
 import {permissionInfo} from "../../../security/premises-info";
 import {PermissionDenie} from "../revenue/revenue-report-route";
+import {CSVLink} from "react-csv";
 export class ReportCustomerRoute extends React.Component {
 
     constructor(props) {
@@ -77,7 +78,44 @@ export class ReportCustomerRoute extends React.Component {
                     <PermissionDenie />
                 </Layout>
             )
+        };
+
+        let csvData = [[
+            "Số lần mua hàng",
+            "Số khách"
+        ]];
+
+        const groups = [
+            {label: "0 -> 2", logic: (b) => b.value.length <= 2},
+            {label: "3 -> 6", logic: (b) => b.value.length <= 6 && b.value.length >= 3},
+            {label: "7 -> 10", logic: (b) => b.value.length <= 10 && b.value.length >= 7},
+            {label: "11 -> 12", logic: (b) => b.value.length <= 12 && b.value.length >= 11},
+            {label: "13+", logic: (b) => b.value.length > 12},
+        ];
+
+        for (let item of groups) {
+            csvData.push([
+                item.label,
+                groupedBills.filter(item.logic).length
+            ])
         }
+
+
+
+        let csvDataBirth = [[
+            "Tên khách",
+            "SĐT",
+            "Ngày sinh"
+        ]];
+
+        for (let customer of (customersBirth || [])) {
+            csvDataBirth.push([
+                customer.customerName,
+                customer.customerPhone,
+                moment(customer.birthDate).format("DD/MM/YYYY")
+            ])
+        }
+
 
         return (
             <Layout activeRoute="Báo Cáo">
@@ -138,6 +176,17 @@ export class ReportCustomerRoute extends React.Component {
 
                             <div className="row">
                                 <div className="col-md-6">
+
+                                    {!loading && (
+                                        <CSVLink
+                                            data={csvData}
+                                            filename={`bao-cao-so-lan-mua-hang.csv`}
+                                            className="btn btn-info btn-icon btn-excel btn-sm">
+                                            <span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>
+                                            <span className="btn-inner--text">Xuất Excel</span>
+                                        </CSVLink>
+                                    )}
+
                                     <table className="table table-hover">
                                         <thead>
                                         <tr>
@@ -146,30 +195,13 @@ export class ReportCustomerRoute extends React.Component {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr>
-                                            <td>0 - 2</td>
-                                            <td>{groupedBills.filter(b => b.value.length <= 2).length}</td>
-                                        </tr>
 
-                                        <tr>
-                                            <td>3 - 6</td>
-                                            <td>{groupedBills.filter(b => b.value.length <= 6 && b.value.length >= 3).length}</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>7 - 10</td>
-                                            <td>{groupedBills.filter(b => b.value.length <= 10 && b.value.length >= 7).length}</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>11 - 12</td>
-                                            <td>{groupedBills.filter(b => b.value.length <= 11 && b.value.length >= 12).length}</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td>13+</td>
-                                            <td>{groupedBills.filter(b => b.value.length >= 13).length}</td>
-                                        </tr>
+                                        { groups.map((item, index) => (
+                                            <tr key={index}>
+                                                <td>{item.label}</td>
+                                                <td>{groupedBills.filter(item.logic).length}</td>
+                                            </tr>
+                                        ))}
                                         </tbody>
                                     </table>
                                 </div>
@@ -178,9 +210,22 @@ export class ReportCustomerRoute extends React.Component {
                                     bills={bills}
                                     types={types}
                                     colors={colors}
+                                    loading={loading}
                                 />
 
                                 <div className="form-group col-md-6">
+
+
+                                    {customersBirth && (
+                                        <CSVLink
+                                            data={csvDataBirth}
+                                            filename={`bao-cao-sinh-nhat-khach.csv`}
+                                            className="btn btn-info btn-icon btn-excel btn-sm">
+                                            <span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>
+                                            <span className="btn-inner--text">Xuất Excel</span>
+                                        </CSVLink>
+                                    )}
+
                                     <table className="table table-hover">
                                         <thead>
                                         <tr>

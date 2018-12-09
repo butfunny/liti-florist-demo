@@ -13,7 +13,7 @@ export class ReportBillItem extends React.Component {
 
     render() {
 
-        let {bills, types, colors} = this.props;
+        let {bills, types, colors, loading} = this.props;
         let {viewType} = this.state;
 
 
