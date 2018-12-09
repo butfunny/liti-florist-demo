@@ -27,6 +27,8 @@ import {ReportDiscountRoute} from "./report/discount/report-discount-route";
 import {ReportBillRoute} from "./report/bill/report-bill-route";
 import {GalleryRoute} from "./gallery-route/gallery-route";
 import {ManageRole} from "./manage-role/manage-role";
+import {CreateRequestMissing} from "./request-missing/create-request-missing";
+import {ListRequestMissing} from "./request-missing/list-request-missing";
 export class AppRouter extends React.Component {
 
     constructor(props) {
@@ -80,6 +82,8 @@ export class AppRouter extends React.Component {
                         <Route exact path="/gallery" component={requireAuthen(GalleryRoute)} />
                         <Route exact path="/manage-role" component={requireAuthenAdmin(ManageRole)} />
                         <Route exact path="/list-request-item" component={requireAuthen(ListRequestWarehouse)} />
+                        <Route exact path="/create-request-missing" component={requireAuthen(CreateRequestMissing)} />
+                        <Route exact path="/list-request-missing" component={requireAuthen(ListRequestMissing)} />
                     </Switch>
                 </BrowserRouter>
                 <ModalsRegistry />

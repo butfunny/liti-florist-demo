@@ -3,6 +3,7 @@ const Security = require("../security/security-be");
 const WareHouseDao = require("../dao/warehouse-dao");
 const SubWareHouseDao = require("../dao/subwarehouse-dao");
 const RequestWarehouseDao = require("../dao/request-warehouse-dao");
+const RequestMissingDao = require("../dao/request-missing-dao");
 
 module.exports = (app) => {
     app.post("/warehouse/create", Security.authorDetails, function (req, res) {
@@ -136,7 +137,7 @@ module.exports = (app) => {
 
     app.post("/accept-return/:id", Security.authorDetails, (req, res) => {
         RequestWarehouseDao.findOne({_id: req.params.id}, (err, request) => {
-            SubWareHouseDao.find({itemID: {$in: request.items.map(i => i.itemID)}}, (err, subItems) => {
+            SubWareHouseDao.find({itemID: {$in: request.items.map(i => i.itemID)}, warehouseID: request.fromWarehouse}, (err, subItems) => {
 
                 let promises = [];
                 const updateWarehouse = (itemID, warehouseQty, subWarehouseQty, warehouseID) => {
@@ -171,6 +172,60 @@ module.exports = (app) => {
 
             })
         })
+    });
+
+
+    app.post("/request-missing-item", Security.authorDetails, (req, res) => {
+        RequestMissingDao.create(req.body, (err, request) => {
+            res.end();
+        })
+    });
+
+    app.post("/request-missing-item-data", Security.authorDetails, (req, res) => {
+        RequestMissingDao.find({created: {$gte: req.body.from, $lt: req.body.to}}, (err, requests) => {
+            res.json(requests)
+        })
+    });
+
+    app.post("/reject-missing-item/:id", Security.authorDetails, (req, res) => {
+        RequestMissingDao.updateOne({_id: req.params.id}, {status: "Từ chối", reason: req.body.reason}, () => {
+            res.end();
+        })
+    });
+
+    app.post("/accept-missing-item/:id", Security.authorDetails, (req, res) => {
+        RequestMissingDao.findOne({_id: req.params.id}, (err, request) => {
+            RequestMissingDao.find({itemID: {$in: request.items.map(i => i.itemID)}, warehouseID: request.warehouseID}, (err, subItems) => {
+                let promises = [];
+                const updateWarehouse = (itemID, warehouseQty, subWarehouseQty, warehouseID) => {
+                    return new Promise((resolve, reject) =>{
+                        SubWareHouseDao.updateOne({itemID: itemID, warehouseID}, {quantity: subWarehouseQty}, () => {
+                            resolve();
+                        })
+
+                    })
+                };
+
+
+                for (let requestItem of request.items) {
+                    let itemFound = subItems.find(i => i.itemID == requestItem.itemID);
+                    if (itemFound.quantity >= requestItem.quantity) {
+                        promises.push(updateWarehouse(itemFound.itemID, requestItem.quantity, itemFound.quantity - requestItem.quantity, request.warehouseID))
+                    } else {
+                        res.send({error: true});
+                        return;
+                    }
+                }
+
+                Promise.all(promises).then(() => {
+                    RequestMissingDao.updateOne({_id: req.params.id}, {status: "Xác nhận"}, () => {
+                        res.end();
+                    });
+                });
+
+            })
+        })
+
     })
 
 };

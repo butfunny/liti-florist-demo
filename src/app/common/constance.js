@@ -152,4 +152,16 @@ export const permissions = [{
     value: "warehouse.request.edit",
     label: "Xác nhận / Từ chối phiếu XNK",
     father: "Kho"
+}, {
+    value: "warehouse.request-missing.create",
+    label: "Tạo phiếu Hao Hụt / Huỷ Hỏng",
+    father: "Kho"
+}, {
+    value: "warehouse.request-missing.view",
+    label: "Xem phiếu Hao Hụt / Huỷ Hỏng",
+    father: "Kho"
+}, {
+    value: "warehouse.request-missing.edit",
+    label: "XN/TC phiếu Hao Hụt / Huỷ Hỏng",
+    father: "Kho"
 }];
