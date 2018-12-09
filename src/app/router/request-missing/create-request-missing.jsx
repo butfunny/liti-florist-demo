@@ -8,6 +8,9 @@ import {permissionInfo, premisesInfo} from "../../security/premises-info";
 import {userInfo} from "../../security/user-info";
 import {warehouseApi} from "../../api/warehouse-api";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
+import {modals} from "../../components/modal/modals";
+import {PreviewRequestModal} from "../warehouse/list-request/preview-request-modal";
+import {PreviewRequestMissing} from "./preview-request-missing";
 export class CreateRequestMissing extends React.Component {
 
     constructor(props) {
@@ -53,6 +56,7 @@ export class CreateRequestMissing extends React.Component {
             })
         })
     }
+
 
 
     render() {

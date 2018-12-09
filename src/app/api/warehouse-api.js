@@ -38,7 +38,7 @@ export const warehouseApi = {
         return api.post(`/api/request-missing-item`, request)
     },
     getRequestMissing: (data) => {
-        return api.post(`/api/request-missing-item-list`, data);
+        return api.post(`/api/request-missing-item-data`, data);
     },
     rejectRequestMissing: (id) => {
         return api.post("/api/reject-missing-item/" + id)

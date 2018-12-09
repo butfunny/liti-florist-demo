@@ -195,7 +195,7 @@ module.exports = (app) => {
 
     app.post("/accept-missing-item/:id", Security.authorDetails, (req, res) => {
         RequestMissingDao.findOne({_id: req.params.id}, (err, request) => {
-            RequestMissingDao.find({itemID: {$in: request.items.map(i => i.itemID)}, warehouseID: request.warehouseID}, (err, subItems) => {
+            SubWareHouseDao.find({itemID: {$in: request.items.map(i => i.itemID)}, warehouseID: request.warehouseID}, (err, subItems) => {
                 let promises = [];
                 const updateWarehouse = (itemID, warehouseQty, subWarehouseQty, warehouseID) => {
                     return new Promise((resolve, reject) =>{
