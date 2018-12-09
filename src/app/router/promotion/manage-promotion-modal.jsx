@@ -24,12 +24,12 @@ export class ManagePromotionModal extends React.Component {
             {"discount" : [required("Giảm Giá"), minVal("Giảm Giá", 0), maxVal("Giảm Giá", 100)]},
             {"from" : [(val) => ({
                     text: "Ngày bắt đầu phải nhỏ hơn ngày kết thúc",
-                    valid: val.getTime() <= promotion.to.getTime()
+                    valid: new Date(val).getTime() <= new Date(promotion.to).getTime()
                 })
             ]},
             {"to" : [(val) => ({
                     text: "Ngày kết thúc phải lớn hơn ngày bắt đầu thúc",
-                    valid: val.getTime() >= promotion.from.getTime()
+                    valid: new Date(val).getTime() >= new Date(promotion.from).getTime()
                 })
             ]}
         ];

@@ -7,6 +7,7 @@ import {formatNumber, getStartAndLastDayOfWeek, getTotalBill, getTotalBillWithou
 import {userInfo} from "../../../security/user-info";
 import {permissionInfo} from "../../../security/premises-info";
 import {PermissionDenie} from "../revenue/revenue-report-route";
+import {CSVLink} from "react-csv";
 export class ReportDiscountRoute extends React.Component {
 
     constructor(props) {
@@ -69,6 +70,23 @@ export class ReportDiscountRoute extends React.Component {
             }
         }
 
+        let csvData = [[
+            "Tên chiến dịch",
+            "Doanh thu trước chiết khấu",
+            "Tổng chiết khấu",
+            "Doanh thu sau chiết khấu"
+        ]];
+
+
+
+        for (let b of billsMapped) {
+            csvData.push([
+                b.name,
+                sumBy(b.bills, b => getTotalBillWithouDiscount(b)),
+                sumBy(b.bills, b => getTotalBillWithouDiscount(b)) - sumBy(b.bills, b => getTotalBill(b)),
+                sumBy(b.bills, b => getTotalBill(b))
+            ])
+        }
 
 
         return (
@@ -111,6 +129,17 @@ export class ReportDiscountRoute extends React.Component {
                             </button>
                         </div>
                     </div>
+
+                    {!loading && (
+                        <CSVLink
+                            data={csvData}
+                            filename={`bao-cao-chien-dich-khuyen-mai.csv`}
+                            className="btn btn-info btn-icon btn-excel btn-sm">
+                            <span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>
+                            <span className="btn-inner--text">Xuất Excel</span>
+                        </CSVLink>
+                    )}
+
 
                     <div className="form-group">
                         <table className="table table-hover">
