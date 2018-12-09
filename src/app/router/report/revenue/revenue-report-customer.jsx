@@ -10,6 +10,8 @@ import sum from "lodash/sum";
 import {premisesInfo} from "../../../security/premises-info";
 import {modals} from "../../../components/modal/modals";
 import {CustomerBillModal} from "../../customers/customer-bill-modal";
+import {getCSVData} from "../../order/excel";
+import {CSVLink} from "react-csv";
 export class RevenueReportCustomer extends React.Component {
 
     constructor(props) {
@@ -55,6 +57,24 @@ export class RevenueReportCustomer extends React.Component {
 
         const customerFiltered = customerMapped.filter((c) => (c.customerName || "").indexOf(keyword) > -1 || (c.customerPhone || "").indexOf(keyword) > -1);
 
+        let CSVdata = [[
+            "Tên khách",
+            "SĐT",
+            ...premises.map(p => `Chi tại ${p.name}`),
+            "Tổng Chi",
+        ]];
+
+        for (let customer of customerMapped) {
+            CSVdata.push([
+                customer.customerName,
+                customer.customerPhone,
+                ...premises.map(p => getPayOfPremises(customer._id, p._id).pay),
+                customer.totalPay
+            ])
+
+        }
+
+
         return (
             <div className="revenue-report-customer">
                 <Input
@@ -62,6 +82,14 @@ export class RevenueReportCustomer extends React.Component {
                     onChange={(e) => this.setState({keyword: e.target.value})}
                     placeholder="Tìm kiếm khách hàng theo tên hoặc số điện thoại"
                 />
+
+                <CSVLink
+                    data={CSVdata}
+                    filename={"bao-cao-doanh-thu-khach-hang.csv"}
+                    className="btn btn-info btn-icon btn-excel btn-sm">
+                    <span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>
+                    <span className="btn-inner--text">Xuất Excel</span>
+                </CSVLink>
 
                 <table className="table table-hover">
                     <thead>
