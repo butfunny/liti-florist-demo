@@ -2,6 +2,7 @@ import React, {Fragment} from "react";
 import sortBy from "lodash/sortBy";
 import sumBy from "lodash/sumBy";
 import {formatNumber} from "../../../common/common";
+import {CSVLink} from "react-csv";
 export class ReportBillItem extends React.Component {
 
     constructor(props) {
@@ -38,11 +39,47 @@ export class ReportBillItem extends React.Component {
             })
         }));
 
+        let csvDataType = [[
+            "Loại",
+            "Số Lượng"
+        ]];
+
+        for (let item of sortBy(itemsCount, c => -c.total)) {
+            csvDataType.push([
+                item.name,
+                item.total
+            ])
+        }
+
+
+        let csvDataColor = [[
+            "Màu",
+            "Số Lượng"
+        ]];
+
+        for (let item of sortBy(itemsColor, c => -c.total)) {
+            csvDataColor.push([
+                item.name,
+                item.total
+            ])
+        }
 
 
         return (
             <Fragment>
                 <div className="form-group col-md-6">
+
+                    {!loading && (
+                        <CSVLink
+                            data={csvDataType}
+                            filename={`bao-cao-loai-san-pham.csv`}
+                            className="btn btn-info btn-icon btn-excel btn-sm">
+                            <span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>
+                            <span className="btn-inner--text">Xuất Excel</span>
+                        </CSVLink>
+                    )}
+
+
                     <table className="table table-hover">
                         <thead>
                         <tr>
@@ -67,6 +104,17 @@ export class ReportBillItem extends React.Component {
                 </div>
 
                 <div className="col-md-6">
+
+                    {!loading && (
+                        <CSVLink
+                            data={csvDataColor}
+                            filename={`bao-cao-mau-san-pham.csv`}
+                            className="btn btn-info btn-icon btn-excel btn-sm">
+                            <span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>
+                            <span className="btn-inner--text">Xuất Excel</span>
+                        </CSVLink>
+                    )}
+
                     <table className="table table-hover">
                         <thead>
                         <tr>
