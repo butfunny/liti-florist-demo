@@ -6,6 +6,7 @@ import sumBy from "lodash/sumBy";
 import moment from "moment";
 import {premisesInfo} from "../../../security/premises-info";
 import {modals} from "../../../components/modal/modals";
+import {CSVLink} from "react-csv";
 export class ReportEmployee extends React.Component {
 
     constructor(props) {
@@ -45,7 +46,7 @@ export class ReportEmployee extends React.Component {
 
     render() {
 
-        let {bills, sales, florists, ships} = this.props;
+        let {bills, sales, florists, ships, loading} = this.props;
 
         let employees = concat(sales, florists, ships);
 
@@ -69,8 +70,36 @@ export class ReportEmployee extends React.Component {
             })
         }));
 
+        let CSVdata = [[
+            "Tài khoản",
+            "Chức vụ",
+            "Tổng thu"
+        ]];
+
+        for (let item of sortBy(employees, c => -c.totalGet)) {
+            CSVdata.push([
+                item.username,
+                item.role,
+                item.totalGet
+            ])
+        }
+
+
         return (
             <div className="report-employee">
+
+                { employees.length > 0 && !loading && (
+                    <CSVLink
+                        data={CSVdata}
+                        filename={"bao-cao-doanh-thu-nhan-vien.csv"}
+                        className="btn btn-info btn-icon btn-excel btn-sm">
+                        <span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>
+                        <span className="btn-inner--text">Xuất Excel</span>
+                    </CSVLink>
+                )}
+
+
+
                 <table className="table table-hover">
                     <thead>
                     <tr>

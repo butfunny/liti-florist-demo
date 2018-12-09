@@ -8,10 +8,10 @@ import {
 } from "../../common/common";
 import {premisesInfo} from "../../security/premises-info";
 
-export const getCSVData = (bills) => {
+export const getCSVData = (bills, hasReason) => {
 
 
-    let csvData = [["Ngày bán hàng",
+    let header = ["Ngày bán hàng",
         "Mã đơn hàng",
         "Nội dung đơn hàng",
         "Họ và tên khách hàng",
@@ -34,8 +34,14 @@ export const getCSVData = (bills) => {
         "Nội dung thiệp",
         "Tiền Hàng",
         "Tổng VAT",
-        "Tổng Tiền",]
+        "Tổng Tiền",
     ];
+
+    if (hasReason) {
+        header.push("Lí do");
+    }
+
+    let csvData = [header];
 
 
     const generateBillItemsText = (items) => {
@@ -95,6 +101,11 @@ export const getCSVData = (bills) => {
             ret.push(getTotalBillItems(bill));
             ret.push(getTotalBillVAT(bill));
             ret.push(getTotalBill(bill));
+
+            if (hasReason) {
+                ret.push(bill.reason)
+            }
+
             csvData.push(ret);
         }
     }

@@ -97,23 +97,29 @@ export class ReportBillRoute extends React.Component {
                     sales={sales}
                     florists={florists}
                     ships={ships}
+                    loading={loading}
                 />
             ),
             "Đơn Huỷ": (
                 <ReportNotSuccessBill
                     bills={bills.filter(b => b.status == "Huỷ Đơn")}
                     customers={customers}
+                    loading={loading}
+                    name={'don-huy'}
                 />
             ),
             "Đơn Khiếu Nại": (
                 <ReportNotSuccessBill
                     bills={bills.filter(b => b.status == "Khiếu Nại")}
                     customers={customers}
+                    loading={loading}
+                    name={'khieu-nai'}
                 />
             ),
             "Kênh Mua Hàng": (
                 <ReportBillFrom
                     bills={bills}
+                    loading={loading}
                 />
             )
         };
