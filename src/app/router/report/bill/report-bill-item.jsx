@@ -33,7 +33,7 @@ export class ReportBillItem extends React.Component {
             name: t,
             total: sumBy(bills, (bill) => {
                 for (let item of bill.items) {
-                    if (item.color && item.color == t) return 1
+                    if (item.color && item.color.indexOf(t) > -1) return 1
                 }
                 return 0;
             })
