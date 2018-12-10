@@ -1,4 +1,4 @@
-export const paymentTypes = ["Tất cả", "Ship", "Shop", "Thẻ", "Chuyển Khoản", "Paypal", "MCC", "Free", "Nợ"];
+export const paymentTypes = ["Tất cả", "Ship", "Shop", "Thẻ", "Chuyển Khoản", "Paypal", "Free", "Nợ"];
 export const viaTypes = ["Đến Shop", "Facebook / Instargram", "Website", "Điện thoại (viber, zalo, imess, cố định)", "Khác (Now, đối tác, voucher...)"];
 
 export const roles = [{
