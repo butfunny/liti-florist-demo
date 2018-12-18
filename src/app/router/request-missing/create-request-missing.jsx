@@ -89,7 +89,7 @@ export class CreateRequestMissing extends React.Component {
                 ) : (
                     <div className="request-warehouse florist-working-route">
                         <div className="ct-page-title">
-                            <h1 className="ct-title">Phiếu báo cáo hoa Hoa Hụt hoặc Huỷ Hỏng</h1>
+                            <h1 className="ct-title">Phiếu báo cáo hoa Hao Hụt hoặc Huỷ Hỏng</h1>
                         </div>
 
                         <div className="form-group">
