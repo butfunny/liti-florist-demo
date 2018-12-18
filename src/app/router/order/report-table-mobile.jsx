@@ -42,6 +42,7 @@ export class ReportTableMobile extends React.Component {
                             { bill.items.map((item, index) => (
                                 <div key={index}>
                                     <b>{item.quantity}</b> {item.flowerType} {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>} {item.vat ? <span className="text-primary"> - {item.vat}% VAT</span> : ""}
+                                    <div className="text-small">Màu: <b>{item.color}</b></div>
                                 </div>
                             ))}
 

@@ -153,30 +153,33 @@ export class BillEditRoute extends React.Component {
                                                     this.setState({bill: {...bill, customer}})
                                                 }}
                                                 editMode
+                                                infoComponent={() => (
+                                                    <BillInfo
+                                                        bill={bill}
+                                                        onChangeBill={(bill) => this.setState({bill})}
+                                                        florists={florists}
+                                                        sales={sales}
+                                                        ships={ships}
+                                                        ref={elem => this.billInfo = elem}
+                                                        locations={locations}
+                                                        deliverTime={bill.deliverTime}
+                                                        onChangeDeliverTime={(deliverTime) => this.setState({
+                                                            bill: {
+                                                                ...bill,
+                                                                deliverTime,
+                                                                to: {
+                                                                    ...bill.to,
+                                                                    shipMoney: this.billInfo.getShipMoney(deliverTime)
+                                                                }
+                                                            }
+                                                        })}
+                                                        to={bill.to}
+                                                        onChange={(to) => this.setState({bill: {...bill, to}})}
+                                                    />
+                                                )}
                                             />
 
-                                            <BillInfo
-                                                bill={bill}
-                                                onChangeBill={(bill) => this.setState({bill})}
-                                                florists={florists}
-                                                sales={sales}
-                                                ships={ships}
-                                                ref={elem => this.billInfo = elem}
-                                                locations={locations}
-                                                deliverTime={bill.deliverTime}
-                                                onChangeDeliverTime={(deliverTime) => this.setState({
-                                                    bill: {
-                                                        ...bill,
-                                                        deliverTime,
-                                                        to: {
-                                                            ...bill.to,
-                                                            shipMoney: this.billInfo.getShipMoney(deliverTime)
-                                                        }
-                                                    }
-                                                })}
-                                                to={bill.to}
-                                                onChange={(to) => this.setState({bill: {...bill, to}})}
-                                            />
+
 
                                             <div className="text-right btn-action">
                                                 <button type="button"

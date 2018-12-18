@@ -49,6 +49,7 @@ export class FloristCartDetails extends React.Component {
                         { bill.items.map((item, index) => (
                             <div key={index}>
                                 <b>{item.quantity}</b> {item.flowerType} {item.name}
+                                <div className="text-small">Màu: <b>{item.color}</b></div>
                             </div>
                         ))}
                     </div>
