@@ -20,6 +20,7 @@ export class BillAddItem extends React.Component {
             name: "",
             type: "",
             color: [],
+            size: ""
         };
 
 
@@ -28,23 +29,25 @@ export class BillAddItem extends React.Component {
 
     render() {
 
-        let {price, name, type, color} = this.state;
+        let {price, name, type, color, size} = this.state;
         let {onChangeItem, onChangeCatalog, saving, types, colors} = this.props;
 
+        let sizes = ["XS", "S", "M", "L", "XL", "XXL"];
 
         let validations = [
             {"type" : [required("Loại")]},
             {"color" : [required("Màu")]},
             {"price" : [required("Giá")]},
-            {"name": [required("Chi tiết")]}
+            {"name": [required("Chi tiết")]},
+            {"size": [required("Size")]},
         ];
 
 
         return (
             <Form
                 onSubmit={() => {
-                    onChangeItem({price, name, type, color: color.join(", ")});
-                    this.setState({price: "", name: "", type: "", color: []});
+                    onChangeItem({price, name, type, color: color.join(", "), size});
+                    this.setState({price: "", name: "", type: "", color: [], size: ""});
                 }}
                 formValue={this.state}
                 validations={validations}
@@ -61,6 +64,20 @@ export class BillAddItem extends React.Component {
                                 value={type} onChange={(e) => this.setState({type: e.target.value})}>
                             <option value="" disabled>Loại*</option>
                             { types.map((t, index) => (
+                                <option value={t} key={index}>
+                                    {t}
+                                </option>
+                            ))}
+                        </select>
+
+                        <select className="form-control"
+                                style={{
+                                    marginBottom: "5px",
+                                    color: "black"
+                                }}
+                                value={size} onChange={(e) => this.setState({size: e.target.value})}>
+                            <option value="" disabled>Size*</option>
+                            { sizes.map((t, index) => (
                                 <option value={t} key={index}>
                                     {t}
                                 </option>
@@ -93,8 +110,8 @@ export class BillAddItem extends React.Component {
 
                             <button className="btn btn-info btn-sm btn-icon"
                                     onClick={() => {
-                                        onChangeCatalog({price, name, type, color: color.join(", ")});
-                                        this.setState({price: "", name: "", type: "", color: []});
+                                        onChangeCatalog({price, name, type, size, color: color.join(", ")});
+                                        this.setState({price: "", name: "", type: "", color: [], size: ""});
                                     }}
                                     disabled={invalidPaths.length > 0 || saving}>
                                 <span className="btn-inner--text">Thêm danh mục</span>

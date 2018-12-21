@@ -423,6 +423,7 @@ export class BillOrderRoute extends RComponent {
                                                         <div key={index}>
                                                             <b>{item.quantity}</b> {item.flowerType} {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>} {item.vat ? <span className="text-primary"> - {item.vat}% VAT</span> : ""}
                                                             <div className="text-small">Màu: <b>{item.color}</b></div>
+                                                            <div className="text-small">Size: <b>{item.size}</b></div>
                                                         </div>
                                                     ))}
 
