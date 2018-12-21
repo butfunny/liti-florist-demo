@@ -11,6 +11,8 @@ import moment from "moment";
 import sortBy from "lodash/sortBy";
 import {userInfo} from "../../security/user-info";
 import sumBy from "lodash/sumBy"
+import {paymentTypes} from "../../common/constance";
+
 export class MySalaryRoute extends React.Component {
 
     constructor(props) {
@@ -25,7 +27,8 @@ export class MySalaryRoute extends React.Component {
             from: today,
             to: endDay,
             bills: null,
-            keyword: ""
+            keyword: "",
+            selectedType: "Tất cả"
         };
 
     }
@@ -44,9 +47,18 @@ export class MySalaryRoute extends React.Component {
 
     render() {
 
-        let {bills, customers, keyword, from, to, loading} = this.state;
+        let {bills, selectedType, keyword, from, to, loading} = this.state;
         let billsFiltered = bills ? bills.filter(b => b.bill_number.toLowerCase().indexOf(keyword.toLowerCase()) > -1) : bills;
         const user = userInfo.getUser();
+
+        if (selectedType == "Đơn Onl") {
+            billsFiltered = bills.filter(b => getSalary(user, b).isOnl);
+        }
+
+        if (selectedType == "Đơn Off") {
+            billsFiltered = bills.filter(b => !getSalary(user, b).isOnl);
+        }
+
 
         return (
             <Layout
@@ -87,7 +99,8 @@ export class MySalaryRoute extends React.Component {
                                     onClick={() => this.getBills()}>
                                 Xem Doanh Thu
 
-                                { loading && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
+                                {loading &&
+                                <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
                             </button>
                         </div>
 
@@ -101,7 +114,19 @@ export class MySalaryRoute extends React.Component {
                         />
                     </div>
 
-                    <h6>Doanh thu {moment(from).format("DD/MM/YYYY")} - {moment(to).format("DD/MM/YYYY")} : <b>{formatNumber(sumBy(bills, b => getSalary(user, b).money))}</b></h6>
+                    <h6>Doanh thu {moment(from).format("DD/MM/YYYY")} - {moment(to).format("DD/MM/YYYY")} : <b>{formatNumber(sumBy(bills, b => getSalary(user, b).money))}</b>
+                    </h6>
+
+                    {user.role == "sale" && (
+                        <select
+                            className="form-control"
+                            value={selectedType}
+                            onChange={(e) => this.setState({selectedType: e.target.value})}>
+                            <option value="Tất cả">Tất cả</option>
+                            <option value="Đơn Onl">Đơn Onl</option>
+                            <option value="Đơn Off">Đơn Off</option>
+                        </select>
+                    )}
 
                     <table className="table table-hover">
                         <thead>
@@ -112,17 +137,19 @@ export class MySalaryRoute extends React.Component {
                         </tr>
                         </thead>
                         <tbody>
-                        { bills && billsFiltered.map((bill, index) => (
+                        {bills && billsFiltered.map((bill, index) => (
                             <tr key={index}>
                                 <td>
-                                    <div>Mã đơn hàng: <b>{bill.bill_number}</b></div>
+                                    <div>Mã đơn hàng: <b>{bill.bill_number}</b> {getSalary(user, bill).isOnl &&
+                                    <span className="text-primary">(Đơn onl)</span>}</div>
                                     {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
                                 </td>
                                 <td>
                                     <div>
-                                        { bill.items.map((item, index) => (
+                                        {bill.items.map((item, index) => (
                                             <div key={index}>
-                                                <b>{item.quantity}</b> {item.flowerType} {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>}
+                                                <b>{item.quantity}</b> {item.flowerType} {item.name} {item.sale &&
+                                            <span className="text-primary">({item.sale}%)</span>}
                                             </div>
                                         ))}
 
@@ -134,7 +161,8 @@ export class MySalaryRoute extends React.Component {
                                     </div>
                                 </td>
                                 <td>
-                                    {formatNumber(getSalary(user, bill).money)} {getSalary(user, bill).percent && <span className="text-primary">({getSalary(user, bill).percent}%)</span>}
+                                    {formatNumber(getSalary(user, bill).money)} {getSalary(user, bill).percent &&
+                                <span className="text-primary">({getSalary(user, bill).percent}%)</span>}
                                 </td>
                             </tr>
                         ))}

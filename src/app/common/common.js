@@ -193,14 +193,18 @@ export const getSalary = (user, bill) => {
         return 0;
     }
 
+    let isOnl = false;
+
     if (user.role == "florist") {
         const found = bill.florists && bill.florists.find(u => u.user_id == user._id);
         if (found) charge += 3 / bill.florists.length;
 
         const isSale = bill.sales && bill.sales.find(u => u.user_id == user._id);
         if (isSale) {
-            if (user.username.indexOf("onl") > -1) {
+            let myUser = bill.sales.find(u => u.username == user.username);
+            if (myUser.isOnl) {
                 charge += 0.9 * 60 / 100;
+                isOnl = true;
             } else {
                 let isHaveSaleOnl = bill.sales.find(u => u.username.indexOf("onl") > -1);
                 if (isHaveSaleOnl) {
@@ -215,10 +219,12 @@ export const getSalary = (user, bill) => {
 
     if (user.role == "sale") {
 
-        if (user.username.indexOf("onl") > -1) {
+        let myUser = bill.sales.find(u => u.username == user.username);
+        if (myUser.isOnl) {
             charge += 1.8 * 60 / 100;
+            isOnl = true;
         } else {
-            let isHaveSaleOnl = bill.sales.find(u => u.username.indexOf("onl") > -1);
+            let isHaveSaleOnl = bill.sales.find(u => u.isOnl);
             if (isHaveSaleOnl) {
                 charge += (1.8 - (1.8 * 60 / 100)) / (bill.sales.length - 1);
             } else {
@@ -243,13 +249,15 @@ export const getSalary = (user, bill) => {
 
         return {
             money: getSalary(),
-            percent: null
+            percent: null,
+            isOnl
         };
     }
 
     return {
         money: billTotal * charge / 100,
-        percent: charge
+        percent: charge,
+        isOnl
     };
 
 };
