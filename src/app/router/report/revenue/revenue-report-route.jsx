@@ -148,6 +148,11 @@ export class RevenueReportRoute extends React.Component {
                                     Tổng Thu chưa bao gồm VAT: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBillWithoutVAT(b))) : 0}</b>
                                 </h6>
 
+
+                                <h6>
+                                    Tổng Đơn Free: <b className="text-primary">{bills ? bills.filter(b => getTotalBill(b) == 0 || b.to.paymentType == "Free").length : 0}</b>
+                                </h6>
+
                                 <h6>
                                     Lợi Nhuận:<b className="text-primary">{formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBill(b)) - sumBy(items, b => b.price))}</b>
                                 </h6>
