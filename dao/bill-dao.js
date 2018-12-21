@@ -33,7 +33,8 @@ module.exports = mongoose.model('BillDao', {
     sales: [{
         user_id: String,
         username: String,
-        name: String
+        name: String,
+        isOnl: {type: Boolean, default: false}
     }],
     florists: [{
         user_id: String,

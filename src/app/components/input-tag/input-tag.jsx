@@ -109,7 +109,7 @@ export class InputTag extends React.Component {
 
     render() {
 
-        let {placeHolder, tags, isErrorTag, list, onChange} = this.props;
+        let {placeHolder, tags, isErrorTag, list, onChange, onClick} = this.props;
         let {selected, value, selectedIndex, selectedTag} = this.state;
         const filteredList = list.filter(item => tags.map(u => u.user_id).indexOf(item.user_id) == -1 && item.username.toLowerCase().indexOf(value.toLowerCase()) > -1);
 
@@ -118,8 +118,10 @@ export class InputTag extends React.Component {
         return (
             <div className="input-tag">
                 { tags.map((tagItem, index) => (
-                    <div className={classnames("tag-item", selectedTag && selectedTag.user_id == tagItem.user_id && "selected")} key={index}>
-                        {tagItem.username}
+                    <div className={classnames("tag-item", selectedTag && selectedTag.user_id == tagItem.user_id && "selected")} key={index}
+                        onClick={() => onClick && tagItem.isSale && onClick(tagItem.username)}
+                    >
+                        {tagItem.username} {tagItem.isOnl ? "(onl)" : ""}
                         <a className="remove-tag" onClick={() => {
                             this.setState({selectedTag: null});
                             onChange(tags.filter(t => t.user_id != tagItem.user_id))
