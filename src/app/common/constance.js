@@ -164,4 +164,8 @@ export const permissions = [{
     value: "warehouse.request-missing.edit",
     label: "XN/TC phiếu Hao Hụt / Huỷ Hỏng",
     father: "Kho"
+}, {
+    value: "warehouse.view-ori-price",
+    label: "Xem giá gốc",
+    father: "Kho"
 }];

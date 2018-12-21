@@ -102,7 +102,9 @@ export class WareHouseFullView extends React.Component {
                             {item.catalog}
                         </td>
                         <td>
-                            {formatNumber(Math.round(item.oriPrice))}
+
+                            { permission[user.role].indexOf("warehouse.view-ori-price") > -1 ? formatNumber(Math.round(item.oriPrice)) : "****"}
+
                         </td>
                         <td>
                             {formatNumber(Math.round(item.price))}

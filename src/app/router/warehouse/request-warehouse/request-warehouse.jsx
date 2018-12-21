@@ -142,9 +142,6 @@ export class RequestWareHouse extends RComponent {
                                     </div>
                                 </div>
 
-
-
-
                             </div>
 
                             <div className="col col-md-6">
