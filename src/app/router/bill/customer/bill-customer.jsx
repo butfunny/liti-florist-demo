@@ -147,7 +147,7 @@ export class BillCustomer extends React.Component {
 
                     <div className="col-lg-6">
                         <div className="form-group">
-                            <label className="control-label">Người Đặt Hàng</label>
+                            <label className="control-label">Tên Người Đặt*</label>
                             <Input
                                 disabled={vipPay}
                                 value={customer.customerName}
@@ -171,7 +171,7 @@ export class BillCustomer extends React.Component {
 
                     <div className="col-lg-6">
                         <div className="form-group">
-                            <label className="control-label">Số Điện Thoại</label>
+                            <label className="control-label">Số Điện Thoại*</label>
                             <AutoComplete
                                 disabled={editMode || vipPay}
                                 ref={elem => this.phone = elem}

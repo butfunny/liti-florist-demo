@@ -59,7 +59,7 @@ export class BillAddItem extends React.Component {
                                     color: "black"
                                 }}
                                 value={type} onChange={(e) => this.setState({type: e.target.value})}>
-                            <option value="" disabled>Loại</option>
+                            <option value="" disabled>Loại*</option>
                             { types.map((t, index) => (
                                 <option value={t} key={index}>
                                     {t}
@@ -74,13 +74,13 @@ export class BillAddItem extends React.Component {
                         />
 
                         <Input
-                            placeholder="Miêu tả"
+                            placeholder="Miêu tả*"
                             value={name}
                             onChange={(e) => this.setState({name: e.target.value})}
                         />
 
                         <InputNumber
-                            placeholder="Giá"
+                            placeholder="Giá*"
                             value={price}
                             onChange={(price) => this.setState({price})}
                         />

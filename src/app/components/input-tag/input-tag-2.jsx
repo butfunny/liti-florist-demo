@@ -130,7 +130,7 @@ export class InputTag2 extends React.Component {
                 ))}
 
                 <div className="input-wrapper auto-complete">
-                    <input placeholder="Màu"
+                    <input placeholder="Màu*"
                            className={classnames(this.state.error && "error-add")}
                            value={value}
                            onChange={(e) => this.setState({value: e.target.value})}

@@ -66,7 +66,7 @@ export class BillInfo extends React.Component {
 
                 <div className="col-lg-6">
                     <div className="form-group">
-                        <label className="control-label">Người Nhận Hàng</label>
+                        <label className="control-label">Người Nhận Hàng*</label>
                         <AutoCompleteNormal
                             value={to.receiverName}
                             onSelect={(location) => {
@@ -83,7 +83,7 @@ export class BillInfo extends React.Component {
 
                 <div className="col-lg-6">
                     <div className="form-group">
-                        <label className="control-label">Số Điện Thoại Nhận</label>
+                        <label className="control-label">Số Điện Thoại Nhận*</label>
                         <AutoCompleteNormal
                             value={to.receiverPhone}
                             onSelect={(location) => {
@@ -100,7 +100,7 @@ export class BillInfo extends React.Component {
 
                 <div className="col-lg-6">
                     <div className="form-group">
-                        <label className="control-label">Ngày nhận hàng</label>
+                        <label className="control-label">Ngày nhận hàng*</label>
                         <DatePicker
                             value={new Date(deliverTime)}
                             onChange={(deliverTime) => onChangeDeliverTime(deliverTime)}
@@ -110,7 +110,7 @@ export class BillInfo extends React.Component {
 
                 <div className="col-lg-6">
                     <div className="form-group">
-                        <label className="control-label">Giờ nhận hàng</label>
+                        <label className="control-label">Giờ nhận hàng*</label>
                         <TimePicker
                             value={new Date(deliverTime)}
                             onChange={(deliverTime) => {
@@ -122,7 +122,7 @@ export class BillInfo extends React.Component {
 
                 <div className="col-lg-6">
                     <div className="form-group">
-                        <label className="control-label">Nơi Nhận</label>
+                        <label className="control-label">Nơi Nhận*</label>
                         <AutoCompleteNormal
                             value={to.receiverPlace}
                             onSelect={(location) => {

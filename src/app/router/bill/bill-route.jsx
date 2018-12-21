@@ -24,7 +24,11 @@ import {RComponent} from "../../components/r-component/r-component";
 
 const initBill = {
     items: [],
-    customer: {},
+    customer: {
+        customerName: "",
+        customerPhone: "",
+        customerPlace: ""
+    },
     customerInfo: null,
     to: {
         receiverPhone: "",
@@ -354,7 +358,17 @@ export class BillRoute extends RComponent {
                                                 </button>
 
                                                 <button type="button"
-                                                        disabled={bill.items.length == 0 || saving || bill.sales.length == 0 || bill.florists.length == 0}
+                                                        disabled={
+                                                            bill.items.length == 0 ||
+                                                            saving ||
+                                                            bill.sales.length == 0 ||
+                                                            bill.florists.length == 0 ||
+                                                            bill.customer.customerName.length == 0 ||
+                                                            bill.customer.customerPhone.length == 0 ||
+                                                            bill.to.receiverName.length == 0 ||
+                                                            bill.to.receiverPhone.length == 0 ||
+                                                            bill.to.receiverPlace.length == 0
+                                                        }
                                                         className="btn btn-info btn-icon"
                                                         onClick={() => this.submitBill(bill)}>
                                                     <span className="btn-inner--text">Bán Hàng</span>
