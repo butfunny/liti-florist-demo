@@ -392,8 +392,7 @@ function dataURItoBlob(dataURI) {
     return new Blob([ab], { type: 'image/jpeg' });
 };
 
-export function getStartAndLastDayOfWeek() {
-    let curr = new Date; // get current date
+export function getStartAndLastDayOfWeek(curr = new Date()) {
     let first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
     let last = first + 6; // last day is the first day + 6
     let from = new Date(curr.setDate(first));

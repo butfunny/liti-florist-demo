@@ -27,13 +27,15 @@ export class RevenueReportBill extends React.Component {
 
     render() {
 
-        let {bills} = this.props;
+        let {bills, filterType, lastInitBills} = this.props;
 
         let premises = premisesInfo.getPremises();
         premises = premises.map(p => ({
             ...p,
             totalGet: sumBy(bills, b => b.premises_id == p._id ? getTotalBill(b) : 0),
-            totalBill: bills.filter(b => b.premises_id == p._id).length
+            totalBill: bills.filter(b => b.premises_id == p._id).length,
+            totalLastGet: sumBy(lastInitBills, b => b.premises_id == p._id ? getTotalBill(b) : 0)
+
         }));
 
         let CSVdata = [[
@@ -84,9 +86,15 @@ export class RevenueReportBill extends React.Component {
                             </td>
 
                             <td>
-                                <button className="btn btn-outline-primary btn-sm" onClick={() => this.viewBills(premise)}>
-                                    Xem lịch sử
-                                </button>
+                                { filterType == "Trong Tuần" && premise.totalGet != premise.totalLastGet && (
+                                    <span>
+                                        { premise.totalGet > premise.totalLastGet ? (
+                                            <span className="text-info"><i className="fa fa-arrow-up"/> ({formatNumber(premise.totalGet - premise.totalLastGet)})</span>
+                                        ) : (
+                                            <span className="text-danger"><i className="fa fa-arrow-down"/> ({formatNumber(premise.totalGet - premise.totalLastGet)})</span>
+                                        )}
+                                    </span>
+                                )}
                             </td>
                         </tr>
                     ))}

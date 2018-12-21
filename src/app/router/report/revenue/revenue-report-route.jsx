@@ -8,6 +8,7 @@ import {RevenueReportCustomer} from "./revenue-report-customer";
 import {RevenueReportBill} from "./revenue-report-bill";
 import {userInfo} from "../../../security/user-info";
 import {permissionInfo} from "../../../security/premises-info";
+import {paymentTypes} from "../../../common/constance";
 
 export const PermissionDenie = () => (
     <div>
@@ -28,13 +29,28 @@ export class RevenueReportRoute extends React.Component {
             bills: [],
             customers: [],
             vips: [],
-            viewType: "Khách Hàng"
+            viewType: "Khách Hàng",
+            lastInitBills: [],
+            filterType: "Trong Tuần",
+            initBills: {}
         };
+
+        this.getInitReport();
 
     }
 
-    componentDidMount() {
-        this.getReport();
+
+    getInitReport() {
+        let {from, to} = this.state;
+        let today = new Date();
+        today.setDate(today.getDate() - 7);
+        let lastWeek = getStartAndLastDayOfWeek(today);
+        Promise.all([billApi.getReportAll({from, to}), billApi.getReportAll({from: lastWeek.from, to: lastWeek.to})]).then((resp) => {
+            let {bills, customers, vips, items} = resp[0];
+            this.setState({bills, customers, vips, items, loading: false, lastInitBills: resp[1].bills, initBills: resp[0]})
+        })
+
+
     }
 
     getReport() {
@@ -48,7 +64,9 @@ export class RevenueReportRoute extends React.Component {
 
 
     render() {
-        let {loading, from, to, bills, viewType, customers, items} = this.state;
+        let {loading, from, to, viewType, filterType, initBills, lastInitBills} = this.state;
+
+        let {customers, items, bills} = filterType == "Trong Tuần" ? initBills : this.state;
 
         const user = userInfo.getUser();
         const permission = permissionInfo.getPermission();
@@ -68,40 +86,51 @@ export class RevenueReportRoute extends React.Component {
                         <h1 className="ct-title">Báo cáo doanh thu</h1>
                     </div>
 
-                    <div className="report-header row">
-                        <div className="col-md-4">
-                            <div className="form-group">
-                                <label className="control-label">Từ ngày</label>
-                                <DatePicker
-                                    value={from}
-                                    onChange={(from) => {
-                                        this.setState({from})
-                                    }}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="col-md-4">
-                            <div className="form-group">
-                                <label className="control-label">Tới ngày</label>
-                                <DatePicker
-                                    value={to}
-                                    onChange={(to) => this.setState({to})}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="col-md-4">
-                            <button className="btn btn-info btn-sm btn-get btn-icon"
-                                    disabled={loading}
-                                    onClick={() => this.getReport()}>
-                                Xem Hoá Đơn
-
-                                { loading && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
-                            </button>
-                        </div>
-
+                    <div className="form-group">
+                        <select
+                            className="form-control"
+                            value={filterType} onChange={(e) => this.setState({filterType: e.target.value})}>
+                            <option  value="Trong Tuần">Trong Tuần</option>
+                            <option  value="Chọn Ngày">Chọn Ngày</option>
+                        </select>
                     </div>
+
+                    { filterType == "Chọn Ngày" && (
+                        <div className="report-header row">
+                            <div className="col-md-4">
+                                <div className="form-group">
+                                    <label className="control-label">Từ ngày</label>
+                                    <DatePicker
+                                        value={from}
+                                        onChange={(from) => {
+                                            this.setState({from})
+                                        }}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="col-md-4">
+                                <div className="form-group">
+                                    <label className="control-label">Tới ngày</label>
+                                    <DatePicker
+                                        value={to}
+                                        onChange={(to) => this.setState({to})}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="col-md-4">
+                                <button className="btn btn-info btn-sm btn-get btn-icon"
+                                        disabled={loading}
+                                        onClick={() => this.getReport()}>
+                                    Xem Hoá Đơn
+
+                                    { loading && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
+                                </button>
+                            </div>
+
+                        </div>
+                    )}
 
                     { !loading && (
                         <Fragment>
@@ -138,11 +167,15 @@ export class RevenueReportRoute extends React.Component {
                             { viewType == "Cửa Hàng" ? (
                                 <RevenueReportBill
                                     bills={bills}
+                                    lastInitBills={lastInitBills}
+                                    filterType={filterType}
                                 />
                             ) : (
                                 <RevenueReportCustomer
                                     bills={bills}
                                     customers={customers}
+                                    lastInitBills={lastInitBills}
+                                    filterType={filterType}
                                 />
                             )}
                         </Fragment>

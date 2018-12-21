@@ -17,7 +17,8 @@ export class RevenueReportCustomer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            keyword: ""
+            keyword: "",
+            selectedType: "Trong tuần"
         }
     }
 
@@ -37,15 +38,16 @@ export class RevenueReportCustomer extends React.Component {
 
     render() {
 
-        let {customers, bills} = this.props;
+        let {customers, bills, filterType, lastInitBills} = this.props;
         let {keyword} = this.state;
 
         const customerMapped = customers.map(c => ({
             ...c,
-            totalPay: sumBy(bills, b => b.customerId == c._id ? getTotalBill(b) : 0)
+            totalPay: sumBy(bills, b => b.customerId == c._id ? getTotalBill(b) : 0),
+            totalLastPay: sumBy(lastInitBills, b => b.customerId == c._id ? getTotalBill(b) : 0)
         }));
 
-        const getPayOfPremises = (customerId, premises_id) => {
+        const getPayOfPremises = (customerId, premises_id, bills) => {
             const customerBills = bills.filter(b => b.customerId == customerId && b.premises_id == premises_id);
             return {
                 pay: sum(customerBills.map(b => getTotalBill(b))),
@@ -68,7 +70,7 @@ export class RevenueReportCustomer extends React.Component {
             CSVdata.push([
                 customer.customerName,
                 customer.customerPhone,
-                ...premises.map(p => getPayOfPremises(customer._id, p._id).pay),
+                ...premises.map(p => getPayOfPremises(customer._id, p._id, bills).pay),
                 customer.totalPay
             ])
 
@@ -113,7 +115,7 @@ export class RevenueReportCustomer extends React.Component {
 
                                 { premises.map((p, index) => (
                                     <div key={index}>
-                                        {p.name}: {formatNumber(getPayOfPremises(customer._id, p._id).pay)} - {getPayOfPremises(customer._id, p._id).total} lần
+                                        {p.name}: {formatNumber(getPayOfPremises(customer._id, p._id, bills).pay)} - {getPayOfPremises(customer._id, p._id, bills).total} lần
                                     </div>
                                 ))}
                             </td>
@@ -123,9 +125,15 @@ export class RevenueReportCustomer extends React.Component {
                             </td>
 
                             <td>
-                                <button className="btn btn-outline-primary btn-sm" onClick={() => this.viewBills(customer)}>
-                                    Xem lịch sử
-                                </button>
+                                { filterType == "Trong Tuần" && (
+                                    <span>
+                                        { customer.totalPay > customer.totalLastPay ? (
+                                            <span className="text-info"><i className="fa fa-arrow-up"/> ({formatNumber(customer.totalPay - customer.totalLastPay)})</span>
+                                        ) : (
+                                            <span className="text-danger"><i className="fa fa-arrow-up"/> ({formatNumber(customer.totalLastPay - customer.totalPay)})</span>
+                                        )}
+                                    </span>
+                                )}
                             </td>
                         </tr>
                     ))}
