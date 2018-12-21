@@ -43,8 +43,8 @@ module.exports = (app) => {
 
     app.post("/customers", (req, res) => {
         let {skip, keyword} = req.body;
-        CustomerDao.find({customerPhone: new RegExp(".*" + keyword + ".*")}).skip(skip).limit(50).exec((err, customers) => {
-            CustomerDao.countDocuments({customerPhone: new RegExp(".*" + keyword + ".*")}, (err, count) => {
+        CustomerDao.find({$or: [{customerPhone: new RegExp(".*" + keyword + ".*")}, {customerName: new RegExp(".*" + keyword + ".*")}]}).skip(skip).limit(50).exec((err, customers) => {
+            CustomerDao.countDocuments({$or: [{customerPhone: new RegExp(".*" + keyword + ".*")}, {customerName: new RegExp(".*" + keyword + ".*")}]}, (err, count) => {
                 BillDao.find({customerId: {$in: customers.map(c => c._id)}}, (err, bills) => {
                     res.json({
                         customers,
