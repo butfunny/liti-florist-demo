@@ -26,7 +26,17 @@ module.exports = (app) => {
     app.get("/vip/card/:cid", Security.authorDetails, function (req, res) {
         VipDao.findOne({cardId: req.params.cid}, function (err, vip) {
             if (vip == null) res.json({error: "Không tìm thấy khách hàng với mã thẻ này."});
-            else res.json(vip)
+            else {
+                let today = new Date();
+                today.setHours(0, 0, 0 ,0);
+                let endDate = new Date(vip.endDate);
+                endDate.setHours(0, 0, 0 ,0);
+                if (today.getTime() > endDate.getTime()) {
+                    res.json({error: "Thẻ hết hạn"})
+                } else {
+                    res.json(vip);
+                }
+            }
         })
     });
 

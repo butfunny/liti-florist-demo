@@ -21,7 +21,7 @@ export class VipCardReaderModal extends React.Component {
         let {cardNumber} = this.state;
         vipApi.getVipByCardID(cardNumber).then((resp) => {
             if (resp.error) {
-                this.setState({errorCreate: true, saving: false})
+                this.setState({errorCreate: resp.error, saving: false})
             } else {
                 this.props.onClose(resp);
             }
@@ -84,7 +84,7 @@ export class VipCardReaderModal extends React.Component {
 
                                 { errorCreate && (
                                     <div className="loading text-danger text-sm-left">
-                                        Thẻ không tồn tại
+                                        {errorCreate}
                                     </div>
                                 )}
                             </div>
