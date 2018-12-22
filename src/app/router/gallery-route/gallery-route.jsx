@@ -6,6 +6,11 @@ import {productApi} from "../../api/product-api";
 import {userInfo} from "../../security/user-info";
 import {permissionInfo} from "../../security/premises-info";
 import {PermissionDenie} from "../report/revenue/revenue-report-route";
+import {modals} from "../../components/modal/modals";
+import {ManageGallery} from "./manage-gallery";
+import {photosApi} from "../../api/photos-api";
+import {confirmModal} from "../../components/confirm-modal/confirm-modal";
+const regexBreakLine = /(?:\r\n|\r|\n)/g;
 export class GalleryRoute extends React.Component {
 
     constructor(props) {
@@ -15,11 +20,16 @@ export class GalleryRoute extends React.Component {
             types: ["Tất cả"],
             colors: ["Tất cả"],
             typeSelected: "Tất cả",
-            colorSelected: "Tất cả"
+            colorSelected: "Tất cả",
+            photos: []
         };
 
         billApi.getBillImages().then(({bills, items}) => {
             this.setState({bills, items})
+        });
+
+        photosApi.getPhotos().then((photos) => {
+            this.setState({photos})
         });
 
         productApi.getTypes().then((types) => {
@@ -29,12 +39,48 @@ export class GalleryRoute extends React.Component {
         productApi.getColors().then((colors) => {
             this.setState({colors: ["Tất cả"].concat(colors.map(t => t.name))})
         });
+
+    }
+
+    addPhoto() {
+        const modal = modals.openModal({
+            content: (
+                <ManageGallery
+                    photo={{
+                        title: "",
+                        colors: [],
+                        flowerType: "",
+                        note: "",
+                        url: ""
+                    }}
+                    onClose={(photo) => {
+                        photosApi.createPhoto(photo).then((photo) => {
+                            modal.close();
+                            let {photos} = this.state;
+                            this.setState({photos: photos.concat(photo)})
+                        })
+
+                    }}
+                />
+            )
+        })
+    }
+
+    remove(photo) {
+        let {photos} = this.state;
+        confirmModal.show({
+            title: "Bạn muốn xoá ảnh này chứ?",
+            description: "Sau khi xoá mọi dữ liệu về ảnh sẽ biến mất."
+        }).then(() => {
+            this.setState({photos: photos.filter(b => b._id != photo._id)});
+            photosApi.removePhoto(photo._id);
+        })
     }
 
     render() {
 
         let {bills} = this.state;
-        let {colors, types, typeSelected, colorSelected, items} = this.state;
+        let {colors, types, typeSelected, colorSelected, items, photos} = this.state;
 
         const user = userInfo.getUser();
         const permission = permissionInfo.getPermission();
@@ -74,12 +120,33 @@ export class GalleryRoute extends React.Component {
 
         });
 
+        let photosFiltered = photos.filter(photo => {
+            if (typeSelected == "Tất cả") {
+                return true;
+            }
+
+            return photo.flowerType == typeSelected;
+        });
+
+        photosFiltered = photosFiltered.filter(photo => {
+            if (colorSelected == "Tất cả") {
+                return true;
+            }
+            return photo.colors.indexOf(colorSelected) > -1;
+
+        });
+
+
         return (
             <Layout activeRoute="Báo Cáo">
                 <div className="gallery-route">
 
                     <div className="ct-page-title">
                         <h1 className="ct-title">Kho Ảnh</h1>
+                    </div>
+
+                    <div className="margin-bottom">
+                        <button type="button" className="btn btn-info" onClick={() => this.addPhoto()}>Thêm ảnh</button>
                     </div>
 
 
@@ -108,6 +175,44 @@ export class GalleryRoute extends React.Component {
                     </div>
 
                     <div className="row">
+
+                        <div className="form-group col-md-12">
+                            <b className="control-label">
+                                Danh mục ảnh đã tải
+                            </b>
+                        </div>
+
+                        { photosFiltered.map((photo, index) => (
+                            <div className="col-lg-4 col-md-6" key={index}>
+                                <div className="bill-item">
+                                    <div className="image-header">
+                                        <img src={photo.url} alt=""/>
+                                    </div>
+                                    <div className="bill-body">
+                                        {photo.flowerType} - { photo.title}
+                                        <div>
+                                            <b>Màu: </b> {photo.colors.join(", ")}
+                                        </div>
+                                        <div>
+                                            <b>Định lượng: </b>
+
+                                            <div dangerouslySetInnerHTML={{__html: photo.note.replace(regexBreakLine, "<br/>")}}/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button className="btn btn-outline-danger btn-sm"
+                                        onClick={() => this.remove(photo)}>
+                                    <i className="fa fa-trash"/>
+                                </button>
+                            </div>
+                        ))}
+
+                        <div className="form-group col-md-12">
+                            <b className="control-label">
+                                Danh mục hoá đơn có ảnh
+                            </b>
+                        </div>
 
                         { billFiltered.map((bill, index) => (
                             <div className="col-lg-4 col-md-6" key={index}>

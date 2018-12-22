@@ -23,6 +23,7 @@ require("../controllers/promotion-controller")(router);
 require("../controllers/florist-controller")(router);
 require("../controllers/upload-controller")(router);
 require("../controllers/product-type-controller")(router);
+require("../controllers/photos-controler")(router);
 
 app.use("/upload", express.static(__dirname + "/../upload"));
 
