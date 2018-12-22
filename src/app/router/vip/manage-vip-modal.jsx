@@ -15,7 +15,7 @@ export class ManageVipModal extends React.Component {
             },
             loading: false,
             cardNumber: "",
-            isVFamily: false
+            vipType: "VIP"
         }
     }
 
@@ -31,14 +31,14 @@ export class ManageVipModal extends React.Component {
     }
 
     submit() {
-        let {customer, cardNumber, isVFamily} = this.state;
+        let {customer, cardNumber, vipType} = this.state;
         this.setState({saving: true});
 
         customerApi.updateCustomer(customer._id, customer).then(() => {
             vipApi.createVip({
                 customerId: customer._id,
                 cardId: cardNumber,
-                isVFamily
+                vipType
             }).then((resp) => {
                 if (resp.error) {
                     this.setState({errorCreate: true, saving: false})
@@ -47,7 +47,7 @@ export class ManageVipModal extends React.Component {
                         vip: {
                             customerId: customer._id,
                             cardId: cardNumber,
-                            isVFamily
+                            vipType
                         },
                         customer
                     })
@@ -58,8 +58,10 @@ export class ManageVipModal extends React.Component {
 
     render() {
 
-        let {customer, loading, vipAlready, saving, cardNumber, errorCreate, isVFamily} = this.state;
+        let {customer, loading, vipAlready, saving, cardNumber, errorCreate, vipType} = this.state;
         let {onDismiss} = this.props;
+
+
 
 
         return (
@@ -147,10 +149,12 @@ export class ManageVipModal extends React.Component {
                                         <div className="form-group">
                                             <label className="control-label">Loại VIP</label>
 
-                                            <select className="form-control" value={isVFamily}
-                                                    onChange={(e) => this.setState({isVFamily: e.target.value})}>
-                                                <option value={false} >VIP Thường</option>
-                                                <option value={true} >VFamily</option>
+                                            <select className="form-control" value={vipType}
+                                                    onChange={(e) => this.setState({vipType: e.target.value})}>
+                                                <option value="VIP" >VIP</option>
+                                                <option value="VVIP" >VVIP</option>
+                                                <option value="FVIP" >FVIP</option>
+                                                <option value="CVIP" >CVIP</option>
                                             </select>
                                         </div>
                                     </Fragment>

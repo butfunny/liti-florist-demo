@@ -9,7 +9,7 @@ module.exports = (app) => {
             if (vip != null) {
                 res.json({error: "Khách hàng đã là VIP hoặc thẻ đã được sử dụng"});
             } else {
-                VipDao.create(req.body, function (err, created) {
+                VipDao.create({...req.body, createdBy: req.user}, function (err, created) {
                     res.json(created);
                 })
             }

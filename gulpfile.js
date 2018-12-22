@@ -164,6 +164,18 @@ gulp.task("update-bill-with-premies", () => {
     })
 });
 
+gulp.task("update-vip", () => {
+    const mongoose = require('mongoose');
+    mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/payment", {useNewUrlParser: true});
+    const VipDao = require("./dao/vip-dao");
+
+    VipDao.update({}, {vipType: "VIP"}, {multi: true}, (err) =>{
+        console.log("finished");
+        mongoose.disconnect();
+    });
+
+});
+
 gulp.task("update-customer-birthdate", () => {
     const mongoose = require('mongoose');
     mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/payment", {useNewUrlParser: true});

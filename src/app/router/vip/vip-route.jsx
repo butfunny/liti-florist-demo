@@ -139,12 +139,18 @@ export class VipRoute extends React.Component {
                                             { customer.birthDate && <div>Ngày Sinh: <b>{moment(new Date(customer.birthDate)).format("DD/MM/YYYY")}</b></div>}
                                             <div>Số Thẻ: <b>6666 {item.cardId.toString().substr(0, 4) + " " + item.cardId.toString().substr(4, 7)}</b></div>
 
+                                            <div>
+                                                Người lập: <b>{item.createdBy ? item.createdBy.username : ""}</b>
+                                            </div>
+                                            <div>
+                                                Ngày phát hành: <b>{moment(new Date(item.created)).format("DD/MM/YYYY")}</b>
+                                            </div>
                                         </td>
 
                                         <td
                                             style={{minWidth: "200px"}}
                                         >
-                                            {item.isVFamily ? "VFamily" : "VIP Thường"}
+                                            {item.vipType}
                                         </td>
                                         <td
                                             style={{minWidth: "150px"}}

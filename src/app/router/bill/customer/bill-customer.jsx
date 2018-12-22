@@ -78,8 +78,15 @@ export class BillCustomer extends React.Component {
                 <VipCardReaderModal
                     onClose={(vip) => {
                         modal.close();
-                        onChangeBill({...bill, vipSaleType: vip.isVFamily ? "Giảm giá 20%" : "Giảm giá 5%"});
-                        this.setState({vipPay: vip.isVFamily ? "vfamily" : "vip"});
+                        const vipSales = {
+                            "VIP": 5,
+                            "VVIP": 10,
+                            "FVIP": 20,
+                            "CVIP": 30
+                        };
+
+                        onChangeBill({...bill, vipSaleType: `Giảm giá ${vipSales[vip.vipType]}%`});
+                        this.setState({vipPay: vip.vipType});
                         this.getCustomerInfo(vip.customerId);
                     }}
                     onDismiss={() => modal.close()}
@@ -270,7 +277,7 @@ export class BillCustomer extends React.Component {
                         </div>
                     </div>
 
-                    { vipPay == "vip" && (
+                    { vipPay == "VIP" && (
                         <div className="col-lg-6">
                             <div className="form-group">
                                 <label className="control-label">VIP sale</label>
@@ -283,10 +290,10 @@ export class BillCustomer extends React.Component {
                         </div>
                     )}
 
-                    { vipPay == "vfamily" && (
+                    { vipPay != "VIP" && (
                         <div className="col-lg-6">
                             <div className="form-group">
-                                <label className="control-label">VFamily Sale</label>
+                                <label className="control-label">{vipPay} Sale</label>
                                 <Input
                                     disabled
                                     value="Giảm giá 20%"

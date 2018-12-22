@@ -27,8 +27,17 @@ export const getTotalBill = (bill) => {
         discount += 5;
     }
 
+    if (bill.vipSaleType == "Giảm giá 10%") {
+        discount += 10;
+    }
+
     if (bill.vipSaleType == "Giảm giá 20%") {
         discount += 20;
+    }
+
+
+    if (bill.vipSaleType == "Giảm giá 30%") {
+        discount += 30;
     }
 
     if (bill.promotion) {

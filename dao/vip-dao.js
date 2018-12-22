@@ -5,5 +5,9 @@ module.exports = mongoose.model('VipDao', {
     "cardId": String,
     birthDate: Date,
     created: {type: Date, default: Date.now},
-    isVFamily: Boolean
+    vipType: String,
+    createdBy: {
+        username: String,
+        name: String
+    }
 }, "vips");
