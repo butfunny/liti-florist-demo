@@ -68,6 +68,7 @@ export class WareHouseFullView extends React.Component {
                 <tr>
                     <th scope="col">Thông Tin</th>
                     <th scope="col">Danh Mục</th>
+                    <th scope="col">Tồn kho</th>
                     <th scope="col">Giá Gốc</th>
                     <th scope="col">Giá Bán</th>
                     <th scope="col">Đơn Vị Tính</th>
@@ -80,26 +81,29 @@ export class WareHouseFullView extends React.Component {
                         <td>
                             {item.name} - {item.productId}
 
-                            <div className="text-small">
-                                <span className="text-danger">*Tồn kho:</span>
+                            {/*<div className="text-small">*/}
+                                {/*<span className="text-danger">*Tồn kho:</span>*/}
 
-                                <div className="text-primary">
-                                    <b>Kho tổng: {item.quantity}</b>
+                                {/*<div className="text-primary">*/}
+                                    {/*<b>Kho tổng: {item.quantity}</b>*/}
 
-                                    <ul>
-                                        { getSubItem(item).map((warehouseItem, index) => (
-                                            <li
-                                                className="padding-left"
-                                                key={index}>
-                                                <b>{warehouseItem.name}: {warehouseItem.quantity}</b>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </div>
+                                    {/*<ul>*/}
+                                        {/*{ getSubItem(item).map((warehouseItem, index) => (*/}
+                                            {/*<li*/}
+                                                {/*className="padding-left"*/}
+                                                {/*key={index}>*/}
+                                                {/*<b>{warehouseItem.name}: {warehouseItem.quantity}</b>*/}
+                                            {/*</li>*/}
+                                        {/*))}*/}
+                                    {/*</ul>*/}
+                                {/*</div>*/}
+                            {/*</div>*/}
                         </td>
                         <td>
                             {item.catalog}
+                        </td>
+                        <td>
+                            {item.quantity}
                         </td>
                         <td>
 
