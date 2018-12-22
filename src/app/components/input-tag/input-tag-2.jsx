@@ -109,7 +109,7 @@ export class InputTag2 extends React.Component {
 
     render() {
 
-        let {placeHolder, tags, isErrorTag, list, onChange} = this.props;
+        let {placeHolder, tags, isErrorTag, list, onChange, noPlaceholder} = this.props;
         let {selected, value, selectedIndex, selectedTag} = this.state;
         const filteredList = list.filter(item => tags.indexOf(item) == -1 && item.toLowerCase().indexOf(value.toLowerCase()) > -1);
 
@@ -130,7 +130,7 @@ export class InputTag2 extends React.Component {
                 ))}
 
                 <div className="input-wrapper auto-complete">
-                    <input placeholder="Màu*"
+                    <input placeholder={noPlaceholder ? "" : "Màu*"}
                            className={classnames(this.state.error && "error-add")}
                            value={value}
                            onChange={(e) => this.setState({value: e.target.value})}

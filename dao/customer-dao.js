@@ -10,6 +10,10 @@ module.exports = mongoose.model('CustomerDao', {
     "receiverPhone": String,
     paymentType: String,
     birthDate: String,
-    "gender": String
+    "gender": String,
+    premises: [String],
+    buyerFrom: [String],
+    hobby: String,
+    notes: String
 }, "customers");
 

@@ -5,14 +5,23 @@ import {AutoComplete} from "../../components/auto-complete/auto-complete";
 import {vipApi} from "../../api/vip-api";
 import moment from "moment";
 import {DatePicker} from "../../components/date-picker/date-picker";
+import {InputTag2} from "../../components/input-tag/input-tag-2";
+import {premisesInfo} from "../../security/premises-info";
+import {viaTypes} from "../../common/constance";
 export class ManageVipModal extends React.Component {
 
     constructor(props) {
         super(props);
+
+        let today = new Date();
+        today.setFullYear(today.getFullYear() + 2);
+
         this.state = {
             customer: {
                 customerPhone: ""
             },
+            created: new Date(),
+            endDate: today,
             loading: false,
             cardNumber: "",
             vipType: "VIP"
@@ -31,14 +40,16 @@ export class ManageVipModal extends React.Component {
     }
 
     submit() {
-        let {customer, cardNumber, vipType} = this.state;
+        let {customer, cardNumber, vipType, created, endDate} = this.state;
         this.setState({saving: true});
 
         customerApi.updateCustomer(customer._id, customer).then(() => {
             vipApi.createVip({
                 customerId: customer._id,
                 cardId: cardNumber,
-                vipType
+                vipType,
+                created,
+                endDate
             }).then((resp) => {
                 if (resp.error) {
                     this.setState({errorCreate: true, saving: false})
@@ -58,9 +69,8 @@ export class ManageVipModal extends React.Component {
 
     render() {
 
-        let {customer, loading, vipAlready, saving, cardNumber, errorCreate, vipType} = this.state;
+        let {customer, loading, vipAlready, saving, cardNumber, errorCreate, vipType, created, endDate} = this.state;
         let {onDismiss} = this.props;
-
 
 
 
@@ -100,17 +110,94 @@ export class ManageVipModal extends React.Component {
                                 <div className="form-group">
                                     <label className="control-label">Thông Tin Khách Hàng</label>
                                     <div>
-                                        Tên: <b>{customer.customerPhone}</b>
+                                        Tên: <b>{customer.customerName}</b>
                                     </div>
-                                    <div>
-                                        Địa chỉ: <b>{customer.customerPlace}</b>
-                                    </div>
+
                                     <div className="form-group">
-                                        <label className="control-label">Ngày sinh:</label>
+                                        <label className="control-label">Ngày sinh</label>
 
                                         <DatePicker
                                             value={customer.birthDate ? new Date(customer.birthDate) : new Date()}
                                             onChange={(birthDate) => this.setState({customer: {...customer, birthDate}})}
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="control-label">Email</label>
+
+                                        <input className="form-control"
+                                               value={customer.email}
+                                               onChange={(e) => this.setState({customer: {...customer, email: e.target.value}})}
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="control-label">Địa chỉ*</label>
+
+                                        <input className="form-control"
+                                               value={customer.customerPlace}
+                                               onChange={(e) => this.setState({customer: {...customer, customerPlace: e.target.value}})}
+                                        />
+                                    </div>
+
+
+                                    <div className="form-group">
+                                        <label className="control-label">Sở thích*</label>
+
+                                        <input className="form-control"
+                                               value={customer.hobby || ""}
+                                               onChange={(e) => this.setState({customer: {...customer, hobby: e.target.value}})}
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="control-label">Ngày phát hành thẻ</label>
+
+                                        <DatePicker
+                                            value={created}
+                                            onChange={(date) => this.setState({created: date})}
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="control-label">Ngày hết hạn thẻ</label>
+
+                                        <DatePicker
+                                            value={endDate}
+                                            onChange={(date) => this.setState({endDate: date})}
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="control-label">Ghi chú</label>
+
+                                        <textarea
+                                            className="form-control"
+                                            style={{
+                                                resize: "none"
+                                            }}
+                                            value={customer.notes} onChange={(e) => this.setState({customer: {...customer, notes: e.target.value}})}/>
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="control-label">Cơ sở mua hàng</label>
+
+                                        <InputTag2
+                                            tags={customer.premises || []}
+                                            noPlaceholder
+                                            list={premisesInfo.getPremises().map(p => p.name)}
+                                            onChange={(premises) => this.setState({customer: {...customer, premises}})}
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label className="control-label">Kênh mua hàng</label>
+
+                                        <InputTag2
+                                            tags={customer.buyerFrom || []}
+                                            noPlaceholder
+                                            list={viaTypes}
+                                            onChange={(buyerFrom) => this.setState({customer: {...customer, buyerFrom}})}
                                         />
                                     </div>
                                 </div>
@@ -174,7 +261,13 @@ export class ManageVipModal extends React.Component {
                     <div className="modal-footer">
                         <button type="button" className="btn btn-link" onClick={() => onDismiss()}>Đóng</button>
                         <button type="submit"
-                                disabled={!customer._id || vipAlready || saving || cardNumber.toString().length != 8}
+                                disabled={!customer._id || vipAlready
+                                || saving || cardNumber.toString().length != 8 ||
+                                customer.customerPlace.length == 0 ||
+                                !customer.premises || customer.premises.length == 0 ||
+                                !customer.hobby || customer.hobby.length == 0 ||
+                                !customer.buyerFrom || customer.buyerFrom.length == 0
+                            }
                                 onClick={() => this.submit()}
                                 className="btn btn-info btn-icon">
                             <span className="btn-inner--text">Lưu</span>

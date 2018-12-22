@@ -9,5 +9,6 @@ module.exports = mongoose.model('VipDao', {
     createdBy: {
         username: String,
         name: String
-    }
+    },
+    endDate: Date,
 }, "vips");

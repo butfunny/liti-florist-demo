@@ -173,8 +173,37 @@ gulp.task("update-vip", () => {
         console.log("finished");
         mongoose.disconnect();
     });
-
 });
+
+gulp.task("update-vip-deadline", () => {
+    const mongoose = require('mongoose');
+    mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/payment", {useNewUrlParser: true});
+    const VipDao = require("./dao/vip-dao");
+
+    const updateCustomer = (vip) => {
+        return new Promise((resolve, reject)=>{
+            let today = new Date(vip.created);
+            today.setFullYear(today.getFullYear() + 2);
+            VipDao.findOneAndUpdate({_id: vip._id}, {endDate: today}, (err) =>{
+                console.log("updated: " + vip._id);
+                resolve();
+            })
+        })
+
+    };
+
+    VipDao.find({}, (err, vips) => {
+        let promises = [];
+        for (let vip of vips) {
+            promises.push(updateCustomer(vip))
+        }
+
+        Promise.all(promises).then(() => {
+            console.log("finished");
+            mongoose.disconnect();
+        })
+    })
+})
 
 gulp.task("update-customer-birthdate", () => {
     const mongoose = require('mongoose');

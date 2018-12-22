@@ -136,6 +136,11 @@ export class VipRoute extends React.Component {
                                             <div>Tên: <b>{customer.customerName}</b></div>
                                             <div>Số Điện Thoại: <b>{customer.customerPhone}</b></div>
                                             <div>Địa chỉ: <b>{customer.customerPlace}</b></div>
+                                            <div>Email: <b>{customer.email}</b></div>
+                                            <div>Sở Thích: <b>{customer.hobby}</b></div>
+                                            <div>Ghi chú: <b>{customer.notes}</b></div>
+                                            <div>Cơ sở mua hàng: <b>{customer.premises.join(", ")}</b></div>
+                                            <div>Kênh mua hàng: <b>{customer.buyerFrom.join(", ")}</b></div>
                                             { customer.birthDate && <div>Ngày Sinh: <b>{moment(new Date(customer.birthDate)).format("DD/MM/YYYY")}</b></div>}
                                             <div>Số Thẻ: <b>6666 {item.cardId.toString().substr(0, 4) + " " + item.cardId.toString().substr(4, 7)}</b></div>
 
@@ -144,6 +149,9 @@ export class VipRoute extends React.Component {
                                             </div>
                                             <div>
                                                 Ngày phát hành: <b>{moment(new Date(item.created)).format("DD/MM/YYYY")}</b>
+                                            </div>
+                                            <div>
+                                                Ngày hết hạn: <b>{moment(new Date(item.endDate)).format("DD/MM/YYYY")}</b>
                                             </div>
                                         </td>
 

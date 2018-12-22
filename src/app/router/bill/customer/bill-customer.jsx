@@ -290,7 +290,7 @@ export class BillCustomer extends React.Component {
                         </div>
                     )}
 
-                    { vipPay != "VIP" && (
+                    { ["VVIP", "FVIP", "CVIP"].indexOf(vipPay) > -1 && (
                         <div className="col-lg-6">
                             <div className="form-group">
                                 <label className="control-label">{vipPay} Sale</label>
