@@ -58,4 +58,9 @@ module.exports = (app) => {
         })
     });
 
+    app.put("/vip/:id", Security.authorDetails, (req, res) => {
+        VipDao.findOneAndUpdate({_id: req.params.id}, req.body, (err) => {
+            res.end();
+        })
+    })
 };

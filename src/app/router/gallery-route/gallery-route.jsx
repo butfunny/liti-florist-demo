@@ -59,8 +59,8 @@ export class GalleryRoute extends React.Component {
                             let {photos} = this.state;
                             this.setState({photos: photos.concat(photo)})
                         })
-
                     }}
+                    onDismiss={() => modal.close()}
                 />
             )
         })

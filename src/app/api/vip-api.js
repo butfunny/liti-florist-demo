@@ -15,5 +15,8 @@ export const vipApi = {
     },
     removeVIP: (id) => {
         return api.delete(`/api/vip/${id}`)
+    },
+    updateVipDate: (id, data) => {
+        return api.put(`/api/vip/${id}`, data)
     }
 };

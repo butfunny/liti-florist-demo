@@ -13,6 +13,7 @@ import {permissionInfo} from "../../security/premises-info";
 import {LoadingOverlay} from "../../components/loading-overlay/loading-overlay";
 import {formatNumber} from "../../common/common";
 import {Pagination} from "../../components/pagination/pagination";
+import {ChangeEndDateModal} from "./change-end-date-modal";
 export class VipRoute extends React.Component {
 
     constructor(props) {
@@ -52,6 +53,24 @@ export class VipRoute extends React.Component {
             this.setState({
                 vips: vips.filter(v => v._id != vip._id)
             })
+        })
+    }
+
+    edit(vip) {
+        const modal = modals.openModal({
+            content: (
+                <ChangeEndDateModal
+                    vip={vip}
+                    onDismiss={() => modal.close()}
+                    onClose={(endDate) => {
+                        let {vips} = this.state;
+                        this.setState({
+                            vips: vips.map(v => v._id == vip._id ? ({...v, endDate}) : v)
+                        });
+                        modal.close();
+                    }}
+                />
+            )
         })
     }
 
@@ -163,6 +182,12 @@ export class VipRoute extends React.Component {
                                         <td
                                             style={{minWidth: "150px"}}
                                         >
+
+                                            <button className="btn btn-outline-primary btn-sm"
+                                                    onClick={() => this.edit(item)}>
+                                                <i className="fa fa-edit"/>
+                                            </button>
+
                                             <button className="btn btn-outline-danger btn-sm"
                                                     onClick={() => this.remove(item)}>
                                                 <i className="fa fa-trash"/>
