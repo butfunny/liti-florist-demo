@@ -19,13 +19,15 @@ export class FloristCartBottom extends React.Component {
     submitOrder() {
         let {selectedItems, bill, history, items} = this.props;
         this.setState({saving: true});
+
+
         floristApi.submitBill({
             selectedFlower: selectedItems.map(i => {
                 return {
                     itemID: i.itemID,
                     price: items.find(item => item._id == i.itemID).price,
                     quantity: i.quantity,
-                    supplier: i.supplier
+                    supplier: items.find(item => item._id == i.itemID).supplier
                 }
             }),
             premises_id: premisesInfo.getActivePremise()._id,

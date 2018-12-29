@@ -9,6 +9,7 @@ import {RevenueReportBill} from "./revenue-report-bill";
 import {userInfo} from "../../../security/user-info";
 import {permissionInfo} from "../../../security/premises-info";
 import {paymentTypes} from "../../../common/constance";
+import {RevenueReportSupplier} from "./revenue-report-supplier";
 
 export const PermissionDenie = () => (
     <div>
@@ -166,6 +167,7 @@ export class RevenueReportRoute extends React.Component {
                                 >
                                     <option value="Khách Hàng">Khách Hàng</option>
                                     <option value="Cửa Hàng">Cửa Hàng</option>
+                                    <option value="Nhà Cung Cấp">Nhà Cung Cấp</option>
                                 </select>
                             </div>
 
@@ -175,12 +177,16 @@ export class RevenueReportRoute extends React.Component {
                                     lastInitBills={lastInitBills}
                                     filterType={filterType}
                                 />
-                            ) : (
+                            ) : viewType == "Khách Hàng" ? (
                                 <RevenueReportCustomer
                                     bills={bills}
                                     customers={customers}
                                     lastInitBills={lastInitBills}
                                     filterType={filterType}
+                                />
+                            ) : (
+                                <RevenueReportSupplier
+                                    bills={bills}
                                 />
                             )}
                         </Fragment>

@@ -43,8 +43,6 @@ export class FloristWorkingRoute extends React.Component {
                 quantity: item.quantity
             })));
 
-            console.log(ret);
-
             return ret.filter(r => r.catalog.toLowerCase() == c.toLowerCase())
         };
 
