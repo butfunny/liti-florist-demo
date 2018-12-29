@@ -6,6 +6,7 @@ const LogsDao = require("../dao/logs-dao");
 const CustomerDao = require("../dao/customer-dao");
 const VipDao = require("../dao/vip-dao");
 const WareHouseDao = require("../dao/warehouse-dao");
+const nodemailer = require("nodemailer");
 
 module.exports = function(app) {
     app.post("/bill",Security.authorDetails, function(req, res) {
@@ -90,6 +91,17 @@ module.exports = function(app) {
     app.put("/bill/:bid", Security.authorDetails, (req, res) => {
         delete req.body._id;
         BillDao.updateOne({_id: req.params.bid}, req.body, () => {
+
+            var transporter = nodemailer.createTransport('smtps://litiflorist.dev%40gmail.com:manhcuong94@smtp.gmail.com');
+
+            var mailOptions = {
+                to: 'sales@hoaliti.com',
+                subject: 'Cập Nhật Đơn Hàng',
+                html: 'Nhân viên <b>' + req.user.username + "</b> đã cập nhật đơn hàng mã: <b>" + req.body.bill_number + "</b> với nội dung là: <b>" + req.body.reason + "</b>"
+            };
+
+            transporter.sendMail(mailOptions, function(error, info){});
+
             LogsDao.create({
                 bill_id: req.params.bid,
                 user: {
