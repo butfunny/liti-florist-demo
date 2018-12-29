@@ -24,7 +24,8 @@ export class FloristCartBottom extends React.Component {
                 return {
                     itemID: i.itemID,
                     price: items.find(item => item._id == i.itemID).price,
-                    quantity: i.quantity
+                    quantity: i.quantity,
+                    supplier: i.supplier
                 }
             }),
             premises_id: premisesInfo.getActivePremise()._id,
