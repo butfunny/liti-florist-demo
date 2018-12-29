@@ -44,7 +44,7 @@ export class FloristWorkingRoute extends React.Component {
                 quantity: item.quantity
             })));
 
-            return ret.filter(r => r.catalog == c)
+            return ret.filter(r => r.catalog.toLowerCase() == c.toLowerCase())
         };
 
         return (
@@ -74,7 +74,7 @@ export class FloristWorkingRoute extends React.Component {
 
                     <div className="product-list">
 
-                        { catalogs.slice(1).filter(c => filter == "All" ? true : c == filter).map((c, index) => (
+                        { catalogs.slice(1).filter(c => filter == "All" ? true : c.toLowerCase() == filter.toLowerCase()).map((c, index) => (
                             <FloristItem
                                 selectedItems={selectedItems}
                                 onChange={(selectedItems) => this.setState({selectedItems})}

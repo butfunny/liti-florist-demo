@@ -74,7 +74,7 @@ export class CreateRequestMissing extends React.Component {
                 quantity: item.quantity
             })));
 
-            return ret.filter(r => r.catalog == c)
+            return ret.filter(r => r.catalog.toLowerCase() == c.toLowerCase())
 
         };
 
@@ -129,7 +129,7 @@ export class CreateRequestMissing extends React.Component {
                                     {loading && <span>Đang lấy dữ liệu chờ 1 chút...</span>}
 
                                     <div>
-                                        { catalogs.slice(1).filter(c => filter == "All" ? true : c == filter).map((c, index) => (
+                                        { catalogs.slice(1).filter(c => filter == "All" ? true : c.toLowerCase() == filter.toLowerCase()).map((c, index) => (
                                             <FloristItem
                                                 selectedItems={selectedItems}
                                                 onChange={(selectedItems) => this.setState({selectedItems})}

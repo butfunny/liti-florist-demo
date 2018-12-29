@@ -44,6 +44,9 @@ export class FloristItem extends React.Component {
                                 {item.name}
                             </div>
                             <div className="price">
+                                NCC: <b>{item.supplier}</b>
+                            </div>
+                            <div className="price">
                                 {formatNumber(item.price)}đ
                             </div>
 
