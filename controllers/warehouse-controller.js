@@ -54,6 +54,7 @@ module.exports = (app) => {
     app.get("/warehouse/list-by-id/:id", Security.authorDetails, (req, res) => {
         SubWareHouseDao.find({warehouseID: req.params.id}, (err, subItems) => {
             WareHouseDao.find({_id: {$in: subItems.map(i => i.itemID)}}, (err, items) => {
+                console.log(items);
                 res.json({items, subItems});
             })
         })

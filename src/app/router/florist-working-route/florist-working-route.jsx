@@ -35,7 +35,6 @@ export class FloristWorkingRoute extends React.Component {
         let {bill, items, keyword, filter, selectedItems, subItems} = this.state;
         let {history} = this.props;
 
-
         const catalogs = ["All", "Cost", "Hoa Chính", "Hoa Lá Phụ/Lá", "Phụ Kiện"];
 
         const itemsWrapped = (c) => {
@@ -43,6 +42,8 @@ export class FloristWorkingRoute extends React.Component {
                 ...items.find(i => i._id == item.itemID),
                 quantity: item.quantity
             })));
+
+            console.log(ret);
 
             return ret.filter(r => r.catalog.toLowerCase() == c.toLowerCase())
         };
