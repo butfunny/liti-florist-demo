@@ -63,7 +63,7 @@ export class WarehouseRoute extends React.Component {
     handleChangeInput(e) {
         if (e.target.files[0]) {
             readXlsxFile(e.target.files[0]).then((rows) => {
-                if (rows[0] && isEqual(["Mã", "Tên hàng", "Danh mục", "Đơn vị tính", "Số lượng", "Giá gốc", "Giá bán"], rows[0])) {
+                if (rows[0] && isEqual(["Mã", "Tên hàng", "Danh mục", "Đơn vị tính", "Số lượng", "Giá gốc", "Giá bán", "Màu sắc", "Nhà cung cấp", "Xuất xứ"], rows[0])) {
                     this.setState({uploading: true});
 
                     const upload = (index) => {
@@ -82,7 +82,10 @@ export class WarehouseRoute extends React.Component {
                                 unit: item[3],
                                 oriPrice: item[5],
                                 price: item[6],
-                                quantity: item[4]
+                                quantity: item[4],
+                                color: item[7],
+                                supplier: item[8],
+                                country: item[9]
                             }).then(() => {
                                 upload(index + 1)
                             })

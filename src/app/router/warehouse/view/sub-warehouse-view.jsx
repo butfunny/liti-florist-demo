@@ -22,9 +22,11 @@ export class SubWareHouseView extends React.Component {
                 <tr>
                     <th scope="col">Thông Tin</th>
                     <th scope="col">Danh Mục</th>
+                    <th scope="col">Tồn kho</th>
                     <th scope="col">Giá Gốc</th>
                     <th scope="col">Giá Bán</th>
-                    <th scope="col">Đơn Vị Tính</th>
+                    <th scope="col">ĐVT</th>
+                    <th scope="col">Nhà cung cấp</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -48,6 +50,9 @@ export class SubWareHouseView extends React.Component {
                             </td>
                             <td>
                                 {itemFound.unit}
+                            </td>
+                            <td>
+                                {itemFound.supplier} - {itemFound.country}
                             </td>
                         </tr>
                     )

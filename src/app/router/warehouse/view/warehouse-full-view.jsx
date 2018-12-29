@@ -71,8 +71,9 @@ export class WareHouseFullView extends React.Component {
                     <th scope="col">Tồn kho</th>
                     <th scope="col">Giá Gốc</th>
                     <th scope="col">Giá Bán</th>
-                    <th scope="col">Đơn Vị Tính</th>
-                    <th scope="col">Tác Vụ</th>
+                    <th scope="col">ĐVT</th>
+                    <th scope="col">Nhà cung cấp</th>
+                    <th scope="col"/>
                 </tr>
                 </thead>
                 <tbody>
@@ -80,6 +81,8 @@ export class WareHouseFullView extends React.Component {
                     <tr key={index}>
                         <td>
                             {item.name} - {item.productId}
+                            <br/>
+                            { item.color && <span>Màu: {item.color}</span>}
 
                             {/*<div className="text-small">*/}
                                 {/*<span className="text-danger">*Tồn kho:</span>*/}
@@ -117,6 +120,9 @@ export class WareHouseFullView extends React.Component {
                         <td>
                             {item.unit}
                         </td>
+
+                        <td>{item.supplier} - {item.country}</td>
+
                         <td>
 
                             { permission[user.role].indexOf("warehouse.edit") > -1 && (
