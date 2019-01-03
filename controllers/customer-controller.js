@@ -9,11 +9,11 @@ module.exports = (app) => {
     app.post("/customer", Security.authorDetails, function(req, res) {
         CustomerDao.create(req.body, function(err, customer) {
             SMSService.sendMessage({
-                to: "84" + customer.customerPhone.substr(1),
-                text: "Cam on ban da mua hang tai Litiflorist"
+                to: "84" + (customer.customerPhone.replace(/ /g, "")).substring(1),
+                text: "Cam on QK da trai nghiem san pham dich vu cua LITI FLORIST. Hi vong QK hai long voi san pham dich vu cua chung toi. Moi gop y vui long LH CSKH:02435766338"
             });
 
-            res.json(customer._id);
+            res.json(customer);
         });
     });
 

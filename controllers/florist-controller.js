@@ -3,6 +3,8 @@ const Security = require("../security/security-be");
 const BillDao = require("../dao/bill-dao");
 const WareHouseDao = require("../dao/warehouse-dao");
 const SubWarehouseDao = require("../dao/subwarehouse-dao");
+const SMSService = require("../service/sms-service");
+const CustomerDao = require("../dao/customer-dao");
 
 module.exports = (app) => {
     app.post("/florist/bills", Security.authorDetails, (req, res) => {
@@ -61,7 +63,16 @@ module.exports = (app) => {
     });
 
     app.post("/ship/done-bill", Security.authorDetails, (req, res) => {
-        BillDao.findOneAndUpdate({_id: req.body.billID}, {status: "Done"}, () => {
+        BillDao.findOneAndUpdate({_id: req.body.billID}, {status: "Done"}, (err, bill) => {
+            CustomerDao.findOne({_id: bill.customerId}, (err, customer) => {
+                if (customer) {
+                    SMSService.sendMessage({
+                        to: "84" + (customer.customerPhone.replace(/ /g, "")).substring(1),
+                        text: `Đơn hàng ${bill.bill_number} của Anh (Chị) tại LITI FLORIST đã được giao thành công đến người nhận. Cảm ơn Anh (Chị) đã sử dụng sản phẩm dịch vụ của LITI FLORIST. L/H CSKH: ‎02435766338"`
+                    })
+                }
+            });
+
             res.end();
         })
     });
