@@ -3,10 +3,16 @@ const Security = require("../security/security-be");
 const CustomerDao = require("../dao/customer-dao");
 const BillDao = require("../dao/bill-dao");
 const BillSupport = require("../common/common");
+const SMSService = require("../service/sms-service");
 
 module.exports = (app) => {
     app.post("/customer", Security.authorDetails, function(req, res) {
         CustomerDao.create(req.body, function(err, customer) {
+            SMSService.sendMessage({
+                to: "84" + customer.customerPhone.substr(1),
+                text: "Cam on ban da mua hang tai Litiflorist"
+            });
+
             res.json(customer._id);
         });
     });
