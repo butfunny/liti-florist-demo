@@ -68,7 +68,7 @@ module.exports = (app) => {
                 if (customer) {
                     SMSService.sendMessage({
                         to: "84" + (customer.customerPhone.replace(/ /g, "")).substring(1),
-                        text: `Đơn hàng ${bill.bill_number} của Anh (Chị) tại LITI FLORIST đã được giao thành công đến người nhận. Cảm ơn Anh (Chị) đã sử dụng sản phẩm dịch vụ của LITI FLORIST. L/H CSKH: ‎02435766338"`
+                        text: `Đon hang ${bill.bill_number} cua Anh (Chi) tai LITI FLORIST da duoc giao thanh cong den nguoi nhan. Cam on Anh (Chi) da su dung san pham dich vu cua LITI FLORIST. L/H CSKH: ‎02435766338`
                     })
                 }
             });
