@@ -28,11 +28,11 @@ export const navItems = (user) => {
             to: "/draft",
             hide: () => permission[user.role].indexOf("bill.view") == -1
         }, {
-            label: "Đơn Hàng Của Tôi",
+            label: "Đơn Chờ Làm",
             to: "/florist",
             hide: () => user.role != "florist"
         }, {
-            label: "Đơn Hàng Của Tôi",
+            label: "Đơn Chờ Ship",
             to: "/ship",
             hide: () => user.role != "ship"
         }, {
@@ -145,17 +145,7 @@ export const navItems = (user) => {
 //       child: [{
 //         label: "Đổi Mật Khẩu",
 //         click: () => {
-//             const modal = modals.openModal({
-//                 content: (
-//                   <ChangePasswordModal
-//                     onClose={() => modal.close()}
-//                     onDone={() => {
-//                         modal.close();
-//                         confirmModal.alert("Đổi mật khẩu thành công");
-//                     }}
-//                   />
-//                 )
-//             })
+
 //         }
 //     }, {
 //         label: "Quản Lý Nhân Viên",

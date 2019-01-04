@@ -9,12 +9,25 @@
     padding: 0.65rem 1.1rem;
     cursor pointer;
     top: 50%;
-    left 15px;
     transform translate(0, -50%);
     color: #6c7293;
     font-weight: 500;
     font-size 13px;
     transition all .2s;
+
+    &.user-nav {
+      right 15px;
+
+      .dropdown-item-wrapper {
+        right: 0;
+        width: 150px;
+        left inherit;
+      }
+    }
+
+    &.premises {
+      left 15px;
+    }
 
     &:hover {
       background-color: #f0f3ff;
@@ -43,6 +56,8 @@
         padding: 0.7rem 1.2rem;
         color: #646c9a;
         transition: all 0.2s;
+        display block;
+
 
         &:hover {
           color: #5d78ff;
