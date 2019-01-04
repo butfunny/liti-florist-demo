@@ -7,29 +7,18 @@ import React from "react";
 import {confirmModal} from "../confirm-modal/confirm-modal";
 import {ConfigModal} from "./config-modal";
 
-export const navItems = (premises, user) => {
-
-    const _premises = premises.map(p => ({
-        label: `Sang ${p.name}`,
-        click: () => {
-            cache.set(p._id, "active-premises");
-            premisesInfo.forceUpdate();
-        }
-    }));
-
-    const subWarehouse = premises.map(p => ({
-        label: `Kho ${p.name}`,
-        to: `/sub-warehouse/${p._id}`
-    }));
+export const navItems = (user) => {
 
     const permission = permissionInfo.getPermission();
 
     return [{
         label: "Hoá Đơn",
         to: "/",
-        hide: () => permission[user.role].indexOf("bill.create") == -1
+        hide: () => permission[user.role].indexOf("bill.create") == -1,
+        icon: <i className="fa fa-file-text-o nav-icon"/>
     }, {
         label: "Đơn Hàng",
+        icon: <i className="fa fa-list nav-icon"/>,
         child: [{
             label: "Đơn Chính",
             to: "/orders",
@@ -54,6 +43,7 @@ export const navItems = (premises, user) => {
         hide: () => user.role != "ship" && user.role != "florist" && user.role != "sale" && !permission[user.role].find(r => r.indexOf("bill") > -1)
     }, {
         label: "Báo Cáo",
+        icon: <i className="fa fa-bar-chart nav-icon"/>,
         child: [{
             label: "Doanh Thu",
             to: "/report-revenue",
@@ -78,6 +68,7 @@ export const navItems = (premises, user) => {
         hide: () => !permission[user.role].find(r => r.indexOf("report") > -1)
     }, {
         label: "Khách Hàng",
+        icon: <i className="fa fa-users nav-icon"/>,
         child: [{
             label: "Danh sách Khách Hàng",
             to: "/customers",
@@ -91,9 +82,11 @@ export const navItems = (premises, user) => {
     }, {
         label: "Khuyến Mại",
         to: "/promotion",
+        icon: <i className="fa fa-gift nav-icon" />,
         hide: () => !permission[user.role].find(r => r.indexOf("promotion") == 0)
     }, {
         label: "Kho",
+        icon: <i className="fa fa-truck nav-icon"/>,
         child: [{
             to: "/warehouse",
             label: "Quản lí kho",
@@ -117,43 +110,63 @@ export const navItems = (premises, user) => {
         }],
         hide: () => !permission[user.role].find(r => r.indexOf("warehouse") > -1)
     }, {
-        label: "Cơ Sở",
+        label: "Quản Lý Hệ Thống",
+        icon: <i className="fa fa-cog nav-icon"/>,
+        hide: () => user.role != "admin",
         child: [{
             label: "Quản Lý Cơ Sở",
             to: "/manage-premises",
             hide: () => user.role != "admin"
-        }, ..._premises],
-    }, {
-        label: "Tài Khoản",
-        child: [{
-            label: "Đổi Mật Khẩu",
-            click: () => {
-                const modal = modals.openModal({
-                    content: (
-                        <ChangePasswordModal
-                            onClose={() => modal.close()}
-                            onDone={() => {
-                                modal.close();
-                                confirmModal.alert("Đổi mật khẩu thành công");
-                            }}
-                        />
-                    )
-                })
-            }
         }, {
             label: "Quản Lý Nhân Viên",
             to: "/manage-user",
             hide: () => user.role != "admin"
-        },{
-            label: "Phân Quyền",
-            to: "/manage-role",
-            hide: () => user.role != "admin"
         }, {
-            label: "Thoát",
-            click: () => {
-                security.logout();
-            }
-
-        }]
+            to: "/manage-role",
+            label: "Phân Quyền",
+            hide: () => user.role != "admin"
+        }],
     }]
 };
+
+//
+// {
+//     label: "Cơ Sở",
+//       child: [{
+//     label: "Quản Lý Cơ Sở",
+//     to: "/manage-premises",
+//     hide: () => user.role != "admin"
+// }, ..._premises],
+// }, {
+//     label: "Tài Khoản",
+//       child: [{
+//         label: "Đổi Mật Khẩu",
+//         click: () => {
+//             const modal = modals.openModal({
+//                 content: (
+//                   <ChangePasswordModal
+//                     onClose={() => modal.close()}
+//                     onDone={() => {
+//                         modal.close();
+//                         confirmModal.alert("Đổi mật khẩu thành công");
+//                     }}
+//                   />
+//                 )
+//             })
+//         }
+//     }, {
+//         label: "Quản Lý Nhân Viên",
+//         to: "/manage-user",
+//         hide: () => user.role != "admin"
+//     },{
+//         label: "Phân Quyền",
+//         to: "/manage-role",
+//         hide: () => user.role != "admin"
+//     }, {
+//         label: "Thoát",
+//         click: () => {
+//             security.logout();
+//         }
+//
+//     }]
+// }

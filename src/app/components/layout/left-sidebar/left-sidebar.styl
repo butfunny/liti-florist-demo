@@ -22,20 +22,49 @@
   }
 
   .nav-item-wrapper {
+
+    .nav-item-sub-wrapper {
+      height 0;
+      overflow hidden;
+      transition height .2s;
+    }
+
+    a {
+      text-decoration none;
+      color black;
+    }
+
     .nav-item {
       cursor pointer;
       padding 9px 30px;
       font-size 13px;
       font-weight: 500;
       transition all .2s;
+      position relative;
+      display block;
+
+      .arrow-icon {
+        color: #c4cff9;
+        position absolute;
+        top: 12px;
+        right 30px;
+        transition transform .2s;
+
+        &.open {
+          transform: rotate(90deg);
+        }
+      }
 
       &.nav-item-sub {
-        padding-left 39px;
         font-weight 400;
+        padding-left 39px;
+
 
         &:hover {
           background-color: #f6f7fd;
           color #536be2;
+
+
         }
 
         .dot {
@@ -49,11 +78,20 @@
 
       &:hover {
         background-color: #f8f8fb;
+        color #536be2;
+
+        .arrow-icon {
+          color #536be2;
+        }
       }
 
       &.active {
         background-color: #f6f7fd;
         color #536be2;
+
+        .arrow-icon {
+          color #536be2;
+        }
       }
     }
   }
