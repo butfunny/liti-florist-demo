@@ -1,62 +1,127 @@
-.form-group {
-  margin-bottom 2rem;
-  width 100%;
-  position relative;
+.liti-input {
+  position: relative;
+  width: 100%;
+  margin-bottom 24px;
 
 
-  .form-control {
-    width: 100%;
-    padding: 0.65rem 1rem;
-    line-height: 1.5;
-    color: #495057;
-    background-color: #fff;
-    border: 1px solid #ebedf2;
-    outline none;
-    font-size 13px;
-    border-top: 0;
-    border-left: 0;
-    border-right: 0;
-    border-radius: 0;
-    padding-left: 0;
-    transition border-color .2s;
-
-    &:focus {
-      border-color: #9aabff;
+  &.has-error {
+    .label {
+      color danger !important;
     }
 
-    &.is-invalid {
-      border-color: #fd397a;
+    input {
+      border-color danger !important;
     }
   }
 
-  .control-label {
-    color black !important;
+  &.focus {
+    input {
+      border-color: primary;
+    }
+
+    .bar {
+      &:before, &:after {
+        width 50%;
+      }
+    }
+
+    .label {
+      top: 0;
+      font-size: 11px;
+      color: primary;
+    }
   }
 
-  .error-text {
-    color #fd397a;
-    font-size 12px;
-    margin-top: 5px;
+  .error {
     position absolute;
+    font-size: 10px;
+    bottom: -15px;
+    color danger;
   }
 
-  .info-text {
-    color #5e72e4;
-    font-size 12px;
-    margin-top: 5px;
-    position absolute;
-    font-weight bold;
+  &.has-value {
+    .bar {
+      &:before, &:after {
+        width 50%;
+      }
+    }
+
+    .label {
+      top: 0;
+      font-size: 11px;
+    }
   }
 
 
-  .spin-icon {
+  input {
+    width 100%;
+    font-size: 16px;
+    padding: 10px 15px;
+    outline: none;
+    color: #262626;
+    border-radius: 2px;
+    border: solid 1px #d1d7e2;
+    transition 0.2s ease all
+
+    &:read-only {
+      background-color: #f1f2f3;
+      font-weight bold;
+    }
+  }
+
+  .bar {
     position absolute;
-    right 10px;
+    background transparent;
+    padding 0 5.5px;
+    font-size: 11px;
+    color transparent;
+    top: -11px;
+    left 11px;
+
+
+    &:before, &:after {
+      content: '';
+      height: 100%;
+      width: 0;
+      position: absolute;
+      background: white;
+      transition: 0.2s ease all;
+      top: 0;
+    }
+
+    &:before {
+      left: 50%;
+    }
+
+    &:after {
+      right: 50%;
+    }
+  }
+
+  .label {
+    color: #607d8b;
+    font-size: 14px;
+    position: absolute;
+    pointer-events: none;
     top: 50%;
+    left 16.5px;
     transform translate(0, -50%);
+    transition: 0.2s ease all;
+    z-index 2;
   }
+
+
+  .icon {
+    position: absolute;
+    left: -30px;
+    top: 50%;
+    transform: translate(0, -50%);
+
+    svg {
+      width 22px;
+    }
+  }
+
 }
 
-form {
-  overflow hidden;
-}
+

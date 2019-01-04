@@ -1,5 +1,6 @@
 import React from "react";
 import classnames from "classnames";
+
 export class Input extends React.Component {
 
     constructor(props) {
@@ -9,55 +10,46 @@ export class Input extends React.Component {
         }
     }
 
-    blur() {
-        this.input.blur();
+    focus() {
+        this.input.focus();
     }
 
+
     render() {
-        let {className, value, onChange, placeholder, type, error, disabled, autoSelect, onKeyDown, onFocus, onBlur, label, saving, style, autocomplete, info, readOnly} = this.props;
+        let {label, className, value, readOnly, icon, error, type, onChange} = this.props;
         let {focus} = this.state;
 
+        const hasValue = () => {
+            if (type == "number") return value != null || value != "";
+            return value.length > 0
+        };
+
+
         return (
-
-            <div className={classnames("form-group input", className, focus && "focused")} style={style}>
-                {label && (
-                    <label className="control-label">
-                        {label}
-                    </label>
-                )}
-
+            <div className={classnames("liti-input", className, error && "has-error", hasValue() && "has-value", focus && "focus")}>
                 <input
                     ref={input => this.input = input}
-                    value={value === undefined ? "" : value}
-                    className={classnames("form-control", error && "is-invalid")}
-                    placeholder={placeholder}
+                    onFocus={() => this.setState({focus: true})}
+                    onBlur={() => this.setState({focus: false})}
+                    value={value}
                     onChange={onChange}
-                    onFocus={() => {this.setState({focus: true}); onFocus && onFocus()}}
-                    onBlur={() => {this.setState({focus: false}); onBlur && onBlur()}}
                     type={type}
-                    disabled={disabled}
-                    onClick={() => {
-                        autoSelect && this.input.select();
-                    }}
-                    onKeyDown={onKeyDown}
-                    autoComplete={autocomplete}
                     readOnly={readOnly}
                 />
 
-                { saving && (
-                    <div className="spin-icon">
-                        <i className="fa fa-spinner fa-pulse"/>
-                    </div>
-                )}
 
+                <div className="label"
 
+                >
+                    {label}
+                </div>
 
-                <div className="error-text">
+                <div className="error">
                     {error}
                 </div>
 
-                <div className="info-text">
-                    {info}
+                <div className="bar">
+                    {label}
                 </div>
             </div>
         );

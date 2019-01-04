@@ -59,14 +59,14 @@ export class LoginRoute extends React.Component {
                           <Input
                             value={username}
                             onChange={(e) => this.setState({username: e.target.value})}
-                            placeholder="Tên Tài Khoản"
+                            label="Tên Tài Khoản"
                             error={getInvalidByKey("username")}
                           />
 
                           <Input
                             value={password}
                             onChange={(e) => this.setState({password: e.target.value})}
-                            placeholder="Mật Khẩu"
+                            label="Mật Khẩu"
                             type="password"
                             error={getInvalidByKey("password")}
                           />
