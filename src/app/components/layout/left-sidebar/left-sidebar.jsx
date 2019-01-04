@@ -14,36 +14,38 @@ export class LeftSideBar extends React.Component {
 
     render() {
         let user = userInfo.getUser();
+        let {activeRoute} = this.props;
 
         return (
-          <div className="left-sidebar">
-              <div className="logo">
-                  <img src="/assets/img/liti-logo.png" alt=""/>
-                  <b>Liti Florist</b>
-              </div>
+            <div className="left-sidebar">
+                <div className="logo">
+                    <img src="/assets/img/liti-logo.png" alt=""/>
+                    <b>Liti Florist</b>
+                </div>
 
-              <div className="nav-item-wrapper">
-                  {navItems(user).filter(n => (n.hide ? !n.hide() : true) && (n.child ? n.child.filter(c => !c.hide || !c.hide()).length > 0 : true)).map((navItem, index) => {
-                      if (navItem.child) return (
-                        <NavItemGroup
-                          key={index}
-                          navItem={navItem}
-                        />
-                      );
+                <div className="nav-item-wrapper">
+                    {navItems(user).filter(n => (n.hide ? !n.hide() : true) && (n.child ? n.child.filter(c => !c.hide || !c.hide()).length > 0 : true)).map((navItem, index) => {
+                        if (navItem.child) return (
+                            <NavItemGroup
+                                activeRoute={activeRoute}
+                                key={index}
+                                navItem={navItem}
+                            />
+                        );
 
-                      return (
-                        <Redirect className="nav-item"
-                                  navItem={navItem}
-                        >
-                            {navItem.icon}
-                            {navItem.label}
-                        </Redirect>
-                      );
-                  })}
+                        return (
+                            <Redirect className={classnames("nav-item", activeRoute == navItem.label && "active")}
+                                      navItem={navItem}
+                            >
+                                {navItem.icon}
+                                {navItem.label}
+                            </Redirect>
+                        );
+                    })}
 
 
-              </div>
-          </div>
+                </div>
+            </div>
         );
     }
 }
@@ -60,29 +62,31 @@ class NavItemGroup extends React.Component {
 
     render() {
         let {open} = this.state;
-        let {navItem} = this.props;
+        let {navItem, activeRoute} = this.props;
+
+
 
         return (
-          <Fragment>
-              <div className="nav-item" onClick={() => this.setState({open: !open})}>
-                  {navItem.icon}
-                  {navItem.label}
+            <Fragment>
+                <div className={classnames("nav-item", navItem.child.map(c => c.label).indexOf(activeRoute) > -1 && "active")} onClick={() => this.setState({open: !open})}>
+                    {navItem.icon}
+                    {navItem.label}
 
-                  <i className={classnames("fa fa-angle-right arrow-icon", open && "open")}/>
-              </div>
+                    <i className={classnames("fa fa-angle-right arrow-icon", open && "open")}/>
+                </div>
 
-              <div className="nav-item-sub-wrapper" style={{
-                  height: open ? `${38 * navItem.child.filter(c => !c.hide || !c.hide()).length}px` : 0
-              }}>
-                  {navItem.child.filter(c => !c.hide || !c.hide()).map((child, index) => (
-                    <Redirect key={index} navItem={child} className="nav-item nav-item-sub">
-                        <span className="dot">•</span> {child.label}
-                    </Redirect>
-                  ))}
-              </div>
+                <div className="nav-item-sub-wrapper" style={{
+                    height: open ? `${38 * navItem.child.filter(c => !c.hide || !c.hide()).length}px` : 0
+                }}>
+                    {navItem.child.filter(c => !c.hide || !c.hide()).map((child, index) => (
+                        <Redirect key={index} navItem={child} className={classnames("nav-item nav-item-sub", activeRoute == child.label == "active")}>
+                            <span className="dot">•</span> {child.label}
+                        </Redirect>
+                    ))}
+                </div>
 
 
-          </Fragment>
+            </Fragment>
         )
     }
 }

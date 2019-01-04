@@ -8,6 +8,7 @@ import {RComponent} from "../../r-component/r-component";
 import classnames from "classnames";
 import {navItems} from "../nav-items.jsx";
 import {LeftSideBar} from "../left-sidebar/left-sidebar";
+
 export class NavDesktop extends RComponent {
 
     constructor(props) {
@@ -41,11 +42,12 @@ export class NavDesktop extends RComponent {
         const activeID = cache.get("active-premises") || premises[0]._id;
 
 
-
         return (
             <nav className="nav-desktop">
 
-                <LeftSideBar />
+                <LeftSideBar
+                    activeRoute={activeRoute}
+                />
 
                 <div className="container">
                     <span className="navbar-brand">
@@ -53,28 +55,33 @@ export class NavDesktop extends RComponent {
                         <sup>{getCurrentPremise()}</sup>
                     </span>
                     <ul className="navbar-nav ml-lg-auto">
-                        { navItems(user).filter(n =>  (n.hide ? !n.hide() : true) &&  (n.child ? n.child.filter(c => !c.hide || !c.hide()).length > 0 : true)).map((navItem, index) => (
+                        {navItems(user).filter(n => (n.hide ? !n.hide() : true) && (n.child ? n.child.filter(c => !c.hide || !c.hide()).length > 0 : true)).map((navItem, index) => (
                             <li className="nav-item" key={index}>
 
-                                { navItem.child ? (
+                                {navItem.child ? (
                                     <Dropdown
                                         renderContent={
                                             navItem.child.filter(c => !c.hide || !c.hide()).map((child, index) => (
                                                 <Redirect
-                                                    onClick={() => {}}
-                                                    className="dropdown-item" key={index} navItem={child} />
+                                                    onClick={() => {
+                                                    }}
+                                                    className="dropdown-item" key={index} navItem={child}/>
                                             ))
                                         }
                                     >
                                         <Redirect
-                                            onClick={() => {}}
-                                            className={classnames("nav-link", activeRoute == navItem.label && "active")} navItem={navItem} />
+                                            onClick={() => {
+                                            }}
+                                            className={classnames("nav-link", activeRoute == navItem.label && "active")}
+                                            navItem={navItem}/>
 
                                     </Dropdown>
                                 ) : (
                                     <Redirect
-                                        onClick={() => {}}
-                                        className={classnames("nav-link", activeRoute == navItem.label && "active")} navItem={navItem} />
+                                        onClick={() => {
+                                        }}
+                                        className={classnames("nav-link", activeRoute == navItem.label && "active")}
+                                        navItem={navItem}/>
                                 )}
                             </li>
                         ))}
@@ -87,5 +94,8 @@ export class NavDesktop extends RComponent {
 
 export const Redirect = ({navItem, className, onClick}) => {
     if (navItem.to) return <Link onClick={onClick} className={className} to={navItem.to}>{navItem.label}</Link>;
-    return <a className={className} onClick={() => {navItem.click && navItem.click(); onClick()}}>{navItem.label}</a>
+    return <a className={className} onClick={() => {
+        navItem.click && navItem.click();
+        onClick()
+    }}>{navItem.label}</a>
 };
