@@ -55,39 +55,37 @@ export class AppRouter extends React.Component {
         };
 
         return (
-            <Fragment>
-                <BrowserRouter>
-                    <Switch>
-                        <Route exact path="/" component={requireAuthen(BillRoute)} />
-                        <Route exact path="/login" component={requireUnauthen(LoginRoute)} />
-                        <Route exact path="/manage-premises" component={requireAuthenAdmin(PremisesRoute)} />
-                        <Route exact path="/manage-user" component={requireAuthenAdmin(ManageUserRoute)} />
-                        <Route exact path="/orders" component={requireAuthen(BillOrderRoute)} />
-                        <Route exact path="/edit-bill/:id" component={requireAuthen(BillEditRoute)} />
-                        <Route exact path="/customers" component={requireAuthen(Customers)} />
-                        <Route exact path="/vip" component={requireAuthen(VipRoute)} />
-                        <Route exact path="/warehouse" component={requireAuthen(WarehouseRoute)} />
-                        <Route exact path="/promotion" component={requireAuthen(PromotionRoute)} />
-                        <Route exact path="/florist" component={requireAuthen(FloristRoute)} />
-                        <Route exact path="/ship" component={requireAuthen(ShipRoute)} />
-                        <Route exact path="/florist-working/:id" component={requireAuthen(FloristWorkingRoute)} />
-                        <Route exact path="/salary" component={requireAuthen(MySalaryRoute)} />
-                        <Route exact path="/draft" component={requireAuthen(OrderDraft)} />
-                        <Route exact path="/edit-bill-draft/:id" component={requireAuthen(BillDraft)} />
-                        <Route exact path="/request-item" component={requireAuthen(RequestWareHouse)} />
-                        <Route exact path="/report-revenue" component={requireAuthen(RevenueReportRoute)} />
-                        <Route exact path="/report-customer" component={requireAuthen(ReportCustomerRoute)} />
-                        <Route exact path="/report-discount" component={requireAuthen(ReportDiscountRoute)} />
-                        <Route exact path="/report-bill" component={requireAuthen(ReportBillRoute)} />
-                        <Route exact path="/gallery" component={requireAuthen(GalleryRoute)} />
-                        <Route exact path="/manage-role" component={requireAuthenAdmin(ManageRole)} />
-                        <Route exact path="/list-request-item" component={requireAuthen(ListRequestWarehouse)} />
-                        <Route exact path="/create-request-missing" component={requireAuthen(CreateRequestMissing)} />
-                        <Route exact path="/list-request-missing" component={requireAuthen(ListRequestMissing)} />
-                    </Switch>
-                </BrowserRouter>
-                <ModalsRegistry />
-            </Fragment>
+            <BrowserRouter>
+                <Fragment>
+                    <Route exact path="/" component={requireAuthen(BillRoute)} />
+                    <Route exact path="/login" component={requireUnauthen(LoginRoute)} />
+                    <Route exact path="/manage-premises" component={requireAuthenAdmin(PremisesRoute)} />
+                    <Route exact path="/manage-user" component={requireAuthenAdmin(ManageUserRoute)} />
+                    <Route exact path="/orders" component={requireAuthen(BillOrderRoute)} />
+                    <Route exact path="/edit-bill/:id" component={requireAuthen(BillEditRoute)} />
+                    <Route exact path="/customers" component={requireAuthen(Customers)} />
+                    <Route exact path="/vip" component={requireAuthen(VipRoute)} />
+                    <Route exact path="/warehouse" component={requireAuthen(WarehouseRoute)} />
+                    <Route exact path="/promotion" component={requireAuthen(PromotionRoute)} />
+                    <Route exact path="/florist" component={requireAuthen(FloristRoute)} />
+                    <Route exact path="/ship" component={requireAuthen(ShipRoute)} />
+                    <Route exact path="/florist-working/:id" component={requireAuthen(FloristWorkingRoute)} />
+                    <Route exact path="/salary" component={requireAuthen(MySalaryRoute)} />
+                    <Route exact path="/draft" component={requireAuthen(OrderDraft)} />
+                    <Route exact path="/edit-bill-draft/:id" component={requireAuthen(BillDraft)} />
+                    <Route exact path="/request-item" component={requireAuthen(RequestWareHouse)} />
+                    <Route exact path="/report-revenue" component={requireAuthen(RevenueReportRoute)} />
+                    <Route exact path="/report-customer" component={requireAuthen(ReportCustomerRoute)} />
+                    <Route exact path="/report-discount" component={requireAuthen(ReportDiscountRoute)} />
+                    <Route exact path="/report-bill" component={requireAuthen(ReportBillRoute)} />
+                    <Route exact path="/gallery" component={requireAuthen(GalleryRoute)} />
+                    <Route exact path="/manage-role" component={requireAuthenAdmin(ManageRole)} />
+                    <Route exact path="/list-request-item" component={requireAuthen(ListRequestWarehouse)} />
+                    <Route exact path="/create-request-missing" component={requireAuthen(CreateRequestMissing)} />
+                    <Route exact path="/list-request-missing" component={requireAuthen(ListRequestMissing)} />
+                    <ModalsRegistry />
+                </Fragment>
+            </BrowserRouter>
         );
     }
 }

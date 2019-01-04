@@ -50,20 +50,13 @@ export class ModalsRegistry extends React.Component {
     render() {
         const {modalList} = this.state;
 
-        const Fade = ({ children, ...props }) => (
-            <CSSTransition
-                {...props}
-                timeout={300}
-                classNames="app-modal-fade"
-            >
-                {children}
-            </CSSTransition>
-        );
-
         return (
             <TransitionGroup className="app-modal-list">
                 { modalList.map((modal, i)=> (
-                    <Fade key={i}>
+                    <CSSTransition
+                        timeout={300}
+                        classNames="app-modal-fade"
+                        key={i}>
                         <Modal
                             cantKickOut={modal.options.cantKickOut}
                             isStack={modalList.length > 1}
@@ -71,7 +64,7 @@ export class ModalsRegistry extends React.Component {
                             content={modal.options.content}
                             onDismiss={() => this.dismiss(modal)}
                         />
-                    </Fade>
+                    </CSSTransition>
 
                 )) }
             </TransitionGroup>

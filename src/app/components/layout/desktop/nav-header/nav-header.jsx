@@ -4,7 +4,7 @@ import {permissionInfo, premisesInfo} from "../../../../security/premises-info";
 import {ClickOutside} from "../../../click-outside/click-outside";
 import {cache} from "../../../../common/cache";
 import {userInfo} from "../../../../security/user-info";
-import {Redirect} from "../../left-sidebar/left-sidebar";
+import {LeftSideBar, Redirect} from "../../left-sidebar/left-sidebar";
 import {modals} from "../../../modal/modals";
 import {ChangePasswordModal} from "../../change-password-modal";
 import {confirmModal} from "../../../confirm-modal/confirm-modal";
@@ -17,11 +17,38 @@ export class NavHeader extends React.Component {
         super(props);
     }
 
+    openSideBar() {
+
+        const modal = modals.openModal({
+            content: (
+                <LeftSideBar
+                    activeRoute={this.props.activeRoute}
+                    onClose={() => modal.close()}
+                />
+            ),
+            className: "side-bar-mobile-modal"
+        })
+
+    }
+
+
     render() {
+
+        let {mobile} = this.props;
+
         return (
-            <div className="nav-header">
+            <div className={classnames("nav-header", mobile && "mobile")}>
+
+                { mobile && (
+                    <div className="nav-item-header menu-btn" onClick={() => this.openSideBar()}>
+                        <i className="fa fa-bars"/>
+                    </div>
+                )}
+
                 <PremisesSelect/>
-                <UserNav/>
+                <UserNav
+                    mobile={mobile}
+                />
             </div>
         );
     }
@@ -84,6 +111,7 @@ class UserNav extends RComponent {
 
         const user = userInfo.getUser();
         let {open} = this.state;
+        let {mobile} = this.props;
 
         const list = [{
             label: "Doanh Thu",
@@ -116,8 +144,14 @@ class UserNav extends RComponent {
             <ClickOutside onClickOut={() => this.setState({open: false})}>
                 <div className={classnames("nav-item-header user-nav", open && "active")}
                      onClick={() => this.setState({open: true})}>
-                    {user.username}
-                    <i className="fa fa-angle-down"/>
+                    { mobile ? (
+                        <i className="fa fa-user-circle-o" aria-hidden="true"/>
+                    ) : (
+                        <span>
+                            {user.username}
+                            <i className="fa fa-angle-down"/>
+                        </span>
+                    )}
 
                     {open && (
                         <div className="dropdown-item-wrapper">

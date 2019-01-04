@@ -19,14 +19,10 @@ export class NavDesktop extends RComponent {
 
         return (
             <nav className="nav-desktop">
-
                 <NavHeader/>
-
                 <LeftSideBar
                     activeRoute={activeRoute}
                 />
-
-
             </nav>
         );
     }

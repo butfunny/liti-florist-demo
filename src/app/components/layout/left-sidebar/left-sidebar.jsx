@@ -15,7 +15,7 @@ export class LeftSideBar extends React.Component {
 
     render() {
         let user = userInfo.getUser();
-        let {activeRoute} = this.props;
+        let {activeRoute, onClose} = this.props;
 
         return (
             <div className="left-sidebar">
@@ -31,6 +31,7 @@ export class LeftSideBar extends React.Component {
                                 activeRoute={activeRoute}
                                 key={index}
                                 navItem={navItem}
+                                onClick={() => onClose && onClose()}
                             />
                         );
 
@@ -38,6 +39,7 @@ export class LeftSideBar extends React.Component {
                             <Redirect className={classnames("nav-item", activeRoute == navItem.label && "active")}
                                       navItem={navItem}
                                       key={index}
+                                      onClick={() => onClose && onClose()}
                             >
                                 {navItem.icon}
                                 {navItem.label}
@@ -74,7 +76,7 @@ class NavItemGroup extends React.Component {
 
     render() {
         let {open} = this.state;
-        let {navItem, activeRoute} = this.props;
+        let {navItem, activeRoute, onClick} = this.props;
 
 
         return (
@@ -94,7 +96,9 @@ class NavItemGroup extends React.Component {
                     height: open ? `${38 * navItem.child.filter(c => !c.hide || !c.hide()).length}px` : 0,
                 }}>
                     {navItem.child.filter(c => !c.hide || !c.hide()).map((child, index) => (
-                        <Redirect key={index} navItem={child} className={classnames("nav-item nav-item-sub", activeRoute == child.label && "active")}>
+                        <Redirect
+                            onClick={onClick}
+                            key={index} navItem={child} className={classnames("nav-item nav-item-sub", activeRoute == child.label && "active")}>
                             <span className="dot">•</span> {child.label}
                         </Redirect>
                     ))}
