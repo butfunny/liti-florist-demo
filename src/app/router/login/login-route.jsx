@@ -32,79 +32,66 @@ export class LoginRoute extends React.Component {
         let {username, password, submitting, error} = this.state;
 
         let validations = [
-            {"username" : [required("Tên Tài Khoản")]},
-            {"password": [required("Mật Khẩu"), minLength(6, "Mật Khẩu")]}
+            {"username": [required("Tên tài khoản")]},
+            {"password": [required("Mật khẩu"), minLength(6, "Mật Khẩu")]}
         ];
 
         return (
-            <div className="login-route">
-                <div className="bg-gradient">
-                    <span/>
-                    <span/>
-                    <span/>
-                    <span/>
-                    <span/>
-                    <span/>
-                    <span/>
-                    <span/>
-                </div>
+          <div className="login-route">
 
-                <div className="container pt-lg-md">
-                    <div className="row justify-content-center">
-                        <div className="col-lg-5">
-                            <div className="card bg-secondary shadow border-0">
-                                <div className="card-header bg-white text-center">
-                                    Đăng Nhập
-                                </div>
+              <div className="card-login">
+                  <div className="card-header">
+                      <b>Đăng Nhập</b>
+                  </div>
 
-                                <div className="card-body px-lg-5 py-lg-5">
-
-                                    { error && (
-                                        <div className="error-login">
-                                            Sai tài khoản hoặc mật khẩu
-                                        </div>
-                                    )}
-
-                                    <Form
-                                        onSubmit={() => this.submit()}
-                                        formValue={this.state}
-                                        validations={validations}
-                                        render={(getInvalidByKey) => (
-                                            <Fragment>
-                                                <Input
-                                                    value={username}
-                                                    onChange={(e) => this.setState({username: e.target.value})}
-                                                    icon={<i className="ni ni-circle-08" />}
-                                                    placeholder="Tên Tài Khoản"
-                                                    error={getInvalidByKey("username")}
-                                                />
-
-                                                <Input
-                                                    value={password}
-                                                    onChange={(e) => this.setState({password: e.target.value})}
-                                                    icon={<i className="ni ni-lock-circle-open"/>}
-                                                    placeholder="Mật Khẩu"
-                                                    type="password"
-                                                    error={getInvalidByKey("password")}
-                                                />
-
-                                                <div className="text-center">
-                                                    <button
-                                                        disabled={submitting}
-                                                        type="submit" className="btn btn-icon btn-3 btn-info">
-                                                        <span className="btn-inner--text">Đăng Nhập</span>
-                                                        { submitting && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
-                                                    </button>
-                                                </div>
-                                            </Fragment>
-                                        )}
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                  {error && (
+                    <div className="error-login text-danger">
+                        Sai tài khoản hoặc mật khẩu
                     </div>
-                </div>
-            </div>
+                  )}
+
+                  <Form
+                    onSubmit={() => this.submit()}
+                    formValue={this.state}
+                    validations={validations}
+                    render={(getInvalidByKey) => (
+                      <Fragment>
+                          <Input
+                            value={username}
+                            onChange={(e) => this.setState({username: e.target.value})}
+                            placeholder="Tên Tài Khoản"
+                            error={getInvalidByKey("username")}
+                          />
+
+                          <Input
+                            value={password}
+                            onChange={(e) => this.setState({password: e.target.value})}
+                            placeholder="Mật Khẩu"
+                            type="password"
+                            error={getInvalidByKey("password")}
+                          />
+
+                          <div className="text-center">
+                              <button
+                                disabled={submitting}
+                                type="submit" className="btn btn-primary">
+                                    <span className="btn-text">
+                                        Đăng Nhập
+                                    </span>
+
+                                  {submitting && (
+                                    <span className="loading-icon">
+                                         <i className="fa fa-spinner fa-pulse"/>
+                                      </span>
+                                  )}
+
+                              </button>
+                          </div>
+                      </Fragment>
+                    )}
+                  />
+              </div>
+          </div>
         );
     }
 }

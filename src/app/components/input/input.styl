@@ -1,9 +1,32 @@
 .form-group {
   margin-bottom 2rem;
+  width 100%;
   position relative;
 
+
   .form-control {
-    color black !important;
+    width: 100%;
+    padding: 0.65rem 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    border: 1px solid #ebedf2;
+    outline none;
+    font-size 13px;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0;
+    padding-left: 0;
+    transition border-color .2s;
+
+    &:focus {
+      border-color: #9aabff;
+    }
+
+    &.is-invalid {
+      border-color: #fd397a;
+    }
   }
 
   .control-label {
@@ -11,7 +34,7 @@
   }
 
   .error-text {
-    color red;
+    color #fd397a;
     font-size 12px;
     margin-top: 5px;
     position absolute;
@@ -32,4 +55,8 @@
     top: 50%;
     transform translate(0, -50%);
   }
+}
+
+form {
+  overflow hidden;
 }

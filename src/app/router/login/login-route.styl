@@ -1,85 +1,39 @@
 .login-route {
   position: relative;
   height 100vh;
+  margin: 0 24px;
 
-  .card-body {
-    position relative;
-
-    .error-login {
-      font-size: 13px;
-      color: red;
-      margin-bottom: 10px;
-      position: absolute;
-      top: 20px;
-    }
-
+  .error-login {
+    font-size 13px;
   }
 
-
-  .container {
-    padding: 180px 10px;
+  .card-header {
+    margin-bottom 24px;
   }
 
-  .bg-gradient {
-    background: linear-gradient(87deg, #172b4d 0, #1a174d 100%) !important;
+  .card-login {
+    max-width: 500px;
+    width calc(100% - 24px);
+    box-shadow: 0px 0px 80px 0px rgba(77, 84, 124, 0.09);
+    border-radius: 0.6rem;
     position absolute;
-    width 100%;
-    height 100%;
+    top: 50%;
+    left 50%;
+    transform translate(-50%, -50%);
+    padding 24px;
 
-    span {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      position absolute;
 
-      &:nth-child(1) {
-        bottom: auto;
-        left: -4%;
-        background: rgba(255, 255, 255, .1);
-      }
-
-      &:nth-child(2) {
-        top: 10%;
-        right: 4%;
-        background: rgba(255, 255, 255, .1);
-      }
-
-      &:nth-child(3) {
-        top: 280px;
-        right: 5.66666%;
-        background: rgba(255, 255, 255, .3);
-      }
-
-      &:nth-child(4) {
-        top: 320px;
-        right: 7%;
-        background: rgba(255, 255, 255, .15);
-      }
-      &:nth-child(5) {
-        top: 38%;
-        right: auto;
-        left: 1%;
-        background: rgba(255, 255, 255, .05);
-      }
-
-      &:nth-child(6) {
-        top: 44%;
-        right: auto;
-        left: 10%;
-        width: 200px;
-        height: 200px;
-        background: rgba(255, 255, 255, .15);
-      }
-      &:nth-child(7) {
-        right: 36%;
-        bottom: 50%;
-        background: rgba(255, 255, 255, .04);
-      }
-      &:nth-child(8) {
-        right: 2%;
-        bottom: 70px;
-        background: rgba(255, 255, 255, .2);
-      }
+    .card-header {
+      text-align center;
+      font-size 20px;
     }
+  }
+
+  .text-center {
+    margin-top: 42px;
+  }
+
+  .btn {
+    width: 100%;
   }
 }
