@@ -7,6 +7,7 @@ import {userInfo} from "../../../security/user-info";
 import {RComponent} from "../../r-component/r-component";
 import classnames from "classnames";
 import {navItems} from "../nav-items.jsx";
+import {LeftSideBar} from "../left-sidebar/left-sidebar";
 export class NavDesktop extends RComponent {
 
     constructor(props) {
@@ -42,40 +43,43 @@ export class NavDesktop extends RComponent {
 
 
         return (
-            <nav className="navbar navbar-expand-lg navbar-dark bg-gradient-info nav-desktop">
-                <div className="container">
-                    <span className="navbar-brand">
-                        <img src="/assets/img/liti-logo.png" alt=""/>
-                        <sup>{getCurrentPremise()}</sup>
-                    </span>
-                    <ul className="navbar-nav ml-lg-auto">
-                        { navItems(premises.filter(p => p._id != activeID), user).filter(n =>  (n.hide ? !n.hide() : true) &&  (n.child ? n.child.filter(c => !c.hide || !c.hide()).length > 0 : true)).map((navItem, index) => (
-                            <li className="nav-item" key={index}>
+            <nav className="nav-desktop">
 
-                                { navItem.child ? (
-                                    <Dropdown
-                                        renderContent={
-                                            navItem.child.filter(c => !c.hide || !c.hide()).map((child, index) => (
-                                                <Redirect
-                                                    onClick={() => {}}
-                                                    className="dropdown-item" key={index} navItem={child} />
-                                            ))
-                                        }
-                                    >
-                                        <Redirect
-                                            onClick={() => {}}
-                                            className={classnames("nav-link", activeRoute == navItem.label && "active")} navItem={navItem} />
+                <LeftSideBar />
 
-                                    </Dropdown>
-                                ) : (
-                                    <Redirect
-                                        onClick={() => {}}
-                                        className={classnames("nav-link", activeRoute == navItem.label && "active")} navItem={navItem} />
-                                )}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                {/*<div className="container">*/}
+                    {/*<span className="navbar-brand">*/}
+                        {/*<img src="/assets/img/liti-logo.png" alt=""/>*/}
+                        {/*<sup>{getCurrentPremise()}</sup>*/}
+                    {/*</span>*/}
+                    {/*<ul className="navbar-nav ml-lg-auto">*/}
+                        {/*{ navItems(premises.filter(p => p._id != activeID), user).filter(n =>  (n.hide ? !n.hide() : true) &&  (n.child ? n.child.filter(c => !c.hide || !c.hide()).length > 0 : true)).map((navItem, index) => (*/}
+                            {/*<li className="nav-item" key={index}>*/}
+
+                                {/*{ navItem.child ? (*/}
+                                    {/*<Dropdown*/}
+                                        {/*renderContent={*/}
+                                            {/*navItem.child.filter(c => !c.hide || !c.hide()).map((child, index) => (*/}
+                                                {/*<Redirect*/}
+                                                    {/*onClick={() => {}}*/}
+                                                    {/*className="dropdown-item" key={index} navItem={child} />*/}
+                                            {/*))*/}
+                                        {/*}*/}
+                                    {/*>*/}
+                                        {/*<Redirect*/}
+                                            {/*onClick={() => {}}*/}
+                                            {/*className={classnames("nav-link", activeRoute == navItem.label && "active")} navItem={navItem} />*/}
+
+                                    {/*</Dropdown>*/}
+                                {/*) : (*/}
+                                    {/*<Redirect*/}
+                                        {/*onClick={() => {}}*/}
+                                        {/*className={classnames("nav-link", activeRoute == navItem.label && "active")} navItem={navItem} />*/}
+                                {/*)}*/}
+                            {/*</li>*/}
+                        {/*))}*/}
+                    {/*</ul>*/}
+                {/*</div>*/}
             </nav>
         );
     }

@@ -29,9 +29,9 @@ export class Layout extends React.Component {
                     )}
                 </div>
 
-                <div className={classnames("container", customerClass)}>
-                    {children}
-                </div>
+                {/*<div className={classnames("container", customerClass)}>*/}
+                    {/*{children}*/}
+                {/*</div>*/}
             </div>
         );
     }
