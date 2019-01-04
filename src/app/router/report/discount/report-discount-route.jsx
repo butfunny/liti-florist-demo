@@ -90,7 +90,7 @@ export class ReportDiscountRoute extends React.Component {
 
 
         return (
-            <Layout activeRoute="Báo Cáo">
+            <Layout activeRoute="Khuyến Mại">
                 <div className="report-route bill-report-route">
                     <div className="ct-page-title">
                         <h1 className="ct-title">Báo cáo chiến dịch khuyến mại</h1>

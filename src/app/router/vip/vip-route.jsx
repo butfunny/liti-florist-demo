@@ -102,7 +102,7 @@ export class VipRoute extends React.Component {
 
         return (
             <Layout
-                activeRoute="Khách Hàng"
+                activeRoute="VIP"
             >
                 { permission[user.role].indexOf("customer.vip.view") == -1 ? (
                     <div>

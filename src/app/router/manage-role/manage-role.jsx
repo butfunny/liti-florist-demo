@@ -25,7 +25,7 @@ export class ManageRole extends React.Component {
 
         return (
             <Layout
-                activeRoute="Tài Khoản"
+                activeRoute="Phân Quyền"
             >
                 <div className="manage-role">
                     <div className="ct-page-title">

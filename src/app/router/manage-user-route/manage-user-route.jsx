@@ -104,7 +104,7 @@ export class ManageUserRoute extends React.Component {
 
         return (
             <Layout
-                activeRoute="Tài Khoản"
+                activeRoute="Quản Lý Nhân Viên"
             >
                 <div className="manage-premises-route manage-user-route">
                     <div className="ct-page-title">

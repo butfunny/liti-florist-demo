@@ -90,7 +90,7 @@ export class PremisesRoute extends React.Component {
 
         return (
             <Layout
-                activeRoute="Cài Đặt"
+                activeRoute="Quản Lý Cơ Sở"
             >
                 <div className="manage-premises-route">
                     <div className="ct-page-title">

@@ -125,7 +125,7 @@ export class ReportBillRoute extends React.Component {
         };
 
         return (
-            <Layout activeRoute="Báo Cáo">
+            <Layout activeRoute="Đơn Hàng">
                 <div className="report-route bill-report-route">
                     <div className="ct-page-title">
                         <h1 className="ct-title">Báo cáo đơn hàng</h1>

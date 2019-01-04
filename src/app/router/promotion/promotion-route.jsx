@@ -88,7 +88,7 @@ export class PromotionRoute extends React.Component {
 
         return (
             <Layout
-                activeRoute="Khuyến Mại">
+                activeRoute="Hình Thức Khuyến Mại">
                 { !permission[user.role].find(r => r.indexOf("promotion") == 0) ? (
                     <div>
                         Bạn không có quyền truy cập vào trang này vui lòng chọn những trang bạn có quyền trên thanh nav

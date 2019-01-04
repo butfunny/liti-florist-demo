@@ -85,7 +85,7 @@ export class Customers extends React.Component {
 
         return (
             <Layout
-                activeRoute="Khách Hàng"
+                activeRoute="Danh Sách Khách Hàng"
             >
                 { permission[user.role].indexOf("customer.list") == -1 ? (
                     <div>

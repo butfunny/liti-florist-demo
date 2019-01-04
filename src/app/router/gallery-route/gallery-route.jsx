@@ -138,7 +138,7 @@ export class GalleryRoute extends React.Component {
 
 
         return (
-            <Layout activeRoute="Báo Cáo">
+            <Layout activeRoute="Kho Ảnh">
                 <div className="gallery-route">
 
                     <div className="ct-page-title">

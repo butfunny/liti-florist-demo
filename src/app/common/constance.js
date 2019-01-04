@@ -102,7 +102,7 @@ export const permissions = [{
     father: "Báo Cáo"
 }, {
     value: "customer.list",
-    label: "Danh sách khách hàng",
+    label: "Danh Sách Khách Hàng",
     father: "Khách Hàng"
 }, {
     value: "customer.vip.view",

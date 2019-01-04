@@ -91,7 +91,7 @@ class NavItemGroup extends React.Component {
                 </div>
 
                 <div className="nav-item-sub-wrapper" style={{
-                    height: open ? `${38 * navItem.child.filter(c => !c.hide || !c.hide()).length}px` : 0
+                    height: open ? `${38 * navItem.child.filter(c => !c.hide || !c.hide()).length}px` : 0,
                 }}>
                     {navItem.child.filter(c => !c.hide || !c.hide()).map((child, index) => (
                         <Redirect key={index} navItem={child} className={classnames("nav-item nav-item-sub", activeRoute == child.label && "active")}>
