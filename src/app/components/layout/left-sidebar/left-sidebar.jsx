@@ -5,6 +5,7 @@ import {userInfo} from "../../../security/user-info";
 import {navItems} from "../nav-items";
 import {Dropdown} from "../../dropdown/dropdown";
 import {Link} from "react-router-dom";
+let navCache = {};
 
 export class LeftSideBar extends React.Component {
 
@@ -36,6 +37,7 @@ export class LeftSideBar extends React.Component {
                         return (
                             <Redirect className={classnames("nav-item", activeRoute == navItem.label && "active")}
                                       navItem={navItem}
+                                      key={index}
                             >
                                 {navItem.icon}
                                 {navItem.label}
@@ -55,22 +57,35 @@ class NavItemGroup extends React.Component {
 
     constructor(props) {
         super(props);
+
+        const getDefaultOpen = () => {
+            if (navCache[props.navItem.label]) return navCache[props.navItem.label];
+            return props.navItem.child.map(c => c.label).indexOf(props.activeRoute) > -1
+        };
+
         this.state = {
-            open: false
-        }
+            open: getDefaultOpen()
+        };
+
+        navCache[props.navItem.label] = getDefaultOpen();
+
     }
+
 
     render() {
         let {open} = this.state;
         let {navItem, activeRoute} = this.props;
 
 
-
         return (
             <Fragment>
-                <div className={classnames("nav-item", navItem.child.map(c => c.label).indexOf(activeRoute) > -1 && "active")} onClick={() => this.setState({open: !open})}>
-                    {navItem.icon}
-                    {navItem.label}
+                <div className={classnames("nav-item", navItem.child.map(c => c.label).indexOf(activeRoute) > -1 && "active")}
+                     onClick={() => {
+                         this.setState({open: !open});
+                         navCache[navItem.label] = !open;
+                     }}>
+                        {navItem.icon}
+                        {navItem.label}
 
                     <i className={classnames("fa fa-angle-right arrow-icon", open && "open")}/>
                 </div>
@@ -79,7 +94,7 @@ class NavItemGroup extends React.Component {
                     height: open ? `${38 * navItem.child.filter(c => !c.hide || !c.hide()).length}px` : 0
                 }}>
                     {navItem.child.filter(c => !c.hide || !c.hide()).map((child, index) => (
-                        <Redirect key={index} navItem={child} className={classnames("nav-item nav-item-sub", activeRoute == child.label == "active")}>
+                        <Redirect key={index} navItem={child} className={classnames("nav-item nav-item-sub", activeRoute == child.label && "active")}>
                             <span className="dot">•</span> {child.label}
                         </Redirect>
                     ))}

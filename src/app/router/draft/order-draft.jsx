@@ -45,7 +45,7 @@ export class OrderDraft extends React.Component {
         const user = userInfo.getUser();
 
         return (
-            <Layout activeRoute="Đơn Hàng">
+            <Layout activeRoute="Đơn Sẵn">
                 { permission[user.role].indexOf("bill.view") == -1 ? (
                     <div>
                         Bạn không có quyền truy cập vào trang này vui lòng chọn những trang bạn có quyền trên thanh nav

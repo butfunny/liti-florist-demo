@@ -247,7 +247,7 @@ export class BillOrderRoute extends RComponent {
 
         return (
             <Layout
-                activeRoute="Đơn Hàng"
+                activeRoute="Đơn Chính"
             >
                 { permission[user.role].indexOf("bill.view") == -1 ? (
                     <div>
