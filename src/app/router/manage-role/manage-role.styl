@@ -1,4 +1,9 @@
 .manage-role {
+
+  .card-title {
+    border-bottom 0;
+  }
+
   .table-permission {
     padding-left 250px;
     font-size 11px;
@@ -16,14 +21,16 @@
         padding 5px;
         border-top: 1px solid #dedede;
         border-right: 1px solid #dedede;
-        border-left: 1px solid #dedede;
+        padding-left: 25px;
+        //border-left: 1px solid #dedede;
+
 
         &:last-child {
-          border-bottom: 1px solid #dedede;
+          //border-bottom: 1px solid #dedede;
         }
 
         &.no-bold {
-          padding-left 15px;
+          padding-left 35px;
           font-weight normal;
         }
       }
@@ -31,10 +38,12 @@
 
     .column-scrollable {
       max-width 100%;
-      overflow scroll;
+      overflow-y hidden;
+      overflow-x scroll;
 
       .column-item {
         display flex;
+
 
         .role-item {
           font-weight bold;
@@ -44,9 +53,13 @@
           border 1px solid #dedede;
           border-left: 0;
           border-bottom: 0;
-          min-height 27px;
+          min-height: 25px;
           position relative;
           text-align center;
+
+          &:last-child {
+            border-right 0;
+          }
 
 
           .checkbox {
@@ -62,6 +75,8 @@
             border-bottom 1px solid #dedede;
           }
         }
+
+
       }
 
 

@@ -32,7 +32,7 @@ export class ManageUserModal extends React.Component {
             <div className="app-modal-box ">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h5 className="modal-title">{user._id ? `Sửa thông tin của ${user.username}` : "Thêm nhân viên"}</h5>
+                        <h5 className="modal-title">{user._id ? `Sửa thông tin của ${this.props.user.username}` : "Thêm nhân viên"}</h5>
                         <button type="button" className="close" onClick={() => onDismiss()}>
                             <span aria-hidden="true">×</span>
                         </button>
@@ -49,7 +49,7 @@ export class ManageUserModal extends React.Component {
                             <Fragment>
                                 <div className="modal-body">
                                     <Input
-                                        disabled={user._id}
+                                        readOnly={user._id}
                                         value={user.username}
                                         onChange={(e) => this.setState({user: {...user, username: e.target.value}})}
                                         label="Tên Tài Khoản"

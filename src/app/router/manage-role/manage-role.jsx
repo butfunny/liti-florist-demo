@@ -6,6 +6,7 @@ import groupBy from "lodash/groupBy";
 import {formatNumber, keysToArray} from "../../common/common";
 import {Checkbox} from "../../components/checkbox/checkbox";
 import {permissionInfo} from "../../security/premises-info";
+import {DataTable} from "../../components/data-table/data-table";
 
 
 
@@ -27,10 +28,12 @@ export class ManageRole extends React.Component {
             <Layout
                 activeRoute="Phân Quyền"
             >
-                <div className="manage-role">
-                    <div className="ct-page-title">
-                        <h1 className="ct-title">Quản lý phân quyền</h1>
+
+                <div className="card manage-role">
+                    <div className="card-title">
+                        Phân Quyền
                     </div>
+
 
                     <div className="table-permission">
                         <div className="column-fixed">

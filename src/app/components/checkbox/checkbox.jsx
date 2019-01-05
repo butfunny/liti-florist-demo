@@ -15,7 +15,7 @@ export class Checkbox extends React.Component {
                 <div className={classnames("checkbox-value", value && "checked")}
                     onClick={() => onChange(!value)}
                 >
-                    <i className="ni ni-check-bold" />
+                    <i className="fa fa-check"/>
                 </div>
 
                 <label className="checkbox-label"
