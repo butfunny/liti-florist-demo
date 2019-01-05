@@ -41,14 +41,14 @@ export class ManagePremisesModal extends React.Component {
                                     <Input
                                         value={name}
                                         onChange={(e) => this.setState({name: e.target.value})}
-                                        placeholder="Tên Cơ Sở"
+                                        label="Tên Cơ Sở"
                                         error={getInvalidByKey("name")}
                                     />
 
                                     <Input
                                         value={address}
                                         onChange={(e) => this.setState({address: e.target.value, location: null})}
-                                        placeholder="Địa chỉ"
+                                        label="Địa chỉ"
                                         error={getInvalidByKey("address")}
                                         saving={address && !location}
                                     />
@@ -61,7 +61,7 @@ export class ManagePremisesModal extends React.Component {
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-link" onClick={() => onDismiss()}>Đóng</button>
-                                    <button type="submit" className="btn btn-info">Lưu</button>
+                                    <button type="submit" className="btn btn-primary">Lưu</button>
                                 </div>
                             </Fragment>
                         )}

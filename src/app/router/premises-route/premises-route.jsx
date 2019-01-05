@@ -6,6 +6,7 @@ import {ManagePremisesModal} from "./manage-premises-modal";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 import {premisesInfo} from "../../security/premises-info";
 import {DataTable} from "../../components/data-table/data-table";
+import {ButtonGroup} from "../../components/button-group/button-group";
 
 export class PremisesRoute extends React.Component {
 
@@ -105,8 +106,20 @@ export class PremisesRoute extends React.Component {
         }, {
             label: "",
             width: "10%",
-            display: (row) => <div className="text-right"><button className="btn btn-danger btn-small" onClick={() => this.removeColor(row)}><i className="fa fa-trash"/></button></div>,
-            className: "number content-menu-action",
+            display: (row) => (
+                <ButtonGroup
+                    actions={[{
+                        name: "Sửa",
+                        icon: <i className="fa fa-pencil-square-o"/>,
+                        click: () => this.editPremises(row)
+                    }, {
+                        name: "Xóa",
+                        icon: <i className="fa fa-trash"/>,
+                        click: () => this.remove(row)
+                    }]}
+                />
+            ),
+            className: "text-right",
             minWidth: "60"
         }];
 
@@ -117,11 +130,11 @@ export class PremisesRoute extends React.Component {
             >
                 <div className="card">
                     <div className="card-title">
-                        Danh sách cơ sở
+                        Danh Sách Cơ Sở
                     </div>
 
                     <div className="card-body">
-                        <button type="button" className="btn btn-primary" onClick={() => this.addPremises()}>Thêm Cơ Sở</button>
+                        <button type="button" className="btn btn-primary btn-medium" onClick={() => this.addPremises()}>Thêm</button>
                     </div>
 
                     <DataTable
@@ -130,33 +143,6 @@ export class PremisesRoute extends React.Component {
                     />
                 </div>
 
-
-
-                {/*<table className="table table-hover">*/}
-                    {/*<thead>*/}
-                    {/*<tr>*/}
-                        {/*<th scope="col">Tên Cơ Sở</th>*/}
-                        {/*<th scope="col">Tác Vụ</th>*/}
-                    {/*</tr>*/}
-                    {/*</thead>*/}
-                    {/*<tbody>*/}
-                    {/*{ premises && premises.map((item, index) => (*/}
-                        {/*<tr key={index}>*/}
-                            {/*<td>{item.name} <br/> <small className="text-sm-left"> {item.address} - {item.phone}</small></td>*/}
-                            {/*<td>*/}
-                                {/*<button className="btn btn-outline-primary btn-sm" onClick={() => this.editPremises(item)}>*/}
-                                    {/*<i className="fa fa-pencil"/>*/}
-                                {/*</button>*/}
-                                {/*/!*{ premises.length > 1 && (*!/*/}
-                                {/*/!*<button className="btn btn-outline-danger btn-sm" onClick={() => this.remove(item)}>*!/*/}
-                                {/*/!*<i className="fa fa-trash"/>*!/*/}
-                                {/*/!*</button>*!/*/}
-                                {/*/!*)}*!/*/}
-                            {/*</td>*/}
-                        {/*</tr>*/}
-                    {/*))}*/}
-                    {/*</tbody>*/}
-                {/*</table>*/}
             </Layout>
         );
     }
