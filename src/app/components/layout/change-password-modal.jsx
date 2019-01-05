@@ -70,7 +70,7 @@ export class ChangePasswordModal extends React.Component {
                                     <Input
                                         value={oldPassword}
                                         onChange={(e) => this.setState({oldPassword: e.target.value})}
-                                        placeholder="Mật Khẩu Cũ"
+                                        label="Mật Khẩu Cũ"
                                         type="password"
                                         error={getInvalidByKey("oldPassword")}
                                     />
@@ -78,7 +78,7 @@ export class ChangePasswordModal extends React.Component {
                                     <Input
                                         value={newPassword}
                                         onChange={(e) => this.setState({newPassword: e.target.value})}
-                                        placeholder="Mật Khẩu Mới"
+                                        label="Mật Khẩu Mới"
                                         type="password"
                                         error={getInvalidByKey("newPassword")}
                                     />
@@ -86,7 +86,7 @@ export class ChangePasswordModal extends React.Component {
                                     <Input
                                         value={retypePassword}
                                         onChange={(e) => this.setState({retypePassword: e.target.value})}
-                                        placeholder="Nhập Lại Mật Khẩu"
+                                        label="Nhập Lại Mật Khẩu"
                                         type="password"
                                         error={getInvalidByKey("retypePassword")}
                                     />
