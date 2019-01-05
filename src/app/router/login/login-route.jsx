@@ -4,6 +4,7 @@ import {Checkbox} from "../../components/checkbox/checkbox";
 import {required, minLength} from "../../components/form/validations";
 import {Form} from "../../components/form/form";
 import {security} from "../../security/secuiry-fe";
+import {userInfo} from "../../security/user-info";
 
 export class LoginRoute extends React.Component {
 
@@ -21,7 +22,9 @@ export class LoginRoute extends React.Component {
         this.setState({submitting: true, error: false});
         let {username, password} = this.state;
         security.login({username, password}).then(() => {
-            this.props.history.push("/");
+            const user = userInfo.getUser();
+            let defaultRoute = security.getDefaultRoute(user);
+            this.props.history.push(defaultRoute ? defaultRoute : "/");
         }, () => {
             this.setState({error: true, submitting: false})
         })

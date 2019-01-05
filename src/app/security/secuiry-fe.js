@@ -4,6 +4,7 @@ import {cache} from "../common/cache";
 import {shopApi} from "../api/shop-api";
 import {permissionInfo, premisesAllInfo, premisesInfo} from "./premises-info";
 import {permissions} from "../common/constance";
+import {navItems} from "../components/layout/nav-items";
 
 const initPermission = {
     "admin": permissions.map(p => p.value),
@@ -92,5 +93,23 @@ export let security = {
         }
 
         return false;
+    },
+    getDefaultRoute: (user) => {
+        const _navItems = navItems(user);
+        let to = null;
+
+        const route = _navItems.find(n => {
+            if (n.child) {
+                let found = n.child.find(item => !item.hide());
+                if (found) {
+                    to = found.to;
+                    return true;
+                }
+            }
+
+            return !n.hide();
+        });
+
+        return to ? to : route.to
     }
 };

@@ -35,10 +35,6 @@ export const navItems = (user) => {
             label: "Đơn Chờ Ship",
             to: "/ship",
             hide: () => user.role != "ship"
-        }, {
-            label: "Doanh Thu Của Tôi",
-            to: "/salary",
-            hide: () => user.role != "ship" && user.role != "florist" && user.role != "sale"
         }],
         hide: () => user.role != "ship" && user.role != "florist" && user.role != "sale" && !permission[user.role].find(r => r.indexOf("bill") > -1)
     }, {

@@ -70,7 +70,7 @@ export class ShipRoute extends React.Component {
 
         return (
             <Layout
-                activeRoute="Đơn Hàng">
+                activeRoute="Đơn Chờ Ship">
                 <div className="florist-route bill-report-route">
                     <div className="ct-page-title">
                         <h1 className="ct-title">Đơn Hàng</h1>
