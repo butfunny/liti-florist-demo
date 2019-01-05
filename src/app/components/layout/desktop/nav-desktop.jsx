@@ -15,7 +15,7 @@ export class NavDesktop extends RComponent {
     }
 
     render() {
-        let {activeRoute} = this.props;
+        let {activeRoute, routeComp} = this.props;
 
         return (
             <nav className="nav-desktop">
@@ -23,6 +23,10 @@ export class NavDesktop extends RComponent {
                 <LeftSideBar
                     activeRoute={activeRoute}
                 />
+
+                <div className="app-route">
+                    {routeComp}
+                </div>
             </nav>
         );
     }

@@ -29,6 +29,7 @@ import {GalleryRoute} from "./gallery-route/gallery-route";
 import {ManageRole} from "./manage-role/manage-role";
 import {CreateRequestMissing} from "./request-missing/create-request-missing";
 import {ListRequestMissing} from "./request-missing/list-request-missing";
+import {SettingRoute} from "./setting/setting-route";
 export class AppRouter extends React.Component {
 
     constructor(props) {
@@ -83,6 +84,7 @@ export class AppRouter extends React.Component {
                     <Route exact path="/list-request-item" component={requireAuthen(ListRequestWarehouse)} />
                     <Route exact path="/create-request-missing" component={requireAuthen(CreateRequestMissing)} />
                     <Route exact path="/list-request-missing" component={requireAuthen(ListRequestMissing)} />
+                    <Route exact path="/setting" component={requireAuthen(SettingRoute)} />
                     <ModalsRegistry />
                 </Fragment>
             </BrowserRouter>

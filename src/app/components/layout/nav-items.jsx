@@ -128,6 +128,10 @@ export const navItems = (user) => {
                 to: "/manage-role",
                 label: "Phân Quyền",
                 hide: () => user.role != "admin"
+            }, {
+                to: "/setting",
+                label: "Cài Đặt Màu, Loại",
+                hide: () => permission[user.role].indexOf("bill.editProductType") == -1 && permission[user.role].indexOf("bill.editProductColor") == -1
             }],
         }]
 };

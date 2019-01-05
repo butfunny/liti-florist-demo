@@ -21,17 +21,15 @@ export class Layout extends React.Component {
                     { isMobile ? (
                         <NavMobile
                             activeRoute={activeRoute}
+                            routeComp={children}
                         />
                     ) : (
                         <NavDesktop
                             activeRoute={activeRoute}
+                            routeComp={children}
                         />
                     )}
                 </div>
-
-                {/*<div className={classnames("container", customerClass)}>*/}
-                    {/*{children}*/}
-                {/*</div>*/}
             </div>
         );
     }

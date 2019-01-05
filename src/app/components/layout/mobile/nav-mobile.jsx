@@ -25,7 +25,7 @@ export class NavMobile extends RComponent {
 
     render() {
 
-        let {activeRoute} = this.props;
+        let {activeRoute, routeComp} = this.props;
 
         return (
             <nav className="nav-mobile">
@@ -33,6 +33,10 @@ export class NavMobile extends RComponent {
                     mobile
                     activeRoute={activeRoute}
                 />
+
+                <div className="app-route">
+                    {routeComp}
+                </div>
             </nav>
         );
     }
