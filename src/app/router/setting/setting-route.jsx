@@ -1,11 +1,15 @@
 import React from "react";
 import {Layout} from "../../components/layout/layout";
 import {DataTable} from "../../components/data-table/data-table";
+import {SelectColor} from "../../components/select-color/select-color";
 
 export class SettingRoute extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            color: undefined
+        }
     }
 
     render() {
@@ -14,7 +18,7 @@ export class SettingRoute extends React.Component {
             label: "Màu",
             width: "80%",
             sortBy: (row) => row.color,
-            display: (row) => row.color,
+            display: (row) => <div className="color-display" style={{background: row.color}}/>,
             minWidth: "150"
         }, {
             label: "",
@@ -23,15 +27,12 @@ export class SettingRoute extends React.Component {
                 e.preventDefault();
                 e.stopPropagation();
             },
-            display: (row) => (
-                <div>
-                    delêt
-                </div>
-            ),
+            display: (row) => <button className="btn btn-danger"><i className="fa fa-trash"/></button>,
             className: "number content-menu-action",
             minWidth: "60"
         }];
 
+        let {color} = this.state;
 
         return (
             <Layout
@@ -43,8 +44,16 @@ export class SettingRoute extends React.Component {
                             Màu
                         </div>
 
-                        <div className="card-body">
-                            Add
+                        <div className="select-color-action">
+                            <SelectColor
+                                label="Chọn Màu"
+                                value={color}
+                                onChange={(color) => this.setState({color})}
+                            />
+
+                            <button className="btn btn-primary">
+                                Thêm
+                            </button>
                         </div>
 
                         <DataTable
