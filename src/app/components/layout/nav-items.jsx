@@ -111,7 +111,7 @@ export const navItems = (user) => {
             label: "Kho Ảnh",
             to: "/gallery",
             icon: <i className="fa fa-picture-o nav-icon"/>,
-            hide: () => permission[user.role].indexOf("report.gallery") == -1
+            hide: () => !security.isHavePermission("report.gallery")
         }, {
             label: "Quản Lý Hệ Thống",
             icon: <i className="fa fa-cog nav-icon"/>,
@@ -131,7 +131,7 @@ export const navItems = (user) => {
             }, {
                 to: "/setting",
                 label: "Cài Đặt Màu, Loại",
-                hide: () => permission[user.role].indexOf("bill.editProductType") == -1 && permission[user.role].indexOf("bill.editProductColor") == -1
+                hide: () => !security.isHavePermission(["bill.editProductColor", "bill.editProductType"])
             }],
         }]
 };

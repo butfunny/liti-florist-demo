@@ -5,6 +5,7 @@ import {modals} from "../../components/modal/modals";
 import {ManagePremisesModal} from "./manage-premises-modal";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 import {premisesInfo} from "../../security/premises-info";
+import {DataTable} from "../../components/data-table/data-table";
 
 export class PremisesRoute extends React.Component {
 
@@ -88,54 +89,74 @@ export class PremisesRoute extends React.Component {
 
         let {premises} = this.state;
 
+
+        let columns = [{
+            label: "Tên Cơ Sở",
+            width: "45%",
+            display: (row) => row.name,
+            sortBy: (row) => row.name,
+            minWidth: "150"
+        }, {
+            label: "Địa Chỉ",
+            width: "45%",
+            display: (row) => row.address,
+            sortBy: (row) => row.address,
+            minWidth: "300"
+        }, {
+            label: "",
+            width: "10%",
+            display: (row) => <div className="text-right"><button className="btn btn-danger btn-small" onClick={() => this.removeColor(row)}><i className="fa fa-trash"/></button></div>,
+            className: "number content-menu-action",
+            minWidth: "60"
+        }];
+
+
         return (
             <Layout
                 activeRoute="Quản Lý Cơ Sở"
             >
-                <div className="manage-premises-route">
-                    <div className="ct-page-title">
-                        <h1 className="ct-title">Quản Lý Cơ Sở</h1>
-                        <div className="avatar-group mt-3">
-                        </div>
+                <div className="card">
+                    <div className="card-title">
+                        Danh sách cơ sở
                     </div>
 
-                    <p className="ct-lead">
-                        Thêm mới chỉnh sửa hoặc xoá các cơ sở hiện hành
-                    </p>
-
-                    <hr/>
-
-                    <div className="margin-bottom">
-                        <button type="button" className="btn btn-info" onClick={() => this.addPremises()}>Thêm Cơ Sở</button>
+                    <div className="card-body">
+                        <button type="button" className="btn btn-primary" onClick={() => this.addPremises()}>Thêm Cơ Sở</button>
                     </div>
 
-
-                    <table className="table table-hover">
-                        <thead>
-                        <tr>
-                            <th scope="col">Tên Cơ Sở</th>
-                            <th scope="col">Tác Vụ</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        { premises && premises.map((item, index) => (
-                            <tr key={index}>
-                                <td>{item.name} <br/> <small className="text-sm-left"> {item.address} - {item.phone}</small></td>
-                                <td>
-                                    <button className="btn btn-outline-primary btn-sm" onClick={() => this.editPremises(item)}>
-                                        <i className="fa fa-pencil"/>
-                                    </button>
-                                    {/*{ premises.length > 1 && (*/}
-                                        {/*<button className="btn btn-outline-danger btn-sm" onClick={() => this.remove(item)}>*/}
-                                            {/*<i className="fa fa-trash"/>*/}
-                                        {/*</button>*/}
-                                    {/*)}*/}
-                                </td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
+                    <DataTable
+                        rows={premises}
+                        columns={columns}
+                    />
                 </div>
+
+
+
+                {/*<table className="table table-hover">*/}
+                    {/*<thead>*/}
+                    {/*<tr>*/}
+                        {/*<th scope="col">Tên Cơ Sở</th>*/}
+                        {/*<th scope="col">Tác Vụ</th>*/}
+                    {/*</tr>*/}
+                    {/*</thead>*/}
+                    {/*<tbody>*/}
+                    {/*{ premises && premises.map((item, index) => (*/}
+                        {/*<tr key={index}>*/}
+                            {/*<td>{item.name} <br/> <small className="text-sm-left"> {item.address} - {item.phone}</small></td>*/}
+                            {/*<td>*/}
+                                {/*<button className="btn btn-outline-primary btn-sm" onClick={() => this.editPremises(item)}>*/}
+                                    {/*<i className="fa fa-pencil"/>*/}
+                                {/*</button>*/}
+                                {/*/!*{ premises.length > 1 && (*!/*/}
+                                {/*/!*<button className="btn btn-outline-danger btn-sm" onClick={() => this.remove(item)}>*!/*/}
+                                {/*/!*<i className="fa fa-trash"/>*!/*/}
+                                {/*/!*</button>*!/*/}
+                                {/*/!*)}*!/*/}
+                            {/*</td>*/}
+                        {/*</tr>*/}
+                    {/*))}*/}
+                    {/*</tbody>*/}
+                {/*</table>*/}
             </Layout>
         );
     }

@@ -46,7 +46,7 @@ export class TypeSetting extends React.Component {
         }, {
             label: "",
             width: "5%",
-            display: (row) => <div className="text-right"><button className="btn btn-danger" onClick={() => this.removeType(row)}><i className="fa fa-trash"/></button></div>,
+            display: (row) => <div className="text-right"><button className="btn btn-danger btn-small" onClick={() => this.removeType(row)}><i className="fa fa-trash"/></button></div>,
             className: "number content-menu-action",
             minWidth: "60"
         }];

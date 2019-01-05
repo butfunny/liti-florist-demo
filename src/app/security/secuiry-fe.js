@@ -83,5 +83,14 @@ export let security = {
     logout: () => {
         userInfo.setUser(null);
         localStorage.removeItem("token");
+    },
+    isHavePermission: (target) => {
+        const permission = permissionInfo.getPermission();
+        const user = userInfo.getUser();
+        for (let per of target) {
+            if (permission[user.role].indexOf(per) > -1) return true
+        }
+
+        return false;
     }
 };
