@@ -1,5 +1,7 @@
 import React from "react";
 import {Layout} from "../../components/layout/layout";
+import {DataTable} from "../../components/data-table/data-table";
+
 export class SettingRoute extends React.Component {
 
     constructor(props) {
@@ -7,6 +9,30 @@ export class SettingRoute extends React.Component {
     }
 
     render() {
+
+        let columns = [{
+            label: "Màu",
+            width: "80%",
+            sortBy: (row) => row.color,
+            display: (row) => row.color,
+            minWidth: "150"
+        }, {
+            label: "",
+            width: "20%",
+            onClickCol: (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            },
+            display: (row) => (
+                <div>
+                    delêt
+                </div>
+            ),
+            className: "number content-menu-action",
+            minWidth: "60"
+        }];
+
+
         return (
             <Layout
                 activeRoute="Cài Đặt Màu, Loại"
@@ -18,8 +44,13 @@ export class SettingRoute extends React.Component {
                         </div>
 
                         <div className="card-body">
-                            112321
+                            Add
                         </div>
+
+                        <DataTable
+                            columns={columns}
+                            rows={[{color: "#efefef"}]}
+                        />
                     </div>
                 </div>
             </Layout>
