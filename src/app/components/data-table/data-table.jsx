@@ -63,7 +63,7 @@ export class DataTable extends React.Component {
 
                         {sortedRows().length == 0 && (
                             <div className="ge-row no-data">
-                                No Data
+                                Không có dữ liệu
                             </div>
                         )}
 

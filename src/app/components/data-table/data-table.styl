@@ -8,7 +8,7 @@
     -webkit-overflow-scrolling: touch;
     color: #646c9a;
     font-weight 500;
-    font-size: 12px;
+    font-size: 14px;
 
     &::-webkit-scrollbar {
       -webkit-appearance: none;
@@ -73,6 +73,15 @@
         display flex;
         position relative;
         transition background .2s;
+
+        &.no-data {
+          padding: 10px 25px;
+          border-bottom: 1px solid #edeef3;
+
+          &:hover {
+            background: #f8f9fa;
+          }
+        }
 
         &:hover {
           .ge-col {

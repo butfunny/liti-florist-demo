@@ -75,6 +75,48 @@
       width 600px;
       margin 100px auto 0 auto;
     }
+
+
+    .modal-header {
+      border-bottom 1px solid #ebedf2;
+      padding 15px;
+      position relative;
+
+      .close {
+        position: absolute;
+        background transparent;
+        border: none;
+        color: #a1a8c3;
+        font-size 22px;
+        right: 15px;
+        top: 10px;
+        cursor pointer;
+        outline none;
+        transition .2s;
+
+        &:hover {
+          color: #5d78ff;
+        }
+      }
+
+      .modal-title {
+        margin 0;
+        font-size 18px;
+        font-weight 600;
+      }
+
+    }
+
+    .modal-body {
+      font-size 15px;
+      padding 15px;
+    }
+
+    .modal-footer {
+      text-align right;
+      padding 15px;
+      border-top 1px solid #ebedf2;
+    }
   }
 
 

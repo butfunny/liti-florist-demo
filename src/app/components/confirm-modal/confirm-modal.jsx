@@ -25,8 +25,8 @@ export class ConfirmModal extends React.Component {
                     </div>
 
                     <div className="modal-footer">
+                        <button type="button" className="btn btn-link  ml-auto" data-dismiss="modal" onClick={() => onDismiss()}>Thôi</button>
                         <button type="button" className="btn btn-primary" onClick={() => onClose()}>Xác Nhận</button>
-                        <button type="button" className="btn btn-link  ml-auto" data-dismiss="modal" onClick={() => onDismiss()}>Đóng</button>
                     </div>
 
                 </div>
