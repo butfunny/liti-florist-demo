@@ -4,6 +4,12 @@
   margin-bottom: 0;
   display inline-block;
 
+  &.has-error {
+    .select-text {
+      border-color danger !important;
+    }
+  }
+
   .select-text {
     width 100%;
     padding: 10px 15px;
@@ -18,6 +24,7 @@
       width 100%;
       border-radius 3px;
       transition background .2s;
+      border: 1px solid #dedede;
     }
   }
 

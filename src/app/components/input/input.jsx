@@ -16,7 +16,7 @@ export class Input extends React.Component {
 
 
     render() {
-        let {label, className, value, readOnly, icon, error, type, onChange} = this.props;
+        let {label, className, value, readOnly, icon, error, type, onChange, onKeyDown} = this.props;
         let {focus} = this.state;
 
         const hasValue = () => {
@@ -35,6 +35,7 @@ export class Input extends React.Component {
                     onChange={onChange}
                     type={type}
                     readOnly={readOnly}
+                    onKeyDown={onKeyDown}
                 />
 
 

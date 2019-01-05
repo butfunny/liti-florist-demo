@@ -3,6 +3,7 @@ import {Layout} from "../../components/layout/layout";
 import {DataTable} from "../../components/data-table/data-table";
 import {SelectColor} from "../../components/select-color/select-color";
 import {ColorSetting} from "./color-setting";
+import {TypeSetting} from "./type-setting";
 
 export class SettingRoute extends React.Component {
 
@@ -20,6 +21,8 @@ export class SettingRoute extends React.Component {
             >
                 <div className="setting-route">
                     <ColorSetting />
+
+                    <TypeSetting/>
                 </div>
             </Layout>
         );

@@ -66,12 +66,12 @@ export class ColorSetting extends React.Component {
                         label="Chọn Màu"
                         value={color}
                         onChange={(color) => this.setState({color})}
-                        error={colors.map(c => c.name).indexOf(color) > -1 ? "Màu trùng" : false}
+                        error={colors.map(c => c.name).indexOf(color) > -1 ? "Trùng màu" : false}
                     />
 
                     <button className="btn btn-primary"
-                            disabled={!color}
-                            onClick={() => colors.map(c => c.name).indexOf(color) == -1 && this.addColor()}>
+                            disabled={!color || colors.map(c => c.name).indexOf(color) > -1}
+                            onClick={() => this.addColor()}>
                         <span className="btn-text">
                             Thêm
                         </span>
