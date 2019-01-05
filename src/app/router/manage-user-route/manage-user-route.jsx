@@ -8,13 +8,15 @@ import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 import {premisesInfo} from "../../security/premises-info";
 import {shopApi} from "../../api/shop-api";
 import {roles} from "../../common/constance";
+import {DataTable} from "../../components/data-table/data-table";
+import {ButtonGroup} from "../../components/button-group/button-group";
 
 export class ManageUserRoute extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            users: null
+            users: []
         };
 
         securityApi.getUsers().then((users) => {
@@ -87,8 +89,8 @@ export class ManageUserRoute extends React.Component {
         let {users} = this.state;
 
         confirmModal.show({
-            title: `Xoá nhân viên ${user.name}?`,
-            description: "Bạn có đồng ý xoá nhân viên này không?"
+            title: `Xoá tài khoản ${user.username}?`,
+            description: "Bạn có đồng ý xoá tài khoản này không?"
         }).then(() => {
             this.setState({
                 users: users.filter(p => p._id != user._id)
@@ -102,60 +104,69 @@ export class ManageUserRoute extends React.Component {
         let {users} = this.state;
         const user = userInfo.getUser();
 
+        let getActions = (item) => {
+            let ret = [{
+                name: "Sửa",
+                icon: <i className="fa fa-pencil-square-o"/>,
+                click: () => this.editUser(item)
+            }];
+
+            if (user._id != item._id) {
+                ret.push({
+                    name: "Xóa",
+                    icon: <i className="fa fa-trash text-danger"/>,
+                    click: () => this.remove(item)
+                })
+            }
+
+            return ret;
+        };
+
+
+
+        let columns = [{
+            label: "Tài Khoản",
+            width: "45%",
+            display: (row) => row.username,
+            sortBy: (row) => row.username,
+            minWidth: "150"
+        }, {
+            label: "Chức Vụ",
+            width: "45%",
+            display: (row) => roles.find(r => r.value == row.role).label,
+            sortBy: (row) => roles.find(r => r.value == row.role).label,
+            minWidth: "300"
+        }, {
+            label: "",
+            width: "10%",
+            display: (row) => (
+                <ButtonGroup
+                    actions={getActions(row)}
+                />
+            ),
+            className: "text-right",
+            minWidth: "60"
+        }];
+
+
         return (
             <Layout
-                activeRoute="Quản Lý Nhân Viên"
+                activeRoute="Quản Lý Tài Khoản"
             >
-                <div className="manage-premises-route manage-user-route">
-                    <div className="ct-page-title">
-                        <h1 className="ct-title">Quản Lý Nhân Viên</h1>
-                        <div className="avatar-group mt-3">
-                        </div>
+
+                <div className="card">
+                    <div className="card-title">
+                        Danh Sách Tài Khoản
                     </div>
 
-                    <p className="ct-lead">
-                        Thêm mới chỉnh sửa hoặc xoá nhân viên bán hàng.
-                    </p>
-
-                    <hr/>
-
-                    <div className="margin-bottom">
-                        <button type="button" className="btn btn-info" onClick={() => this.addUser()}>Thêm Nhân
-                            Viên
-                        </button>
+                    <div className="card-body">
+                        <button type="button" className="btn btn-primary btn-medium" onClick={() => this.addUser()}>Thêm</button>
                     </div>
 
-                    <table className="table table-hover">
-                        <thead>
-                        <tr>
-                            <th scope="col">Tài Khoản</th>
-                            <th scope="col">Tác Vụ</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {users && users.map((item, index) => (
-                            <tr key={index}>
-                                <td>
-                                    <div><b>{item.username}</b></div>
-                                    <div>Chức vụ: <b>{roles.find(r => r.value == item.role).label}</b></div>
-                                </td>
-                                <td>
-                                    <button className="btn btn-outline-primary btn-sm"
-                                            onClick={() => this.editUser(item)}>
-                                        <i className="fa fa-pencil"/>
-                                    </button>
-                                    {user._id != item._id && (
-                                        <button className="btn btn-outline-danger btn-sm"
-                                                onClick={() => this.remove(item)}>
-                                            <i className="fa fa-trash"/>
-                                        </button>
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
-
+                    <DataTable
+                        rows={users}
+                        columns={columns}
+                    />
                 </div>
             </Layout>
         );

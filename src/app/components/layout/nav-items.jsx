@@ -121,7 +121,7 @@ export const navItems = (user) => {
                 to: "/manage-premises",
                 hide: () => user.role != "admin"
             }, {
-                label: "Quản Lý Nhân Viên",
+                label: "Quản Lý Tài Khoản",
                 to: "/manage-user",
                 hide: () => user.role != "admin"
             }, {
