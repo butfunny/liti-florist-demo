@@ -15,7 +15,12 @@ export const premisesInfo = {
         listeners.forEach(f => f())
     },
     getActivePremise: () => {
-        return premises.find(p => p._id == cache.get("active-premises"));
+        if (cache.get("active-premises")) {
+            return premises.find(p => p._id == cache.get("active-premises"));
+        } else {
+            cache.get(premises[0]._id, "active-premises");
+            return premises[0];
+        }
     },
     removeListener: (listener) => {
         listeners.filter(l => l != listener);

@@ -44,11 +44,15 @@ module.exports = {
     isAdmin: (req, res, next) => {
         decode(req).then((decodedAuth) => {
                 UserDao.findOne({_id: decodedAuth._id}, {"password": 0}, (err, user) => {
-                    if (user.role === "admin") {
-                        req.user = user;
-                        next();
-                    } else {
+                    if (!user) {
                         res.status(401).end();
+                    } else {
+                        if (user.role === "admin") {
+                            req.user = user;
+                            next();
+                        } else {
+                            res.status(401).end();
+                        }
                     }
                 })
             }, () => {
