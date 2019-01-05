@@ -31,7 +31,7 @@ export class Input extends React.Component {
                     ref={input => this.input = input}
                     onFocus={() => this.setState({focus: true})}
                     onBlur={() => this.setState({focus: false})}
-                    value={value}
+                    value={value || ""}
                     onChange={onChange}
                     type={type}
                     readOnly={readOnly}
