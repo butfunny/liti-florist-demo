@@ -2,6 +2,8 @@
 const ProductTypeDao = require("../dao/product-type-dao");
 const ProductColorDao = require("../dao/product-color-dao");
 const Security = require("../security/security-be");
+const SupplierDao = require("../dao/supplier-dao");
+
 
 module.exports = function(app) {
     app.post("/product-type",Security.authorDetails, function (req, res) {
@@ -53,6 +55,33 @@ module.exports = function(app) {
             res.end();
         })
     });
+
+
+    app.post("/supplier",Security.isAdmin, function (req, res) {
+        SupplierDao.findOne({name: req.body.name}, (err, type) => {
+            if (!type) {
+                SupplierDao.create(req.body, () => {
+                    res.end();
+                })
+            } else {
+                res.end();
+            }
+        });
+    });
+
+    app.get("/suppliers",Security.isAdmin, function (req, res) {
+        SupplierDao.find({}, (err, types) => {
+            res.json(types);
+        })
+    });
+
+
+    app.put("/supplier", Security.isAdmin, (req, res) => {
+        SupplierDao.deleteOne({name: req.body.name}, () => {
+            res.end();
+        })
+    });
+
 
 };
 

@@ -121,6 +121,10 @@ export const navItems = (user) => {
                 to: "/manage-user",
                 hide: () => user.role != "admin"
             }, {
+                label: "Quản Lý Nhà Cung Cấp",
+                to: "/manage-supplier",
+                hide: () => user.role != "admin"
+            }, {
                 to: "/manage-role",
                 label: "Phân Quyền",
                 hide: () => user.role != "admin"

@@ -36,5 +36,14 @@ export const productApi = {
     },
     removeColor: (name) => {
         return api.put("/api/product-color", {name});
+    },
+    createSupplier: (data) => {
+        return api.post("/api/supplier", data)
+    },
+    suppliers: () => {
+        return api.get("/api/suppliers");
+    },
+    removeSupplier: (name) => {
+        return api.put("/api/supplier", {name});
     }
 };

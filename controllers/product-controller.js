@@ -31,6 +31,8 @@ module.exports = function(app) {
         ProductDao.find({base_id: req.params.base_id}, function (err, products) {
             res.send(products ? products : []);
         })
-    })
+    });
+
+
 };
 
