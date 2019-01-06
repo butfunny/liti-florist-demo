@@ -76,7 +76,9 @@ export class PaginationDataTable extends React.Component {
                     />
                 </div>
 
-                <div className="pagination-data-table">
+                <div className="pagination-data-table"
+                    style={{height: !rows ? "300px" : ""}}
+                >
 
                     { loading && (
                         <div className="loading-overlay">
