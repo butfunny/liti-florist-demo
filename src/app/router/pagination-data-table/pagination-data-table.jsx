@@ -67,7 +67,7 @@ export class PaginationDataTable extends React.Component {
 
                 <div className="card-body">
                     <Input
-                        style={{marginBottom: 0}}
+                        style={{marginBottom: "5px", marginTop: "5px"}}
                         onKeyDown={(e) => !loading && e.keyCode == 13 && this.search(e.target.value)}
                         value={keyword}
                         onChange={(e) => this.setState({keyword: e.target.value})}

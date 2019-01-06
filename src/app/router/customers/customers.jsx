@@ -83,7 +83,7 @@ export class Customers extends React.Component {
             width: "15%",
             display: (row) => formatNumber(row.totalPay),
             sortKey: "totalPay",
-            minWidth: "100"
+            minWidth: "150"
         }, {
             label: "Tổng Đơn",
             width: "15%",
@@ -139,59 +139,6 @@ export class Customers extends React.Component {
                             })
                         }}
                     />
-
-
-                    {/*{ customers && (*/}
-                        {/*<LoadingOverlay*/}
-                            {/*show={loading}*/}
-                        {/*>*/}
-                            {/*<div className="table-wrapper">*/}
-
-                                {/*<div className="row tb-header">*/}
-                                    {/*<div className="col col-md-6">*/}
-                                        {/*Khách hàng*/}
-                                    {/*</div>*/}
-                                    {/*<div className="col col-md-4">*/}
-                                        {/*Tổng chi*/}
-                                    {/*</div>*/}
-                                    {/*<div className="col col-md-2"/>*/}
-                                {/*</div>*/}
-
-                                {/*<div className="table-data">*/}
-                                    {/*{ customers.map((customer, index) => (*/}
-                                        {/*<div className="row" key={index}>*/}
-                                            {/*<div className="col col-md-6">*/}
-                                                {/*<div>{customer.customerName}</div>*/}
-                                                {/*{customer.customerPhone}*/}
-
-                                                {/*<div>*/}
-                                                    {/*<b>Số tiền đã chi tại từng cơ sở: </b>*/}
-                                                {/*</div>*/}
-
-                                                {/*{ premises.map((p, index) => (*/}
-                                                    {/*<div key={index}>*/}
-                                                        {/*{p.name}: {formatNumber(getPayOfPremises(customer._id, p._id))}*/}
-                                                    {/*</div>*/}
-                                                {/*))}*/}
-                                            {/*</div>*/}
-                                            {/*<div className="col col-md-4">*/}
-                                                {/*{formatNumber(getTotalPay(customer._id, false))}*/}
-
-                                                {/*{ getTotalPay(customer._id, true) > 0 && <div className="text-danger">Nợ <b>{formatNumber(getTotalPay(customer._id, true))}</b></div>}*/}
-                                            {/*</div>*/}
-
-                                            {/*<div className="col col-md2">*/}
-                                                {/*<button className="btn btn-outline-primary btn-sm" onClick={() => this.viewBills(customer)}>*/}
-                                                    {/*Xem lịch sử*/}
-                                                {/*</button>*/}
-                                            {/*</div>*/}
-                                        {/*</div>*/}
-                                    {/*))*/}
-                                    {/*}*/}
-                                {/*</div>*/}
-                            {/*</div>*/}
-                        {/*</LoadingOverlay>*/}
-                    {/*)}*/}
                 </div>
             </Layout>
         );

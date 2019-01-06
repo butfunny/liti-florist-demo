@@ -40,7 +40,13 @@
     padding-bottom: 25px;
 
     .total {
-      float right;
+
+      margin-bottom: 10px;
+      @media (min-width 769px) {
+        float right;
+        margin-bottom 0;
+      }
+
       font-weight: 400;
       font-size 13px;
       color: #646c9a;
