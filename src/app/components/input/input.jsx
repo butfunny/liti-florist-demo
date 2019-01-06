@@ -16,7 +16,7 @@ export class Input extends React.Component {
 
 
     render() {
-        let {label, className, value, readOnly, icon, error, type, onChange, onKeyDown} = this.props;
+        let {label, className, value, readOnly, icon, error, type, onChange, onKeyDown, info, style} = this.props;
         let {focus} = this.state;
 
         const hasValue = () => {
@@ -26,7 +26,7 @@ export class Input extends React.Component {
 
 
         return (
-            <div className={classnames("liti-input", className, error && "has-error", hasValue() && "has-value", focus && "focus")}>
+            <div className={classnames("liti-input", className, error && "has-error", hasValue() && "has-value", focus && "focus")} style={style}>
                 <input
                     ref={input => this.input = input}
                     onFocus={() => this.setState({focus: true})}
@@ -52,6 +52,12 @@ export class Input extends React.Component {
                 <div className="bar">
                     {label}
                 </div>
+
+                { hasValue() && (
+                    <div className="info">
+                        {info}
+                    </div>
+                )}
             </div>
         );
     }

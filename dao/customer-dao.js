@@ -15,6 +15,7 @@ module.exports = mongoose.model('CustomerDao', {
     buyerFrom: [String],
     hobby: String,
     notes: String,
-    totalPay: Number
+    totalPay: Number,
+    totalBill: Number
 }, "customers");
 

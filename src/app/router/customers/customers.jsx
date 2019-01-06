@@ -10,6 +10,7 @@ import {permissionInfo, premisesInfo} from "../../security/premises-info";
 import {Pagination} from "../../components/pagination/pagination";
 import {LoadingOverlay} from "../../components/loading-overlay/loading-overlay";
 import {userInfo} from "../../security/user-info";
+import {PaginationDataTable} from "../pagination-data-table/pagination-data-table";
 export class Customers extends React.Component {
 
     constructor(props) {
@@ -22,28 +23,11 @@ export class Customers extends React.Component {
             bills: null,
             total: 0,
             loading: false,
-
         };
 
 
     }
 
-    componentDidMount() {
-        this.getCustomerBills();
-    }
-
-    getCustomerBills() {
-
-        let {keyword, page} = this.state;
-        this.setState({loading: true});
-
-        customerApi.getCustomers({
-            keyword,
-            skip: (page - 1) * 50
-        }).then(({customers, bills, total}) => {
-            this.setState({customers, bills, loading: false, total})
-        });
-    }
 
     viewBills(customer) {
         let {bills} = this.state;
@@ -82,97 +66,133 @@ export class Customers extends React.Component {
         const user = userInfo.getUser();
         const permission = permissionInfo.getPermission();
 
+        let columns = [{
+            label: "Khách Hàng",
+            width: "25%",
+            display: (row) => row.customerName,
+            sortKey: "customerName",
+            minWidth: "200"
+        }, {
+            label: "Điện Thoại",
+            width: "15%",
+            display: (row) => row.customerPhone,
+            sortKey: "customerPhone",
+            minWidth: "150"
+        }, {
+            label: "Tổng Tiền",
+            width: "15%",
+            display: (row) => formatNumber(row.totalPay),
+            sortKey: "totalPay",
+            minWidth: "100"
+        }, {
+            label: "Tổng Đơn",
+            width: "15%",
+            display: (row) => formatNumber(row.totalBill),
+            sortKey: "totalBill",
+            minWidth: "100"
+        }, {
+            label: "Miêu tả",
+            width: "15%",
+            display: (row) => "Miêu tả",
+            minWidth: "100"
+        }, {
+            label: "Màu",
+            width: "5%",
+            display: (row) => "Màu",
+            minWidth: "100"
+        }, {
+            label: "Size",
+            width: "5%",
+            display: (row) => "Size",
+            minWidth: "100"
+        }, {
+            label: "Loại",
+            width: "5%",
+            display: (row) => "Loại",
+            minWidth: "100"
+        }];
+
 
         return (
             <Layout
                 activeRoute="Danh Sách Khách Hàng"
             >
-                { permission[user.role].indexOf("customer.list") == -1 ? (
-                    <div>
-                        Bạn không có quyền truy cập vào trang này vui lòng chọn những trang bạn có quyền trên thanh nav
+                <div className="card">
+                    <div className="card-title">
+                        Danh Sách Khách Hàng
                     </div>
-                ) : (
-                    <div className="customers-route">
-                        <div className="ct-page-title">
-                            <h1 className="ct-title">Danh Sách Khách Hàng</h1>
-                        </div>
 
-                        <Input
-                            onKeyDown={(e) => !loading && e.keyCode == 13 && this.setState({page: 1}, () => this.getCustomerBills())}
-                            value={keyword}
-                            onChange={(e) => this.setState({keyword: e.target.value})}
-                            placeholder="Nhấn enter để bắt đầu tìm"
-                        />
 
-                        { !customers && <span>Đang tải... <i className="fa fa-spinner fa-pulse"/></span>}
+                    <PaginationDataTable
+                        total={total}
+                        columns={columns}
+                        rows={customers}
+                        api={({keyword, page, sortKey, isDesc}) => {
+                            return customerApi.getCustomers({
+                                keyword,
+                                skip: (page - 1) * 15,
+                                sortKey,
+                                isDesc
+                            }).then(({customers, bills, total, vips}) => {
+                                this.setState({customers, bills, total, vips});
+                                return Promise.resolve();
+                            })
+                        }}
+                    />
 
-                        { customers && (
-                            <LoadingOverlay
-                                show={loading}
-                            >
-                                <div className="table-wrapper">
 
-                                    <div className="row tb-header">
-                                        <div className="col col-md-6">
-                                            Khách hàng
-                                        </div>
-                                        <div className="col col-md-4">
-                                            Tổng chi
-                                        </div>
-                                        <div className="col col-md-2"/>
-                                    </div>
+                    {/*{ customers && (*/}
+                        {/*<LoadingOverlay*/}
+                            {/*show={loading}*/}
+                        {/*>*/}
+                            {/*<div className="table-wrapper">*/}
 
-                                    <div className="table-data">
-                                        { customers.map((customer, index) => (
-                                            <div className="row" key={index}>
-                                                <div className="col col-md-6">
-                                                    <div>{customer.customerName}</div>
-                                                    {customer.customerPhone}
+                                {/*<div className="row tb-header">*/}
+                                    {/*<div className="col col-md-6">*/}
+                                        {/*Khách hàng*/}
+                                    {/*</div>*/}
+                                    {/*<div className="col col-md-4">*/}
+                                        {/*Tổng chi*/}
+                                    {/*</div>*/}
+                                    {/*<div className="col col-md-2"/>*/}
+                                {/*</div>*/}
 
-                                                    <div>
-                                                        <b>Số tiền đã chi tại từng cơ sở: </b>
-                                                    </div>
+                                {/*<div className="table-data">*/}
+                                    {/*{ customers.map((customer, index) => (*/}
+                                        {/*<div className="row" key={index}>*/}
+                                            {/*<div className="col col-md-6">*/}
+                                                {/*<div>{customer.customerName}</div>*/}
+                                                {/*{customer.customerPhone}*/}
 
-                                                    { premises.map((p, index) => (
-                                                        <div key={index}>
-                                                            {p.name}: {formatNumber(getPayOfPremises(customer._id, p._id))}
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                                <div className="col col-md-4">
-                                                    {formatNumber(getTotalPay(customer._id, false))}
+                                                {/*<div>*/}
+                                                    {/*<b>Số tiền đã chi tại từng cơ sở: </b>*/}
+                                                {/*</div>*/}
 
-                                                    { getTotalPay(customer._id, true) > 0 && <div className="text-danger">Nợ <b>{formatNumber(getTotalPay(customer._id, true))}</b></div>}
-                                                </div>
+                                                {/*{ premises.map((p, index) => (*/}
+                                                    {/*<div key={index}>*/}
+                                                        {/*{p.name}: {formatNumber(getPayOfPremises(customer._id, p._id))}*/}
+                                                    {/*</div>*/}
+                                                {/*))}*/}
+                                            {/*</div>*/}
+                                            {/*<div className="col col-md-4">*/}
+                                                {/*{formatNumber(getTotalPay(customer._id, false))}*/}
 
-                                                <div className="col col-md2">
-                                                    <button className="btn btn-outline-primary btn-sm" onClick={() => this.viewBills(customer)}>
-                                                        Xem lịch sử
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ))
-                                        }
-                                    </div>
-                                </div>
-                            </LoadingOverlay>
-                        )}
+                                                {/*{ getTotalPay(customer._id, true) > 0 && <div className="text-danger">Nợ <b>{formatNumber(getTotalPay(customer._id, true))}</b></div>}*/}
+                                            {/*</div>*/}
 
-                        <div className="table-footer">
-                            <div className="total">
-                                <b>Tổng số khách hàng: {total}</b>
-                            </div>
-
-                            { customers && (
-                                <Pagination
-                                    value={page || 1}
-                                    total={Math.round(total / 50) }
-                                    onChange={(newPage) => !loading && page != newPage && this.setState({page: newPage}, () => this.getCustomerBills()) }
-                                />
-                            )}
-                        </div>
-                    </div>
-                )}
+                                            {/*<div className="col col-md2">*/}
+                                                {/*<button className="btn btn-outline-primary btn-sm" onClick={() => this.viewBills(customer)}>*/}
+                                                    {/*Xem lịch sử*/}
+                                                {/*</button>*/}
+                                            {/*</div>*/}
+                                        {/*</div>*/}
+                                    {/*))*/}
+                                    {/*}*/}
+                                {/*</div>*/}
+                            {/*</div>*/}
+                        {/*</LoadingOverlay>*/}
+                    {/*)}*/}
+                </div>
             </Layout>
         );
     }

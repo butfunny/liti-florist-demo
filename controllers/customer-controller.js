@@ -2,6 +2,7 @@ const _ = require('lodash');
 const Security = require("../security/security-be");
 const CustomerDao = require("../dao/customer-dao");
 const BillDao = require("../dao/bill-dao");
+const VipDao = require("../dao/vip-dao");
 const BillSupport = require("../common/common");
 const SMSService = require("../service/sms-service");
 const {getTotalBill} = require("../common/common");
@@ -49,15 +50,20 @@ module.exports = (app) => {
     });
 
     app.post("/customers", (req, res) => {
-        let {skip, keyword} = req.body;
-        CustomerDao.find({$or: [{customerPhone: new RegExp(".*" + keyword + ".*")}, {customerName: new RegExp(".*" + keyword + ".*")}]}).skip(skip).limit(50).exec((err, customers) => {
+        let {skip, keyword, sortKey, isDesc} = req.body;
+        CustomerDao.find({$or: [{customerPhone: new RegExp(".*" + keyword + ".*")}, {customerName: new RegExp(".*" + keyword + ".*")}]}).sort({[sortKey] : isDesc ? -1 : 1}).skip(skip).limit(15).exec((err, customers) => {
             CustomerDao.countDocuments({$or: [{customerPhone: new RegExp(".*" + keyword + ".*")}, {customerName: new RegExp(".*" + keyword + ".*")}]}, (err, count) => {
                 BillDao.find({customerId: {$in: customers.map(c => c._id)}}, (err, bills) => {
-                    res.json({
-                        customers,
-                        bills,
-                        total: count
+                    VipDao.find({customerId: {$in: customers.map(c => c._id)}}, (err, vips) => {
+                        res.json({
+                            customers,
+                            bills,
+                            total: count,
+                            vips
+                        })
                     })
+
+
                 })
             })
         })
@@ -83,7 +89,7 @@ module.exports = (app) => {
     app.put("/update-customer-pay/:id", Security.authorDetails, (req, res) => {
         BillDao.find({customerId: req.params.id}, (err, bills) => {
             let totalPay = _.sumBy(bills, b => getTotalBill(b));
-            CustomerDao.findOneAndUpdate({_id: req.params.id}, {totalPay: totalPay}, () => {
+            CustomerDao.findOneAndUpdate({_id: req.params.id}, {totalPay: totalPay, totalBill: bills.length}, () => {
                 res.end();
             })
         })

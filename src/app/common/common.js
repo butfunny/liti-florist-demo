@@ -1,6 +1,6 @@
 import sumBy from "lodash/sumBy";
 
-export let formatNumber = (numb = 0) => numb.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+export let formatNumber = (numb = 0) => parseInt(numb).toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
 
 export const getTotalBill = (bill) => {
 

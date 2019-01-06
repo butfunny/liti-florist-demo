@@ -6,8 +6,8 @@ export class Pagination extends React.Component {
 
         let total = this.props.total;
         let r = {
-            from: Math.round((this.props.value - 1) / 10) * 10 + 1,
-            to  : Math.min(total, Math.round((this.props.value - 1) / 10) * 10 + 10)
+            from: Math.floor((this.props.value - 1) / 10) * 10 + 1,
+            to  : Math.min(total, Math.floor((this.props.value - 1) / 10) * 10 + 10)
         };
         if (this.props.value != 1 && this.props.value == r.from) {
             r.from--;
@@ -43,40 +43,42 @@ export class Pagination extends React.Component {
     render() {
         let shownPages = this.getShownPages();
 
-
         return (
-            <nav>
-                <ul className="pagination justify-content-end">
+            <div className="pagination">
 
-                    <li className={classnames("page-item", this.props.value <= 1 && "disabled")} onClick={()=> this.props.value > 1 && this.props.onChange(this.props.value - 1)}>
+                { shownPages.length > 0 && (
+                    <div className={classnames("page-item page-button", this.props.value <= 1 && "disabled")} onClick={()=> this.props.value > 1 && this.props.onChange(this.props.value - 1)}>
                         <span className="page-link" >
                             <i className="fa fa-angle-left"/>
-                            <span className="sr-only">Previous</span>
                         </span>
-                    </li>
+                    </div>
+                )}
+
+                {shownPages.length == 0 && (
+                    <div className={classnames("page-item active")}
+                         onClick={()=> this.props.onChange(1)}
+                    ><span className="page-link" >1</span></div>
+                )}
 
 
-                    { shownPages.map((p)=> (
-                        <li className={classnames("page-item", {active: p.page == this.props.value})}
-                            key={p.page}
-                            onClick={()=> this.props.onChange(p.page)}
-                        ><span className="page-link" >{p.label}</span></li>
-                    )) }
+                { shownPages.map((p)=> (
+                    <div className={classnames("page-item", {active: p.page == this.props.value})}
+                         key={p.page}
+                         onClick={()=> this.props.onChange(p.page)}
+                    ><span className="page-link" >{p.label}</span></div>
+                )) }
 
-                    { this.props.value < this.props.total && (
-                        <li
-                            onClick={()=> this.props.value < this.props.total && this.props.onChange(this.props.value + 1)}
-                            className={classnames("page-item", this.props.value >= this.props.total && "disabled")}>
+                { this.props.value < this.props.total && (
+                    <div
+                        onClick={()=> this.props.value < this.props.total && this.props.onChange(this.props.value + 1)}
+                        className={classnames("page-item page-button", this.props.value >= this.props.total && "disabled")}>
                             <span className="page-link">
                                 <i className="fa fa-angle-right"/>
-                                <span className="sr-only">Next</span>
                             </span>
-                        </li>
-                    )}
+                    </div>
+                )}
 
-
-                </ul>
-            </nav>
+            </div>
         )
     }
 }

@@ -1,0 +1,51 @@
+.pagination-data-table {
+  position relative;
+
+  .loading-overlay {
+    position absolute;
+    top: 0;
+    left 0;
+    width 100%;
+    height 100%;
+    background: rgba(255,255,255,0.5);
+
+    .loading-box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      width: 169px;
+      cursor: wait;
+      box-shadow: 0 0 13px 0 rgba(82,63,105,0.05);
+      background: #fff;
+      font-size: 14px;
+      line-height: 40px;
+      font-weight: 500;
+
+      .loading-icon {
+        padding-left 10px;
+
+        i {
+          color primary;
+          font-size 14px;
+        }
+      }
+
+
+    }
+  }
+
+  .table-footer {
+    padding: 15px;
+    padding-bottom: 25px;
+
+    .total {
+      float right;
+      font-weight: 400;
+      font-size 13px;
+      color: #646c9a;
+      padding-top: 10px;
+      padding-right 10px;
+    }
+  }
+}
