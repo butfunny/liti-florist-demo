@@ -18,5 +18,11 @@ export const customerApi = {
     },
     getCustomerBirthDate: () => {
         return api.get(`/api//customers-birthday`);
+    },
+    getCustomersAll: () => {
+        return api.get("/api/get-customers")
+    },
+    updateCustomerPay: (customerID) => {
+        return api.put(`/api/update-customer-pay/${customerID}`)
     }
 };

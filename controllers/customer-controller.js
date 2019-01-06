@@ -4,6 +4,7 @@ const CustomerDao = require("../dao/customer-dao");
 const BillDao = require("../dao/bill-dao");
 const BillSupport = require("../common/common");
 const SMSService = require("../service/sms-service");
+const {getTotalBill} = require("../common/common");
 
 module.exports = (app) => {
     app.post("/customer", Security.authorDetails, function(req, res) {
@@ -76,6 +77,21 @@ module.exports = (app) => {
 
             res.json(ret);
 
+        })
+    });
+
+    app.put("/update-customer-pay/:id", Security.authorDetails, (req, res) => {
+        BillDao.find({customerId: req.params.id}, (err, bills) => {
+            let totalPay = _.sumBy(bills, b => getTotalBill(b));
+            CustomerDao.findOneAndUpdate({_id: req.params.id}, {totalPay: totalPay}, () => {
+                res.end();
+            })
+        })
+    });
+
+    app.get("/get-customers", Security.authorDetails, (req, res) => {
+        CustomerDao.find({}, (err, customers) => {
+            res.json(customers);
         })
     })
 
