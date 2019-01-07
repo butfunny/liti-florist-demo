@@ -115,7 +115,7 @@ export class ManageVipModal extends React.Component {
                             <Fragment>
 
                                 {vipAlready && (
-                                    <div className="loading text-danger text-sm-left">
+                                    <div className="text-danger vip-already">
                                         Khách đã làm vip rồi
                                     </div>
                                 )}
@@ -254,9 +254,9 @@ export class ManageVipModal extends React.Component {
                                 !customer.buyerFrom || customer.buyerFrom.length == 0
                                 }
                                 onClick={() => this.submit()}
-                                className="btn btn-info btn-icon">
-                            <span className="btn-inner--text">Lưu</span>
-                            {saving && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
+                                className="btn btn-primary">
+                            <span className="btn-text">Lưu</span>
+                            {saving && <span className="loading-icon"><i className="fa fa-spinner fa-pulse"/></span>}
                         </button>
                     </div>
                 </div>
