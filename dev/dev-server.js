@@ -24,6 +24,7 @@ require("../controllers/florist-controller")(router);
 require("../controllers/upload-controller")(router);
 require("../controllers/product-type-controller")(router);
 require("../controllers/photos-controler")(router);
+require("../controllers/flowers-controller")(router);
 
 app.use("/upload", express.static(__dirname + "/../upload"));
 

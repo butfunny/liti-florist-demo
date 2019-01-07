@@ -125,6 +125,14 @@ export const permissions = [{
     label: "Xoá Chiến Dịch",
     father: "Khuyến Mại"
 }, {
+    value: "warehouse.products.view",
+    label: "Xem Danh Sách Sản Phẩm",
+    father: "Kho"
+}, {
+    value: "warehouse.products.update",
+    label: "Chỉnh Sửa Danh Sách Sản Phẩm",
+    father: "Kho"
+},  {
     value: "warehouse.view",
     label: "Xem Kho",
     father: "Kho"
@@ -169,3 +177,5 @@ export const permissions = [{
     label: "Xem giá gốc",
     father: "Kho"
 }];
+
+export const catalogs = ["Hoa Chính", "Hoa Lá Phụ/Lá", "Phụ Kiện", "Cost"];

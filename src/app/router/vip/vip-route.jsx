@@ -184,11 +184,9 @@ export class VipRoute extends React.Component {
                     </div>
 
                     <div className="card-body">
-                        <div className="margin-bottom">
-                            <button type="button" className="btn btn-primary" onClick={() => this.addVip()}>Thêm khách
-                                VIP
-                            </button>
-                        </div>
+                        <button type="button" className="btn btn-primary" onClick={() => this.addVip()}>Thêm khách
+                            VIP
+                        </button>
 
                         <Input
                             value={keyword}
