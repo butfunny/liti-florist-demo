@@ -11,6 +11,8 @@ import {ChangeEndDateModal} from "./change-end-date-modal";
 import {ButtonGroup} from "../../components/button-group/button-group";
 import {DataTable} from "../../components/data-table/data-table";
 import {ColumnViewMore} from "../../components/column-view-more/column-view-more";
+import {EditVipModal} from "./edit-vip-modal";
+
 export class VipRoute extends React.Component {
 
     constructor(props) {
@@ -54,15 +56,21 @@ export class VipRoute extends React.Component {
     }
 
     edit(vip) {
+
+        let {customers} = this.state;
+
+
         const modal = modals.openModal({
             content: (
-                <ChangeEndDateModal
+                <EditVipModal
                     vip={vip}
+                    customer={customers.find(c => c._id == vip.customerId)}
                     onDismiss={() => modal.close()}
-                    onClose={(endDate) => {
-                        let {vips} = this.state;
+                    onClose={({vip, customer}) => {
+                        let {vips, customers} = this.state;
                         this.setState({
-                            vips: vips.map(v => v._id == vip._id ? ({...v, endDate}) : v)
+                            vips: vips.map(v => v._id == vip._id ? vip : v),
+                            customers: customers.map(v => v._id == customer._id ? customer : v)
                         });
                         modal.close();
                     }}
@@ -89,9 +97,9 @@ export class VipRoute extends React.Component {
                 }
             }
 
-            return vip.cardId.toLowerCase().indexOf(keyword.toLowerCase()) > - 1 ||
-            customer.customerName.toLowerCase().indexOf(keyword.toLowerCase()) > - 1 ||
-            customer.customerPhone.toLowerCase().indexOf(keyword.toLowerCase()) > - 1
+            return vip.cardId.toLowerCase().indexOf(keyword.toLowerCase()) > -1 ||
+                customer.customerName.toLowerCase().indexOf(keyword.toLowerCase()) > -1 ||
+                customer.customerPhone.toLowerCase().indexOf(keyword.toLowerCase()) > -1
         });
 
         let columns = [{
@@ -111,7 +119,9 @@ export class VipRoute extends React.Component {
                                 <div className="info-item">Ghi chú: <b>{customer.notes}</b></div>
                                 <div className="info-item">Cơ sở mua hàng: <b>{customer.premises.join(", ")}</b></div>
                                 <div className="info-item">Kênh mua hàng: <b>{customer.buyerFrom.join(", ")}</b></div>
-                                { customer.birthDate && <div>Ngày Sinh: <b>{moment(new Date(customer.birthDate)).format("DD/MM/YYYY")}</b></div>}
+                                {customer.birthDate &&
+                                <div>Ngày Sinh: <b>{moment(new Date(customer.birthDate)).format("DD/MM/YYYY")}</b>
+                                </div>}
                             </Fragment>
                         )}
                         subText={`Số Điện Thoại: ${customer.customerPhone}`}
@@ -123,7 +133,8 @@ export class VipRoute extends React.Component {
             label: "Số Thẻ",
             width: "20%",
             sortBy: (row) => row.cardId,
-            display: (row) => <span>6666 {row.cardId.toString().substr(0, 4) + " " + row.cardId.toString().substr(4, 7)}</span>,
+            display: (row) =>
+                <span>6666 {row.cardId.toString().substr(0, 4) + " " + row.cardId.toString().substr(4, 7)}</span>,
             minWidth: "150"
         }, {
             label: "Loại Thẻ",
@@ -149,8 +160,8 @@ export class VipRoute extends React.Component {
             display: (row) => (
                 <ButtonGroup
                     actions={[{
-                        name: "Gia hạn thẻ",
-                        icon: <i className="fa fa-credit-card"/>,
+                        name: "Sửa Thông Tin",
+                        icon: <i className="fa fa-pencil"/>,
                         click: () => this.edit(row)
                     }, {
                         name: "Xóa",
@@ -161,7 +172,6 @@ export class VipRoute extends React.Component {
             ),
             minWidth: "50"
         }];
-
 
 
         return (
@@ -175,7 +185,9 @@ export class VipRoute extends React.Component {
 
                     <div className="card-body">
                         <div className="margin-bottom">
-                            <button type="button" className="btn btn-primary" onClick={() => this.addVip()}>Thêm khách VIP</button>
+                            <button type="button" className="btn btn-primary" onClick={() => this.addVip()}>Thêm khách
+                                VIP
+                            </button>
                         </div>
 
                         <Input
@@ -192,7 +204,7 @@ export class VipRoute extends React.Component {
                     </div>
 
                     <DataTable
-                        rows={vips ? vipsFiltered: null}
+                        rows={vips ? vipsFiltered : null}
                         columns={columns}
                     />
                 </div>
