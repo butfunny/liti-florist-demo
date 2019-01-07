@@ -104,19 +104,24 @@ export class ManageVipModal extends React.Component {
 
                         { customer._id && (
                             <Fragment>
-                                <div className="form-group">
-                                    <label className="control-label">Thông Tin Khách Hàng</label>
-                                    <div>
-                                        Tên: <b>{customer.customerName}</b>
-                                    </div>
 
+                                <Input
+                                    readOnly
+                                    label="Tên Khách Hàng"
+                                    value={customer.customerName}
+                                />
+
+                                <DatePicker
+                                    label="Ngày Sinh"
+                                    value={customer.birthDate ? new Date(customer.birthDate) : new Date()}
+                                    onChange={(birthDate) => this.setState({customer: {...customer, birthDate}})}
+                                />
+
+                                <div className="form-group">
                                     <div className="form-group">
                                         <label className="control-label">Ngày sinh</label>
 
-                                        <DatePicker
-                                            value={customer.birthDate ? new Date(customer.birthDate) : new Date()}
-                                            onChange={(birthDate) => this.setState({customer: {...customer, birthDate}})}
-                                        />
+
                                     </div>
 
                                     <div className="form-group">

@@ -28,7 +28,7 @@ export class DayView extends React.Component {
                             const updatedDay = datePickerUtil.subtractMonth({day: 1, month, year});
                             onChangeDateView({month: updatedDay.month, year: updatedDay.year});
                         }}>
-                            «
+                            <i className="fa fa-angle-left"/>
                         </th>
                         <th colSpan="5" className="datepicker-switch" onClick={() => onSwitchToMonth()}>Tháng {month} {year}</th>
                         <th className="next"
@@ -37,7 +37,7 @@ export class DayView extends React.Component {
                                 onChangeDateView({month: updatedDay.month, year: updatedDay.year});
                             }}
                         >
-                            »
+                            <i className="fa fa-angle-right"/>
                         </th>
                     </tr>
                     <tr>

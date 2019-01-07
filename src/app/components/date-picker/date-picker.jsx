@@ -1,6 +1,7 @@
 import React from "react";
 import {Calendar} from "./calendar/calendar";
 import {ClickOutside} from "../click-outside/click-outside";
+import classnames from "classnames";
 export class DatePicker extends React.Component {
 
     constructor(props) {
@@ -36,31 +37,43 @@ export class DatePicker extends React.Component {
     render() {
 
         let {value, open} = this.state;
+        let {label} = this.props;
 
         const formatValue = (value) => {
             if (value < 10) return `0${value}`;
             return value
         };
 
+        console.log(open);
+
         return (
             <ClickOutside onClickOut={() => this.setState({open :false})}>
-                <div className="date-picker">
-                    <div className="input-group">
-                        <div className="input-group-prepend">
-                            <span className="input-group-text"><i className="ni ni-calendar-grid-58"/></span>
-                        </div>
-                        <input className="form-control"
-                               type="text"
-                               value={`${formatValue(value.day)}/${formatValue(value.month)}/${value.year}`}
-                               readOnly
-                               onClick={() => this.setState({open: true})}
-                        />
+                <div className="date-picker liti-input select has-value" onClick={() => this.setState({open: true})}>
+
+                    <div className="select-text">
+                        {formatValue(value.day)}/{formatValue(value.month)}/{value.year}
+                    </div>
+
+                    <div className="calender-button">
+                        <i className="fa fa-calendar" aria-hidden="true"/>
+                    </div>
+
+                    <div className="label"
+
+                    >
+                        {label}
+                    </div>
+
+                    <div className="bar">
+                        {label}
                     </div>
 
                     { open && (
                         <Calendar
                             value={value}
-                            onChange={(value) => this.handleChange(value)}
+                            onChange={(value) => {
+                                setTimeout(() => this.handleChange(value))
+                            }}
                         />
                     )}
 

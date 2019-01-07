@@ -17,13 +17,13 @@ export class MonthView extends React.Component {
                     <tr>
                         <th className="prev" onClick={() => {
                             onChange({month: value.month, year: value.year - 1});
-                        }}>«</th>
+                        }}><i className="fa fa-angle-left"/></th>
                         <th colSpan="5" className="datepicker-switch">{value.year}</th>
                         <th className="next"
                             onClick={() => {
                                 onChange({month: value.month, year: value.year + 1});
                             }}
-                        >»</th>
+                        ><i className="fa fa-angle-right"/></th>
                     </tr>
                     </thead>
                     <tbody>
