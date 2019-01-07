@@ -10,9 +10,19 @@
   }
 
 
+
   .dropdown-menu {
     width 100%;
     position absolute;
+    box-shadow: 0px 0px 13px 0px rgba(82, 63, 105, 0.05);
+    background white;
+    font-size: 12px;
+    z-index 10;
+    border: 1px solid #d1d7e2;
+    border-top: 0;
+    border-bottom-left-radius 2px;
+    border-bottom-right-radius 2px;
+    top: 100%;
 
 
     .dropdown-item {
@@ -21,6 +31,10 @@
       overflow: hidden;
       text-overflow: ellipsis;
       position relative;
+      padding: 0.7rem 1.2rem;
+      color: #646c9a;
+      transition: all 0.2s;
+      display block;
 
       .btn-danger {
         position absolute;
@@ -30,8 +44,8 @@
       }
 
       &.active {
-        color: #fff;
-        background-color: #5e72e4;
+        color: #5d78ff;
+        background-color: #f8f9fa;
       }
     }
   }

@@ -85,25 +85,22 @@ export class ManageVipModal extends React.Component {
                     </div>
 
                     <div className="modal-body">
-                        <div className="form-group">
-                            <label className="control-label"> Số Điện Thoại Khách</label>
+                        <AutoComplete
+                            asyncGet={(phone) => {
+                                if (phone.length > 3) {
+                                    return customerApi.getCustomerByPhone(phone).then((resp) => resp.customers)
+                                }
 
-                            <AutoComplete
-                                asyncGet={(phone) => {
-                                    if (phone.length > 3) {
-                                        return customerApi.getCustomerByPhone(phone).then((resp) => resp.customers)
-                                    }
-
-                                    return Promise.resolve([])
-                                }}
-                                onSelect={(customer) => this.handleSelect(customer)}
-                                objectKey="customerPhone"
-                                object={customer}
-                                onChange={(value) => this.setState({customer: {...customer, customerPhone: value, _id: null}, vipAlready: false, errorCreate: false})}
-                                displayAs={(customer) => `${customer.customerPhone} - ${customer.customerName}`}
-                                noPopup
-                            />
-                        </div>
+                                return Promise.resolve([])
+                            }}
+                            onSelect={(customer) => this.handleSelect(customer)}
+                            objectKey="customerPhone"
+                            object={customer}
+                            onChange={(value) => this.setState({customer: {...customer, customerPhone: value, _id: null}, vipAlready: false, errorCreate: false})}
+                            displayAs={(customer) => `${customer.customerPhone} - ${customer.customerName}`}
+                            noPopup
+                            label="Số Điện Thoại Khách"
+                        />
 
                         { customer._id && (
                             <Fragment>

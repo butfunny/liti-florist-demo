@@ -12,7 +12,8 @@ export class AutoComplete extends React.Component {
             selected: false,
             value: props.object[props.objectKey],
             list: [],
-            loading: false
+            loading: false,
+            open: false
         }
     }
 
@@ -101,13 +102,13 @@ export class AutoComplete extends React.Component {
 
 
                 {!loading && selected && list.slice(0, 10).length > 0 && (
-                    <div className="dropdown-menu dropdown-menu-center show">
+                    <div className="dropdown-menu">
                         {list.map((item, index) => (
                             <a className={classnames("dropdown-item", selectedIndex == index && "active")}
                                onMouseEnter={() => this.setState({selectedIndex: index})}
                                onMouseLeave={() => this.setState({selectedIndex: -1})}
                                onMouseDown={() => {
-                                   this.setState({value: item[objectKey]});
+                                   this.setState({value: item[objectKey], selected: false});
                                    onSelect(item)
                                }}
                                key={index}>
