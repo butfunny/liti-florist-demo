@@ -32,30 +32,19 @@ export class Customers extends React.Component {
     }
 
 
-    viewBills(customer) {
-        let {bills} = this.state;
-
-        const modal = modals.openModal({
-            content: (
-                <CustomerBillModal
-                    bills={bills.filter(b => b.customerId == customer._id)}
-                    onClose={() => modal.close()}
-                />
-            )
-        })
-    }
-
     render() {
 
-        let {customers, bills, keyword, loading, page, total} = this.state;
+        let {customers, bills, total, vips} = this.state;
 
-        const user = userInfo.getUser();
-        const permission = permissionInfo.getPermission();
 
         let columns = [{
             label: "Khách Hàng",
             width: "15%",
-            display: (row) => row.customerName,
+            display: (row) => (
+                <div className="customer-name">
+                    {row.customerName} {vips.find(v => v.customerId == row._id) && <span className="text-danger vip">VIP</span>}
+                </div>
+            ),
             sortKey: "customerName",
             minWidth: "150"
         }, {
@@ -107,7 +96,6 @@ export class Customers extends React.Component {
                     <div className="card-title">
                         Danh Sách Khách Hàng
                     </div>
-
 
                     <PaginationDataTable
                         total={total}
@@ -186,6 +174,10 @@ class CustomerDescriptionInfo extends React.Component {
         this.state = {
             showInfo: false
         }
+    }
+
+    componentWillReceiveProps(props) {
+      this.setState({showInfo: false})
     }
 
     render() {
