@@ -6,13 +6,7 @@ import {vipApi} from "../../api/vip-api";
 import moment from "moment";
 import {Input} from "../../components/input/input";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
-import {securityApi} from "../../api/security-api";
 import {Checkbox} from "../../components/checkbox/checkbox";
-import {userInfo} from "../../security/user-info";
-import {permissionInfo} from "../../security/premises-info";
-import {LoadingOverlay} from "../../components/loading-overlay/loading-overlay";
-import {formatNumber} from "../../common/common";
-import {Pagination} from "../../components/pagination/pagination";
 import {ChangeEndDateModal} from "./change-end-date-modal";
 import {ButtonGroup} from "../../components/button-group/button-group";
 import {DataTable} from "../../components/data-table/data-table";
@@ -203,79 +197,6 @@ export class VipRoute extends React.Component {
                         columns={columns}
                     />
                 </div>
-
-                {/*<div className="manage-premises-route manage-user-route">*/}
-                    {/*<div className="ct-page-title">*/}
-                        {/*<h1 className="ct-title">Quản lý khách hàng VIP</h1>*/}
-                        {/*<div className="avatar-group mt-3">*/}
-                        {/*</div>*/}
-                    {/*</div>*/}
-
-                    {/*<hr/>*/}
-
-
-
-                    {/*<div className="form-group">*/}
-
-                    {/*</div>*/}
-
-
-
-                    {/*<table className="table table-hover">*/}
-                        {/*<thead>*/}
-                        {/*<tr>*/}
-                            {/*<th scope="col">Thông Tin Khách</th>*/}
-                            {/*<th scope="col">Loại VIP</th>*/}
-                            {/*<th scope="col">Tác Vụ</th>*/}
-                        {/*</tr>*/}
-                        {/*</thead>*/}
-                        {/*<tbody>*/}
-                        {/*{vips && vipsFiltered.map((item, index) => {*/}
-
-                            {/*let customer = getCustomer(item.customerId);*/}
-
-                            {/*return (*/}
-                                {/*<tr key={index}>*/}
-                                    {/*<td>*/}
-
-
-                                        {/*<div>*/}
-                                            {/*Người lập: <b>{item.createdBy ? item.createdBy.username : ""}</b>*/}
-                                        {/*</div>*/}
-                                        {/*<div>*/}
-                                            {/*Ngày phát hành: <b>{moment(new Date(item.created)).format("DD/MM/YYYY")}</b>*/}
-                                        {/*</div>*/}
-                                        {/*<div>*/}
-                                            {/*Ngày hết hạn: <b>{moment(new Date(item.endDate)).format("DD/MM/YYYY")}</b>*/}
-                                        {/*</div>*/}
-                                    {/*</td>*/}
-
-                                    {/*<td*/}
-                                        {/*style={{minWidth: "200px"}}*/}
-                                    {/*>*/}
-                                        {/*{item.vipType}*/}
-                                    {/*</td>*/}
-                                    {/*<td*/}
-                                        {/*style={{minWidth: "150px"}}*/}
-                                    {/*>*/}
-
-                                        {/*<button className="btn btn-outline-primary btn-sm"*/}
-                                                {/*onClick={() => this.edit(item)}>*/}
-                                            {/*<i className="fa fa-edit"/>*/}
-                                        {/*</button>*/}
-
-                                        {/*<button className="btn btn-outline-danger btn-sm"*/}
-                                                {/*onClick={() => this.remove(item)}>*/}
-                                            {/*<i className="fa fa-trash"/>*/}
-                                        {/*</button>*/}
-                                    {/*</td>*/}
-                                {/*</tr>*/}
-                            {/*)*/}
-                        {/*})}*/}
-                        {/*</tbody>*/}
-                    {/*</table>*/}
-
-                {/*</div>*/}
 
             </Layout>
         );
