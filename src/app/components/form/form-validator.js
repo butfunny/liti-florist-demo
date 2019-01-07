@@ -10,20 +10,16 @@ export let formValidator = {
 
             if (path.indexOf("@") > -1) {
                 let arr = path.substring(1).split(".");
-                for (let i = 0; i < formValue[arr[0]].length; i++) {
-                    let formValueElem = formValue[arr[0]][i][arr[1]];
+                let formValueElem = formValue[arr[0]][arr[1]];
 
-                    for (let func of arrFunc) {
-                        if (!func(formValueElem, formValue[arr[0]][i]).valid) {
-                            invalidPaths.push({
-                                invalidKey: path,
-                                text: func(formValueElem).text,
-                                index: i
-                            })
-                        }
+                for (let func of arrFunc) {
+                    if (!func(formValueElem).valid) {
+                        invalidPaths.push({
+                            invalidKey: path,
+                            text: func(formValueElem).text
+                        })
                     }
                 }
-
             } else {
                 for (let func of arrFunc) {
                     if (!func(pathData).valid) {

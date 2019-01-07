@@ -31,10 +31,6 @@ export class ButtonGroup extends React.Component {
                 { open && (
                     <ClickOutside onClickOut={() => this.setState({open: false})}>
                         <div className="button-dropdown"
-                             style={{
-                                 top: `${top + 30}px`,
-                                 left: `${left - 69}px`
-                             }}
                         >
                             { actions.map((action, index) => (
                                 <div className="button-dropdown-item" key={index}

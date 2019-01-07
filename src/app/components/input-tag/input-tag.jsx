@@ -109,7 +109,7 @@ export class InputTag extends React.Component {
 
     render() {
 
-        let {placeHolder, tags, isErrorTag, list, onChange, onClick} = this.props;
+        let {placeHolder, tags, isErrorTag, list, onChange, onClick, error, label} = this.props;
         let {selected, value, selectedIndex, selectedTag} = this.state;
         const filteredList = list.filter(item => tags.map(u => u.user_id).indexOf(item.user_id) == -1 && item.username.toLowerCase().indexOf(value.toLowerCase()) > -1);
 
@@ -130,6 +130,20 @@ export class InputTag extends React.Component {
                         </a>
                     </div>
                 ))}
+
+                <div className="label"
+
+                >
+                    {label}
+                </div>
+
+                <div className="bar">
+                    {label}
+                </div>
+
+                <div className="error">
+                    {error}
+                </div>
 
                 <div className="input-wrapper auto-complete">
                     <input placeholder="Nhập username.."

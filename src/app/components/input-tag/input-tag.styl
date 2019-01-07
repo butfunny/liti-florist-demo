@@ -9,6 +9,14 @@
   border-bottom 0;
   border-radius: 2px;
 
+  .error {
+    position absolute;
+    font-size: 10px;
+    bottom: -15px;
+    color danger;
+  }
+
+
   .tag-item {
     position: relative;
     border-right: 1px solid #d1d7e2;
@@ -75,6 +83,10 @@
 
   &.has-error {
     border-color danger !important;
+
+    .label {
+      color danger;
+    }
   }
 
   .input-wrapper {

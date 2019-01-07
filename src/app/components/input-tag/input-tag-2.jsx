@@ -139,6 +139,10 @@ export class InputTag2 extends React.Component {
                     {label}
                 </div>
 
+                <div className="error">
+                    {error}
+                </div>
+
                 <div className="input-wrapper auto-complete">
                     <input
                            className={classnames(this.state.error && "error-add")}

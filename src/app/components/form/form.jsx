@@ -9,6 +9,10 @@ export class Form extends React.Component {
         }
     }
 
+    setShowError(value) {
+        this.setState({showError: value})
+    }
+
     render() {
 
         let {validations, formValue, render, onSubmit, className} = this.props;

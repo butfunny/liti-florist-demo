@@ -149,8 +149,8 @@ export class VipRoute extends React.Component {
             display: (row) => (
                 <ButtonGroup
                     actions={[{
-                        name: "Sửa",
-                        icon: <i className="fa fa-pencil-square-o"/>,
+                        name: "Gia hạn thẻ",
+                        icon: <i className="fa fa-credit-card"/>,
                         click: () => this.edit(row)
                     }, {
                         name: "Xóa",
@@ -168,7 +168,6 @@ export class VipRoute extends React.Component {
             <Layout
                 activeRoute="VIP"
             >
-
                 <div className="card vip-route">
                     <div className="card-title">
                         Danh sách VIP
@@ -182,7 +181,7 @@ export class VipRoute extends React.Component {
                         <Input
                             value={keyword}
                             onChange={(e) => this.setState({keyword: e.target.value})}
-                            label="Tìm Kiếm theo tên, số điện thoại, hoặc số thẻ"
+                            label="Tìm Kiếm"
                         />
 
                         <Checkbox

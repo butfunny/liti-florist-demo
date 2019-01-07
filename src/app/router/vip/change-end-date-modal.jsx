@@ -33,23 +33,20 @@ export class ChangeEndDateModal extends React.Component {
                 </div>
 
                 <div className="modal-body">
-                    <div className="form-group">
-                        <label className="control-label">Ngày hết hạn thẻ</label>
-
-                        <DatePicker
-                            value={endDate}
-                            onChange={(date) => this.setState({endDate: date})}
-                        />
-                    </div>
+                    <DatePicker
+                        label="Ngày hết hạn thẻ"
+                        value={endDate}
+                        onChange={(date) => this.setState({endDate: date})}
+                    />
                 </div>
 
                 <div className="modal-footer">
                     <button type="button" className="btn btn-link" onClick={() => onDismiss()}>Đóng</button>
                     <button type="submit"
                             onClick={() => this.submit()}
-                            className="btn btn-info btn-icon">
-                        <span className="btn-inner--text">Lưu</span>
-                        { saving && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
+                            className="btn btn-primary">
+                        <span className="btn-text">Lưu</span>
+                        { saving && <span className="loading-icon"><i className="fa fa-spinner fa-pulse"/></span>}
                     </button>
                 </div>
             </div>
