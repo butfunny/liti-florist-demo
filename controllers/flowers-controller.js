@@ -4,7 +4,7 @@ const Security = require("../security/security-be");
 module.exports = function(app) {
     app.post("/flowers", Security.authorDetails, (req, res) => {
         FlowersDao.findOne({productID: req.body.productID}, (err, flower) => {
-            if (flower) res.end({error: true});
+            if (flower) res.send({error: true});
             else {
                 FlowersDao.create(req.body, (err, flower) => {
                     res.json(flower)

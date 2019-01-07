@@ -11,7 +11,7 @@ export class InputNumber extends React.Component {
     }
 
     componentWillReceiveProps(props) {
-      this.setState({value: formatNumber(props.value)})
+      this.setState({value: props.value == "" ? "" : formatNumber(props.value)})
     }
 
     render() {
@@ -36,6 +36,8 @@ export class InputNumber extends React.Component {
                             this.props.onChange(value ? parseInt(value) : "")
                         }
                     }
+
+
                 }}
             />
         );

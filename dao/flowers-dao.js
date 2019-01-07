@@ -7,6 +7,8 @@ module.exports = mongoose.model('FlowersDao', {
     image: String,
     colors: [String],
     oriPrice: Number,
-    price: Number
+    price: Number,
+    tags: [String],
+    unit: String
 }, "flowers");
 

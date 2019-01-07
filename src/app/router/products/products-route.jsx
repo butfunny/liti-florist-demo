@@ -18,6 +18,10 @@ export class ProductsRoute extends React.Component {
                         price: 0
                     }}
                     onDismiss={() => modal.close()}
+                    onClose={() => {
+                        modal.close();
+                        // this.refresh();
+                    }}
                 />
             )
         })

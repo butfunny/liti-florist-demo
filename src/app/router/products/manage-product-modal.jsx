@@ -10,13 +10,30 @@ import {Form} from "../../components/form/form";
 import {minVal, required} from "../../components/form/validations";
 import {PictureUpload} from "../../components/picture-upload/picture-upload";
 import {SelectTagsColor} from "../../components/select-tags-color/select-tags-color";
+import {InputNumber} from "../../components/input-number/input-number";
+import {flowersApi} from "../../api/flowers-api";
 export class ManageProductModal extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            product: props.product
+            product: props.product,
+            error: false
         }
+    }
+
+    submit() {
+       let {product} = this.props;
+       if (!product._id) {
+           this.setState({saving: true});
+           flowersApi.createFlower(this.state.product).then((resp) => {
+               if (resp.error) {
+                   this.setState({error: true, saving: false});
+               } else {
+                   this.props.onClose(resp);
+               }
+           })
+       }
     }
 
     render() {
@@ -27,11 +44,12 @@ export class ManageProductModal extends React.Component {
             {"name": [required("Tên")]},
             {"image": [required("Ảnh Sản Phẩm")]},
             {"colors": [required("Màu")]},
-            {"oriPrice": [minVal(0), required("Giá Gốc")]},
-            {"price": [minVal(0), required("Giá Bán")]},
+            {"oriPrice": [minVal("Gía Gốc", 0), required("Giá Gốc")]},
+            {"price": [minVal("Giá Gốc", 0), required("Giá Bán")]},
+            {"unit": [required("Đơn Vị Tính")]},
         ];
 
-        let {product, saving} = this.state;
+        let {product, saving, error} = this.state;
         let {onDismiss} = this.props;
 
 
@@ -55,8 +73,8 @@ export class ManageProductModal extends React.Component {
                                 <Input
                                     label="Mã Sản Phẩm"
                                     value={product.productID}
-                                    onChange={(e) => this.setState({product: {...product, productID: e.target.value}})}
-                                    error={getInvalidByKey("productID")}
+                                    onChange={(e) => this.setState({product: {...product, productID: e.target.value}, error: false})}
+                                    error={error ? "Mã trùng" : getInvalidByKey("productID")}
                                 />
 
 
@@ -88,6 +106,26 @@ export class ManageProductModal extends React.Component {
                                     error={getInvalidByKey("colors")}
                                 />
 
+                                <Input
+                                    label="Đơn Vị Tính"
+                                    value={product.unit}
+                                    onChange={(e) => this.setState({product: {...product, unit: e.target.value}})}
+                                    error={getInvalidByKey("unit")}
+                                />
+
+                                <InputNumber
+                                    label="Giá Gốc"
+                                    value={product.oriPrice}
+                                    onChange={(oriPrice) => this.setState({product: {...product, oriPrice}})}
+                                    error={getInvalidByKey("oriPrice")}
+                                />
+
+                                <InputNumber
+                                    label="Giá Bán"
+                                    value={product.price}
+                                    onChange={(price) => this.setState({product: {...product, price}})}
+                                    error={getInvalidByKey("price")}
+                                />
                             </div>
 
                             <div className="modal-footer">
