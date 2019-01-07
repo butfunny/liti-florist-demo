@@ -9,6 +9,7 @@ import {DatePicker} from "../../components/date-picker/date-picker";
 import {Form} from "../../components/form/form";
 import {minVal, required} from "../../components/form/validations";
 import {PictureUpload} from "../../components/picture-upload/picture-upload";
+import {SelectTagsColor} from "../../components/select-tags-color/select-tags-color";
 export class ManageProductModal extends React.Component {
 
     constructor(props) {
@@ -80,7 +81,12 @@ export class ManageProductModal extends React.Component {
                                     error={getInvalidByKey("image")}
                                 />
 
-
+                                <SelectTagsColor
+                                    label="Màu"
+                                    tags={product.colors || []}
+                                    onChange={(colors) => this.setState({product: {...product, colors}})}
+                                    error={getInvalidByKey("colors")}
+                                />
 
                             </div>
 

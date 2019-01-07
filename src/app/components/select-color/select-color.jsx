@@ -17,11 +17,13 @@ export class SelectColor extends React.Component {
         let {open} = this.state;
 
         return (
-            <div className={classnames("liti-input select-color", className, error && "has-error", value && "has-value", open && "focus")}>
+            <div className={classnames("liti-input select-color select", className, error && "has-error", value && "has-value", open && "focus")}>
                 <div className="select-text" onClick={() => this.setState({open: true})}>
                     { value && (
                         <div className="color" style={{background: value}}/>
                     )}
+
+                    <i className={classnames("fa sort-icon", !open ? "fa-angle-down" : "fa-angle-up")}/>
                 </div>
 
                 <div className="label"
@@ -44,7 +46,9 @@ export class SelectColor extends React.Component {
                             <CompactPicker
                                 color={value}
                                 onChange={(color) => {
-                                    onChange(color.hex)
+                                    onChange(color.hex, () => {
+                                        this.setState({open: false})
+                                    })
                                 }}
                             />
                         </div>
