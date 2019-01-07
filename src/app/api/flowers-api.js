@@ -9,5 +9,8 @@ export const flowersApi = {
     },
     removeFlower: (id) => {
         return api.delete("/api/flower/" + id);
+    },
+    getFlowers: (data) => {
+        return api.post("/api/list-flowers", data);
     }
 };

@@ -12,6 +12,10 @@ import {PictureUpload} from "../../components/picture-upload/picture-upload";
 import {SelectTagsColor} from "../../components/select-tags-color/select-tags-color";
 import {InputNumber} from "../../components/input-number/input-number";
 import {flowersApi} from "../../api/flowers-api";
+import readXlsxFile from "read-excel-file";
+import isEqual from "lodash/isEqual";
+import {confirmModal} from "../../components/confirm-modal/confirm-modal";
+import {warehouseApi} from "../../api/warehouse-api";
 export class ManageProductModal extends React.Component {
 
     constructor(props) {
@@ -37,7 +41,6 @@ export class ManageProductModal extends React.Component {
     }
 
     render() {
-
 
         let validations = [
             {"productID": [required("Mã Sản Phẩm")]},

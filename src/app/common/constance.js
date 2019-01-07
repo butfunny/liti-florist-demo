@@ -178,4 +178,4 @@ export const permissions = [{
     father: "Kho"
 }];
 
-export const catalogs = ["Hoa Chính", "Hoa Lá Phụ/Lá", "Phụ Kiện", "Cost"];
+export const catalogs = ["Hoa chính", "Hoa lá phụ/Lá", "Phụ kiện", "cost"];

@@ -20,8 +20,16 @@ module.exports = function(app) {
         })
     });
 
-    app.get("/flowers", Security.authorDetails, (req, res) => {
-        console.log("Do later");
+    app.post("/list-flowers", Security.authorDetails, (req, res) => {
+        let {skip, keyword, sortKey, isDesc} = req.body;
+        FlowersDao.find({name: new RegExp(".*" + keyword + ".*", "i")}).sort({[sortKey] : isDesc ? -1 : 1}).skip(skip).limit(15).exec((err, flowers) => {
+            FlowersDao.countDocuments({name: new RegExp(".*" + keyword + ".*", "i")}, (err, count) => {
+                res.json({
+                    flowers,
+                    total: count,
+                })
+            })
+        })
     });
 
 
