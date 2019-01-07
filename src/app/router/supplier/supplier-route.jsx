@@ -5,6 +5,9 @@ import {DataTable} from "../../components/data-table/data-table";
 import {Input} from "../../components/input/input";
 import {productApi} from "../../api/product-api";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
+import {ButtonGroup} from "../../components/button-group/button-group";
+import {modals} from "../../components/modal/modals";
+import {EditSupplierModal} from "./edit-supplier-modal";
 
 export class SupplierRoute extends React.Component {
 
@@ -12,7 +15,8 @@ export class SupplierRoute extends React.Component {
         super(props);
         this.state = {
             supplier: "",
-            suppliers: []
+            suppliers: [],
+            error: false
         };
 
         productApi.suppliers().then((suppliers) => this.setState({suppliers}))
@@ -21,10 +25,29 @@ export class SupplierRoute extends React.Component {
     addSupplier() {
         let {suppliers, supplier} = this.state;
         this.setState({adding: true});
-        productApi.createSupplier({name: supplier}).then(() => {
-            this.setState({adding: false});
-            this.setState({suppliers: suppliers.concat({name: supplier}), supplier: ""})
+        productApi.createSupplier({name: supplier}).then((newSupplier) => {
+            if (newSupplier.error) {
+                this.setState({error: true, adding: false})
+            } else {
+                this.setState({adding: false, suppliers: suppliers.concat(newSupplier)})
+            }
         });
+    }
+
+    edit(row) {
+        let {suppliers} = this.state;
+        const modal = modals.openModal({
+            content: (
+                <EditSupplierModal
+                    supplier={row}
+                    onDismiss={() => modal.close()}
+                    onClose={(supplier) => {
+                        this.setState({suppliers: suppliers.map(s => s._id == supplier._id ? supplier : s)});
+                        modal.close();
+                    }}
+                />
+            )
+        })
     }
 
     removeType(row) {
@@ -32,7 +55,7 @@ export class SupplierRoute extends React.Component {
             title: "Xóa nhà cung cấp này?",
             description: "Bạn có đồng ý muốn xóa nhà cung cấp này không?"
         }).then(() => {
-            productApi.removeSupplier(row.name);
+            productApi.removeSupplier(row._id);
             let {suppliers} = this.state;
             this.setState({suppliers: suppliers.filter(c => c.name != row.name)});
         })
@@ -48,10 +71,17 @@ export class SupplierRoute extends React.Component {
         }, {
             label: "",
             width: "5%",
-            display: (row) => <div className="text-right">
-                <button className="btn btn-danger btn-small" onClick={() => this.removeType(row)}><i
-                    className="fa fa-trash"/></button>
-            </div>,
+            display: (row) => <ButtonGroup
+                actions={[{
+                    name: "Sửa",
+                    icon: <i className="fa fa-pencil"/>,
+                    click: () => this.edit(row)
+                }, {
+                    name: "Xóa",
+                    icon: <i className="fa fa-trash text-danger"/>,
+                    click: () => this.removeType(row)
+                }]}
+            />,
             className: "number content-menu-action",
             minWidth: "60"
         }];

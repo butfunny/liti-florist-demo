@@ -43,7 +43,10 @@ export const productApi = {
     suppliers: () => {
         return api.get("/api/suppliers");
     },
-    removeSupplier: (name) => {
-        return api.put("/api/supplier", {name});
+    removeSupplier: (id) => {
+        return api.delete("/api/supplier/" + id);
+    },
+    updateSupplier: (id, data) => {
+        return api.put("/api/supplier/" + id, data)
     }
 };

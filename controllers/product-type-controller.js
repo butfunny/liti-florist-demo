@@ -60,11 +60,11 @@ module.exports = function(app) {
     app.post("/supplier",Security.isAdmin, function (req, res) {
         SupplierDao.findOne({name: req.body.name}, (err, type) => {
             if (!type) {
-                SupplierDao.create(req.body, () => {
-                    res.end();
+                SupplierDao.create(req.body, (err, supplier) => {
+                    res.json(supplier);
                 })
             } else {
-                res.end();
+                res.json({error: true});
             }
         });
     });
@@ -76,11 +76,24 @@ module.exports = function(app) {
     });
 
 
-    app.put("/supplier", Security.isAdmin, (req, res) => {
-        SupplierDao.deleteOne({name: req.body.name}, () => {
+    app.delete("/supplier/:id", Security.isAdmin, (req, res) => {
+        SupplierDao.deleteOne({name: req.params.id}, () => {
             res.end();
         })
     });
+
+    app.put("/supplier/:id", Security.isAdmin, (req , res) => {
+        delete req.body._id;
+        SupplierDao.findOne({name: req.body.name}, (err, supplier) => {
+            if (supplier && supplier._id != req.params.id) res.json({error: true});
+            else {
+                SupplierDao.findOneAndUpdate({_id: req.params.id}, {name: req.body.name}, (err) => {
+                    res.end();
+                })
+            }
+        })
+
+    })
 
 
 };
