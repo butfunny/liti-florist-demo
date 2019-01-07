@@ -8,6 +8,8 @@ import {DatePicker} from "../../components/date-picker/date-picker";
 import {InputTag2} from "../../components/input-tag/input-tag-2";
 import {premisesInfo} from "../../security/premises-info";
 import {viaTypes} from "../../common/constance";
+import {Select} from "../../components/select/select";
+import {InputGroup} from "../../components/input/input-group";
 
 export class ManageVipModal extends React.Component {
 
@@ -112,6 +114,36 @@ export class ManageVipModal extends React.Component {
                         {customer._id && (
                             <Fragment>
 
+                                {vipAlready && (
+                                    <div className="loading text-danger text-sm-left">
+                                        Khách đã làm vip rồi
+                                    </div>
+                                )}
+
+
+                                {!vipAlready && (
+                                    <Fragment>
+
+                                        <InputGroup
+                                            badge="6666"
+                                            value={cardNumber}
+                                            onChange={(e) => this.setState({
+                                                cardNumber: e.target.value,
+                                                errorCreate: false
+                                            })}
+                                            label="Số Thẻ"
+                                            type="number"
+                                        />
+
+                                        <Select
+                                            list={["VIP", "VVIP", "FVIP", "CVIP"]}
+                                            value={vipType}
+                                            onChange={(type) => this.setState({vipType: type})}
+                                            label="Loại VIP"
+                                        />
+                                    </Fragment>
+                                )}
+
                                 <Input
                                     readOnly
                                     label="Tên Khách Hàng"
@@ -194,53 +226,10 @@ export class ManageVipModal extends React.Component {
                                 />
 
 
-
-
                             {loading && (
                                 <div className="loading text-primary text-sm-left">
                                     Đang lấy thông tin khách hàng <i className="fa fa-spinner fa-pulse"/>
                                 </div>
-                            )}
-
-                            {vipAlready && (
-                                <div className="loading text-danger text-sm-left">
-                                    Khách đã làm vip rồi
-                                </div>
-                            )}
-
-
-                            {!vipAlready && (
-                                <Fragment>
-                                    <div className="form-group">
-                                        <label className="control-label">Số Thẻ</label>
-
-                                        <div className="input-group">
-                                            <div className="input-group-prepend">
-                                                <span className="input-group-text">6666</span>
-                                            </div>
-                                            <input
-                                                value={cardNumber}
-                                                onChange={(e) => this.setState({
-                                                    cardNumber: e.target.value,
-                                                    errorCreate: false
-                                                })}
-                                                type="number"
-                                                className="form-control" placeholder="8 Số cuối"/>
-                                        </div>
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label className="control-label">Loại VIP</label>
-
-                                        <select className="form-control" value={vipType}
-                                                onChange={(e) => this.setState({vipType: e.target.value})}>
-                                            <option value="VIP">VIP</option>
-                                            <option value="VVIP">VVIP</option>
-                                            <option value="FVIP">FVIP</option>
-                                            <option value="CVIP">CVIP</option>
-                                        </select>
-                                    </div>
-                                </Fragment>
                             )}
 
                                 {errorCreate && (

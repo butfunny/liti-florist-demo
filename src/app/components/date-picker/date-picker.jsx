@@ -44,7 +44,6 @@ export class DatePicker extends React.Component {
             return value
         };
 
-        console.log(open);
 
         return (
             <ClickOutside onClickOut={() => this.setState({open :false})}>

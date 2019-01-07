@@ -51,14 +51,9 @@ export class Select extends React.Component {
                 { open && (
                     <ClickOutside onClickOut={() => this.setState({open: false})}>
                         <div className="select-dropdown"
-                             style={{
-                                 top: `${top + 40}px`,
-                                 left: `${left}px`,
-                                 width: `${width}px`
-                             }}
                         >
                             { list.map((item, index) => (
-                                <div className="dropdown-item" key={index}
+                                <div className={classnames("dropdown-item", item == value && "active")} key={index}
                                      onClick={() => {
                                          setTimeout(() => {
                                              this.setState({open: false});

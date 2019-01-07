@@ -20,14 +20,12 @@ export class Input extends React.Component {
         let {focus} = this.state;
 
         const hasValue = () => {
-            if (type == "number") return value != null || value != "";
+            if (type == "number") return value != null && value != "";
             return value && value.length > 0
         };
 
-
         return (
             <div className={classnames("liti-input", className, error && "has-error", hasValue() && "has-value", focus && "focus")} style={style}>
-
 
                 { textArea ? (
                     <textarea
