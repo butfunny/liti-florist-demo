@@ -2,18 +2,14 @@ import React from "react";
 import {Layout} from "../../components/layout/layout";
 import {modals} from "../../components/modal/modals";
 import {ManageProductModal} from "./manage-product-modal";
-import readXlsxFile from "read-excel-file";
-import isEqual from "lodash/isEqual";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 import {flowersApi} from "../../api/flowers-api";
-import {customerApi} from "../../api/customer-api";
 import {PaginationDataTable} from "../pagination-data-table/pagination-data-table";
-import sum from "lodash/sum";
 import {formatNumber, getTotalBill} from "../../common/common";
-import {premisesInfo} from "../../security/premises-info";
-import {ColumnViewMore} from "../../components/column-view-more/column-view-more";
-import sortBy from "lodash/sortBy";
 import {ButtonGroup} from "../../components/button-group/button-group";
+import {SelectTagsColor} from "../../components/select-tags-color/select-tags-color";
+import {SelectTags} from "../../components/select-tags/select-tags";
+import {catalogs} from "../../common/constance";
 
 export class ProductsRoute extends React.Component {
 
@@ -22,6 +18,8 @@ export class ProductsRoute extends React.Component {
 
         this.state = {
             flowers: null,
+            filteredColors: [],
+            filteredTypes: []
         };
 
     }
@@ -73,7 +71,7 @@ export class ProductsRoute extends React.Component {
 
 
     render() {
-        let {flowers, total} = this.state;
+        let {flowers, total, filteredColors, filteredTypes} = this.state;
 
         let columns = [{
             label: "Mã SP",
@@ -168,6 +166,26 @@ export class ProductsRoute extends React.Component {
                         <button type="button" className="btn btn-primary" onClick={() => this.addProduct()}>Thêm Sản
                             Phẩm
                         </button>
+
+                        <div className="filter-wrapper">
+                            <div className="filter-col">
+                                <SelectTagsColor
+                                    label="Lọc Theo Màu"
+                                    tags={filteredColors}
+                                    onChange={(filteredColors) => this.setState({filteredColors}, () => this.table.reset())}
+                                />
+                            </div>
+
+                            <div className="filter-col">
+                                <SelectTags
+                                    label="Lọc Theo Loại"
+                                    tags={filteredTypes}
+                                    onChange={(filteredTypes) => this.setState({filteredTypes}, () => this.table.reset())}
+                                    list={catalogs}
+                                    placeholder="Chọn Loại"
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     <PaginationDataTable
@@ -180,7 +198,9 @@ export class ProductsRoute extends React.Component {
                                 keyword,
                                 skip: (page - 1) * 15,
                                 sortKey,
-                                isDesc
+                                isDesc,
+                                filteredColors,
+                                filteredTypes
                             }).then(({flowers, total}) => {
                                 this.setState({flowers, total});
                                 return Promise.resolve();

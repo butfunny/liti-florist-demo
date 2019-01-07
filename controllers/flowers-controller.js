@@ -28,9 +28,19 @@ module.exports = function(app) {
     });
 
     app.post("/list-flowers", Security.authorDetails, (req, res) => {
-        let {skip, keyword, sortKey, isDesc} = req.body;
-        FlowersDao.find({name: new RegExp(".*" + keyword + ".*", "i")}).sort({[sortKey] : isDesc ? -1 : 1}).skip(skip).limit(15).exec((err, flowers) => {
-            FlowersDao.countDocuments({name: new RegExp(".*" + keyword + ".*", "i")}, (err, count) => {
+        let {skip, keyword, sortKey, isDesc, filteredColors, filteredTypes} = req.body;
+
+        let query = [{name: new RegExp(".*" + keyword + ".*", "i")}];
+        if (filteredColors.length > 0) {
+            query.push({$or: filteredColors.map(color => ({colors: new RegExp(".*" + color + ".*", "i")}))})
+        }
+
+        if (filteredTypes.length > 0) {
+            query.push({$or: filteredTypes.map(catalog => ({catalog: new RegExp(".*" + catalog + ".*", "i")}))})
+        }
+
+        FlowersDao.find({$and: query}).sort({[sortKey] : isDesc ? -1 : 1}).skip(skip).limit(15).exec((err, flowers) => {
+            FlowersDao.countDocuments({$and: query}, (err, count) => {
                 res.json({
                     flowers,
                     total: count,

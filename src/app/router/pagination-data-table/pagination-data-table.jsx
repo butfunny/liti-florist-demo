@@ -32,6 +32,14 @@ export class PaginationDataTable extends React.Component {
         })
     }
 
+    reset() {
+        let {keyword} = this.state;
+        this.setState({loading: true});
+        this.props.api({page: 1, sortKey: null, isDesc: null, keyword}).then(() => {
+            this.setState({loading: false})
+        })
+    }
+
 
     sort(column, index) {
         let {isDesc, page, keyword} = this.state;
@@ -75,7 +83,7 @@ export class PaginationDataTable extends React.Component {
         return (
             <Fragment>
 
-                <div className="card-body">
+                <div className="card-body card-body-pagination">
                     <Input
                         style={{marginBottom: "5px", marginTop: "5px"}}
                         onKeyDown={(e) => !loading && e.keyCode == 13 && this.search(e.target.value)}

@@ -1,6 +1,6 @@
 export const required = (path) => (val) => ({
     text: `${path} không được để trống`,
-    valid: Number.isInteger(val) ? true : val && val.length > 0
+    valid: Number.isInteger(parseInt(val)) ? true : val && val.length > 0
 });
 
 export const minLength = (length, path) => (val) => ({

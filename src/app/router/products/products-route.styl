@@ -1,4 +1,30 @@
 .products-route {
+
+  .card-body-pagination {
+    padding-top: 0;
+  }
+
+  .filter-wrapper {
+    margin-top: 25px;
+    display flex;
+
+    .filter-col {
+      width calc(50% - 12px);
+
+      .input-tag {
+        margin-bottom 0;
+      }
+
+      &:first-child {
+        margin-right 12px;
+      }
+
+      &:last-child {
+        margin-left 12px;
+      }
+    }
+  }
+
   .product-name {
     position relative;
     padding-left 30px;
