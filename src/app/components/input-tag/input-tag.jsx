@@ -116,7 +116,7 @@ export class InputTag extends React.Component {
 
 
         return (
-            <div className="input-tag">
+            <div className={classnames("input-tag", error && "has-error", tags && tags.length > 0 && "has-value", selected && "focus")}>
                 { tags.map((tagItem, index) => (
                     <div className={classnames("tag-item", selectedTag && selectedTag.user_id == tagItem.user_id && "selected")} key={index}
                         onClick={() => onClick && tagItem.isSale && onClick(tagItem.username)}

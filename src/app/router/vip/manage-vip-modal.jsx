@@ -8,6 +8,7 @@ import {DatePicker} from "../../components/date-picker/date-picker";
 import {InputTag2} from "../../components/input-tag/input-tag-2";
 import {premisesInfo} from "../../security/premises-info";
 import {viaTypes} from "../../common/constance";
+
 export class ManageVipModal extends React.Component {
 
     constructor(props) {
@@ -71,8 +72,8 @@ export class ManageVipModal extends React.Component {
 
         let {customer, loading, vipAlready, saving, cardNumber, errorCreate, vipType, created, endDate} = this.state;
         let {onDismiss} = this.props;
-
-
+        let defaultBirthDate = new Date();
+        defaultBirthDate.setFullYear(1970);
 
         return (
             <div className="app-modal-box manage-vip-modal">
@@ -96,13 +97,19 @@ export class ManageVipModal extends React.Component {
                             onSelect={(customer) => this.handleSelect(customer)}
                             objectKey="customerPhone"
                             object={customer}
-                            onChange={(value) => this.setState({customer: {...customer, customerPhone: value, _id: null}, vipAlready: false, errorCreate: false})}
+                            onChange={(value) => this.setState({
+                                customer: {
+                                    ...customer,
+                                    customerPhone: value,
+                                    _id: null
+                                }, vipAlready: false, errorCreate: false
+                            })}
                             displayAs={(customer) => `${customer.customerPhone} - ${customer.customerName}`}
                             noPopup
                             label="Số Điện Thoại Khách"
                         />
 
-                        { customer._id && (
+                        {customer._id && (
                             <Fragment>
 
                                 <Input
@@ -111,152 +118,139 @@ export class ManageVipModal extends React.Component {
                                     value={customer.customerName}
                                 />
 
+                                <div className="form-group">
+
+                                    <InputTag2
+                                        label="Cở Sở Mua Hàng"
+                                        tags={customer.premises || []}
+                                        list={premisesInfo.getPremises().map(p => p.name)}
+                                        onChange={(premises) => this.setState({customer: {...customer, premises}})}
+                                    />
+
+                                    <InputTag2
+                                        label="Kênh Mua Hàng"
+                                        tags={customer.buyerFrom || []}
+                                        list={viaTypes}
+                                        onChange={(buyerFrom) => this.setState({
+                                            customer: {
+                                                ...customer,
+                                                buyerFrom
+                                            }
+                                        })}
+                                    />
+                                </div>
+
                                 <DatePicker
                                     label="Ngày Sinh"
-                                    value={customer.birthDate ? new Date(customer.birthDate) : new Date()}
+                                    value={customer.birthDate ? new Date(customer.birthDate) : defaultBirthDate}
                                     onChange={(birthDate) => this.setState({customer: {...customer, birthDate}})}
                                 />
 
-                                <div className="form-group">
-                                    <div className="form-group">
-                                        <label className="control-label">Ngày sinh</label>
+                                <Input
+                                    label="Email"
+                                    value={customer.email}
+                                    onChange={(e) => this.setState({customer: {...customer, email: e.target.value}})}
+                                />
+
+                                <Input
+                                    label="Địa Chỉ"
+                                    value={customer.customerPlace}
+                                    onChange={(e) => this.setState({
+                                        customer: {
+                                            ...customer,
+                                            customerPlace: e.target.value
+                                        }
+                                    })}
+                                />
+
+                                <Input
+                                    label="Sở Thích"
+                                    value={customer.hobby}
+                                    onChange={(e) => this.setState({
+                                        customer: {
+                                            ...customer,
+                                            hobby: e.target.value
+                                        }
+                                    })}
+                                />
+
+                                <DatePicker
+                                    label="Ngày Phát Hành Thẻ"
+                                    value={created}
+                                    onChange={(date) => this.setState({created: date})}
+                                />
+
+                                <DatePicker
+                                    label="Ngày Hết Hạn Thẻ"
+                                    value={endDate}
+                                    onChange={(date) => this.setState({endDate: date})}
+                                />
+
+                                <Input
+                                    textArea
+                                    value={customer.notes}
+                                    onChange={(e) => this.setState({customer: {...customer, notes: e.target.value}})}
+                                    label="Ghi chú"
+                                />
 
 
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label className="control-label">Email</label>
-
-                                        <input className="form-control"
-                                               value={customer.email}
-                                               onChange={(e) => this.setState({customer: {...customer, email: e.target.value}})}
-                                        />
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label className="control-label">Địa chỉ*</label>
-
-                                        <input className="form-control"
-                                               value={customer.customerPlace}
-                                               onChange={(e) => this.setState({customer: {...customer, customerPlace: e.target.value}})}
-                                        />
-                                    </div>
 
 
-                                    <div className="form-group">
-                                        <label className="control-label">Sở thích*</label>
-
-                                        <input className="form-control"
-                                               value={customer.hobby || ""}
-                                               onChange={(e) => this.setState({customer: {...customer, hobby: e.target.value}})}
-                                        />
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label className="control-label">Ngày phát hành thẻ</label>
-
-                                        <DatePicker
-                                            value={created}
-                                            onChange={(date) => this.setState({created: date})}
-                                        />
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label className="control-label">Ngày hết hạn thẻ</label>
-
-                                        <DatePicker
-                                            value={endDate}
-                                            onChange={(date) => this.setState({endDate: date})}
-                                        />
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label className="control-label">Ghi chú</label>
-
-                                        <textarea
-                                            className="form-control"
-                                            style={{
-                                                resize: "none"
-                                            }}
-                                            value={customer.notes} onChange={(e) => this.setState({customer: {...customer, notes: e.target.value}})}/>
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label className="control-label">Cơ sở mua hàng</label>
-
-                                        <InputTag2
-                                            tags={customer.premises || []}
-                                            noPlaceholder
-                                            list={premisesInfo.getPremises().map(p => p.name)}
-                                            onChange={(premises) => this.setState({customer: {...customer, premises}})}
-                                        />
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label className="control-label">Kênh mua hàng</label>
-
-                                        <InputTag2
-                                            tags={customer.buyerFrom || []}
-                                            noPlaceholder
-                                            list={viaTypes}
-                                            onChange={(buyerFrom) => this.setState({customer: {...customer, buyerFrom}})}
-                                        />
-                                    </div>
+                            {loading && (
+                                <div className="loading text-primary text-sm-left">
+                                    Đang lấy thông tin khách hàng <i className="fa fa-spinner fa-pulse"/>
                                 </div>
+                            )}
 
-                                { loading && (
-                                    <div className="loading text-primary text-sm-left">
-                                        Đang lấy thông tin khách hàng <i className="fa fa-spinner fa-pulse"/>
-                                    </div>
-                                )}
-
-                                { vipAlready && (
-                                    <div className="loading text-danger text-sm-left">
-                                        Khách đã làm vip rồi
-                                    </div>
-                                )}
+                            {vipAlready && (
+                                <div className="loading text-danger text-sm-left">
+                                    Khách đã làm vip rồi
+                                </div>
+                            )}
 
 
+                            {!vipAlready && (
+                                <Fragment>
+                                    <div className="form-group">
+                                        <label className="control-label">Số Thẻ</label>
 
-                                { !vipAlready && (
-                                    <Fragment>
-                                        <div className="form-group">
-                                            <label className="control-label">Số Thẻ</label>
-
-                                            <div className="input-group">
-                                                <div className="input-group-prepend">
-                                                    <span className="input-group-text">6666</span>
-                                                </div>
-                                                <input
-                                                    value={cardNumber}
-                                                    onChange={(e) => this.setState({cardNumber: e.target.value, errorCreate: false})}
-                                                    type="number"
-                                                    className="form-control" placeholder="8 Số cuối"/>
+                                        <div className="input-group">
+                                            <div className="input-group-prepend">
+                                                <span className="input-group-text">6666</span>
                                             </div>
+                                            <input
+                                                value={cardNumber}
+                                                onChange={(e) => this.setState({
+                                                    cardNumber: e.target.value,
+                                                    errorCreate: false
+                                                })}
+                                                type="number"
+                                                className="form-control" placeholder="8 Số cuối"/>
                                         </div>
+                                    </div>
 
-                                        <div className="form-group">
-                                            <label className="control-label">Loại VIP</label>
+                                    <div className="form-group">
+                                        <label className="control-label">Loại VIP</label>
 
-                                            <select className="form-control" value={vipType}
-                                                    onChange={(e) => this.setState({vipType: e.target.value})}>
-                                                <option value="VIP" >VIP</option>
-                                                <option value="VVIP" >VVIP</option>
-                                                <option value="FVIP" >FVIP</option>
-                                                <option value="CVIP" >CVIP</option>
-                                            </select>
-                                        </div>
-                                    </Fragment>
-                                )}
+                                        <select className="form-control" value={vipType}
+                                                onChange={(e) => this.setState({vipType: e.target.value})}>
+                                            <option value="VIP">VIP</option>
+                                            <option value="VVIP">VVIP</option>
+                                            <option value="FVIP">FVIP</option>
+                                            <option value="CVIP">CVIP</option>
+                                        </select>
+                                    </div>
+                                </Fragment>
+                            )}
 
-                                { errorCreate && (
+                                {errorCreate && (
                                     <div className="loading text-danger text-sm-left">
                                         Thẻ đã được sử dụng
                                     </div>
                                 )}
 
-                            </Fragment>
-                        )}
+                                </Fragment>
+                            )}
 
                     </div>
 
@@ -269,11 +263,11 @@ export class ManageVipModal extends React.Component {
                                 !customer.premises || customer.premises.length == 0 ||
                                 !customer.hobby || customer.hobby.length == 0 ||
                                 !customer.buyerFrom || customer.buyerFrom.length == 0
-                            }
+                                }
                                 onClick={() => this.submit()}
                                 className="btn btn-info btn-icon">
                             <span className="btn-inner--text">Lưu</span>
-                            { saving && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
+                            {saving && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
                         </button>
                     </div>
                 </div>

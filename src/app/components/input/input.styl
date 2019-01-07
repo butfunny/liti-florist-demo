@@ -4,18 +4,20 @@
   margin-bottom 24px;
 
 
+
+
   &.has-error {
     .label {
       color danger !important;
     }
 
-    input {
+    input, textarea {
       border-color danger !important;
     }
   }
 
   &.focus {
-    input {
+    input, textarea {
       border-color: primary;
     }
 
@@ -60,7 +62,7 @@
   }
 
 
-  input {
+  input, textarea {
     width 100%;
     font-size: 14px;
     padding: 10px 15px;
@@ -111,7 +113,7 @@
     font-size: 14px;
     position: absolute;
     pointer-events: none;
-    top: 50%;
+    top: 18px;
     left 16.5px;
     transform translate(0, -50%);
     transition: 0.2s ease all;

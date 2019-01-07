@@ -109,14 +109,14 @@ export class InputTag2 extends React.Component {
 
     render() {
 
-        let {placeHolder, tags, isErrorTag, list, onChange, noPlaceholder} = this.props;
-        let {selected, value, selectedIndex, selectedTag} = this.state;
+        let {placeHolder, tags, isErrorTag, list, onChange, noPlaceholder, label, error} = this.props;
+        let {selected, value, selectedIndex, selectedTag, focus} = this.state;
         const filteredList = list.filter(item => tags.indexOf(item) == -1 && item.toLowerCase().indexOf(value.toLowerCase()) > -1);
 
 
 
         return (
-            <div className="input-tag">
+            <div className={classnames("input-tag", error && "has-error", tags && tags.length > 0 && "has-value", selected && "focus")}>
                 { tags.map((tagItem, index) => (
                     <div className={classnames("tag-item", selectedTag && selectedTag == tagItem && "selected")} key={index}>
                         {tagItem}
@@ -124,13 +124,23 @@ export class InputTag2 extends React.Component {
                             this.setState({selectedTag: null});
                             onChange(tags.filter(t => t != tagItem))
                         }}>
-                            <i className="fa fa-close"/>
+                            <span aria-hidden="true">×</span>
                         </a>
                     </div>
                 ))}
 
+                <div className="label"
+
+                >
+                    {label}
+                </div>
+
+                <div className="bar">
+                    {label}
+                </div>
+
                 <div className="input-wrapper auto-complete">
-                    <input placeholder={noPlaceholder ? "" : "Màu*"}
+                    <input
                            className={classnames(this.state.error && "error-add")}
                            value={value}
                            onChange={(e) => this.setState({value: e.target.value})}
@@ -138,6 +148,7 @@ export class InputTag2 extends React.Component {
                            onFocus={() => this.setState({selected: true})}
                            onBlur={() => this.setState({selected: false})}
                            ref={elem => this.input = elem}
+
                     />
 
                     {selected && filteredList.length > 0 && (

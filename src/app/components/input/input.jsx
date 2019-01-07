@@ -16,7 +16,7 @@ export class Input extends React.Component {
 
 
     render() {
-        let {label, className, value, readOnly, icon, error, type, onChange, onKeyDown, info, style} = this.props;
+        let {label, className, value, readOnly, icon, error, type, onChange, onKeyDown, info, style, textArea} = this.props;
         let {focus} = this.state;
 
         const hasValue = () => {
@@ -27,16 +27,31 @@ export class Input extends React.Component {
 
         return (
             <div className={classnames("liti-input", className, error && "has-error", hasValue() && "has-value", focus && "focus")} style={style}>
-                <input
-                    ref={input => this.input = input}
-                    onFocus={() => this.setState({focus: true})}
-                    onBlur={() => this.setState({focus: false})}
-                    value={value || ""}
-                    onChange={onChange}
-                    type={type}
-                    readOnly={readOnly}
-                    onKeyDown={onKeyDown}
-                />
+
+
+                { textArea ? (
+                    <textarea
+                        ref={input => this.input = input}
+                        onFocus={() => this.setState({focus: true})}
+                        onBlur={() => this.setState({focus: false})}
+                        value={value || ""}
+                        onChange={onChange}
+                        readOnly={readOnly}
+                        onKeyDown={onKeyDown}
+                        style={{height: "80px", resize: "none"}}
+                    />
+                ) : (
+                    <input
+                        ref={input => this.input = input}
+                        onFocus={() => this.setState({focus: true})}
+                        onBlur={() => this.setState({focus: false})}
+                        value={value || ""}
+                        onChange={onChange}
+                        type={type}
+                        readOnly={readOnly}
+                        onKeyDown={onKeyDown}
+                    />
+                )}
 
 
                 <div className="label"
