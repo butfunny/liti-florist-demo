@@ -59,28 +59,41 @@ export class DataTable extends React.Component {
                             </div>
                         ))}
                     </div>
-                    <div className="ge-table-body">
 
-                        {sortedRows().length == 0 && (
-                            <div className="ge-row no-data">
-                                Không có dữ liệu
+
+                    { !rows && (
+                        <div className="loading-overlay">
+                            <div className="loading-box">
+                                Đang Tải... <span className="loading-icon"><i className="fa fa-spinner fa-pulse"/></span>
                             </div>
-                        )}
+                        </div>
+                    )}
 
-                        {sortedRows().length > 0 && sortedRows().map((row, i) => (
-                            <div className={classnames("ge-row ge-data", onClickRow && "on-click-row")} key={i}
-                                 onClick={() => onClickRow && onClickRow(row)}>
-                                {columns.map((column, index) => (
-                                    <div
-                                        style={{minWidth: `${column.minWidth}px`, width: `${column.width}`}}
-                                        className={classnames("ge-col", column.className)} key={index}>
-                                        {column.display(row, i)}
-                                    </div>
-                                ))}
-                            </div>
-                        ))}
 
-                    </div>
+                    { rows && (
+                        <div className="ge-table-body">
+
+                            {sortedRows().length == 0 && (
+                                <div className="ge-row no-data">
+                                    Không có dữ liệu
+                                </div>
+                            )}
+
+                            {sortedRows().length > 0 && sortedRows().map((row, i) => (
+                                <div className={classnames("ge-row ge-data", onClickRow && "on-click-row")} key={i}
+                                     onClick={() => onClickRow && onClickRow(row)}>
+                                    {columns.map((column, index) => (
+                                        <div
+                                            style={{minWidth: `${column.minWidth}px`, width: `${column.width}`}}
+                                            className={classnames("ge-col", column.className)} key={index}>
+                                            {column.display(row, i)}
+                                        </div>
+                                    ))}
+                                </div>
+                            ))}
+
+                        </div>
+                    )}
 
 
                 </div>
