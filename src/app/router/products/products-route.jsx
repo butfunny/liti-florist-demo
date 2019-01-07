@@ -38,7 +38,22 @@ export class ProductsRoute extends React.Component {
                     onDismiss={() => modal.close()}
                     onClose={() => {
                         modal.close();
-                        this.refresh();
+                        this.table.refresh();
+                    }}
+                />
+            )
+        })
+    }
+
+    edit(row) {
+        const modal = modals.openModal({
+            content: (
+                <ManageProductModal
+                    product={row}
+                    onDismiss={() => modal.close()}
+                    onClose={() => {
+                        modal.close();
+                        this.table.refresh();
                     }}
                 />
             )
@@ -62,7 +77,7 @@ export class ProductsRoute extends React.Component {
 
         let columns = [{
             label: "Mã SP",
-            width: "15%",
+            width: "10%",
             display: (row) => row.productID,
             sortKey: "productID",
             minWidth: "150"
@@ -116,6 +131,12 @@ export class ProductsRoute extends React.Component {
             display: (row) => row.unit,
             minWidth: "50",
             sortKey: "unit",
+        }, {
+            label: "Dài",
+            width: "5%",
+            display: (row) => row.lengthiness,
+            minWidth: "50",
+            sortKey: "lengthiness",
         }, {
             label: "",
             width: "5%",

@@ -24,7 +24,10 @@ export class PaginationDataTable extends React.Component {
 
     refresh() {
         this.setState({loading: true});
-        this.props.api({page: 1, sortKey: null, isDesc: null, keyword: ""}).then(() => {
+        let {keyword, isDesc, sortIndexCol, page} = this.state;
+        let {columns} = this.props;
+
+        this.props.api({page, keyword, isDesc, sortKey: sortIndexCol ? columns[sortIndexCol].sortKey : null}).then(() => {
             this.setState({loading: false})
         })
     }

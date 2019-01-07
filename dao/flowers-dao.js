@@ -9,6 +9,7 @@ module.exports = mongoose.model('FlowersDao', {
     oriPrice: Number,
     price: Number,
     tags: [String],
-    unit: String
+    unit: String,
+    lengthiness: Number
 }, "flowers");
 

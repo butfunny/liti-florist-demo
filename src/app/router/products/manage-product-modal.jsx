@@ -34,7 +34,16 @@ export class ManageProductModal extends React.Component {
                if (resp.error) {
                    this.setState({error: true, saving: false});
                } else {
-                   this.props.onClose(resp);
+                   this.props.onClose();
+               }
+           })
+       } else {
+           this.setState({saving: true});
+           flowersApi.updateFlower(product._id, this.state.product).then((resp) => {
+               if (resp.error) {
+                   this.setState({error: true, saving: false});
+               } else {
+                   this.props.onClose();
                }
            })
        }
@@ -107,6 +116,12 @@ export class ManageProductModal extends React.Component {
                                     tags={product.colors || []}
                                     onChange={(colors) => this.setState({product: {...product, colors}})}
                                     error={getInvalidByKey("colors")}
+                                />
+
+                                <InputNumber
+                                    label="Chiều Dài Cành Hoa"
+                                    value={product.lengthiness}
+                                    onChange={(lengthiness) => this.setState({product: {...product, lengthiness}})}
                                 />
 
                                 <Input

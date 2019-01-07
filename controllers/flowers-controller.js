@@ -15,9 +15,16 @@ module.exports = function(app) {
 
     app.put("/flower/:id", Security.authorDetails, (req, res) => {
         delete req.body._id;
-        FlowersDao.findOneAndUpdate({_id: req.parmas.id}, req.body, () => {
-            res.end();
+        FlowersDao.findOne({productID: req.body.productID}, (err, flower) => {
+            if (flower && flower._id != req.params.id) res.send({error: true});
+            else {
+                FlowersDao.findOneAndUpdate({_id: req.params.id}, req.body, () => {
+                    res.end();
+                })
+            }
         })
+
+
     });
 
     app.post("/list-flowers", Security.authorDetails, (req, res) => {
