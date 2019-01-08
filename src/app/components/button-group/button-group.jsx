@@ -32,7 +32,7 @@ export class ButtonGroup extends RComponent {
                     <ClickOutside onClickOut={() => this.setState({open: false})}>
                         <div className="button-dropdown"
                         >
-                            { actions.map((action, index) => (
+                            { actions.filter(a => !a.hide || !a.hide()).map((action, index) => (
                                 <div className="button-dropdown-item" key={index}
                                     onClick={() => {
                                         setTimeout(() => {

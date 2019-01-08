@@ -75,7 +75,7 @@ export class PaginationDataTable extends React.Component {
 
     render() {
 
-        let {columns, rows, onClickRow, total, noSearch} = this.props;
+        let {columns, rows, onClickRow, total, noSearch, rowStyling} = this.props;
         let {sortIndexCol, isDesc, loading, keyword, page} = this.state;
 
 
@@ -139,11 +139,12 @@ export class PaginationDataTable extends React.Component {
                                 )}
 
                                 {rows && rows.map((row, i) => (
-                                    <div className={classnames("ge-row ge-data", onClickRow && "on-click-row")} key={i}
+                                    <div className={classnames("ge-row ge-data", onClickRow && "on-click-row")}
+                                         key={i}
                                          onClick={() => onClickRow && onClickRow(row)}>
                                         {columns.map((column, index) => (
                                             <div
-                                                style={{minWidth: `${column.minWidth}px`, width: `${column.width}`}}
+                                                style={{minWidth: `${column.minWidth}px`, width: `${column.width}`, ...(rowStyling ? rowStyling(row) : {})}}
                                                 className={classnames("ge-col", column.className)} key={index}>
                                                 {column.display(row, i)}
                                             </div>

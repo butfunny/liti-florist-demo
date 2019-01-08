@@ -9,8 +9,8 @@ import {productApi} from "../../api/product-api";
 import {formatNumber} from "../../common/common";
 import {ColumnViewMore} from "../../components/column-view-more/column-view-more";
 import {ImgPreview} from "../../components/img-repview/img-preview";
-
-
+import sumBy from "lodash/sumBy";
+import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 
 export class RequestWarehouseRoute extends React.Component {
 
@@ -26,11 +26,45 @@ export class RequestWarehouseRoute extends React.Component {
         productApi.suppliers().then((suppliers) => this.setState({suppliers}))
     }
 
+
+
+    rejectRequest(row) {
+        confirmModal.showInput({
+            title: "Từ chối phiếu",
+            label: "Lý do"
+        }).then((reason) => {
+            warehouseApi.updateRequest(row._id, {
+                status: "reject",
+                reason
+            }).then(() => {
+                this.table.refresh();
+            })
+        })
+    }
+
     render() {
 
         let {history} = this.props;
 
         let {requests, total, suppliers, flowers} = this.state;
+
+        const status = [{
+            value: "pending",
+            background: "",
+            label: "Chờ xử lý",
+            color: ""
+        }, {
+            value: "confirm",
+            background: "rgb(29,201,183, .1)",
+            label: "Xác nhận",
+            color: "#1dc9b7"
+        }, {
+            value: "reject",
+            background: "rgb(253,57,122, .1)",
+            label: "Từ chối",
+            color: "#fd397a"
+        }];
+
 
         let columns = [{
             label: "Thời gian",
@@ -40,7 +74,7 @@ export class RequestWarehouseRoute extends React.Component {
             sortKey: "created"
         }, {
             label: "Kiểu",
-            width: "25%",
+            width: "30%",
             display: (row) => {
                 const requestTypesRender = {
                     "request-from-supplier": () => <span><i className="fa fa-arrow-right text-primary" aria-hidden="true"/> Nhập từ <b className="text-primary">{suppliers.find(s => s._id == row.supplierID).name}</b></span>
@@ -53,62 +87,103 @@ export class RequestWarehouseRoute extends React.Component {
         }, {
             label: "Sản phẩm",
             width: "35%",
-            display: (row) => row.items.map((item, index) => {
-                let product = flowers.find(f => f._id == item.parentID);
+            display: (row) => (
+                <Fragment>
+                    {row.items.map((item, index) => {
+                        let product = flowers.find(f => f._id == item.parentID);
 
-                return (
-                    <ColumnViewMore
-                        key={index}
-                        header={
-                            <div className="product-name">
-                                <ImgPreview src={product.image}/> {item.quantity} - {product.name}
-                            </div>
-                        }
-                        renderViewMoreBody={() => (
-                            <Fragment>
-                                <div className="info-item">
-                                    Màu:
-                                    {product.colors.map((color, index) => (
-                                        <div key={index}
-                                             style={{
-                                                 background: color,
-                                                 height: "15px",
-                                                 width: "25px",
-                                                 display: "inline-block",
-                                                 marginLeft: "5px"
-                                             }}
-                                        />
-                                    ))}
-                                </div>
-
-                                <div className="info-item">
-                                    Đơn Vị Tính: {product.unit}
-                                </div>
-
-                                { product.lengthiness && (
-                                    <div className="info-item">
-                                        Chiều Dài Cành Hoa: {product.lengthiness}
+                        return (
+                            <ColumnViewMore
+                                key={index}
+                                header={
+                                    <div className="product-name">
+                                        <ImgPreview src={product.image}/> {item.quantity} - {product.name}
                                     </div>
+                                }
+                                renderViewMoreBody={() => (
+                                    <Fragment>
+                                        <div className="info-item">
+                                             {product.productID} - {product.catalog}
+                                        </div>
+
+                                        <div className="info-item">
+                                            Màu:
+                                            {product.colors.map((color, index) => (
+                                                <div key={index}
+                                                     style={{
+                                                         background: color,
+                                                         height: "15px",
+                                                         width: "25px",
+                                                         display: "inline-block",
+                                                         marginLeft: "5px"
+                                                     }}
+                                                />
+                                            ))}
+                                        </div>
+
+                                        <div className="info-item">
+                                            Đơn Vị Tính: {product.unit}
+                                        </div>
+
+                                        { product.lengthiness && (
+                                            <div className="info-item">
+                                                Chiều Dài Cành Hoa: {product.lengthiness}
+                                            </div>
+                                        )}
+                                    </Fragment>
                                 )}
-                            </Fragment>
-                        )}
-                        viewMoreText="Chi Tiết"
-                        subText={<div>{product.productID} - {product.catalog}</div>}
-                        isShowViewMoreText
-                    />
-                )
-            }),
+                                viewMoreText="Chi Tiết"
+                                isShowViewMoreText
+                            />
+                        )
+                    })}
+
+                    <div style={{
+                        fontSize: "11px",
+                        marginTop: "10px"
+                    }}>
+                        Tổng Tiền: {formatNumber(sumBy(row.items, item => item.quantity * item.price))}
+                    </div>
+                </Fragment>
+            ),
             minWidth: "300",
         }, {
             label: "Trạng Thái",
-            width: "15%",
-            display: (row) => "Nhập Hàng",
-            minWidth: "150"
+            width: "10%",
+            display: (row) => {
+                if (row.status == "reject") {
+                    return (
+                        <span style={{color: status.find(r => r.value == row.status).color}}>
+                            {status.find(r => r.value == row.status).label}
+
+                            <div style={{fontSize: "11px"}}>
+                                Lí do: <b>{row.reason}</b>
+                            </div>
+
+                        </span>
+                    )
+                }
+
+                return <span style={{color: status.find(r => r.value == row.status).color}}>{status.find(r => r.value == row.status).label}</span>
+            },
+            minWidth: "100",
+            sortKey: "status"
         }, {
             label: "",
             width: "5%",
-            display: (row) => "Nhập Hàng",
-            minWidth: "150"
+            display: (row) => <ButtonGroup
+                actions={[{
+                    name: "Chi tiết",
+                    icon: <i className="fa fa-file-text"/>,
+                    click: () => this.view(row)
+                }, {
+                    name: "Từ chối",
+                    icon: <i className="fa fa-times text-danger"/>,
+                    click: () => this.rejectRequest(row),
+                    hide: () => row.status == "reject"
+                }]}
+            />,
+            minWidth: "50"
         }];
 
 
@@ -141,6 +216,8 @@ export class RequestWarehouseRoute extends React.Component {
                         </div>
 
                         <PaginationDataTable
+                            ref={elem => this.table = elem}
+                            rowStyling={(row) => ({background: status.find(r => r.value == row.status).background})}
                             total={total}
                             columns={columns}
                             rows={requests}
