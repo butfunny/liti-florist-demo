@@ -11,6 +11,8 @@ import {ColumnViewMore} from "../../components/column-view-more/column-view-more
 import {ImgPreview} from "../../components/img-repview/img-preview";
 import sumBy from "lodash/sumBy";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
+import {modals} from "../../components/modal/modals";
+import {RequestPreviewModal} from "./request-preview/request-preview-modal";
 
 export class RequestWarehouseRoute extends React.Component {
 
@@ -27,6 +29,23 @@ export class RequestWarehouseRoute extends React.Component {
     }
 
 
+
+    viewRequest(row) {
+        const modal = modals.openModal({
+            content: (
+                <RequestPreviewModal
+                    flowers={this.state.flowers}
+                    request={row}
+                    suppliers={this.state.suppliers}
+                    onDismiss={() => modal.close()}
+                    onClose={() => {
+                        modal.close();
+                        this.table.refresh();
+                    }}
+                />
+            )
+        })
+    }
 
     rejectRequest(row) {
         confirmModal.showInput({
@@ -54,7 +73,7 @@ export class RequestWarehouseRoute extends React.Component {
             label: "Chờ xử lý",
             color: ""
         }, {
-            value: "confirm",
+            value: "accepted",
             background: "rgb(29,201,183, .1)",
             label: "Xác nhận",
             color: "#1dc9b7"
@@ -171,18 +190,20 @@ export class RequestWarehouseRoute extends React.Component {
         }, {
             label: "",
             width: "5%",
-            display: (row) => <ButtonGroup
-                actions={[{
-                    name: "Chi tiết",
-                    icon: <i className="fa fa-file-text"/>,
-                    click: () => this.view(row)
-                }, {
-                    name: "Từ chối",
-                    icon: <i className="fa fa-times text-danger"/>,
-                    click: () => this.rejectRequest(row),
-                    hide: () => row.status == "reject"
-                }]}
-            />,
+            display: (row) => row.status == "pending" && (
+                <ButtonGroup
+                    actions={[{
+                        name: "Chi tiết",
+                        icon: <i className="fa fa-file-text"/>,
+                        click: () => this.viewRequest(row)
+                    }, {
+                        name: "Từ chối",
+                        icon: <i className="fa fa-times text-danger"/>,
+                        click: () => this.rejectRequest(row),
+                        hide: () => row.status == "reject"
+                    }]}
+                />
+            ),
             minWidth: "50"
         }];
 

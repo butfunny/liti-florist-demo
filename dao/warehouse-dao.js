@@ -1,7 +1,7 @@
 let mongoose = require('mongoose');
 
 module.exports = mongoose.model('WarehouseDao', {
-    productID: String,
+    parentID: String,
     quantity: Number,
     supplierID: String,
     price: Number,

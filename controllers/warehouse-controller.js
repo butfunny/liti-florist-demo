@@ -23,6 +23,45 @@ module.exports = (app) => {
         })
     });
 
+    app.get("/warehouse/detail-request/:id", Security.authorDetails, (req, res) => {
+        RequestWarehouseDao.findOne({_id: req.params.id}, (err, request) => {
+            if (request.requestType == "request-from-supplier") {
+                WareHouseDao.find({parentID: {$in: request.items.map(i => i.parentID)}}, (err, flowersInWarehouse) => {
+                    res.json({
+                        flowersInWarehouse
+                    })
+                })
+            }
+        })
+    });
+
+    app.post("/warehouse/accept-request/:id", Security.authorDetails, (req, res) => {
+        RequestWarehouseDao.findOne({_id: req.params.id}, (err, request) => {
+            if (request.requestType == "request-from-supplier") {
+                WareHouseDao.find({parentID: {$in: request.items.map(i => i.parentID)}}, (err, flowersInWarehouse) => {
+                    let promises = [];
+
+                    for (let item of request.items) {
+                        let found = flowersInWarehouse.find(i => i.parentID == item.parentID && i.price == item.price && i.oriPrice == item.oriPrice && i.supplierID == item.supplierID);
+                        if (found) {
+                            promises.push(WareHouseDao.updateOne({_id: found._id}, {quantity: found.quantity + item.quantity}))
+                        } else {
+                            promises.push(WareHouseDao.create(item))
+                        }
+                    }
+
+                    Promise.all(promises).then(() => {
+                        RequestWarehouseDao.updateOne({_id: req.params.id}, {status: "accepted"}, () => {
+                            res.end();
+                        })
+                    })
+
+                })
+            }
+        })
+
+    });
+
 
     app.post("/warehouse/request-list", Security.authorDetails, (req, res) => {
         let {skip, keyword, sortKey, isDesc} = req.body;

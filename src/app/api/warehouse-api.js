@@ -9,6 +9,12 @@ export const warehouseApi = {
     },
     getRequest: (data) => {
         return api.post("/api/warehouse/request-list", data)
+    },
+    acceptRequest: (id) => {
+        return api.post("/api/warehouse/accept-request/" + id)
+    },
+    getRequestByID: (id) => {
+        return api.get("/api/warehouse/detail-request/" + id)
     }
 
     // createItem: (item) => {
