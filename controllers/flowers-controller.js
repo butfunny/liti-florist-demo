@@ -1,4 +1,6 @@
 const FlowersDao = require("../dao/flowers-dao");
+const WarehouseDao = require("../dao/warehouse-dao");
+const SubWarehouseDao = require("../dao/subwarehouse-dao");
 const Security = require("../security/security-be");
 
 module.exports = function(app) {
@@ -51,8 +53,21 @@ module.exports = function(app) {
 
 
     app.delete("/flower/:id", Security.authorDetails, (req, res) => {
-        FlowersDao.deleteOne({_id: req.params.id}, () => {
-            res.end();
-        })
+
+        WarehouseDao.find({productID: req.params.pid}, (err, item) => {
+            if (item) res.json({error: true});
+            else {
+                SubWarehouseDao.find({productID: req.params.pid}, (err, item) => {
+                    if (item) res.json({error: true});
+                    else {
+                        FlowersDao.deleteOne({_id: req.params.id}, () => {
+                            res.end();
+                        })
+                    }
+                })
+            }
+        });
+
+
     })
 };

@@ -110,15 +110,15 @@ export class SupplierRoute extends React.Component {
                             <button className="btn btn-primary"
                                     disabled={supplier.length == 0 || suppliers.map(c => c.name).indexOf(supplier) > -1}
                                     onClick={() => this.addType()}>
-                        <span className="btn-text">
-                            Thêm
-                        </span>
+                                    <span className="btn-text">
+                                        Thêm
+                                    </span>
 
-                                {adding && (
+                                { adding && (
                                     <span className="loading-icon">
-                                    <i className="fa fa-spinner fa-pulse"/>
-                                </span>
-                                )}
+                                        <i className="fa fa-spinner fa-pulse"/>
+                                    </span>
+                                ) }
                             </button>
                         </div>
 
