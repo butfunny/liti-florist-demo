@@ -22,13 +22,9 @@ export class Customers extends React.Component {
 
         this.state = {
             customers: null,
-            page: 1,
-            keyword: "",
             bills: null,
             total: 0,
-            loading: false,
         };
-
 
     }
 

@@ -24,7 +24,7 @@ module.exports = (app) => {
 
 
     app.post("/warehouse/request-list", Security.authorDetails, (req, res) => {
-        let {skip, keyword, sortKey, isDesc, type} = req.body;
+        let {skip, keyword, sortKey = "created", isDesc = true, type} = req.body;
 
         let query = [{name: new RegExp(".*" + keyword + ".*", "i")}, {type}];
 

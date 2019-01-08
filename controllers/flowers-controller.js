@@ -1,6 +1,7 @@
 const FlowersDao = require("../dao/flowers-dao");
 const WarehouseDao = require("../dao/warehouse-dao");
 const SubWarehouseDao = require("../dao/subwarehouse-dao");
+const RequestWarehouseDao = require("../dao/request-warehouse-dao");
 const Security = require("../security/security-be");
 
 module.exports = function(app) {
@@ -54,15 +55,21 @@ module.exports = function(app) {
 
     app.delete("/flower/:id", Security.authorDetails, (req, res) => {
 
-        WarehouseDao.findOne({productID: req.params.pid}, (err, item) => {
+        WarehouseDao.findOne({productID: req.params.id}, (err, item) => {
             if (item) res.json({error: true});
             else {
-                SubWarehouseDao.findOne({productID: req.params.pid}, (err, item) => {
+                SubWarehouseDao.findOne({productID: req.params.id}, (err, item) => {
                     if (item) res.json({error: true});
                     else {
-                        FlowersDao.deleteOne({_id: req.params.id}, () => {
-                            res.end();
+                        RequestWarehouseDao.findOne({"items.parentID": req.params.id}, (err, item) => {
+                            if (item) res.json({error: true});
+                            else {
+                                FlowersDao.deleteOne({_id: req.params.id}, () => {
+                                    res.end();
+                                })
+                            }
                         })
+
                     }
                 })
             }

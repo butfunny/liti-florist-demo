@@ -75,7 +75,7 @@ export class PaginationDataTable extends React.Component {
 
     render() {
 
-        let {columns, rows, onClickRow, total} = this.props;
+        let {columns, rows, onClickRow, total, noSearch} = this.props;
         let {sortIndexCol, isDesc, loading, keyword, page} = this.state;
 
 
@@ -83,16 +83,20 @@ export class PaginationDataTable extends React.Component {
         return (
             <Fragment>
 
-                <div className="card-body card-body-pagination">
-                    <Input
-                        style={{marginBottom: "5px", marginTop: "5px"}}
-                        onKeyDown={(e) => !loading && e.keyCode == 13 && this.search(e.target.value)}
-                        value={keyword}
-                        onChange={(e) => this.setState({keyword: e.target.value})}
-                        label="Tìm Kiếm"
-                        info="Nhấn Enter để bắt đầu tìm kiếm"
-                    />
-                </div>
+                { !noSearch && (
+                    <div className="card-body card-body-pagination">
+                        <Input
+                            style={{marginBottom: "5px", marginTop: "5px"}}
+                            onKeyDown={(e) => !loading && e.keyCode == 13 && this.search(e.target.value)}
+                            value={keyword}
+                            onChange={(e) => this.setState({keyword: e.target.value})}
+                            label="Tìm Kiếm"
+                            info="Nhấn Enter để bắt đầu tìm kiếm"
+                        />
+                    </div>
+                )}
+
+
 
                 <div className="pagination-data-table"
                     style={{height: !rows ? "300px" : ""}}

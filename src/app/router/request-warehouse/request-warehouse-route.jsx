@@ -1,15 +1,24 @@
 import React from "react";
 import {Layout} from "../../components/layout/layout";
 import {ButtonGroup} from "../../components/button-group/button-group";
+import {customerApi} from "../../api/customer-api";
+import {PaginationDataTable} from "../pagination-data-table/pagination-data-table";
+import {warehouseApi} from "../../api/warehouse-api";
 export class RequestWarehouseRoute extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            requests: null,
+            total: 0,
+        };
     }
 
     render() {
 
         let {history} = this.props;
+
+        let {requests, total} = this.state;
 
         return (
             <Layout
@@ -38,6 +47,23 @@ export class RequestWarehouseRoute extends React.Component {
                                 }]}
                             />
                         </div>
+
+                        <PaginationDataTable
+                            total={total}
+                            columns={columns}
+                            rows={requests}
+                            api={({keyword, page, sortKey, isDesc}) => {
+                                return warehouseApi.getRequest({
+                                    keyword,
+                                    skip: (page - 1) * 15,
+                                    sortKey,
+                                    isDesc
+                                }).then(({requests, total}) => {
+                                    this.setState({requests, total});
+                                    return Promise.resolve();
+                                })
+                            }}
+                        />
                     </div>
                 </div>
             </Layout>
