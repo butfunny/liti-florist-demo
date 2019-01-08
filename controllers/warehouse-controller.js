@@ -32,6 +32,14 @@ module.exports = (app) => {
                     })
                 })
             }
+
+            if (request.requestType == "return-to-supplier") {
+                WareHouseDao.find({_id: {$in: request.items.map(i => i.id)}}, (err, flowersInWarehouse) => {
+                    res.json({
+                        flowersInWarehouse
+                    })
+                })
+            }
         })
     });
 
@@ -48,6 +56,30 @@ module.exports = (app) => {
                         } else {
                             promises.push(WareHouseDao.create(item))
                         }
+                    }
+
+                    Promise.all(promises).then(() => {
+                        RequestWarehouseDao.updateOne({_id: req.params.id}, {status: "accepted"}, () => {
+                            res.end();
+                        })
+                    })
+
+                })
+            }
+
+            if (request.requestType == "return-to-supplier") {
+                WareHouseDao.find({_id: {$in: request.items.map(i => i.id)}}, (err, items) => {
+                    let promises = [];
+
+                    for (let item of items) {
+                        let requestItem = request.items.find(i => i.id == item._id);
+                        if (requestItem.quantity > item.quantity) {
+                            res.json({error: "Kho không đủ số lượng trả."});
+                            return;
+                        } else {
+                            promises.push(WareHouseDao.updateOne({_id: item._id}, {quantity: item.quantity - requestItem.quantity}))
+                        }
+
                     }
 
                     Promise.all(promises).then(() => {

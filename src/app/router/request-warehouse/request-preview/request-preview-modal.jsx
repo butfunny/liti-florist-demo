@@ -1,15 +1,17 @@
-import React from "react";
+import React, {Fragment} from "react";
 import {warehouseApi} from "../../../api/warehouse-api";
 import {Input} from "../../../components/input/input";
 import moment from "../request-warehouse-route";
 import {ImgPreview} from "../../../components/img-repview/img-preview";
 import {DataTable} from "../../../components/data-table/data-table";
+import {ColumnViewMore} from "../../../components/column-view-more/column-view-more";
+import classnames from "classnames";
 export class RequestPreviewModal extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            flowersInWarehouse: []
+            flowersInWarehouse: null
         };
 
         warehouseApi.getRequestByID(props.request._id).then(({flowersInWarehouse}) => {
@@ -18,19 +20,34 @@ export class RequestPreviewModal extends React.Component {
     }
 
     submit() {
-        this.setState({saving: true});
-        warehouseApi.acceptRequest(this.props.request._id).then(() => {
-            this.props.onClose();
+        this.setState({saving: true, error: false});
+        warehouseApi.acceptRequest(this.props.request._id).then((resp) => {
+            if (resp && resp.error) this.setState({error: resp.error, saving: false});
+            else this.props.onClose();
         })
     }
 
     render() {
 
         let {onDismiss, onClose, suppliers, request, flowers} = this.props;
-        let {flowersInWarehouse, saving} = this.state;
+        let {flowersInWarehouse, saving, error} = this.state;
+
+        const renderItemInWarehouse = (item) => {
+            if (request.requestType == "request-from-supplier") {
+                let found = flowersInWarehouse.find(i => i.parentID == item.parentID && i.price == item.price && i.oriPrice == item.oriPrice && i.supplierID == item.supplierID);
+                return found ? found.quantity : 0
+            }
+
+            if (request.requestType == "return-to-supplier") {
+                let found = flowersInWarehouse.find(i => i._id == item.id);
+                return <span className={classnames(found.quantity < item.quantity && "text-danger")}>{found.quantity}</span>
+            }
+
+        };
 
         const requestTypesRender = {
-            "request-from-supplier": () => <span><i className="fa fa-arrow-right text-primary" aria-hidden="true"/> Nhập từ <b className="text-primary">{suppliers.find(s => s._id == request.supplierID).name}</b></span>
+            "request-from-supplier": () => <span><i className="fa fa-arrow-right text-primary" aria-hidden="true"/> Nhập từ <b className="text-primary">{suppliers.find(s => s._id == request.supplierID).name}</b></span>,
+            "return-to-supplier": () => <span><i className="fa fa-arrow-left text-danger" aria-hidden="true"/> Trả hàng </span>
         };
 
         const columns = [{
@@ -39,9 +56,53 @@ export class RequestPreviewModal extends React.Component {
             display: (item) => {
                 let product = flowers.find(f => f._id == item.parentID);
                 return (
-                    <div className="product-name">
-                        <ImgPreview src={product.image}/> {item.quantity} - {product.name}
-                    </div>
+                    <ColumnViewMore
+                        header={
+                            <div className="product-name">
+                                <ImgPreview src={product.image}/> {item.quantity} - {product.name}
+                            </div>
+                        }
+                        renderViewMoreBody={() => (
+                            <Fragment>
+                                { request.requestType == "return-to-supplier" && (
+                                    <div className="info-item">
+                                        Nhà cung cấp: {suppliers.find(s => s._id == item.supplierID) && suppliers.find(s => s._id == item.supplierID).name}
+                                    </div>
+                                )}
+
+                                <div className="info-item">
+                                    {product.productID} - {product.catalog}
+                                </div>
+
+                                <div className="info-item">
+                                    Màu:
+                                    {product.colors.map((color, index) => (
+                                        <div key={index}
+                                             style={{
+                                                 background: color,
+                                                 height: "15px",
+                                                 width: "25px",
+                                                 display: "inline-block",
+                                                 marginLeft: "5px"
+                                             }}
+                                        />
+                                    ))}
+                                </div>
+
+                                <div className="info-item">
+                                    Đơn Vị Tính: {product.unit}
+                                </div>
+
+                                { product.lengthiness && (
+                                    <div className="info-item">
+                                        Chiều Dài Cành Hoa: {product.lengthiness}
+                                    </div>
+                                )}
+                            </Fragment>
+                        )}
+                        viewMoreText="Chi Tiết"
+                        isShowViewMoreText
+                    />
                 )
             },
             minWidth: "300"
@@ -54,10 +115,7 @@ export class RequestPreviewModal extends React.Component {
             label: "Tồn Kho",
             width: "20%",
             minWidth: "100",
-            display: (item) => {
-                let found = flowersInWarehouse.find(i => i.parentID == item.parentID && i.price == item.price && i.oriPrice == item.oriPrice && i.supplierID == item.supplierID);
-                return found ? found.quantity : 0
-            }
+            display: (item) => flowersInWarehouse && renderItemInWarehouse(item)
         }];
 
         return (
@@ -95,6 +153,15 @@ export class RequestPreviewModal extends React.Component {
                     columns={columns}
                     rows={request.items}
                 />
+
+                { error && (
+                    <div className="error text-danger" style={{
+                        padding: "10px 15px",
+                        fontSize: "13px"
+                    }}>
+                        {error}
+                    </div>
+                )}
 
                 <div className="modal-footer">
                     <button type="button" className="btn btn-link  ml-auto" data-dismiss="modal" onClick={() => onDismiss()}>Thôi</button>

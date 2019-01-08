@@ -69,7 +69,8 @@ export class ReturnToSupplier extends React.Component {
             oriPrice: item.oriPrice,
             price: item.price,
             quantity: item.submitQuantity,
-            supplierID: item.supplierID
+            supplierID: item.supplierID,
+            id: item._id
         });
 
         warehouseApi.createRequest({
