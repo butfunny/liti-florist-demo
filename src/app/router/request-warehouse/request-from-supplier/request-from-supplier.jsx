@@ -16,6 +16,8 @@ import sumBy from "lodash/sumBy";
 import pick from "lodash/pick";
 import {warehouseApi} from "../../../api/warehouse-api";
 import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
+import {InputNumber} from "../../../components/input-number/input-number";
+import {ImgPreview} from "../../../components/img-repview/img-preview";
 export class RequestFromSupplier extends React.Component {
 
     constructor(props) {
@@ -74,6 +76,18 @@ export class RequestFromSupplier extends React.Component {
         })
     }
 
+    handleChangeItem(row, key, value) {
+        let items = [...this.state.request.items];
+        let itemFound = items.find(i => i.parentID == row.parentID);
+        itemFound[key] = value;
+        this.setState({
+            request: {
+                ...this.state.request,
+                items
+            }
+        })
+    }
+
     submit() {
 
         let {request} = this.state;
@@ -105,7 +119,11 @@ export class RequestFromSupplier extends React.Component {
             width: "35%",
             display: (row) => (
                 <ColumnViewMore
-                    header={row.name}
+                    header={
+                        <div className="product-name">
+                            <ImgPreview src={row.image}/> {row.name}
+                        </div>
+                    }
                     renderViewMoreBody={() => (
                         <Fragment>
                             <div className="info-item">
@@ -158,14 +176,24 @@ export class RequestFromSupplier extends React.Component {
         }, {
             label: "Giá Nhập",
             width: "15%",
-            display: (row) => formatNumber(row.oriPrice),
+            display: (row) => (
+                <InputNumber
+                    value={row.oriPrice}
+                    onChange={(oriPrice) => this.handleChangeItem(row, "oriPrice", oriPrice)}
+                />
+            ),
             className: "number content-menu-action",
             minWidth: "100",
             sortBy: (row) => row.oriPrice
         }, {
             label: "Giá Bán",
             width: "15%",
-            display: (row) => formatNumber(row.price),
+            display: (row) => (
+                <InputNumber
+                    value={row.price}
+                    onChange={(price) => this.handleChangeItem(row, "price", price)}
+                />
+            ),
             className: "number content-menu-action",
             minWidth: "100",
             sortBy: (row) => row.price

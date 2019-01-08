@@ -4,6 +4,7 @@ const WareHouseDao = require("../dao/warehouse-dao");
 const SubWareHouseDao = require("../dao/subwarehouse-dao");
 const RequestWarehouseDao = require("../dao/request-warehouse-dao");
 const RequestMissingDao = require("../dao/request-missing-dao");
+const FlowersDao = require("../dao/flowers-dao");
 
 module.exports = (app) => {
 
@@ -24,16 +25,26 @@ module.exports = (app) => {
 
 
     app.post("/warehouse/request-list", Security.authorDetails, (req, res) => {
-        let {skip, keyword, sortKey = "created", isDesc = true, type} = req.body;
+        let {skip, keyword, sortKey = "created", isDesc = true} = req.body;
 
-        let query = [{name: new RegExp(".*" + keyword + ".*", "i")}, {type}];
+        let query = [{$or: [{receivedName: new RegExp(".*" + keyword + ".*", "i")}, {requestName: new RegExp(".*" + keyword + ".*", "i")}]}];
 
         RequestWarehouseDao.find({$and: query}).sort({[sortKey] : isDesc ? -1 : 1}).skip(skip).limit(15).exec((err, requests) => {
             RequestWarehouseDao.countDocuments({$and: query}, (err, count) => {
-                res.json({
-                    requests,
-                    total: count,
+                let flowerIds = [];
+                for (let request of requests) {
+                    flowerIds = flowerIds.concat(request.items.map(i => i.parentID))
+                }
+
+                FlowersDao.find({_id: {$in: flowerIds}}, (err, flowers) => {
+                    res.json({
+                        requests,
+                        flowers,
+                        total: count,
+                    })
                 })
+
+
             })
         })
     });

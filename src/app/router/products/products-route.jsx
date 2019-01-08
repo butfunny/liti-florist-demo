@@ -10,6 +10,7 @@ import {ButtonGroup} from "../../components/button-group/button-group";
 import {SelectTagsColor} from "../../components/select-tags-color/select-tags-color";
 import {SelectTags} from "../../components/select-tags/select-tags";
 import {catalogs} from "../../common/constance";
+import {ImgPreview} from "../../components/img-repview/img-preview";
 
 export class ProductsRoute extends React.Component {
 
@@ -88,8 +89,7 @@ export class ProductsRoute extends React.Component {
             width: "25%",
             display: (row) => (
                 <div className="product-name">
-                    <img
-                        src={row.image} alt=""/> {row.name}
+                    <ImgPreview src={row.image}/> {row.name}
                 </div>
             ),
             sortKey: "name",
