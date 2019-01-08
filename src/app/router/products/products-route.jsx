@@ -64,8 +64,8 @@ export class ProductsRoute extends React.Component {
             description: "Bạn có đồng ý muốn xóa sản phẩm này không?"
         }).then(() => {
             flowersApi.removeFlower(row._id).then((resp) => {
-                if (resp.error) {
-                    confirmModal.alert("Không thể xóa sản phẩm vì sản phẩm đang tồn tại trong kho");
+                if (resp && resp.error) {
+                    confirmModal.alert("Không thể xóa sản phẩm vì sản phẩm đang được sử dụng ở nơi khác");
                 } else {
                     this.table.refresh();
                 }

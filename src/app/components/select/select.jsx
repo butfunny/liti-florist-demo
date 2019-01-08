@@ -26,13 +26,12 @@ export class Select extends React.Component {
 
         return (
             <div className={classnames("liti-input select", className, error && "has-error", value && "has-value", open && "focus")} onClick={() => this.setState({open: true})}>
-                { value && (
-                    <div className="select-text">
-                        {displayAs ? displayAs(value) : value}
+                <div className="select-text">
+                    {displayAs ? displayAs(value) : value}&nbsp;
 
-                        <i className={classnames("fa sort-icon", !open ? "fa-angle-down" : "fa-angle-up")}/>
-                    </div>
-                )}
+                    <i className={classnames("fa sort-icon", !open ? "fa-angle-down" : "fa-angle-up")}/>
+                </div>
+
 
                 <div className="label"
 

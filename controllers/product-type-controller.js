@@ -3,6 +3,9 @@ const ProductTypeDao = require("../dao/product-type-dao");
 const ProductColorDao = require("../dao/product-color-dao");
 const Security = require("../security/security-be");
 const SupplierDao = require("../dao/supplier-dao");
+const WarehouseDao = require("../dao/warehouse-dao");
+const SubWarehouseDao = require("../dao/subwarehouse-dao");
+const RequestWarehouseDao = require("../dao/request-warehouse-dao");
 
 
 module.exports = function(app) {
@@ -77,9 +80,28 @@ module.exports = function(app) {
 
 
     app.delete("/supplier/:id", Security.isAdmin, (req, res) => {
-        SupplierDao.deleteOne({name: req.params.id}, () => {
-            res.end();
-        })
+
+        RequestWarehouseDao.findOne({supplierID: req.params.id}, (err, item) => {
+            if (item) res.json({error: true});
+            else {
+                WarehouseDao.findOne({supplierID: req.params.id}, (err, item) => {
+                    if (item) res.json({error: true});
+                    else {
+                        SubWarehouseDao.findOne({supplierID: req.params.id}, (err, item) => {
+                            if (item) res.json({error: true});
+                            else {
+                                SupplierDao.deleteOne({name: req.params.id}, () => {
+                                    res.end();
+                                })
+                            }
+                        })
+                    }
+                })
+            }
+
+        });
+
+
     });
 
     app.put("/supplier/:id", Security.isAdmin, (req , res) => {

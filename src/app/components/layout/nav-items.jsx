@@ -85,9 +85,9 @@ export const navItems = (user) => {
                 label: "Danh Sách Sản Phẩm",
                 hide: () => permission[user.role].indexOf("warehouse.products.view") == -1 && permission[user.role].indexOf("warehouse.products.update") == -1
             }, {
-                to: "/warehouse",
-                label: "Quản lí kho",
-                hide: () => (permission[user.role].indexOf("warehouse.view") == -1 && permission[user.role].indexOf("warehouse.create") == -1) && permission[user.role].indexOf("warehouse.edit") == -1 && permission[user.role].indexOf("warehouse.edit") == -1
+                to: "/request-warehouse",
+                label: "Phiếu Xuất Nhập Kho",
+                hide: () => false
             }, {
                 to: "/list-request-item",
                 label: "Phiếu xuất nhập kho",

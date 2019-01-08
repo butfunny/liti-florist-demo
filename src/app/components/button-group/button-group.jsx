@@ -1,7 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import {ClickOutside} from "../click-outside/click-outside";
-export class ButtonGroup extends React.Component {
+import classnames from "classnames";
+import {RComponent} from "../r-component/r-component";
+export class ButtonGroup extends RComponent {
 
     constructor(props) {
         super(props);
@@ -9,23 +11,21 @@ export class ButtonGroup extends React.Component {
             top: 0,
             left: 0,
             open: false
-        }
+        };
+
+
     }
 
-    componentDidMount() {
-        let {left, top} = ReactDOM.findDOMNode(this).getBoundingClientRect();
-        this.setState({top, left})
-    }
 
     render() {
 
         let {top, left, open} = this.state;
-        let {actions} = this.props;
+        let {actions, customText, className} = this.props;
 
         return (
-            <div className="button-group" onClick={() => this.setState({open: true})}>
+            <div className={classnames("button-group", className)} onClick={() => this.setState({open: true})}>
                 <div className="button-text">
-                    <i className="fa fa-cog nav-icon"/>
+                     {customText ? customText : <i className="fa fa-cog nav-icon"/>}
                 </div>
 
                 { open && (

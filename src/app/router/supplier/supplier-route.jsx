@@ -55,9 +55,15 @@ export class SupplierRoute extends React.Component {
             title: "Xóa nhà cung cấp này?",
             description: "Bạn có đồng ý muốn xóa nhà cung cấp này không?"
         }).then(() => {
-            productApi.removeSupplier(row._id);
-            let {suppliers} = this.state;
-            this.setState({suppliers: suppliers.filter(c => c.name != row.name)});
+            productApi.removeSupplier(row._id).then((resp) => {
+                if (resp && resp.error) {
+                    confirmModal.alert("Không thể xóa nhà cung cấp này, vì đã được sử dụng ở nơi khách");
+                } else {
+                    let {suppliers} = this.state;
+                    this.setState({suppliers: suppliers.filter(c => c.name != row.name)});
+                }
+            });
+
         })
     }
 

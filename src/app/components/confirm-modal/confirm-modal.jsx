@@ -53,7 +53,7 @@ export class AlertModal extends React.Component {
                     </div>
 
                     <div className="modal-footer">
-                        <button type="button" className="btn btn-link  ml-auto" data-dismiss="modal" onClick={() => onDismiss()}>Đóng</button>
+                        <button type="button" className="btn btn-primary " onClick={() => onDismiss()}>Đóng</button>
                     </div>
 
                 </div>

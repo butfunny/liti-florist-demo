@@ -30,9 +30,9 @@ module.exports = function(app) {
     });
 
     app.post("/list-flowers", Security.authorDetails, (req, res) => {
-        let {skip, keyword, sortKey, isDesc, filteredColors, filteredTypes} = req.body;
+        let {skip, keyword, sortKey, isDesc, filteredColors = [], filteredTypes = []} = req.body;
 
-        let query = [{name: new RegExp(".*" + keyword + ".*", "i")}];
+        let query = [{$or: [{name: new RegExp(".*" + keyword + ".*", "i")}, {productID: new RegExp(".*" + keyword + ".*", "i")}]}];
         if (filteredColors.length > 0) {
             query.push({$or: filteredColors.map(color => ({colors: new RegExp(".*" + color + ".*", "i")}))})
         }
@@ -54,10 +54,10 @@ module.exports = function(app) {
 
     app.delete("/flower/:id", Security.authorDetails, (req, res) => {
 
-        WarehouseDao.find({productID: req.params.pid}, (err, item) => {
+        WarehouseDao.findOne({productID: req.params.pid}, (err, item) => {
             if (item) res.json({error: true});
             else {
-                SubWarehouseDao.find({productID: req.params.pid}, (err, item) => {
+                SubWarehouseDao.findOne({productID: req.params.pid}, (err, item) => {
                     if (item) res.json({error: true});
                     else {
                         FlowersDao.deleteOne({_id: req.params.id}, () => {
