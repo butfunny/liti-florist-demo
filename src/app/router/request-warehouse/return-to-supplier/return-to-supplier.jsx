@@ -98,7 +98,7 @@ export class ReturnToSupplier extends React.Component {
         let itemFound = items.find(i => i._id == row._id);
         let quantity = itemFound.quantity <= _quantity ? itemFound.quantity : _quantity;
 
-        if (quantity == 0) {
+        if (quantity === 0) {
             items = items.filter(i => i != itemFound);
         } else {
             itemFound.submitQuantity = quantity;
@@ -291,7 +291,7 @@ export class ReturnToSupplier extends React.Component {
                                 <div style={{marginTop: "12px"}}>
                                     <button className="btn btn-primary"
                                             onClick={() => this.submit()}
-                                            disabled={request.items.length == 0 || request.requestName.length == 0 || request.receivedName.length == 0}
+                                            disabled={request.items.filter(i => i.submitQuantity > 0).length == 0 || request.requestName.length == 0 || request.receivedName.length == 0}
                                     >
                                         Tạo Phiếu
                                     </button>

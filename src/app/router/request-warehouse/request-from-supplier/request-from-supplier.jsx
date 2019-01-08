@@ -53,7 +53,7 @@ export class RequestFromSupplier extends React.Component {
         let items = [...this.state.request.items];
         let itemFound = items.find(i => i.parentID == row.parentID);
 
-        if (quantity == 0) {
+        if (quantity === 0) {
             items = items.filter(i => i != itemFound);
         } else {
             itemFound.quantity = quantity;
@@ -288,7 +288,7 @@ export class RequestFromSupplier extends React.Component {
                                 <div style={{marginTop: "12px"}}>
                                     <button className="btn btn-primary"
                                             onClick={() => this.submit()}
-                                        disabled={request.items.length == 0 || !request.supplierID || request.requestName.length == 0 || request.receivedName.length == 0}
+                                        disabled={request.items.filter(i => i.quantity > 0).length == 0 || !request.supplierID || request.requestName.length == 0 || request.receivedName.length == 0}
                                     >
                                         Tạo Phiếu
                                     </button>

@@ -19,9 +19,9 @@ export class InputQuantity extends React.Component {
                     <i className="fa fa-minus" aria-hidden="true"/>
                 </button>
 
-                <Input
-                    readOnly
+                <InputNumber
                     value={value}
+                    onChange={(value) => onChange(value)}
                 />
 
                 <button className="btn btn-primary btn-small"
