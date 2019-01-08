@@ -13,6 +13,8 @@ import {ColumnViewMore} from "../../../components/column-view-more/column-view-m
 import {ImgPreview} from "../../../components/img-repview/img-preview";
 import {InputQuantity} from "../../../components/input-quantity/input-quantity";
 import {InputNumber} from "../../../components/input-number/input-number";
+import pick from "lodash/pick";
+import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
 export class ReturnToSupplier extends React.Component {
 
     constructor(props) {
@@ -58,6 +60,37 @@ export class ReturnToSupplier extends React.Component {
         })
     }
 
+    submit() {
+
+        let {request} = this.state;
+
+        const mapItem = (item) => ({
+            parentID: item.parentID,
+            oriPrice: item.oriPrice,
+            price: item.price,
+            quantity: item.submitQuantity,
+            supplierID: item.supplierID
+        });
+
+        warehouseApi.createRequest({
+            ...request,
+            items: request.items.map(item => mapItem(item)),
+            requestType: "return-to-supplier",
+            created: new Date(),
+            status: "pending"
+        }).then(() => {
+            confirmModal.alert("Gửi phiếu thành công");
+            this.setState({
+                request: {
+                    items: [],
+                    requestName: "",
+                    receivedName: ""
+                }
+            })
+        })
+    }
+
+
 
     handleChangeQuantity(row, _quantity) {
         let items = [...this.state.request.items];
@@ -96,6 +129,10 @@ export class ReturnToSupplier extends React.Component {
                     }
                     renderViewMoreBody={() => (
                         <Fragment>
+                            <div className="info-item">
+                                Nhà cung cấp: {suppliers.find(s => s._id == row.supplierID).name}
+                            </div>
+
                             <div className="info-item">
                                 Màu:
                                 {row.colors.map((color, index) => (
@@ -220,7 +257,7 @@ export class ReturnToSupplier extends React.Component {
                                 asyncGet={(name) => {
                                     if (name.length > 0) {
                                         return warehouseApi.searchProductInBase(name).then(({products, flowers}) => {
-                                            return products.map(p => {
+                                            return products.filter(p => request.items.map(i => i._id).indexOf(p._id) == -1 && p.quantity > 0).map(p => {
                                                 let flower = flowers.find(f => f._id == p.parentID);
                                                 return {
                                                     ...flower,
