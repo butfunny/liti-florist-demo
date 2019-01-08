@@ -212,6 +212,8 @@ export class RequestFromSupplier extends React.Component {
             minWidth: "50",
         }];
 
+        let {history} = this.props;
+
 
         return (
             <Layout
@@ -221,7 +223,13 @@ export class RequestFromSupplier extends React.Component {
                 <div className="request-from-supplier">
                     <div className="card">
                         <div className="card-title">
-                            Phiếu nhập hàng
+                            <i className="fa fa-chevron-left text-primary"
+                               onClick={() => history.push("/request-warehouse")}
+                               style={{
+                                   cursor: "pointer",
+                                   paddingRight: "5px"
+                               }}
+                               aria-hidden="true"/> Phiếu nhập hàng
                         </div>
 
                         <div className="card-body">
