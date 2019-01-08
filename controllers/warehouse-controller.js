@@ -94,6 +94,23 @@ module.exports = (app) => {
     });
 
 
+    app.post("/warehouse/base-items", Security.authorDetails, (req, res) => {
+        let {keyword} = req.body;
+
+        let query = [{$or: [{name: new RegExp(".*" + keyword + ".*", "i")}, {productID: new RegExp(".*" + keyword + ".*", "i")}]}];
+
+        FlowersDao.find({$and: query}, (err, flowers) => {
+            WareHouseDao.find({parentID: {$in: flowers.map(f => f._id)}}, (err, products) => {
+                res.json({
+                    products,
+                    flowers
+                })
+            })
+        });
+    });
+
+
+
 
 
     // app.post("/warehouse/create", Security.authorDetails, function (req, res) {

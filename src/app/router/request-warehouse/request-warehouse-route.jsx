@@ -228,7 +228,8 @@ export class RequestWarehouseRoute extends React.Component {
                                     click: () => history.push("/request-warehouse/request-from-supplier")
                                 }, {
                                     icon: <i className="fa fa-arrow-left text-danger" aria-hidden="true"/>,
-                                    name: "Trả hàng"
+                                    name: "Trả hàng",
+                                    click: () => history.push("/request-warehouse/return-to-supplier")
                                 }, {
                                     icon: <i className="fa fa-exchange text-success" aria-hidden="true"/>,
                                     name: "Chuyển kho"

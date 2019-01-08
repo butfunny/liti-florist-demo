@@ -34,6 +34,7 @@ import {SupplierRoute} from "./supplier/supplier-route";
 import {ProductsRoute} from "./products/products-route";
 import {RequestWarehouseRoute} from "./request-warehouse/request-warehouse-route";
 import {RequestFromSupplier} from "./request-warehouse/request-from-supplier/request-from-supplier";
+import {ReturnToSupplier} from "./request-warehouse/return-to-supplier/return-to-supplier";
 export class AppRouter extends React.Component {
 
     constructor(props) {
@@ -93,6 +94,7 @@ export class AppRouter extends React.Component {
                     <Route exact path="/products" component={requireAuthen(ProductsRoute)} />
                     <Route exact path="/request-warehouse" component={requireAuthen(RequestWarehouseRoute)} />
                     <Route exact path="/request-warehouse/request-from-supplier" component={requireAuthen(RequestFromSupplier)} />
+                    <Route exact path="/request-warehouse/return-to-supplier" component={requireAuthen(ReturnToSupplier)} />
                     <ModalsRegistry />
                 </Fragment>
             </BrowserRouter>
