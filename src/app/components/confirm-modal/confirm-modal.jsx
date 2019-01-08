@@ -72,6 +72,10 @@ class InputAlertModal extends React.Component {
         }
     }
 
+    componentDidMount() {
+        this.input.focus();
+    }
+
     render() {
 
         let {title, onDismiss, label, onClose} = this.props;
@@ -89,6 +93,7 @@ class InputAlertModal extends React.Component {
 
                     <div className="modal-body">
                         <Input
+                            ref={input => this.input = input}
                             label={`${label}*`}
                             value={text}
                             onChange={(e) => this.setState({text: e.target.value})}

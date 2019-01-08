@@ -100,7 +100,19 @@ export class RequestWarehouseRoute extends React.Component {
                     "return-to-supplier": () => <span><i className="fa fa-arrow-left text-danger" aria-hidden="true"/> Trả hàng </span>
                 };
 
-                return requestTypesRender[row.requestType]();
+                return (
+                    <div>
+                        {requestTypesRender[row.requestType]()}
+
+                        <div className="info-item">
+                            Người gửi: {row.requestName}
+                        </div>
+
+                        <div className="info-item">
+                            Người nhận: {row.receivedName}
+                        </div>
+                    </div>
+                );
             },
             minWidth: "150",
             sortKey: "type"
@@ -245,6 +257,7 @@ export class RequestWarehouseRoute extends React.Component {
                         </div>
 
                         <PaginationDataTable
+                            placeholderSearch="Tìm kiếm theo tên người gửi hoặc người nhận"
                             ref={elem => this.table = elem}
                             rowStyling={(row) => ({background: status.find(r => r.value == row.status).background})}
                             total={total}

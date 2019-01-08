@@ -75,7 +75,7 @@ export class PaginationDataTable extends React.Component {
 
     render() {
 
-        let {columns, rows, onClickRow, total, noSearch, rowStyling} = this.props;
+        let {columns, rows, onClickRow, total, noSearch, rowStyling, placeholderSearch = "Tìm kiếm"} = this.props;
         let {sortIndexCol, isDesc, loading, keyword, page} = this.state;
 
 
@@ -90,7 +90,7 @@ export class PaginationDataTable extends React.Component {
                             onKeyDown={(e) => !loading && e.keyCode == 13 && this.search(e.target.value)}
                             value={keyword}
                             onChange={(e) => this.setState({keyword: e.target.value})}
-                            label="Tìm Kiếm"
+                            label={placeholderSearch}
                             info="Nhấn Enter để bắt đầu tìm kiếm"
                         />
                     </div>
