@@ -6,6 +6,7 @@ import {ImgPreview} from "../../../components/img-repview/img-preview";
 import {DataTable} from "../../../components/data-table/data-table";
 import {ColumnViewMore} from "../../../components/column-view-more/column-view-more";
 import classnames from "classnames";
+import {premisesInfo} from "../../../security/premises-info";
 export class RequestPreviewModal extends React.Component {
 
     constructor(props) {
@@ -31,6 +32,7 @@ export class RequestPreviewModal extends React.Component {
 
         let {onDismiss, onClose, suppliers, request, flowers} = this.props;
         let {flowersInWarehouse, saving, error} = this.state;
+        const premises = premisesInfo.getPremises();
 
         const renderItemInWarehouse = (item) => {
             if (request.requestType == "request-from-supplier") {
@@ -38,7 +40,8 @@ export class RequestPreviewModal extends React.Component {
                 return found ? found.quantity : 0
             }
 
-            if (request.requestType == "return-to-supplier") {
+
+            if (request.requestType == "return-to-supplier" || request.requestType == "transfer-to-subwarehouse") {
                 let found = flowersInWarehouse.find(i => i._id == item.id);
                 return <span className={classnames(found.quantity < item.quantity && "text-danger")}>{found.quantity}</span>
             }
@@ -46,9 +49,11 @@ export class RequestPreviewModal extends React.Component {
         };
 
         const requestTypesRender = {
-            "request-from-supplier": () => <span><i className="fa fa-arrow-right text-primary" aria-hidden="true"/> Nhập từ <b className="text-primary">{suppliers.find(s => s._id == request.supplierID).name}</b></span>,
-            "return-to-supplier": () => <span><i className="fa fa-arrow-left text-danger" aria-hidden="true"/> Trả hàng </span>
+            "request-from-supplier": () => <span><i className="fa fa-arrow-right text-primary" aria-hidden="true"/> Nhập từ <b className="text-primary">{suppliers.find(s => s._id == row.supplierID).name}</b></span>,
+            "return-to-supplier": () => <span><i className="fa fa-arrow-left text-danger" aria-hidden="true"/> Trả hàng </span>,
+            "transfer-to-subwarehouse": () => <span>Kho tổng <i className="fa fa-arrow-right text-primary" aria-hidden="true"/> {premises.find(p => p._id == request.premisesID).name} </span>
         };
+
 
         const columns = [{
             label: "Sản Phẩm",

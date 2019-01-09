@@ -13,6 +13,7 @@ import sumBy from "lodash/sumBy";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 import {modals} from "../../components/modal/modals";
 import {RequestPreviewModal} from "./request-preview/request-preview-modal";
+import {premisesInfo} from "../../security/premises-info";
 
 export class RequestWarehouseRoute extends React.Component {
 
@@ -84,6 +85,8 @@ export class RequestWarehouseRoute extends React.Component {
             color: "#fd397a"
         }];
 
+        const premises = premisesInfo.getPremises();
+
 
         let columns = [{
             label: "Thời gian",
@@ -97,7 +100,8 @@ export class RequestWarehouseRoute extends React.Component {
             display: (row) => {
                 const requestTypesRender = {
                     "request-from-supplier": () => <span><i className="fa fa-arrow-right text-primary" aria-hidden="true"/> Nhập từ <b className="text-primary">{suppliers.find(s => s._id == row.supplierID).name}</b></span>,
-                    "return-to-supplier": () => <span><i className="fa fa-arrow-left text-danger" aria-hidden="true"/> Trả hàng </span>
+                    "return-to-supplier": () => <span><i className="fa fa-arrow-left text-danger" aria-hidden="true"/> Trả hàng </span>,
+                    "transfer-to-subwarehouse": () => <span>Kho tổng <i className="fa fa-arrow-right text-primary" aria-hidden="true"/> {premises.find(p => p._id == row.premisesID).name} </span>
                 };
 
                 return (
@@ -134,7 +138,7 @@ export class RequestWarehouseRoute extends React.Component {
                                 }
                                 renderViewMoreBody={() => (
                                     <Fragment>
-                                        { row.requestType == "return-to-supplier" && (
+                                        { row.requestType != "request-from-supplier" && (
                                             <div className="info-item">
                                                Nhà cung cấp: {suppliers.find(s => s._id == item.supplierID) && suppliers.find(s => s._id == item.supplierID).name}
                                             </div>
@@ -250,8 +254,15 @@ export class RequestWarehouseRoute extends React.Component {
                                     name: "Trả hàng",
                                     click: () => history.push("/request-warehouse/return-to-supplier")
                                 }, {
-                                    icon: <i className="fa fa-exchange text-success" aria-hidden="true"/>,
-                                    name: "Chuyển kho"
+                                    icon: <i className="fa fa-exchange text-primary" aria-hidden="true"/>,
+                                    name: "Xuất kho",
+                                    click: () => history.push("/request-warehouse/transfer-to-subwarehouse")
+                                }, {
+                                    icon: <i className="fa fa-retweet text-primary" aria-hidden="true"/>,
+                                    name: "Trả kho"
+                                }, {
+                                    icon: <i className="fa fa-exclamation text-danger" aria-hidden="true"/>,
+                                    name: "Báo cáo hao hụt/hủy hỏng"
                                 }]}
                             />
                         </div>

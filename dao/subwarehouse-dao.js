@@ -1,10 +1,11 @@
 let mongoose = require('mongoose');
 
 module.exports = mongoose.model('SubWareHouseDao', {
-    productID: String,
+    parentID: String,
     quantity: Number,
     supplierID: String,
     price: Number,
     oriPrice: Number,
-    warehouseID: String
+    premisesID: String,
+    baseProductID: String
 }, "sub-warehouse");
