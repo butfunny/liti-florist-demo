@@ -1,201 +1,284 @@
 import React, {Fragment} from "react";
 import {Layout} from "../../components/layout/layout";
+import {premisesInfo} from "../../security/premises-info";
+import {Select} from "../../components/select/select";
 import {warehouseApi} from "../../api/warehouse-api";
-import {modals} from "../../components/modal/modals";
-import {ManageWarehouseItemModal} from "./modals/manage-warehouse-item";
-import {WareHouseFullView} from "./view/warehouse-full-view";
-import {permissionInfo, premisesInfo} from "../../security/premises-info";
-import {SubWareHouseView} from "./view/sub-warehouse-view";
+import {ImgPreview} from "../../components/img-repview/img-preview";
+import {formatNumber} from "../../common/common";
+import {ButtonGroup} from "../../components/button-group/button-group";
+import {DataTable} from "../../components/data-table/data-table";
+import sortBy from "lodash/sortBy";
 import {Input} from "../../components/input/input";
-import {userInfo} from "../../security/user-info";
-import {Checkbox} from "../../components/checkbox/checkbox";
-import moment from "moment";
-import {CSVLink} from "react-csv";
-import readXlsxFile from 'read-excel-file'
-import {confirmModal} from "../../components/confirm-modal/confirm-modal";
-import isEqual from "lodash/isEqual"
-import {generateDatas} from "../../common/common";
-import {uploadApi} from "../../api/upload-api";
+import {SelectTagsColor} from "../../components/select-tags-color/select-tags-color";
+import {SelectTags} from "../../components/select-tags/select-tags";
+import {catalogs} from "../../common/constance";
+import {productApi} from "../../api/product-api";
 export class WarehouseRoute extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            items: [],
-            viewType: "",
+            items: null,
+            selectedBase: "all",
             keyword: "",
-            loading: true
+            filteredColors: [],
+            filteredTypes: [],
+            suppliers: []
         };
 
-        warehouseApi.getItems().then(({warehouseItems, subWarehouseItems}) => {
-            this.setState({items: warehouseItems, subWarehouseItems, loading: false})
-        })
-
+        productApi.suppliers().then((suppliers) => this.setState({suppliers}))
     }
 
-
-    refresh() {
-        return warehouseApi.getItems().then(({warehouseItems, subWarehouseItems}) => {
-            this.setState({items: warehouseItems, subWarehouseItems});
-            return Promise.resolve();
-        });
+    componentDidMount() {
+        this.loadData("all");
     }
 
-    addItem() {
-        let {items} = this.state;
-
-        const modal = modals.openModal({
-            content: (
-                <ManageWarehouseItemModal
-                    items={items}
-                    onClose={(newItems) => {
-                        let {items} = this.state;
-                        this.setState({items: items.concat(newItems)});
-                        modal.close();
-                    }}
-                    onDismiss={() => modal.close()}
-                />
-            )
-        })
-    }
-
-
-    handleChangeInput(e) {
-        if (e.target.files[0]) {
-            readXlsxFile(e.target.files[0]).then((rows) => {
-                if (rows[0] && isEqual(["Mã", "Tên hàng", "Danh mục", "Đơn vị tính", "Số lượng", "Giá gốc", "Giá bán", "Màu sắc", "Nhà cung cấp", "Xuất xứ"], rows[0])) {
-                    this.setState({uploading: true});
-
-                    const upload = (index) => {
-                        if (index == rows.length - 1) {
-                            this.setState({uploading: false});
-                            confirmModal.alert(`Thêm thành công ${rows.length - 1} sản phẩm`);
-                            warehouseApi.getItems().then(({warehouseItems, subWarehouseItems}) => {
-                                this.setState({items: warehouseItems, subWarehouseItems, loading: false})
-                            })
-                        } else {
-                            let item = rows[index];
-                            warehouseApi.createItem({
-                                productId: item[0],
-                                name: item[1],
-                                catalog: item[2],
-                                unit: item[3],
-                                oriPrice: item[5],
-                                price: item[6],
-                                quantity: item[4],
-                                color: item[7],
-                                supplier: item[8],
-                                country: item[9]
-                            }).then(() => {
-                                upload(index + 1)
-                            })
+    loadData(baseID) {
+        this.setState({items: null});
+        if (baseID == "all") {
+            warehouseApi.searchProductInBase("").then(({products, flowers}) => {
+                this.setState({items: products.map(p => {
+                        let flower = flowers.find(f => f._id == p.parentID);
+                        return {
+                            ...flower,
+                            ...p
                         }
-                    };
-
-                    upload(1);
-
-                } else {
-                    confirmModal.alert("Sai định dạng file");
-                }
+                    })
+                })
+            })
+        } else {
+            warehouseApi.searchProductInSubWarehouse({keyword: name, premisesID: baseID}).then(({products, flowers}) => {
+                this.setState({items: products.map(p => {
+                        let flower = flowers.find(f => f._id == p.parentID);
+                        return {
+                            ...flower,
+                            ...p
+                        }
+                    })
+                })
             })
         }
     }
 
+    // handleChangeInput(e) {
+    //     if (e.target.files[0]) {
+    //         readXlsxFile(e.target.files[0]).then((rows) => {
+    //             if (rows[0] && isEqual(["Mã", "Tên hàng", "Danh mục", "Đơn vị tính", "Số lượng", "Giá gốc", "Giá bán", "Màu sắc", "Nhà cung cấp", "Xuất xứ"], rows[0])) {
+    //                 this.setState({uploading: true});
+    //
+    //                 const upload = (index) => {
+    //                     if (index == rows.length - 1) {
+    //                         this.setState({uploading: false});
+    //                         confirmModal.alert(`Thêm thành công ${rows.length - 1} sản phẩm`);
+    //                         warehouseApi.getItems().then(({warehouseItems, subWarehouseItems}) => {
+    //                             this.setState({items: warehouseItems, subWarehouseItems, loading: false})
+    //                         })
+    //                     } else {
+    //                         let item = rows[index];
+    //                         warehouseApi.createItem({
+    //                             productId: item[0],
+    //                             name: item[1],
+    //                             catalog: item[2],
+    //                             unit: item[3],
+    //                             oriPrice: item[5],
+    //                             price: item[6],
+    //                             quantity: item[4],
+    //                             color: item[7],
+    //                             supplier: item[8],
+    //                             country: item[9]
+    //                         }).then(() => {
+    //                             upload(index + 1)
+    //                         })
+    //                     }
+    //                 };
+    //
+    //                 upload(1);
+    //
+    //             } else {
+    //                 confirmModal.alert("Sai định dạng file");
+    //             }
+    //         })
+    //     }
+    // }
+
     render() {
 
-        let {items, viewType, keyword, uploading, loading, subWarehouseItems} = this.state;
-        const premises = premisesInfo.getPremises();
 
-        const itemsFiltered = items.filter(i => i.name.toLowerCase().indexOf(keyword.toLowerCase()) > -1);
-        const permission = permissionInfo.getPermission();
-        const user = userInfo.getUser();
+        let premises = premisesInfo.getPremises();
+
+        let columns = [{
+            label: "Mã SP",
+            width: "10%",
+            display: (row) => row.productID,
+            sortBy: (row) => row.productID,
+            minWidth: "150"
+        }, {
+            label: "Tên",
+            width: "25%",
+            display: (row) => (
+                <div className="product-name">
+                    <ImgPreview src={row.image}/> {row.name}
+                    <div style={{fontSize: "12px"}}>
+                        Nhà cung cấp: {this.state.suppliers.find(s => s._id == row.supplierID).name}
+                    </div>
+                </div>
+            ),
+            sortBy: (row) => row.name,
+            minWidth: "250"
+        }, {
+            label: "Tồn",
+            width: "5%",
+            display: (row) => row.quantity,
+            sortBy: (row) => row.quantity,
+            minWidth: "50"
+        }, {
+            label: "Loại",
+            width: "15%",
+            display: (row) => row.catalog,
+            sortBy: (row) => row.catalog,
+            minWidth: "150"
+        }, {
+            label: "Màu",
+            width: "15%",
+            display: (row) => row.colors.map((color, index) => (
+                <div key={index}
+                     style={{
+                         background: color,
+                         height: "15px",
+                         width: "25px",
+                         display: "inline-block",
+                         marginRight: "5px"
+                     }}
+                />
+            )),
+            minWidth: "150"
+        }, {
+            label: "Giá Gốc",
+            width: "10%",
+            display: (row) => formatNumber(row.oriPrice),
+            sortBy: (row) => row.oriPrice,
+            minWidth: "100"
+        }, {
+            label: "Giá Bán",
+            width: "10%",
+            display: (row) => formatNumber(row.price),
+            sortBy: (row) => row.price,
+            minWidth: "100"
+        }, {
+            label: "DVT",
+            width: "5%",
+            display: (row) => row.unit,
+            sortBy: (row) => row.unit,
+            minWidth: "50"
+        }, {
+            label: "Dài",
+            width: "5%",
+            display: (row) => row.lengthiness,
+            sortBy: (row) => row.lengthiness,
+            minWidth: "50",
+        }];
+
+
+        let {selectedBase, keyword, filteredColors, filteredTypes, items} = this.state;
+
+
+        let bases = [{
+            value: "all",
+            label: "Kho Tổng"
+        }, ...premises.map((p) => ({
+            value: p._id,
+            label: `Kho ${p.name}`
+        }))];
+
+
+        let itemsFiltered = items && items.filter(i => {
+
+            const filterKeyword = (i) => {
+                let keys = ["productID", "name", "unit"];
+                for (let key of keys) {
+                    if (i[key].toLowerCase().indexOf(keyword.toLowerCase()) > -1) return true;
+                }
+                return false;
+            };
+
+            const filterColor = (i) => {
+                if (filteredColors.length == 0) return true;
+
+                for (let color of filteredColors) {
+                    if (i.colors.indexOf(color) > -1) return true;
+                }
+                return false;
+            };
+
+
+            const filterType = (i) => {
+                if (filteredTypes.length == 0) return true;
+                for (let type of filteredTypes) {
+                    if (i.catalog.toLowerCase() == type.toLowerCase()) return true;
+                }
+            };
+
+
+            return filterKeyword(i) && filterType(i) && filterColor(i);
+        });
 
         return (
             <Layout
-                activeRoute="Kho"
+                activeRoute="Tồn Kho"
             >
-                { (permission[user.role].indexOf("warehouse.view") == -1 && permission[user.role].indexOf("warehouse.create") == -1) && permission[user.role].indexOf("warehouse.edit") == -1 && permission[user.role].indexOf("warehouse.edit") == -1 ? (
-                    <div>
-                        Bạn không có quyền truy cập vào trang này vui lòng chọn những trang bạn có quyền trên thanh nav
-                    </div>
-                ) : (
-                    <div className="warehouse-route manage-premises-route">
-                        <div className="ct-page-title">
-                            <h1 className="ct-title">Quản Lý Kho</h1>
-                            <div className="avatar-group mt-3">
-                            </div>
+                <div className="warehouse-route products-route">
+                    <div className="card">
+                        <div className="card-title">
+                            Tồn Kho
                         </div>
-                        <hr/>
 
-                        { permission[user.role].indexOf("warehouse.create") > -1 && (
-                            <div className="margin-bottom">
-                                <button type="button" className="btn btn-info btn-sm"  onClick={() => this.addItem()}>
-                                    Thêm Sản Phẩm
-                                </button>
+                        <div className="card-body">
+                            <Select
+                                label="Kho"
+                                value={selectedBase}
+                                list={bases.map(b => b.value)}
+                                displayAs={(base) => bases.find(b => b.value == base).label}
+                                onChange={(selectedBase) => {
+                                    this.setState({selectedBase});
+                                    this.loadData(selectedBase)
+                                }}
+                            />
 
-                                <button
-                                    disabled={uploading}
-                                    onClick={() => this.excel.click()}
-                                    className="btn btn-primary btn-icon btn-excel btn-sm">
-                                    <span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>
-                                    <span className="btn-inner--text">Thêm Bằng File Excel</span>
-                                    { uploading && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
-                                </button>
+                            <div className="filter-wrapper">
+                                <div className="filter-col">
+                                    <SelectTagsColor
+                                        label="Lọc Theo Màu"
+                                        tags={filteredColors}
+                                        onChange={(filteredColors) => this.setState({filteredColors})}
+                                    />
+                                </div>
 
-                                <input type="file"
-                                       accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                                       ref={input => this.excel = input}
-                                       onChange={(e) => this.handleChangeInput(e)}
-                                       style={{display: "none"}} />
+                                <div className="filter-col">
+                                    <SelectTags
+                                        label="Lọc Theo Loại"
+                                        tags={filteredTypes}
+                                        onChange={(filteredTypes) => this.setState({filteredTypes})}
+                                        list={catalogs}
+                                        placeholder="Chọn Loại"
+                                    />
+                                </div>
                             </div>
-                        )}
 
+                            <Input
+                                style={{marginBottom: "5px", marginTop: "24px"}}
+                                value={keyword}
+                                onChange={(e) => this.setState({keyword: e.target.value})}
+                                label="Tìm kiếm"
+                                info="Tên, mã, đơn vị tính"
+                            />
+                        </div>
 
-                        { permission[user.role].indexOf("warehouse.view") > -1 && (
-                            <Fragment>
-                                <div className="form-group">
-                                    <select
-                                        className="form-control"
-                                        value={viewType}
-                                        onChange={(e) => this.setState({viewType: e.target.value})}
-                                    >
-                                        <option value="">Kho Tổng</option>
-                                        { premises.map((p, index) => (
-                                            <option key={index} value={p._id}>Kho {p.name}</option>
-                                        ))}
-
-                                    </select>
-                                </div>
-
-                                <div className="form-group">
-                                    <Input
-                                        value={keyword}
-                                        onChange={(e) => this.setState({keyword: e.target.value})}
-                                        placeholder="Tìm kiếm theo tên"
-                                    />
-                                </div>
-
-                                { loading && "Đang tải...."}
-
-                                { viewType.length > 0 ? (
-                                    <SubWareHouseView
-                                        warehouseItems={items}
-                                        items={subWarehouseItems.filter(i => i.warehouseID == viewType)}
-                                    />
-                                ) : (
-                                    <WareHouseFullView
-                                        items={itemsFiltered}
-                                        onChange={() => this.refresh()}
-                                        subWarehouseItems={subWarehouseItems}
-                                    />
-                                )}
-                            </Fragment>
-                        )}
-
-
-
+                        <DataTable
+                            rows={sortBy(itemsFiltered, i => -i.quantity)}
+                            columns={columns}
+                        />
                     </div>
-                )}
+                </div>
 
             </Layout>
         );

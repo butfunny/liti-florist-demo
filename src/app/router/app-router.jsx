@@ -19,16 +19,12 @@ import {ShipRoute} from "./ship-route/ship-route";
 import {MySalaryRoute} from "./salary-route/my-salary-route";
 import {OrderDraft} from "./draft/order-draft";
 import {BillDraft} from "./draft/bill-draft";
-import {RequestWareHouse} from "./warehouse/request-warehouse/request-warehouse";
-import {ListRequestWarehouse} from "./warehouse/list-request/list-request-warehouse";
 import {RevenueReportRoute} from "./report/revenue/revenue-report-route";
 import {ReportCustomerRoute} from "./report/customer/report-customer-route";
 import {ReportDiscountRoute} from "./report/discount/report-discount-route";
 import {ReportBillRoute} from "./report/bill/report-bill-route";
 import {GalleryRoute} from "./gallery-route/gallery-route";
 import {ManageRole} from "./manage-role/manage-role";
-import {CreateRequestMissing} from "./request-missing/create-request-missing";
-import {ListRequestMissing} from "./request-missing/list-request-missing";
 import {SettingRoute} from "./setting/setting-route";
 import {SupplierRoute} from "./supplier/supplier-route";
 import {ProductsRoute} from "./products/products-route";
@@ -82,16 +78,12 @@ export class AppRouter extends React.Component {
                     <Route exact path="/salary" component={requireAuthen(MySalaryRoute)} />
                     <Route exact path="/draft" component={requireAuthen(OrderDraft)} />
                     <Route exact path="/edit-bill-draft/:id" component={requireAuthen(BillDraft)} />
-                    <Route exact path="/request-item" component={requireAuthen(RequestWareHouse)} />
                     <Route exact path="/report-revenue" component={requireAuthen(RevenueReportRoute)} />
                     <Route exact path="/report-customer" component={requireAuthen(ReportCustomerRoute)} />
                     <Route exact path="/report-discount" component={requireAuthen(ReportDiscountRoute)} />
                     <Route exact path="/report-bill" component={requireAuthen(ReportBillRoute)} />
                     <Route exact path="/gallery" component={requireAuthen(GalleryRoute)} />
                     <Route exact path="/manage-role" component={requireAuthenAdmin(ManageRole)} />
-                    <Route exact path="/list-request-item" component={requireAuthen(ListRequestWarehouse)} />
-                    <Route exact path="/create-request-missing" component={requireAuthen(CreateRequestMissing)} />
-                    <Route exact path="/list-request-missing" component={requireAuthen(ListRequestMissing)} />
                     <Route exact path="/setting" component={requireAuthen(SettingRoute)} />
                     <Route exact path="/manage-supplier" component={requireAuthen(SupplierRoute)} />
                     <Route exact path="/products" component={requireAuthen(ProductsRoute)} />

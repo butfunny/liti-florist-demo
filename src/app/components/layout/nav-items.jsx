@@ -89,21 +89,9 @@ export const navItems = (user) => {
                 label: "Phiếu Xuất Nhập Kho",
                 hide: () => false
             }, {
-                to: "/list-request-item",
-                label: "Phiếu xuất nhập kho",
-                hide: () => permission[user.role].indexOf("warehouse.request.view") == -1
-            }, {
-                to: "/request-item",
-                label: "Phiếu yêu cầu xuất nhập kho",
-                hide: () => permission[user.role].indexOf("warehouse.request.create") == -1
-            }, {
-                to: "/create-request-missing",
-                label: "Tạo phiếu Hao Hụt / Huỷ Hỏng",
-                hide: () => permission[user.role].indexOf("warehouse.request-missing.create") == -1
-            }, {
-                to: "/list-request-missing",
-                label: "Phiếu Hao Hụt / Huỷ Hỏng",
-                hide: () => permission[user.role].indexOf("warehouse.request-missing.create") == -1
+                to: "/warehouse",
+                label: "Tồn Kho",
+                hide: () => false
             }],
             hide: () => !permission[user.role].find(r => r.indexOf("warehouse") > -1)
         },
