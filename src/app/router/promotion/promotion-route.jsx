@@ -5,14 +5,7 @@ import {ManagePromotionModal} from "./manage-promotion-modal";
 import {promotionApi} from "../../api/promotion-api";
 import moment from "moment";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
-import {securityApi} from "../../api/security-api";
-import {permissionInfo} from "../../security/premises-info";
-import {userInfo} from "../../security/user-info";
-import {Input} from "../../components/input/input";
-import {Checkbox} from "../../components/checkbox/checkbox";
 import {security} from "../../security/secuiry-fe";
-import {ImgPreview} from "../../components/img-repview/img-preview";
-import {formatNumber} from "../../common/common";
 import {ButtonGroup} from "../../components/button-group/button-group";
 import {DataTable} from "../../components/data-table/data-table";
 export class PromotionRoute extends React.Component {
@@ -88,9 +81,6 @@ export class PromotionRoute extends React.Component {
 
         let {promotions} = this.state;
 
-        const permission = permissionInfo.getPermission();
-        const user = userInfo.getUser();
-
         let columns = [{
             label: "Thời Gian Áp Dụng",
             width: "40%",
@@ -146,14 +136,16 @@ export class PromotionRoute extends React.Component {
                             </button>
                         )}
                     </div>
+
+                    { security.isHavePermission(["promotion.view"]) && (
+                        <DataTable
+                            rows={promotions}
+                            columns={columns}
+                        />
+                    )}
                 </div>
 
-                { security.isHavePermission(["promotion.view"]) && (
-                    <DataTable
-                        rows={promotions}
-                        columns={columns}
-                    />
-                )}
+
             </Layout>
         );
     }

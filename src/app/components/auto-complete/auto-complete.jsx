@@ -61,6 +61,9 @@ export class AutoComplete extends React.Component {
                 });
                 onSelect(filtered[index]);
             }
+            e.preventDefault();
+            e.stopPropagation();
+
             return;
         }
 

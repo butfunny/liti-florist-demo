@@ -78,6 +78,11 @@ export const navItems = (user) => {
             icon: <i className="fa fa-gift nav-icon"/>,
             hide: () => !permission[user.role].find(r => r.indexOf("promotion") == 0)
         }, {
+            label: "Kho Ảnh",
+            to: "/gallery",
+            icon: <i className="fa fa-picture-o nav-icon"/>,
+            hide: () => false
+        },{
             label: "Kho",
             icon: <i className="fa fa-truck nav-icon"/>,
             child: [{
@@ -94,12 +99,6 @@ export const navItems = (user) => {
                 hide: () => false
             }],
             hide: () => !permission[user.role].find(r => r.indexOf("warehouse") > -1)
-        },
-        {
-            label: "Kho Ảnh",
-            to: "/gallery",
-            icon: <i className="fa fa-picture-o nav-icon"/>,
-            hide: () => !security.isHavePermission("report.gallery")
         }, {
             label: "Quản Lý Hệ Thống",
             icon: <i className="fa fa-cog nav-icon"/>,

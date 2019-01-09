@@ -17,7 +17,7 @@ export class InputNumber extends React.Component {
     render() {
 
         let {value} = this.state;
-        let {maxVal} = this.props;
+        let {maxVal = 99999999} = this.props;
 
         return (
             <Input

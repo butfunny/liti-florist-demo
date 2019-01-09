@@ -50,7 +50,7 @@ export class GalleryRoute extends React.Component {
                         title: "",
                         colors: [],
                         flowerType: "",
-                        note: "",
+                        items: [],
                         url: ""
                     }}
                     onClose={(photo) => {
@@ -139,111 +139,121 @@ export class GalleryRoute extends React.Component {
 
         return (
             <Layout activeRoute="Kho Ảnh">
-                <div className="gallery-route">
 
-                    <div className="ct-page-title">
-                        <h1 className="ct-title">Kho Ảnh</h1>
+                <div className="card">
+                    <div className="card-title">
+                        Kho Ảnh
                     </div>
 
-                    <div className="margin-bottom">
-                        <button type="button" className="btn btn-info" onClick={() => this.addPhoto()}>Thêm ảnh</button>
-                    </div>
-
-
-                    <div className="form-group">
-                        <label>Loại</label>
-                        <select className="form-control"
-                                value={typeSelected}
-                                onChange={(e) => this.setState({typeSelected: e.target.value})}
-                        >
-                            { types.map((type, index) => (
-                                <option value={type} key={index}>{type}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="form-group">
-                        <label>Màu</label>
-                        <select className="form-control"
-                                value={colorSelected}
-                                onChange={(e) => this.setState({colorSelected: e.target.value})}
-                        >
-                            { colors.map((type, index) => (
-                                <option value={type} key={index}>{type}</option>
-                            ))}
-                        </select>
-                    </div>
-
-                    <div className="row">
-
-                        <div className="form-group col-md-12">
-                            <b className="control-label">
-                                Danh mục ảnh đã tải
-                            </b>
-                        </div>
-
-                        { photosFiltered.map((photo, index) => (
-                            <div className="col-lg-4 col-md-6" key={index}>
-                                <div className="bill-item">
-                                    <div className="image-header">
-                                        <img src={photo.url} alt=""/>
-                                    </div>
-                                    <div className="bill-body">
-                                        {photo.flowerType} - { photo.title}
-                                        <div>
-                                            <b>Màu: </b> {photo.colors.join(", ")}
-                                        </div>
-                                        <div>
-                                            <b>Định lượng: </b>
-
-                                            <div dangerouslySetInnerHTML={{__html: photo.note.replace(regexBreakLine, "<br/>")}}/>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <button className="btn btn-outline-danger btn-sm"
-                                        onClick={() => this.remove(photo)}>
-                                    <i className="fa fa-trash"/>
-                                </button>
-                            </div>
-                        ))}
-
-                        <div className="form-group col-md-12">
-                            <b className="control-label">
-                                Danh mục hoá đơn có ảnh
-                            </b>
-                        </div>
-
-                        { billFiltered.map((bill, index) => (
-                            <div className="col-lg-4 col-md-6" key={index}>
-                                <div className="bill-item">
-                                    <div className="image-header">
-                                        <img src={bill.image} alt=""/>
-                                    </div>
-                                    <div className="bill-body">
-                                        { bill.items.map((item, index) => (
-                                            <div key={index}>
-                                                {item.flowerType} {item.name} - <b>{formatNumber(item.price)}</b>
-                                            </div>
-                                        ))}
-
-                                        <div>
-                                            <b>Nguyên liệu: </b>
-
-                                            {bill.selectedFlower.map((b, index) => (
-                                                <div key={index}>
-                                                    {b.quantity} - {items.find(item => b.itemID == item._id).name} - {formatNumber(b.price)}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-
-
+                    <div className="card-body">
+                        <button type="button" className="btn btn-primary" onClick={() => this.addPhoto()}>Thêm ảnh</button>
                     </div>
                 </div>
+
+                {/*<div className="gallery-route">*/}
+
+                    {/*<div className="ct-page-title">*/}
+                        {/*<h1 className="ct-title">Kho Ảnh</h1>*/}
+                    {/*</div>*/}
+
+                    {/*<div className="margin-bottom">*/}
+                    {/*</div>*/}
+
+
+                    {/*<div className="form-group">*/}
+                        {/*<label>Loại</label>*/}
+                        {/*<select className="form-control"*/}
+                                {/*value={typeSelected}*/}
+                                {/*onChange={(e) => this.setState({typeSelected: e.target.value})}*/}
+                        {/*>*/}
+                            {/*{ types.map((type, index) => (*/}
+                                {/*<option value={type} key={index}>{type}</option>*/}
+                            {/*))}*/}
+                        {/*</select>*/}
+                    {/*</div>*/}
+
+                    {/*<div className="form-group">*/}
+                        {/*<label>Màu</label>*/}
+                        {/*<select className="form-control"*/}
+                                {/*value={colorSelected}*/}
+                                {/*onChange={(e) => this.setState({colorSelected: e.target.value})}*/}
+                        {/*>*/}
+                            {/*{ colors.map((type, index) => (*/}
+                                {/*<option value={type} key={index}>{type}</option>*/}
+                            {/*))}*/}
+                        {/*</select>*/}
+                    {/*</div>*/}
+
+                    {/*<div className="row">*/}
+
+                        {/*<div className="form-group col-md-12">*/}
+                            {/*<b className="control-label">*/}
+                                {/*Danh mục ảnh đã tải*/}
+                            {/*</b>*/}
+                        {/*</div>*/}
+
+                        {/*{ photosFiltered.map((photo, index) => (*/}
+                            {/*<div className="col-lg-4 col-md-6" key={index}>*/}
+                                {/*<div className="bill-item">*/}
+                                    {/*<div className="image-header">*/}
+                                        {/*<img src={photo.url} alt=""/>*/}
+                                    {/*</div>*/}
+                                    {/*<div className="bill-body">*/}
+                                        {/*{photo.flowerType} - { photo.title}*/}
+                                        {/*<div>*/}
+                                            {/*<b>Màu: </b> {photo.colors.join(", ")}*/}
+                                        {/*</div>*/}
+                                        {/*<div>*/}
+                                            {/*<b>Định lượng: </b>*/}
+
+                                            {/*<div dangerouslySetInnerHTML={{__html: photo.note.replace(regexBreakLine, "<br/>")}}/>*/}
+                                        {/*</div>*/}
+                                    {/*</div>*/}
+                                {/*</div>*/}
+
+                                {/*<button className="btn btn-outline-danger btn-sm"*/}
+                                        {/*onClick={() => this.remove(photo)}>*/}
+                                    {/*<i className="fa fa-trash"/>*/}
+                                {/*</button>*/}
+                            {/*</div>*/}
+                        {/*))}*/}
+
+                        {/*<div className="form-group col-md-12">*/}
+                            {/*<b className="control-label">*/}
+                                {/*Danh mục hoá đơn có ảnh*/}
+                            {/*</b>*/}
+                        {/*</div>*/}
+
+                        {/*{ billFiltered.map((bill, index) => (*/}
+                            {/*<div className="col-lg-4 col-md-6" key={index}>*/}
+                                {/*<div className="bill-item">*/}
+                                    {/*<div className="image-header">*/}
+                                        {/*<img src={bill.image} alt=""/>*/}
+                                    {/*</div>*/}
+                                    {/*<div className="bill-body">*/}
+                                        {/*{ bill.items.map((item, index) => (*/}
+                                            {/*<div key={index}>*/}
+                                                {/*{item.flowerType} {item.name} - <b>{formatNumber(item.price)}</b>*/}
+                                            {/*</div>*/}
+                                        {/*))}*/}
+
+                                        {/*<div>*/}
+                                            {/*<b>Nguyên liệu: </b>*/}
+
+                                            {/*{bill.selectedFlower.map((b, index) => (*/}
+                                                {/*<div key={index}>*/}
+                                                    {/*{b.quantity} - {items.find(item => b.itemID == item._id).name} - {formatNumber(b.price)}*/}
+                                                {/*</div>*/}
+                                            {/*))}*/}
+                                        {/*</div>*/}
+                                    {/*</div>*/}
+                                {/*</div>*/}
+                            {/*</div>*/}
+                        {/*))}*/}
+
+
+                    {/*</div>*/}
+                {/*</div>*/}
             </Layout>
         );
     }

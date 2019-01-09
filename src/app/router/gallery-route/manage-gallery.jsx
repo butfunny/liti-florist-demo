@@ -5,9 +5,20 @@ import {Form} from "../../components/form/form";
 import {productApi} from "../../api/product-api";
 import {InputTag2} from "../../components/input-tag/input-tag-2";
 import {minVal, required} from "../../components/form/validations";
-import {resizeImage} from "../../common/common";
+import {formatNumber, resizeImage} from "../../common/common";
 import {uploadApi} from "../../api/upload-api";
 import {billApi} from "../../api/bill-api";
+import {Select} from "../../components/select/select";
+import {SelectTagsColor} from "../../components/select-tags-color/select-tags-color";
+import {PictureUpload} from "../../components/picture-upload/picture-upload";
+import {flowersApi} from "../../api/flowers-api";
+import {AutoComplete} from "../../components/auto-complete/auto-complete";
+import {DataTable} from "../../components/data-table/data-table";
+import {ColumnViewMore} from "../../components/column-view-more/column-view-more";
+import {ImgPreview} from "../../components/img-repview/img-preview";
+import {InputQuantity} from "../../components/input-quantity/input-quantity";
+import {InputNumber} from "../../components/input-number/input-number";
+import {formValidator} from "../../components/form/form-validator";
 
 export class ManageGallery extends React.Component {
 
@@ -16,33 +27,58 @@ export class ManageGallery extends React.Component {
         this.state = {
             photo: props.photo,
             types: [],
-            colors: [],
             catalogs: []
         };
+
 
         productApi.getTypes().then((types) => {
             this.setState({types: types})
         });
 
-        productApi.getColors().then((colors) => {
-            this.setState({colors: colors})
-        });
-
-
     }
 
-    handleChange(e) {
-        if (e.target.files[0]) {
-            resizeImage(e.target.files[0]).then((file) => {
-                this.setState({uploading: true});
-                uploadApi.upload(file).then(resp => {
-                    this.setState({uploading: false});
-                    let {photo} = this.state;
-                    this.setState({photo: {...photo, url: resp.file}})
-                })
-            })
+    handleSelectProduct(product) {
+        let items = [...this.state.photo.items];
+        let itemFound = items.find(i => i.parentID == product._id);
+        if (itemFound) itemFound.quantity++;
+        else items.push({parentID: product._id, quantity: 1, ...product});
+
+        this.setState({
+            productID: "",
+            photo: {
+                ...this.state.photo,
+                items
+            }
+        })
+    }
+
+    handleChangeQuantity(row, quantity) {
+        let items = [...this.state.photo.items];
+        let itemFound = items.find(i => i.parentID == row.parentID);
+
+        if (quantity === 0) {
+            items = items.filter(i => i != itemFound);
+        } else {
+            itemFound.quantity = quantity;
         }
+
+        this.setState({
+            photo: {
+                ...this.state.photo,
+                items
+            }
+        })
     }
+
+    handleRemoveItem(row) {
+        this.setState({
+            photo: {
+                ...this.state.photo,
+                items: this.state.photo.items.filter(i => i.parentID != row.parentID)
+            }
+        })
+    }
+
 
     render() {
 
@@ -51,10 +87,79 @@ export class ManageGallery extends React.Component {
 
         let validations = [
             {"title" : [required("Tên")]},
-            {"flowerType" : [required("Màu")]},
-            {"url" : [required("Màu")]},
-            {"note" : [required("Màu")]},
+            {"flowerType" : [required("Loại")]},
+            {"colors" : [required("Màu")]},
+            {"url" : [required("Ảnh")]}
         ];
+
+        let columns = [{
+            label: "Thông Tin SP",
+            width: "80%",
+            display: (row) => (
+                <ColumnViewMore
+                    header={
+                        <div className="product-name">
+                            <ImgPreview src={row.image}/> {row.name}
+                        </div>
+                    }
+                    renderViewMoreBody={() => (
+                        <Fragment>
+                            <div className="info-item">
+                                Màu:
+                                {row.colors.map((color, index) => (
+                                    <div key={index}
+                                         style={{
+                                             background: color,
+                                             height: "15px",
+                                             width: "25px",
+                                             display: "inline-block",
+                                             marginLeft: "5px"
+                                         }}
+                                    />
+                                ))}
+                            </div>
+
+                            <div className="info-item">
+                                Đơn Vị Tính: {row.unit}
+                            </div>
+
+                            { row.lengthiness && (
+                                <div className="info-item">
+                                    Chiều Dài Cành Hoa: {row.lengthiness}
+                                </div>
+                            )}
+                        </Fragment>
+                    )}
+                    viewMoreText="Chi Tiết"
+                    subText={<div>{row.productID} - {row.catalog}</div>}
+                    isShowViewMoreText
+                />
+            ),
+            minWidth: "200",
+            sortBy: (row) => row.name
+        }, {
+            label: "Số Lượng",
+            width: "15%",
+            display: (row) => (
+                <InputQuantity
+                    value={row.quantity}
+                    onChange={(quantity) => this.handleChangeQuantity(row, quantity)}
+                />
+            ),
+            className: "number content-menu-action",
+            minWidth: "150",
+            sortBy: (row) => row.quantity
+        }, {
+            label: "",
+            width: "5%",
+            display: (row) => <button onClick={() => this.handleRemoveItem(row)} className="btn btn-small btn-danger btn-remove"><i className="fa fa-trash" aria-hidden="true"/></button>,
+            className: "number content-menu-action",
+            minWidth: "50",
+        }];
+
+
+
+        let isValidForm = formValidator.getInvalidPaths(photo, validations);
 
         return (
             <div className="manage-gallery-modal app-modal-box">
@@ -67,95 +172,86 @@ export class ManageGallery extends React.Component {
                     </div>
 
                     <Form
+                        ref={elem => this.form = elem}
                         onSubmit={() => {
-                            this.setState({saving: true});
-                            onClose(photo);
+
                         }}
                         formValue={photo}
                         validations={validations}
-                        render={(a, invalidPaths) => {
+                        render={(getInvalidByKey, invalidPaths) => {
                             return (
                                 <Fragment>
                                     <div className="modal-body">
                                         <Input
+                                            label="Tên hoa*"
                                             value={photo.title}
                                             onChange={(e) => this.setState({photo: {...photo, title: e.target.value}})}
-                                            placeholder="Tên hoa"
+                                            error={getInvalidByKey("title")}
                                         />
 
-                                        <div className="form-group">
-                                            <select className="form-control"
-                                                    style={{
-                                                        marginBottom: "5px",
-                                                        color: "black"
-                                                    }}
-                                                    value={photo.flowerType} onChange={(e) => this.setState({photo: {...photo, flowerType: e.target.value}})}>
-                                                <option value="" disabled>Loại*</option>
-                                                { types.map((t, index) => (
-                                                    <option value={t.name} key={index}>
-                                                        {t.name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
+                                        <Select
+                                            list={types.map(t => t.name)}
+                                            value={photo.flowerType}
+                                            onChange={(value) => this.setState({photo: {...photo, flowerType: value}})}
+                                            label="Loại*"
+                                            error={getInvalidByKey("flowerType")}
+                                        />
 
-                                        <div className="form-group">
-                                            <InputTag2
-                                                tags={photo.colors}
-                                                onChange={(c) => this.setState({photo: {...photo, colors: c}})}
-                                                list={colors.map(c => c.name)}
-                                            />
-                                        </div>
+                                        <SelectTagsColor
+                                            tags={photo.colors}
+                                            onChange={(c) => this.setState({photo: {...photo, colors: c}})}
+                                            error={getInvalidByKey("colors")}
+                                            label="Màu"
+                                        />
 
-                                        <div className="form-group">
-                                        <textarea
-                                            style={{resize: "none"}}
-                                            placeholder="Định Lượng"
-                                            value={photo.note}
-                                            onChange={(e) => this.setState({photo: {...photo, note: e.target.value}})}
-                                            className="form-control">
-                                        </textarea>
-                                        </div>
+                                        <PictureUpload
+                                            label="Ảnh Hoa"
+                                            value={photo.url}
+                                            onChange={(image) => this.setState({photo: {...photo, url: image}})}
+                                            error={getInvalidByKey("url")}
+                                        />
 
-                                        <div className="form-group">
-                                            <button type="button" className="btn btn-info btn-icon" onClick={() => this.inputUpload.click()}>
-                                                <span className="btn-inner--text">Tải ảnh</span>
-                                                { uploading && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
-                                            </button>
+                                        <AutoComplete
+                                            asyncGet={(name) => {
+                                                if (name.length > 0) {
+                                                    return flowersApi.getFlowers({keyword: name, skip: 0}).then((resp) => resp.flowers)
+                                                }
+                                                return Promise.resolve([])
+                                            }}
+                                            onSelect={(product) => this.handleSelectProduct(product)}
+                                            objectKey="productID"
+                                            object={this.state}
+                                            onChange={(value) => this.setState({productID: value})}
+                                            displayAs={(product) => <span>{product.productID} - <b>{product.name}</b> - {product.catalog}</span>}
+                                            noPopup
+                                            label="Tên/Mã Sản Phẩm"
+                                        />
 
-                                            <input
-                                                style={{
-                                                    display: "none"
-                                                }}
-                                                className="input-upload"
-                                                ref={elem => this.inputUpload = elem}
-                                                type="file"
-                                                onChange={(e) => this.handleChange(e)}
-                                            />
-
-                                            { photo.url && (
-                                                <img
-                                                    style={{
-                                                        width: "100%"
-                                                    }}
-                                                    src={photo.url} alt=""/>
-                                            )}
-                                        </div>
-
-                                    </div>
-                                    <div className="modal-footer">
-                                        <button type="button" className="btn btn-link" onClick={() => onDismiss()}>Đóng</button>
-                                        <button type="submit"
-                                                disabled={invalidPaths.length > 0 || photo.colors.length == 0}
-                                                className="btn btn-info btn-icon">
-                                            <span className="btn-inner--text">Lưu</span>
-                                            { saving && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
-                                        </button>
                                     </div>
                                 </Fragment>
                             )
                         }}
+
                     />
+
+                    <DataTable
+                        columns={columns}
+                        rows={photo.items}
+                    />
+
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-link" onClick={() => onDismiss()}>Đóng</button>
+                        <button type="submit"
+                                disabled={!isValidForm || photo.items.length == 0 }
+                                onClick={() => {
+                                    this.setState({saving: true});
+                                    onClose(photo);
+                                }}
+                                className="btn btn-primary">
+                            <span className="btn-inner--text">Lưu</span>
+                            { saving && <span className="loading-icon"><i className="fa fa-spinner fa-pulse"/></span>}
+                        </button>
+                    </div>
                 </div>
             </div>
         );
