@@ -89,7 +89,8 @@ export class ManageGallery extends React.Component {
             {"title" : [required("Tên")]},
             {"flowerType" : [required("Loại")]},
             {"colors" : [required("Màu")]},
-            {"url" : [required("Ảnh")]}
+            {"url" : [required("Ảnh")]},
+            {"price" : [required("Giá"), minVal("Giá", 0)]}
         ];
 
         let columns = [{
@@ -204,12 +205,21 @@ export class ManageGallery extends React.Component {
                                             label="Màu"
                                         />
 
+                                        <InputNumber
+                                            label="Giá"
+                                            value={photo.price}
+                                            onChange={(price) => this.setState({photo: {...photo, price}})}
+                                            error={getInvalidByKey("price")}
+                                        />
+
                                         <PictureUpload
                                             label="Ảnh Hoa"
                                             value={photo.url}
                                             onChange={(image) => this.setState({photo: {...photo, url: image}})}
                                             error={getInvalidByKey("url")}
                                         />
+
+
 
                                         <AutoComplete
                                             asyncGet={(name) => {

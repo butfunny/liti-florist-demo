@@ -2,20 +2,27 @@ import React from "react";
 import classnames from "classnames";
 import {SelectColor} from "../select-color/select-color";
 import uniq from "lodash/uniq"
+import {productApi} from "../../api/product-api";
+import {Select} from "../select/select";
 export class SelectTagsColor extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            value: ""
-        }
+            value: "",
+            colors: []
+        };
+
+        productApi.getColors().then((colors) => {
+            this.setState({colors: colors.map(c => c.name)})
+        })
     }
 
     render() {
 
 
         let {placeHolder, tags, isErrorTag, list, onChange, noPlaceholder, label, error} = this.props;
-        let {selected, value, selectedIndex, selectedTag, focus} = this.state;
+        let {selected, value, selectedIndex, selectedTag, focus, colors} = this.state;
 
 
         return (
@@ -57,12 +64,22 @@ export class SelectTagsColor extends React.Component {
                 </div>
 
                 <div className="input-wrapper auto-complete">
-                    <SelectColor
-                        value={value}
-                        onChange={(color, cb) => {
-                            onChange(uniq(tags.concat(color)));
-                            cb();
+                    <Select
+                        value={" "}
+                        onChange={(item) => {
+                            onChange(uniq(tags.concat(item)));
                         }}
+                        list={colors.filter(item => tags.findIndex(t => t == item) == -1)}
+                        displayAs={(color) => (
+                            <div className="tag-value"
+                                 style={{
+                                     background: color,
+                                     width: "100%",
+                                     height: "19px",
+                                     borderRadius: "3px"
+                                 }}
+                            />
+                        )}
                     />
                 </div>
             </div>

@@ -16,18 +16,22 @@ import {ButtonGroup} from "../../components/button-group/button-group";
 import {DataTable} from "../../components/data-table/data-table";
 import {ColumnViewMore} from "../../components/column-view-more/column-view-more";
 import sumBy from "lodash/sumBy";
+import {Select} from "../../components/select/select";
+import {SelectTagsColor} from "../../components/select-tags-color/select-tags-color";
+import {SelectTags} from "../../components/select-tags/select-tags";
+import {catalogs} from "../../common/constance";
+import {Input} from "../../components/input/input";
 const regexBreakLine = /(?:\r\n|\r|\n)/g;
 export class GalleryRoute extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            bills: [],
-            types: ["Tất cả"],
-            colors: ["Tất cả"],
-            typeSelected: "Tất cả",
-            colorSelected: "Tất cả",
-            photos: []
+            photos: [],
+            filteredColors: [],
+            filteredTypes: [],
+            types: [],
+            keyword: ""
         };
 
         billApi.getBillImages().then(({bills, items}) => {
@@ -46,12 +50,9 @@ export class GalleryRoute extends React.Component {
         });
 
         productApi.getTypes().then((types) => {
-            this.setState({types: ["Tất cả"].concat(types.map(t => t.name))})
+            this.setState({types: types.map(t => t.name)})
         });
 
-        productApi.getColors().then((colors) => {
-            this.setState({colors: ["Tất cả"].concat(colors.map(t => t.name))})
-        });
 
     }
 
@@ -95,60 +96,6 @@ export class GalleryRoute extends React.Component {
         let {bills} = this.state;
         let {colors, types, typeSelected, colorSelected, items, photos} = this.state;
 
-        const user = userInfo.getUser();
-        const permission = permissionInfo.getPermission();
-
-        if (permission[user.role].indexOf("report.gallery") == -1) {
-            return (
-                <Layout activeRoute="Báo Cáo">
-                    <PermissionDenie />
-                </Layout>
-            )
-        }
-
-
-        let billFiltered = bills.filter(bill => {
-            if (typeSelected == "Tất cả") {
-                return true;
-            }
-
-            for (let item of bill.items) {
-                if (item.flowerType && item.flowerType == typeSelected) return true;
-            }
-
-            return false;
-
-        });
-
-        billFiltered = billFiltered.filter(bill => {
-            if (colorSelected == "Tất cả") {
-                return true;
-            }
-
-            for (let item of bill.items) {
-                if (item.color && item.color == colorSelected) return true;
-            }
-
-            return false;
-
-        });
-
-        let photosFiltered = photos.filter(photo => {
-            if (typeSelected == "Tất cả") {
-                return true;
-            }
-
-            return photo.flowerType == typeSelected;
-        });
-
-        photosFiltered = photosFiltered.filter(photo => {
-            if (colorSelected == "Tất cả") {
-                return true;
-            }
-            return photo.colors.indexOf(colorSelected) > -1;
-
-        });
-
 
         let columns = [{
             label: "Ảnh",
@@ -164,7 +111,7 @@ export class GalleryRoute extends React.Component {
             minWidth: "150"
         }, {
             label: "Định Lượng",
-            width: "45%",
+            width: "35%",
             display: (row) => row.items.map((product, index) => {
                 return (
                     <ColumnViewMore
@@ -213,6 +160,12 @@ export class GalleryRoute extends React.Component {
             }),
             minWidth: "300"
         }, {
+            label: "Giá",
+            width: "10%",
+            display: (row) => formatNumber(row.price),
+            sortBy: (row) => row.price,
+            minWidth: "100"
+        }, {
             label: "Màu",
             width: "10%",
             display: (row) => row.colors.map((color, index) => (
@@ -226,7 +179,7 @@ export class GalleryRoute extends React.Component {
                      }}
                 />
             )),
-            minWidth: "150"
+            minWidth: "100"
         }, {
             label: "",
             width: "5%",
@@ -235,22 +188,80 @@ export class GalleryRoute extends React.Component {
             minWidth: "50"
         }];
 
+        let {filteredColors, filteredTypes, keyword} = this.state;
+
+        let itemsFiltered = photos && photos.filter(i => {
+
+            const filterKeyword = (i) => {
+                let keys = ["title"];
+                for (let key of keys) {
+                    if (`${i.flowerType}${i[key]}`.toLowerCase().indexOf(keyword.toLowerCase()) > -1) return true;
+                }
+                return false;
+            };
+
+            const filterColor = (i) => {
+                if (filteredColors.length == 0) return true;
+
+                for (let color of filteredColors) {
+                    if (i.colors.indexOf(color) > -1) return true;
+                }
+                return false;
+            };
+
+
+            const filterType = (i) => {
+                if (filteredTypes.length == 0) return true;
+                for (let type of filteredTypes) {
+                    if (i.flowerType.toLowerCase() == type.toLowerCase()) return true;
+                }
+            };
+
+            return filterKeyword(i) && filterType(i) && filterColor(i);
+        });
 
         return (
             <Layout activeRoute="Kho Ảnh">
 
-                <div className="card gallery-route">
+                <div className="card gallery-route warehouse-route products-route">
                     <div className="card-title">
                         Kho Ảnh
                     </div>
 
                     <div className="card-body">
                         <button type="button" className="btn btn-primary" onClick={() => this.addPhoto()}>Thêm ảnh</button>
+
+                        <div className="filter-wrapper">
+                            <div className="filter-col">
+                                <SelectTagsColor
+                                    label="Lọc Theo Màu"
+                                    tags={filteredColors}
+                                    onChange={(filteredColors) => this.setState({filteredColors})}
+                                />
+                            </div>
+
+                            <div className="filter-col">
+                                <SelectTags
+                                    label="Lọc Theo Loại"
+                                    tags={filteredTypes}
+                                    onChange={(filteredTypes) => this.setState({filteredTypes})}
+                                    list={types}
+                                    placeholder="Chọn Loại"
+                                />
+                            </div>
+                        </div>
+
+                        <Input
+                            style={{marginBottom: "5px", marginTop: "24px"}}
+                            value={keyword}
+                            onChange={(e) => this.setState({keyword: e.target.value})}
+                            label="Tìm kiếm"
+                            info="Tên, mã, đơn vị tính"
+                        />
                     </div>
 
-
                     <DataTable
-                        rows={photos}
+                        rows={itemsFiltered}
                         columns={columns}
                     />
                 </div>

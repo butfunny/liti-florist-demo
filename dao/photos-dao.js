@@ -6,5 +6,6 @@ module.exports = mongoose.model('PhotosDao', {
     colors: [String],
     flowerType: String,
     title: String,
-    items: [JSON]
+    items: [JSON],
+    price: Number
 }, "photos");
