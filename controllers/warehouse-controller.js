@@ -231,7 +231,7 @@ module.exports = (app) => {
 
 
     app.post("/warehouse/request-list", Security.authorDetails, (req, res) => {
-        let {skip, keyword, sortKey, isDesc} = req.body;
+        let {skip, keyword, sortKey, isDesc, filteredStatuses = [], filteredTypes = []} = req.body;
 
         if (sortKey == null) sortKey = "created";
         if (isDesc == null) isDesc = true;
@@ -239,6 +239,14 @@ module.exports = (app) => {
         let query = [
             {$or: [{receivedName: new RegExp(".*" + keyword + ".*", "i")}, {requestName: new RegExp(".*" + keyword + ".*", "i")}]}
         ];
+
+        if (filteredStatuses.length > 0) {
+            query.push({$or: filteredStatuses.map(status => ({status}))})
+        }
+
+        if (filteredTypes.length > 0) {
+            query.push({$or: filteredTypes.map(type => ({requestType: type}))})
+        }
 
         RequestWarehouseDao.find({$and: query}).sort({[sortKey] : isDesc ? -1 : 1}).skip(skip).limit(15).exec((err, requests) => {
             RequestWarehouseDao.countDocuments({$and: query}, (err, count) => {

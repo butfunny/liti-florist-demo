@@ -14,6 +14,9 @@ import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 import {modals} from "../../components/modal/modals";
 import {RequestPreviewModal} from "./request-preview/request-preview-modal";
 import {premisesInfo} from "../../security/premises-info";
+import {SelectTagsColor} from "../../components/select-tags-color/select-tags-color";
+import {SelectTags} from "../../components/select-tags/select-tags";
+import {catalogs} from "../../common/constance";
 
 export class RequestWarehouseRoute extends React.Component {
 
@@ -23,7 +26,9 @@ export class RequestWarehouseRoute extends React.Component {
             requests: null,
             total: 0,
             suppliers: [],
-            flowers: []
+            flowers: [],
+            filteredStatuses: [],
+            filteredTypes: []
         };
 
         productApi.suppliers().then((suppliers) => this.setState({suppliers}))
@@ -66,7 +71,7 @@ export class RequestWarehouseRoute extends React.Component {
 
         let {history} = this.props;
 
-        let {requests, total, suppliers, flowers} = this.state;
+        let {requests, total, suppliers, flowers, filteredStatuses, filteredTypes} = this.state;
 
         const status = [{
             value: "pending",
@@ -234,11 +239,32 @@ export class RequestWarehouseRoute extends React.Component {
         }];
 
 
+        const types = [{
+            value: "request-from-supplier",
+            label: "Nhập hàng từ nhà cung cấp"
+        }, {
+            value: "return-to-supplier",
+            label: "Trả hàng"
+        }, {
+            value: "transfer-to-subwarehouse",
+            label: "Xuất kho"
+        }, {
+            value: "return-to-base",
+            label: "Trả kho"
+        }, {
+            value: "report-missing",
+            label: "Hao hụt"
+        }, {
+            value: "report-error",
+            label: "Hủy Hỏng"
+        }];
+
+
         return (
             <Layout
                 activeRoute="Phiếu Xuất Nhập Kho"
             >
-                <div className="request-warehouse-route">
+                <div className="request-warehouse-route products-route">
                     <div className="card">
                         <div className="card-title">
                             Phiếu Xuất Nhập Kho
@@ -270,6 +296,30 @@ export class RequestWarehouseRoute extends React.Component {
                                     click: () => history.push("/request-warehouse/report-flower")
                                 }]}
                             />
+
+
+                            <div className="filter-wrapper">
+                                <div className="filter-col">
+                                    <SelectTags
+                                        label="Lọc Theo Trạng Thái"
+                                        tags={filteredStatuses}
+                                        onChange={(filteredStatuses) => this.setState({filteredStatuses}, () => this.table.reset())}
+                                        list={status.map(s => s.label)}
+                                        displayAs={(s) => {}}
+                                        placeholder="Chọn Trạng Thái"
+                                    />
+                                </div>
+
+                                <div className="filter-col">
+                                    <SelectTags
+                                        label="Lọc Theo Kiểu"
+                                        tags={filteredTypes}
+                                        onChange={(filteredTypes) => this.setState({filteredTypes}, () => this.table.reset())}
+                                        list={types.map(s => s.label)}
+                                        placeholder="Chọn Kiểu"
+                                    />
+                                </div>
+                            </div>
                         </div>
 
                         <PaginationDataTable
@@ -284,7 +334,9 @@ export class RequestWarehouseRoute extends React.Component {
                                     keyword,
                                     skip: (page - 1) * 15,
                                     sortKey,
-                                    isDesc
+                                    isDesc,
+                                    filteredStatuses: filteredStatuses.map(s => status.find(status => status.label == s).value),
+                                    filteredTypes: filteredTypes.map(s => types.find(type => type.label == s).value)
                                 }).then(({requests, total, flowers}) => {
                                     this.setState({requests, total, flowers});
                                     return Promise.resolve();
