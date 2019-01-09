@@ -13,6 +13,7 @@ import {SelectTagsColor} from "../../components/select-tags-color/select-tags-co
 import {SelectTags} from "../../components/select-tags/select-tags";
 import {catalogs} from "../../common/constance";
 import {productApi} from "../../api/product-api";
+import {security} from "../../security/secuiry-fe";
 export class WarehouseRoute extends React.Component {
 
     constructor(props) {
@@ -155,8 +156,8 @@ export class WarehouseRoute extends React.Component {
         }, {
             label: "Giá Gốc",
             width: "10%",
-            display: (row) => formatNumber(row.oriPrice),
-            sortBy: (row) => row.oriPrice,
+            display: (row) => security.isHavePermission(["warehouse.view-ori-price"]) && formatNumber(row.oriPrice),
+            sortBy: security.isHavePermission(["warehouse.view-ori-price"]) ? (row) => row.oriPrice : null,
             minWidth: "100"
         }, {
             label: "Giá Bán",
