@@ -83,13 +83,14 @@ export class AutoComplete extends React.Component {
 
     render() {
 
-        let {onSelect, displayAs, objectKey, onChange, noPopup} = this.props;
+        let {onSelect, displayAs, objectKey, onChange, noPopup, className} = this.props;
         let {selected, selectedIndex, list, loading, value} = this.state;
 
         return (
-            <div className="auto-complete">
+            <div className={classnames("auto-complete", className)}>
                 <Input
                     {...this.props}
+                    className={null}
                     value={value}
                     onChange={(e) => {
                         onChange(e.target.value);

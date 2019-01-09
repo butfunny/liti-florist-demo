@@ -1,35 +1,6 @@
 .bill-customer {
-  .form-control {
-    height 34px !important;
 
-    &.no-height {
-      height auto !important;
-    }
-  }
-
-  .text-action {
-    color dodgerblue;
-    cursor pointer;
-
-    &:hover {
-      text-decoration underline;
-    }
-  }
-
-  margin-bottom: 20px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.05);
-  box-shadow: 0 1px 1px rgba(0,0,0,.05);
-
-  .panel-header {
-    color: #333;
-    background-color: #f5f5f5;
-    border-color: #ddd;
-    padding 10px 15px;
-    border-bottom 1px solid #ddd;
-    font-size 18px;
+  .card-title {
     position relative;
 
     .vip-card {
@@ -38,11 +9,50 @@
       right 15px;
       cursor pointer;
     }
+
+    .text-small {
+      margin-top: 5px;
+    }
   }
 
-  .row {
-    padding 10px 15px;
+  .card-body {
+    padding-top: 14px;
   }
+
+  .text-action {
+    color primary;
+    cursor pointer;
+    padding-left 10px;
+
+    &:hover {
+      text-decoration underline;
+    }
+  }
+
+  .auto-complete {
+    .dropdown-menu {
+      top: 35px !important;
+    }
+  }
+
+  @media (min-width 769px) {
+    .row {
+      display flex;
+
+      .col {
+        width calc(50% - 12px);
+
+        &:first-child {
+          margin-right 12px;
+        }
+
+        &:last-child {
+          margin-left 12px;
+        }
+      }
+    }
+  }
+
 
   .info-customer {
     font-weight bold;

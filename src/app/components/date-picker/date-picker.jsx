@@ -37,7 +37,7 @@ export class DatePicker extends React.Component {
     render() {
 
         let {value, open} = this.state;
-        let {label} = this.props;
+        let {label, className} = this.props;
 
         const formatValue = (value) => {
             if (value < 10) return `0${value}`;
@@ -47,7 +47,7 @@ export class DatePicker extends React.Component {
 
         return (
             <ClickOutside onClickOut={() => this.setState({open :false})}>
-                <div className="date-picker liti-input select has-value" onClick={() => this.setState({open: true})}>
+                <div className={classnames("date-picker liti-input select has-value", className)} onClick={() => this.setState({open: true})}>
 
                     <div className="select-text">
                         {formatValue(value.day)}/{formatValue(value.month)}/{value.year}
