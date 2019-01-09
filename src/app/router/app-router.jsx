@@ -36,6 +36,7 @@ import {RequestWarehouseRoute} from "./request-warehouse/request-warehouse-route
 import {RequestFromSupplier} from "./request-warehouse/request-from-supplier/request-from-supplier";
 import {ReturnToSupplier} from "./request-warehouse/return-to-supplier/return-to-supplier";
 import {TransferToSubWarehouse} from "./request-warehouse/transfer-to-subwarehouse/transfer-to-subwarehouse";
+import {ReturnToBaseRoute} from "./request-warehouse/return-to-base/return-to-base";
 export class AppRouter extends React.Component {
 
     constructor(props) {
@@ -97,6 +98,7 @@ export class AppRouter extends React.Component {
                     <Route exact path="/request-warehouse/request-from-supplier" component={requireAuthen(RequestFromSupplier)} />
                     <Route exact path="/request-warehouse/return-to-supplier" component={requireAuthen(ReturnToSupplier)} />
                     <Route exact path="/request-warehouse/transfer-to-subwarehouse" component={requireAuthen(TransferToSubWarehouse)} />
+                    <Route exact path="/request-warehouse/return-to-base" component={requireAuthen(ReturnToBaseRoute)} />
                     <ModalsRegistry />
                 </Fragment>
             </BrowserRouter>

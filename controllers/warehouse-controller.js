@@ -40,6 +40,14 @@ module.exports = (app) => {
                     })
                 })
             }
+
+            if (request.requestType == "return-to-base") {
+                SubWareHouseDao.find({_id: {$in: request.items.map(i => i.id)}}, (err, flowersInWarehouse) => {
+                    res.json({
+                        flowersInWarehouse
+                    })
+                })
+            }
         })
     });
 
@@ -145,6 +153,44 @@ module.exports = (app) => {
                     })
                 })
             }
+
+            if (request.requestType == "return-to-base") {
+                SubWareHouseDao.find({_id: {$in: request.items.map(i => i.id)}}, (err, items) => {
+                    let promises = [];
+                    for (let item of items) {
+                        let requestItem = request.items.find(i => i.id == item._id);
+                        if (requestItem.quantity > item.quantity) {
+                            res.json({error: "Kho không đủ số lượng chuyển."});
+                            return;
+                        }
+                    }
+
+                    for (let item of items) {
+                        let requestItem = request.items.find(i => i.id == item._id);
+                        const updateWarehouse = () => {
+                            return new Promise((resolve, reject)=>{
+                                SubWareHouseDao.findOne({_id: item._id}, (err, premisesItem) => {
+                                    SubWareHouseDao.updateOne({_id: premisesItem._id}, {quantity: premisesItem.quantity - requestItem.quantity}, () => {
+                                        WareHouseDao.findOne({_id: premisesItem.baseProductID}, (err, baseItem) => {
+                                            WareHouseDao.updateOne({_id: premisesItem.baseProductID}, {quantity: baseItem.quantity + requestItem.quantity}, () => {
+                                                resolve();
+                                            })
+                                        });
+                                    })
+                                })
+                            })
+                        };
+                        promises.push(updateWarehouse())
+                    }
+
+                    Promise.all(promises).then(() => {
+                        RequestWarehouseDao.updateOne({_id: req.params.id}, {status: "accepted"}, () => {
+                            res.end();
+                        })
+                    })
+                })
+            }
+
         })
 
     });
@@ -188,6 +234,21 @@ module.exports = (app) => {
 
         FlowersDao.find({$and: query}, (err, flowers) => {
             WareHouseDao.find({parentID: {$in: flowers.map(f => f._id)}}, (err, products) => {
+                res.json({
+                    products,
+                    flowers
+                })
+            })
+        });
+    });
+
+    app.post("/warehouse/sub-warehouse-items", Security.authorDetails, (req, res) => {
+        let {keyword, premisesID} = req.body;
+
+        let query = [{$or: [{name: new RegExp(".*" + keyword + ".*", "i")}, {productID: new RegExp(".*" + keyword + ".*", "i")}]}];
+
+        FlowersDao.find({$and: query}, (err, flowers) => {
+            SubWareHouseDao.find({$and: [{parentID: {$in: flowers.map(f => f._id)}}, {premisesID}]}, (err, products) => {
                 res.json({
                     products,
                     flowers

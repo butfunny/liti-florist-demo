@@ -101,7 +101,8 @@ export class RequestWarehouseRoute extends React.Component {
                 const requestTypesRender = {
                     "request-from-supplier": () => <span><i className="fa fa-arrow-right text-primary" aria-hidden="true"/> Nhập từ <b className="text-primary">{suppliers.find(s => s._id == row.supplierID).name}</b></span>,
                     "return-to-supplier": () => <span><i className="fa fa-arrow-left text-danger" aria-hidden="true"/> Trả hàng </span>,
-                    "transfer-to-subwarehouse": () => <span>Kho tổng <i className="fa fa-arrow-right text-primary" aria-hidden="true"/> {premises.find(p => p._id == row.premisesID).name} </span>
+                    "transfer-to-subwarehouse": () => <span>Kho tổng <i className="fa fa-arrow-right text-primary" aria-hidden="true"/> {premises.find(p => p._id == row.premisesID).name} </span>,
+                    "return-to-base": () => <span>Kho {premises.find(p => p._id == row.premisesID).name} <i className="fa fa-arrow-right text-danger" aria-hidden="true"/> Kho tổng </span>
                 };
 
                 return (
@@ -259,7 +260,8 @@ export class RequestWarehouseRoute extends React.Component {
                                     click: () => history.push("/request-warehouse/transfer-to-subwarehouse")
                                 }, {
                                     icon: <i className="fa fa-retweet text-primary" aria-hidden="true"/>,
-                                    name: "Trả kho"
+                                    name: "Trả kho",
+                                    click: () => history.push("/request-warehouse/return-to-base")
                                 }, {
                                     icon: <i className="fa fa-exclamation text-danger" aria-hidden="true"/>,
                                     name: "Báo cáo hao hụt/hủy hỏng"

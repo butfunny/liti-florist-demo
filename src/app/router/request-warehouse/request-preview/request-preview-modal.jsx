@@ -41,7 +41,7 @@ export class RequestPreviewModal extends React.Component {
             }
 
 
-            if (request.requestType == "return-to-supplier" || request.requestType == "transfer-to-subwarehouse") {
+            if (request.requestType == "return-to-supplier" || request.requestType == "transfer-to-subwarehouse" || request.requestType == "return-to-base") {
                 let found = flowersInWarehouse.find(i => i._id == item.id);
                 return <span className={classnames(found.quantity < item.quantity && "text-danger")}>{found.quantity}</span>
             }
@@ -51,7 +51,8 @@ export class RequestPreviewModal extends React.Component {
         const requestTypesRender = {
             "request-from-supplier": () => <span><i className="fa fa-arrow-right text-primary" aria-hidden="true"/> Nhập từ <b className="text-primary">{suppliers.find(s => s._id == row.supplierID).name}</b></span>,
             "return-to-supplier": () => <span><i className="fa fa-arrow-left text-danger" aria-hidden="true"/> Trả hàng </span>,
-            "transfer-to-subwarehouse": () => <span>Kho tổng <i className="fa fa-arrow-right text-primary" aria-hidden="true"/> {premises.find(p => p._id == request.premisesID).name} </span>
+            "transfer-to-subwarehouse": () => <span>Kho tổng <i className="fa fa-arrow-right text-primary" aria-hidden="true"/> {premises.find(p => p._id == request.premisesID).name} </span>,
+            "return-to-base": () => <span>Kho {premises.find(p => p._id == request.premisesID).name} <i className="fa fa-arrow-right text-danger" aria-hidden="true"/> Kho tổng </span>
         };
 
 
@@ -69,7 +70,7 @@ export class RequestPreviewModal extends React.Component {
                         }
                         renderViewMoreBody={() => (
                             <Fragment>
-                                { request.requestType == "return-to-supplier" && (
+                                { request.requestType != "request-from-supplier" && (
                                     <div className="info-item">
                                         Nhà cung cấp: {suppliers.find(s => s._id == item.supplierID) && suppliers.find(s => s._id == item.supplierID).name}
                                     </div>

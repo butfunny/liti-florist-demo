@@ -18,6 +18,9 @@ export const warehouseApi = {
     },
     searchProductInBase: (keyword) => {
         return api.post("/api/warehouse/base-items", {keyword})
+    },
+    searchProductInSubWarehouse: (data) => {
+        return api.post("/api/warehouse/sub-warehouse-items", data)
     }
 
     // createItem: (item) => {

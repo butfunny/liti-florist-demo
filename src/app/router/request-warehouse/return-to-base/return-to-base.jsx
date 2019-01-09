@@ -1,34 +1,33 @@
 import React, {Fragment} from "react";
-import {Select} from "../../../components/select/select";
+import {Layout} from "../../../components/layout/layout";
+import {productApi} from "../../../api/product-api";
 import {Input} from "../../../components/input/input";
+import {Select} from "../../../components/select/select";
+import {premisesInfo} from "../../../security/premises-info";
+import {warehouseApi} from "../../../api/warehouse-api";
 import {AutoComplete} from "../../../components/auto-complete/auto-complete";
-import {flowersApi} from "../../../api/flowers-api";
 import {DataTable} from "../../../components/data-table/data-table";
 import {formatNumber} from "../../../common/common";
 import sumBy from "lodash/sumBy";
-import {Layout} from "../../../components/layout/layout";
-import {premisesInfo} from "../../../security/premises-info";
-import {warehouseApi} from "../../../api/warehouse-api";
-import {productApi} from "../../../api/product-api";
-import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
 import {ColumnViewMore} from "../../../components/column-view-more/column-view-more";
 import {ImgPreview} from "../../../components/img-repview/img-preview";
 import {InputQuantity} from "../../../components/input-quantity/input-quantity";
-export class TransferToSubWarehouse extends React.Component {
+import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
+export class ReturnToBaseRoute extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            suppliers: [],
             request: {
                 items: [],
                 requestName: "",
                 receivedName: ""
             },
-            productID: "",
-            suppliers: []
+            productID: ""
         };
-        productApi.suppliers().then((suppliers) => this.setState({suppliers}))
 
+        productApi.suppliers().then((suppliers) => this.setState({suppliers}))
     }
 
     handleSelectProduct(product) {
@@ -75,7 +74,7 @@ export class TransferToSubWarehouse extends React.Component {
         warehouseApi.createRequest({
             ...request,
             items: request.items.map(item => mapItem(item)),
-            requestType: "transfer-to-subwarehouse",
+            requestType: "return-to-base",
             created: new Date(),
             status: "pending"
         }).then(() => {
@@ -108,8 +107,6 @@ export class TransferToSubWarehouse extends React.Component {
             }
         })
     }
-
-
 
     render() {
         let {history} = this.props;
@@ -218,7 +215,6 @@ export class TransferToSubWarehouse extends React.Component {
         return (
             <Layout
                 activeRoute="Phiếu Xuất Nhập Kho"
-                hidden={false}
             >
                 <div className="request-from-supplier">
                     <div className="card">
@@ -229,16 +225,17 @@ export class TransferToSubWarehouse extends React.Component {
                                    cursor: "pointer",
                                    paddingRight: "5px"
                                }}
-                               aria-hidden="true"/> Phiếu xuất kho
+                               aria-hidden="true"/> Phiếu trả kho
                         </div>
 
                         <div className="card-body">
+
                             <Select
-                                label="Xuất tới kho*"
+                                label="Chọn kho*"
                                 list={premises.map(s => s._id)}
                                 value={request.premisesID}
                                 displayAs={(r) => premises.find(s => s._id == r) ? premises.find(s => s._id == r).name : null}
-                                onChange={(premisesID) => this.setState({request: {...request, premisesID}})}
+                                onChange={(premisesID) => this.setState({request: {...request, premisesID, items: []}})}
                             />
 
                             <div className="row">
@@ -257,51 +254,56 @@ export class TransferToSubWarehouse extends React.Component {
                                 />
                             </div>
 
-                            <AutoComplete
-                                asyncGet={(name) => {
-                                    if (name.length > 0) {
-                                        return warehouseApi.searchProductInBase(name).then(({products, flowers}) => {
-                                            return products.filter(p => request.items.map(i => i._id).indexOf(p._id) == -1 && p.quantity > 0).map(p => {
-                                                let flower = flowers.find(f => f._id == p.parentID);
-                                                return {
-                                                    ...flower,
-                                                    ...p
-                                                }
+                            { request.premisesID && (
+                                <AutoComplete
+                                    asyncGet={(name) => {
+                                        if (name.length > 0) {
+                                            return warehouseApi.searchProductInSubWarehouse({keyword: name, premisesID: request.premisesID}).then(({products, flowers}) => {
+                                                return products.filter(p => request.items.map(i => i._id).indexOf(p._id) == -1 && p.quantity > 0).map(p => {
+                                                    let flower = flowers.find(f => f._id == p.parentID);
+                                                    return {
+                                                        ...flower,
+                                                        ...p
+                                                    }
+                                                })
                                             })
-                                        })
-                                    }
-                                    return Promise.resolve([])
-                                }}
-                                onSelect={(product) => this.handleSelectProduct(product)}
-                                objectKey="productID"
-                                object={this.state}
-                                onChange={(value) => this.setState({productID: value})}
-                                displayAs={(product) => <span><b>{product.name}</b> - {product.catalog} - {suppliers.find(s => s._id == product.supplierID).name}</span>}
-                                noPopup
-                                label="Tên/Mã Sản Phẩm"
-                            />
-
+                                        }
+                                        return Promise.resolve([])
+                                    }}
+                                    onSelect={(product) => this.handleSelectProduct(product)}
+                                    objectKey="productID"
+                                    object={this.state}
+                                    onChange={(value) => this.setState({productID: value})}
+                                    displayAs={(product) => <span><b>{product.name}</b> - {product.catalog} - {suppliers.find(s => s._id == product.supplierID).name}</span>}
+                                    noPopup
+                                    label="Tên/Mã Sản Phẩm"
+                                />
+                            )}
                         </div>
 
-                        <DataTable
-                            columns={columns}
-                            rows={request.items}
-                        />
+                        { request.premisesID && (
+                            <Fragment>
+                                <DataTable
+                                    columns={columns}
+                                    rows={request.items}
+                                />
 
-                        <div className="card-body">
-                            <div className="text-right">
-                                Tổng Tiền: <b>{formatNumber(sumBy(request.items, item => item.quantity * item.price))}</b>
+                                <div className="card-body">
+                                    <div className="text-right">
+                                        Tổng Tiền: <b>{formatNumber(sumBy(request.items, item => item.quantity * item.price))}</b>
 
-                                <div style={{marginTop: "12px"}}>
-                                    <button className="btn btn-primary"
-                                            onClick={() => this.submit()}
-                                            disabled={!request.premisesID || request.items.filter(i => i.submitQuantity > 0).length == 0 || request.requestName.length == 0 || request.receivedName.length == 0}
-                                    >
-                                        Tạo Phiếu
-                                    </button>
+                                        <div style={{marginTop: "12px"}}>
+                                            <button className="btn btn-primary"
+                                                    onClick={() => this.submit()}
+                                                    disabled={!request.premisesID || request.items.filter(i => i.submitQuantity > 0).length == 0 || request.requestName.length == 0 || request.receivedName.length == 0}
+                                            >
+                                                Tạo Phiếu
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                            </Fragment>
+                        )}
                     </div>
                 </div>
             </Layout>
