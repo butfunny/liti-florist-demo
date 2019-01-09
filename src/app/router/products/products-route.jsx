@@ -119,8 +119,8 @@ export class ProductsRoute extends React.Component {
         }, {
             label: "Giá Gốc",
             width: "10%",
-            display: (row) => formatNumber(row.oriPrice),
-            sortKey: "oriPrice",
+            display: (row) => security.isHavePermission(["warehouse.view-ori-price"]) && formatNumber(row.oriPrice),
+            sortKey: security.isHavePermission(["warehouse.view-ori-price"]) && "oriPrice",
             minWidth: "100"
         }, {
             label: "Giá Bán",
