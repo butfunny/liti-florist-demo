@@ -6,6 +6,10 @@ export class InputGroup extends React.Component {
         super(props);
     }
 
+    focus(){
+        this.input.focus()
+    }
+
     render() {
 
         let {badge} = this.props;
@@ -17,6 +21,7 @@ export class InputGroup extends React.Component {
                 </div>
 
                 <Input
+                    ref={input => this.input = input}
                     {...this.props}
                 />
             </div>
