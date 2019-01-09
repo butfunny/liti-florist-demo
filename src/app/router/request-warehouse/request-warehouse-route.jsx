@@ -97,7 +97,7 @@ export class RequestWarehouseRoute extends React.Component {
             label: "Thời gian",
             width: "20%",
             display: (row) => moment(row.created).format("DD/MM/YYYY HH:mm"),
-            minWidth: "100",
+            minWidth: "150",
             sortKey: "created"
         }, {
             label: "Kiểu",
@@ -126,7 +126,7 @@ export class RequestWarehouseRoute extends React.Component {
                     </div>
                 );
             },
-            minWidth: "150",
+            minWidth: "200",
             sortKey: "type"
         }, {
             label: "Sản phẩm",
@@ -196,7 +196,7 @@ export class RequestWarehouseRoute extends React.Component {
                     </div>
                 </Fragment>
             ),
-            minWidth: "300",
+            minWidth: "250",
         }, {
             label: "Trạng Thái",
             width: "10%",
@@ -323,7 +323,7 @@ export class RequestWarehouseRoute extends React.Component {
                         </div>
 
                         <PaginationDataTable
-                            placeholderSearch="Tìm kiếm theo tên người gửi hoặc người nhận"
+                            placeholderSearch="Tìm theo tên người gửi hoặc người nhận"
                             ref={elem => this.table = elem}
                             rowStyling={(row) => ({background: status.find(r => r.value == row.status).background})}
                             total={total}

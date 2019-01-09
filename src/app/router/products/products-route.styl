@@ -6,21 +6,24 @@
 
   .filter-wrapper {
     margin-top: 25px;
-    display flex;
 
-    .filter-col {
-      width calc(50% - 12px);
+    @media (min-width 769px) {
+      display flex;
 
-      .input-tag {
-        margin-bottom 0;
-      }
+      .filter-col {
+        width calc(50% - 12px);
 
-      &:first-child {
-        margin-right 12px;
-      }
+        .input-tag {
+          margin-bottom 0;
+        }
 
-      &:last-child {
-        margin-left 12px;
+        &:first-child {
+          margin-right 12px;
+        }
+
+        &:last-child {
+          margin-left 12px;
+        }
       }
     }
   }
