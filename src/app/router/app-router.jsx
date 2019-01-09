@@ -37,6 +37,7 @@ import {RequestFromSupplier} from "./request-warehouse/request-from-supplier/req
 import {ReturnToSupplier} from "./request-warehouse/return-to-supplier/return-to-supplier";
 import {TransferToSubWarehouse} from "./request-warehouse/transfer-to-subwarehouse/transfer-to-subwarehouse";
 import {ReturnToBaseRoute} from "./request-warehouse/return-to-base/return-to-base";
+import {ReportFlower} from "./request-warehouse/report-flower/report-flower";
 export class AppRouter extends React.Component {
 
     constructor(props) {
@@ -99,6 +100,7 @@ export class AppRouter extends React.Component {
                     <Route exact path="/request-warehouse/return-to-supplier" component={requireAuthen(ReturnToSupplier)} />
                     <Route exact path="/request-warehouse/transfer-to-subwarehouse" component={requireAuthen(TransferToSubWarehouse)} />
                     <Route exact path="/request-warehouse/return-to-base" component={requireAuthen(ReturnToBaseRoute)} />
+                    <Route exact path="/request-warehouse/report-flower" component={requireAuthen(ReportFlower)} />
                     <ModalsRegistry />
                 </Fragment>
             </BrowserRouter>

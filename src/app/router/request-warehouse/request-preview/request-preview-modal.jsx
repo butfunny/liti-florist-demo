@@ -40,11 +40,8 @@ export class RequestPreviewModal extends React.Component {
                 return found ? found.quantity : 0
             }
 
-
-            if (request.requestType == "return-to-supplier" || request.requestType == "transfer-to-subwarehouse" || request.requestType == "return-to-base") {
-                let found = flowersInWarehouse.find(i => i._id == item.id);
-                return <span className={classnames(found.quantity < item.quantity && "text-danger")}>{found.quantity}</span>
-            }
+            let found = flowersInWarehouse.find(i => i._id == item.id);
+            return <span className={classnames(found.quantity < item.quantity && "text-danger")}>{found.quantity}</span>
 
         };
 
@@ -52,7 +49,9 @@ export class RequestPreviewModal extends React.Component {
             "request-from-supplier": () => <span><i className="fa fa-arrow-right text-primary" aria-hidden="true"/> Nhập từ <b className="text-primary">{suppliers.find(s => s._id == row.supplierID).name}</b></span>,
             "return-to-supplier": () => <span><i className="fa fa-arrow-left text-danger" aria-hidden="true"/> Trả hàng </span>,
             "transfer-to-subwarehouse": () => <span>Kho tổng <i className="fa fa-arrow-right text-primary" aria-hidden="true"/> {premises.find(p => p._id == request.premisesID).name} </span>,
-            "return-to-base": () => <span>Kho {premises.find(p => p._id == request.premisesID).name} <i className="fa fa-arrow-right text-danger" aria-hidden="true"/> Kho tổng </span>
+            "return-to-base": () => <span>Kho {premises.find(p => p._id == request.premisesID).name} <i className="fa fa-arrow-right text-danger" aria-hidden="true"/> Kho tổng </span>,
+            "report-missing": () => <span><span className="text-danger">Hao Hụt</span> - {premises.find(p => p._id == request.premisesID).name} </span>,
+            "report-error": () => <span><span className="text-danger">Hủy Hỏng</span> - {premises.find(p => p._id == request.premisesID).name} </span>,
         };
 
 

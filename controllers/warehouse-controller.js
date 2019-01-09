@@ -41,7 +41,7 @@ module.exports = (app) => {
                 })
             }
 
-            if (request.requestType == "return-to-base") {
+            if (request.requestType == "return-to-base" || request.requestType == "report-missing" || request.requestType == "report-error") {
                 SubWareHouseDao.find({_id: {$in: request.items.map(i => i.id)}}, (err, flowersInWarehouse) => {
                     res.json({
                         flowersInWarehouse
@@ -190,6 +190,40 @@ module.exports = (app) => {
                     })
                 })
             }
+
+            if (request.requestType == "report-missing" || request.requestType == "report-error") {
+                SubWareHouseDao.find({_id: {$in: request.items.map(i => i.id)}}, (err, items) => {
+                    let promises = [];
+                    for (let item of items) {
+                        let requestItem = request.items.find(i => i.id == item._id);
+                        if (requestItem.quantity > item.quantity) {
+                            res.json({error: "Kho không đủ số lượng."});
+                            return;
+                        }
+                    }
+
+                    for (let item of items) {
+                        let requestItem = request.items.find(i => i.id == item._id);
+                        const updateWarehouse = () => {
+                            return new Promise((resolve, reject)=>{
+                                SubWareHouseDao.findOne({_id: item._id}, (err, premisesItem) => {
+                                    SubWareHouseDao.updateOne({_id: premisesItem._id}, {quantity: premisesItem.quantity - requestItem.quantity}, () => {
+                                        resolve();
+                                    })
+                                })
+                            })
+                        };
+                        promises.push(updateWarehouse())
+                    }
+
+                    Promise.all(promises).then(() => {
+                        RequestWarehouseDao.updateOne({_id: req.params.id}, {status: "accepted"}, () => {
+                            res.end();
+                        })
+                    })
+                })
+            }
+
 
         })
 
