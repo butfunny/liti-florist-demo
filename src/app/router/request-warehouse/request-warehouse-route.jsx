@@ -17,11 +17,14 @@ import {premisesInfo} from "../../security/premises-info";
 import {SelectTagsColor} from "../../components/select-tags-color/select-tags-color";
 import {SelectTags} from "../../components/select-tags/select-tags";
 import {catalogs} from "../../common/constance";
+import {security} from "../../security/secuiry-fe";
+import union from "lodash/union";
 
 export class RequestWarehouseRoute extends React.Component {
 
     constructor(props) {
         super(props);
+
         this.state = {
             requests: null,
             total: 0,
@@ -66,6 +69,32 @@ export class RequestWarehouseRoute extends React.Component {
             })
         })
     }
+
+    types = [{
+        value: "request-from-supplier",
+        label: "Nhập hàng từ nhà cung cấp",
+        hide: () => !security.isHavePermission(["warehouse.request.view-request-from-supplier"])
+    }, {
+        value: "return-to-supplier",
+        label: "Trả hàng",
+        hide: () => !security.isHavePermission(["warehouse.request.view-return-to-supplier"])
+    }, {
+        value: "transfer-to-subwarehouse",
+        label: "Xuất kho",
+        hide: () => !security.isHavePermission(["warehouse.request.view-transfer-to-subwarehouse"])
+    }, {
+        value: "return-to-base",
+        label: "Trả kho",
+        hide: () => !security.isHavePermission(["warehouse.request.view-return-to-base"])
+    }, {
+        value: "report-missing",
+        label: "Hao hụt",
+        hide: () => !security.isHavePermission(["warehouse.request.view-report-flower"])
+    }, {
+        value: "report-error",
+        label: "Hủy Hỏng",
+        hide: () => !security.isHavePermission(["warehouse.request.view-report-flower"])
+    }];
 
     render() {
 
@@ -239,27 +268,6 @@ export class RequestWarehouseRoute extends React.Component {
         }];
 
 
-        const types = [{
-            value: "request-from-supplier",
-            label: "Nhập hàng từ nhà cung cấp"
-        }, {
-            value: "return-to-supplier",
-            label: "Trả hàng"
-        }, {
-            value: "transfer-to-subwarehouse",
-            label: "Xuất kho"
-        }, {
-            value: "return-to-base",
-            label: "Trả kho"
-        }, {
-            value: "report-missing",
-            label: "Hao hụt"
-        }, {
-            value: "report-error",
-            label: "Hủy Hỏng"
-        }];
-
-
         return (
             <Layout
                 activeRoute="Phiếu Xuất Nhập Kho"
@@ -315,7 +323,7 @@ export class RequestWarehouseRoute extends React.Component {
                                         label="Lọc Theo Kiểu"
                                         tags={filteredTypes}
                                         onChange={(filteredTypes) => this.setState({filteredTypes}, () => this.table.reset())}
-                                        list={types.map(s => s.label)}
+                                        list={this.types.filter(t => !t.hide()).map(s => s.label)}
                                         placeholder="Chọn Kiểu"
                                     />
                                 </div>
@@ -336,7 +344,7 @@ export class RequestWarehouseRoute extends React.Component {
                                     sortKey,
                                     isDesc,
                                     filteredStatuses: filteredStatuses.map(s => status.find(status => status.label == s).value),
-                                    filteredTypes: filteredTypes.map(s => types.find(type => type.label == s).value)
+                                    filteredTypes: filteredTypes.length == 0 ? this.types.filter(t => !t.hide()).map(t => t.value) : filteredTypes.map(s => this.types.find(type => type.label == s).value)
                                 }).then(({requests, total, flowers}) => {
                                     this.setState({requests, total, flowers});
                                     return Promise.resolve();

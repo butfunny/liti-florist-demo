@@ -133,44 +133,64 @@ export const permissions = [{
     label: "Chỉnh Sửa Danh Sách Sản Phẩm",
     father: "Kho"
 },  {
-    value: "warehouse.view",
-    label: "Xem Kho",
+    value: "warehouse.request.view-request-from-supplier",
+    label: "Xem Phiếu Nhập Hàng",
     father: "Kho"
 }, {
-    value: "warehouse.create",
-    label: "Thêm sản phẩm vào kho tổng",
+    value: "warehouse.request.create-request-from-supplier",
+    label: "Tạo Phiếu Nhập Hàng",
+    father: "Kho"
+},{
+    value: "warehouse.request.update-request-from-supplier",
+    label: "Duyệt Phiếu Nhập Hàng",
+    father: "Kho"
+},{
+    value: "warehouse.request.view-return-to-supplier",
+    label: "Xem Phiếu Trả Hàng",
     father: "Kho"
 }, {
-    value: "warehouse.edit",
-    label: "Sửa sản phẩm kho tổng",
+    value: "warehouse.request.create-return-to-supplier",
+    label: "Tạo Phiếu Trả Hàng",
+    father: "Kho"
+},{
+    value: "warehouse.request.update-return-to-supplier",
+    label: "Duyệt Phiếu Trả Hàng",
     father: "Kho"
 }, {
-    value: "warehouse.remove",
-    label: "Xoá sản phẩm kho tổng",
+    value: "warehouse.request.view-transfer-to-subwarehouse",
+    label: "Xem Phiếu Xuất Kho",
     father: "Kho"
 }, {
-    value: "warehouse.request.create",
-    label: "Tạo phiếu XNK",
+    value: "warehouse.request.create-transfer-to-subwarehouse",
+    label: "Tạo Phiếu Xuất Kho",
+    father: "Kho"
+},{
+    value: "warehouse.request.update-transfer-to-subwarehouse",
+    label: "Duyệt Phiếu Xuất Kho",
     father: "Kho"
 }, {
-    value: "warehouse.request.view",
-    label: "Xem phiếu XNK",
+    value: "warehouse.request.view-return-to-base",
+    label: "Xem Phiếu Trả Kho",
     father: "Kho"
 }, {
-    value: "warehouse.request.edit",
-    label: "Xác nhận / Từ chối phiếu XNK",
+    value: "warehouse.request.create-return-to-base",
+    label: "Tạo Phiếu Trả Kho",
+    father: "Kho"
+},{
+    value: "warehouse.request.update-return-to-base",
+    label: "Duyệt Phiếu Trả Kho",
     father: "Kho"
 }, {
-    value: "warehouse.request-missing.create",
-    label: "Tạo phiếu Hao Hụt / Huỷ Hỏng",
+    value: "warehouse.request.view-report-flower",
+    label: "Xem Phiếu Hao Hụt / Hủy Hỏng",
     father: "Kho"
 }, {
-    value: "warehouse.request-missing.view",
-    label: "Xem phiếu Hao Hụt / Huỷ Hỏng",
+    value: "warehouse.request.create-report-flower",
+    label: "Tạo Phiếu Hao Hụt / Hủy Hỏng",
     father: "Kho"
-}, {
-    value: "warehouse.request-missing.edit",
-    label: "XN/TC phiếu Hao Hụt / Huỷ Hỏng",
+},{
+    value: "warehouse.request.update-report-flower",
+    label: "Duyệt Phiếu Hao Hụt / Hủy Hỏng",
     father: "Kho"
 }, {
     value: "warehouse.view-ori-price",

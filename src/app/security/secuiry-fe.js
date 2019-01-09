@@ -87,6 +87,8 @@ export let security = {
     },
     isHavePermission: (target) => {
         const permission = permissionInfo.getPermission();
+
+
         const user = userInfo.getUser();
         for (let per of target) {
             if (permission[user.role].indexOf(per) > -1) return true

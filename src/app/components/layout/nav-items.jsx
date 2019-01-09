@@ -83,11 +83,11 @@ export const navItems = (user) => {
             child: [{
                 to: "/products",
                 label: "Danh Sách Sản Phẩm",
-                hide: () => permission[user.role].indexOf("warehouse.products.view") == -1 && permission[user.role].indexOf("warehouse.products.update") == -1
+                hide: () => !permission[user.role].find(r => r.indexOf("warehouse.product") > -1)
             }, {
                 to: "/request-warehouse",
                 label: "Phiếu Xuất Nhập Kho",
-                hide: () => false
+                hide: () => !permission[user.role].find(r => r.indexOf("warehouse.request") > -1)
             }, {
                 to: "/warehouse",
                 label: "Tồn Kho",

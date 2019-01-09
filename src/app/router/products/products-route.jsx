@@ -11,6 +11,7 @@ import {SelectTagsColor} from "../../components/select-tags-color/select-tags-co
 import {SelectTags} from "../../components/select-tags/select-tags";
 import {catalogs} from "../../common/constance";
 import {ImgPreview} from "../../components/img-repview/img-preview";
+import {security} from "../../security/secuiry-fe";
 
 export class ProductsRoute extends React.Component {
 
@@ -142,17 +143,19 @@ export class ProductsRoute extends React.Component {
         }, {
             label: "",
             width: "5%",
-            display: (row) => <ButtonGroup
-                actions={[{
-                    name: "Sửa",
-                    icon: <i className="fa fa-pencil"/>,
-                    click: () => this.edit(row)
-                }, {
-                    name: "Xóa",
-                    icon: <i className="fa fa-trash text-danger"/>,
-                    click: () => this.remove(row)
-                }]}
-            />,
+            display: (row) => security.isHavePermission("warehouse.products.update") && (
+                <ButtonGroup
+                    actions={[{
+                        name: "Sửa",
+                        icon: <i className="fa fa-pencil"/>,
+                        click: () => this.edit(row)
+                    }, {
+                        name: "Xóa",
+                        icon: <i className="fa fa-trash text-danger"/>,
+                        click: () => this.remove(row)
+                    }]}
+                />
+            ),
             minWidth: "50"
         }];
 
