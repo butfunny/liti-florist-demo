@@ -2,6 +2,7 @@ const FlowersDao = require("../dao/flowers-dao");
 const WarehouseDao = require("../dao/warehouse-dao");
 const SubWarehouseDao = require("../dao/subwarehouse-dao");
 const RequestWarehouseDao = require("../dao/request-warehouse-dao");
+const PhotoDao = require("../dao/photos-dao");
 const Security = require("../security/security-be");
 
 module.exports = function(app) {
@@ -64,9 +65,14 @@ module.exports = function(app) {
                         RequestWarehouseDao.findOne({"items.parentID": req.params.id}, (err, item) => {
                             if (item) res.json({error: true});
                             else {
-                                FlowersDao.deleteOne({_id: req.params.id}, () => {
-                                    res.end();
-                                })
+                                PhotoDao.findOne({"items.parentID": req.params.id}, ((err, item) => {
+                                    if (item) res.json({error: true});
+                                    else {
+                                        FlowersDao.deleteOne({_id: req.params.id}, () => {
+                                            res.end();
+                                        })
+                                    }
+                                }))
                             }
                         })
 

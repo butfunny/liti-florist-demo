@@ -1,4 +1,5 @@
 const PhotosDao = require("../dao/photos-dao");
+const FlowersDao = require("../dao/flowers-dao");
 const Security = require("../security/security-be");
 
 module.exports = function(app) {
@@ -10,7 +11,19 @@ module.exports = function(app) {
 
     app.get("/photos", Security.authorDetails, (req, res) => {
         PhotosDao.find({}, (err, photos) => {
-            res.json(photos)
+            let flowerIDS = [];
+            for (let photo of photos) {
+                for (let item of photo.items) {
+                    flowerIDS.push(item.parentID)
+                }
+            }
+
+            FlowersDao.find({_id: {$in: flowerIDS}}, (err, flowers) => {
+                res.json({
+                    photos,
+                    flowers
+                })
+            })
         })
     });
 

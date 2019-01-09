@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Fragment} from "react";
 import {Layout} from "../../components/layout/layout";
 import {billApi} from "../../api/bill-api";
 import {formatNumber} from "../../common/common";
@@ -10,6 +10,12 @@ import {modals} from "../../components/modal/modals";
 import {ManageGallery} from "./manage-gallery";
 import {photosApi} from "../../api/photos-api";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
+import {ImgPreview} from "../../components/img-repview/img-preview";
+import {security} from "../../security/secuiry-fe";
+import {ButtonGroup} from "../../components/button-group/button-group";
+import {DataTable} from "../../components/data-table/data-table";
+import {ColumnViewMore} from "../../components/column-view-more/column-view-more";
+import sumBy from "lodash/sumBy";
 const regexBreakLine = /(?:\r\n|\r|\n)/g;
 export class GalleryRoute extends React.Component {
 
@@ -28,8 +34,15 @@ export class GalleryRoute extends React.Component {
             this.setState({bills, items})
         });
 
-        photosApi.getPhotos().then((photos) => {
-            this.setState({photos})
+        photosApi.getPhotos().then(({photos, flowers}) => {
+            this.setState({photos: photos.map(photo => ({
+                ...photo,
+                items: photo.items.map((item) => {
+                    let found = flowers.find(f => f._id == item.parentID);
+                    if (found) return {...item, ...found};
+                    return item
+                })
+            }))})
         });
 
         productApi.getTypes().then((types) => {
@@ -137,10 +150,96 @@ export class GalleryRoute extends React.Component {
         });
 
 
+        let columns = [{
+            label: "Ảnh",
+            width: "10%",
+            display: (row) => <div className="product-image"><ImgPreview src={row.url} /></div>,
+            sortBy: (row) => row.flowerType,
+            minWidth: "100"
+        }, {
+            label: "Tên",
+            width: "25%",
+            display: (row) => `${row.flowerType} ${row.title}`,
+            sortBy: (row) => row.flowerType,
+            minWidth: "150"
+        }, {
+            label: "Định Lượng",
+            width: "45%",
+            display: (row) => row.items.map((product, index) => {
+                return (
+                    <ColumnViewMore
+                        key={index}
+                        header={
+                            <div className="product-name">
+                                <ImgPreview src={product.image}/> {product.quantity} - {product.name}
+                            </div>
+                        }
+                        renderViewMoreBody={() => (
+                            <Fragment>
+                                <div className="info-item">
+                                    {product.productID} - {product.catalog}
+                                </div>
+
+                                <div className="info-item">
+                                    Màu:
+                                    {product.colors.map((color, index) => (
+                                        <div key={index}
+                                             style={{
+                                                 background: color,
+                                                 height: "15px",
+                                                 width: "25px",
+                                                 display: "inline-block",
+                                                 marginLeft: "5px"
+                                             }}
+                                        />
+                                    ))}
+                                </div>
+
+                                <div className="info-item">
+                                    Đơn Vị Tính: {product.unit}
+                                </div>
+
+                                { product.lengthiness && (
+                                    <div className="info-item">
+                                        Chiều Dài Cành Hoa: {product.lengthiness}
+                                    </div>
+                                )}
+                            </Fragment>
+                        )}
+                        viewMoreText="Chi Tiết"
+                        isShowViewMoreText
+                    />
+                )
+            }),
+            minWidth: "300"
+        }, {
+            label: "Màu",
+            width: "10%",
+            display: (row) => row.colors.map((color, index) => (
+                <div key={index}
+                     style={{
+                         background: color,
+                         height: "15px",
+                         width: "25px",
+                         display: "inline-block",
+                         marginRight: "5px"
+                     }}
+                />
+            )),
+            minWidth: "150"
+        }, {
+            label: "",
+            width: "5%",
+            display: (row) => <button className="btn btn-danger btn-small" onClick={() => this.remove(row)}><i className="fa fa-trash"/></button>,
+            sortBy: (row) => row.flowerType,
+            minWidth: "50"
+        }];
+
+
         return (
             <Layout activeRoute="Kho Ảnh">
 
-                <div className="card">
+                <div className="card gallery-route">
                     <div className="card-title">
                         Kho Ảnh
                     </div>
@@ -148,6 +247,12 @@ export class GalleryRoute extends React.Component {
                     <div className="card-body">
                         <button type="button" className="btn btn-primary" onClick={() => this.addPhoto()}>Thêm ảnh</button>
                     </div>
+
+
+                    <DataTable
+                        rows={photos}
+                        columns={columns}
+                    />
                 </div>
 
                 {/*<div className="gallery-route">*/}
