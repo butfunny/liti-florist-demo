@@ -276,9 +276,11 @@ export class BillCustomer extends React.Component {
                             />
                         )}
                     </div>
+
+                    { infoComponent()}
+
                 </div>
 
-                { infoComponent()}
             </div>
         );
     }

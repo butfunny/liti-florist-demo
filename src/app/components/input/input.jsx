@@ -14,6 +14,10 @@ export class Input extends React.Component {
         this.input.focus();
     }
 
+    select() {
+        this.input.select();
+    }
+
 
     render() {
         let {label, className, value, readOnly, icon, error, type, onChange, onKeyDown, info, style, textArea} = this.props;

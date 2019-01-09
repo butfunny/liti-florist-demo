@@ -152,7 +152,6 @@ export class InputTag2 extends React.Component {
                            onFocus={() => this.setState({selected: true})}
                            onBlur={() => this.setState({selected: false})}
                            ref={elem => this.input = elem}
-
                     />
 
                     {selected && filteredList.length > 0 && (

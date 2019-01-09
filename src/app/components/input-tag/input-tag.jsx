@@ -109,14 +109,14 @@ export class InputTag extends React.Component {
 
     render() {
 
-        let {placeHolder, tags, isErrorTag, list, onChange, onClick, error, label} = this.props;
+        let {placeHolder, tags, isErrorTag, list, onChange, onClick, error, label, className} = this.props;
         let {selected, value, selectedIndex, selectedTag} = this.state;
         const filteredList = list.filter(item => tags.map(u => u.user_id).indexOf(item.user_id) == -1 && item.username.toLowerCase().indexOf(value.toLowerCase()) > -1);
 
 
 
         return (
-            <div className={classnames("input-tag", error && "has-error", tags && tags.length > 0 && "has-value", selected && "focus")}>
+            <div className={classnames("input-tag", error && "has-error", tags && tags.length > 0 && "has-value", selected && "focus", className)}>
                 { tags.map((tagItem, index) => (
                     <div className={classnames("tag-item", selectedTag && selectedTag.user_id == tagItem.user_id && "selected")} key={index}
                         onClick={() => onClick && tagItem.isSale && onClick(tagItem.username)}
@@ -126,7 +126,7 @@ export class InputTag extends React.Component {
                             this.setState({selectedTag: null});
                             onChange(tags.filter(t => t.user_id != tagItem.user_id))
                         }}>
-                            <i className="fa fa-close"/>
+                            <span aria-hidden="true">×</span>
                         </a>
                     </div>
                 ))}
@@ -146,7 +146,7 @@ export class InputTag extends React.Component {
                 </div>
 
                 <div className="input-wrapper auto-complete">
-                    <input placeholder="Nhập username.."
+                    <input
                            className={classnames(this.state.error && "error-add")}
                            value={value}
                            onChange={(e) => this.setState({value: e.target.value})}

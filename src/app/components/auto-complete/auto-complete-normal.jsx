@@ -66,14 +66,15 @@ export class AutoCompleteNormal extends React.Component {
 
     render() {
 
-        let {onSelect, displayAs, onChange, noPopup, defaultList, value, allowRemove, onRemove} = this.props;
+        let {onSelect, displayAs, onChange, noPopup, defaultList, value, allowRemove, onRemove, className} = this.props;
         let {selected, selectedIndex} = this.state;
         const list = defaultList.filter(item => item.toLowerCase().indexOf(value.toLowerCase()) > -1);
 
         return (
-            <div className="auto-complete">
+            <div className={classnames("auto-complete", className)}>
                 <Input
                     {...this.props}
+                    className={null}
                     value={value}
                     onChange={(e) => {
                         onChange(e.target.value);

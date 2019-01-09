@@ -1,4 +1,6 @@
 import React from "react";
+import {Input} from "../input/input";
+import classnames from "classnames";
 export class TimePicker extends React.Component {
 
     constructor(props) {
@@ -6,10 +8,10 @@ export class TimePicker extends React.Component {
     }
 
     render() {
-        let {value = new Date(), onChange} = this.props;
+        let {value = new Date(), onChange, className} = this.props;
 
         return (
-            <div className="time-picker">
+            <div className={classnames("time-picker", className)}>
                 <InputPicker
                     value={value.getHours()}
                     onChange={(hour) => {
@@ -63,7 +65,7 @@ class InputPicker extends React.Component {
 
         return (
             <div className="input-picker">
-                <input
+                <Input
                     className="form-control"
                     value={formatValue(value)}
                     onChange={(e) => this.handleChange(e.target.value)}
