@@ -143,7 +143,7 @@ export class ProductsRoute extends React.Component {
         }, {
             label: "",
             width: "5%",
-            display: (row) => security.isHavePermission("warehouse.products.update") && (
+            display: (row) => security.isHavePermission(["warehouse.products.update"]) && (
                 <ButtonGroup
                     actions={[{
                         name: "Sửa",

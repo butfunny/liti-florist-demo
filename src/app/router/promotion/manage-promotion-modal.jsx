@@ -68,41 +68,25 @@ export class ManagePromotionModal extends React.Component {
                                         error={getInvalidByKey("discount")}
                                     />
 
-                                    <div className="form-group">
-                                        <label className="control-label">
-                                            Từ Ngày
-                                        </label>
+                                    <DatePicker
+                                        label="Từ Ngày"
+                                        value={new Date(promotion.from)}
+                                        onChange={(date) => this.setState({promotion: {...promotion, from: date}})}
+                                        error={getInvalidByKey("from")}
+                                    />
 
-                                        <DatePicker
-                                            value={new Date(promotion.from)}
-                                            onChange={(date) => this.setState({promotion: {...promotion, from: date}})}
-                                        />
-
-                                        <div className="text-danger add-date">
-                                            {getInvalidByKey("from")}
-                                        </div>
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label className="control-label">
-                                            Tới Ngày
-                                        </label>
-
-                                        <DatePicker
-                                            value={new Date(promotion.to)}
-                                            onChange={(date) => this.setState({promotion: {...promotion, to: date}})}
-                                        />
-
-                                        <div className="text-danger add-date">
-                                            {getInvalidByKey("to")}
-                                        </div>
-                                    </div>
+                                    <DatePicker
+                                        label="Tới Ngày"
+                                        value={new Date(promotion.to)}
+                                        onChange={(date) => this.setState({promotion: {...promotion, to: date}})}
+                                        error={getInvalidByKey("to")}
+                                    />
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-link" onClick={() => onDismiss()}>Đóng</button>
-                                    <button type="submit" className="btn btn-info btn-icon">
-                                        <span className="btn-inner--text">Lưu</span>
-                                        { saving && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
+                                    <button type="submit" className="btn btn-primary">
+                                        <span className="btn-text">Lưu</span>
+                                        { saving && <span className="loading-icon"><i className="fa fa-spinner fa-pulse"/></span>}
                                     </button>
                                 </div>
                             </Fragment>

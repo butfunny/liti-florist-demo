@@ -73,7 +73,7 @@ export const navItems = (user) => {
             }],
             hide: () => !permission[user.role].find(r => r.indexOf("customer") > -1)
         }, {
-            label: "Hình Thức Khuyến Mại",
+            label: "Chiến Dịch Khuyến Mại",
             to: "/promotion",
             icon: <i className="fa fa-gift nav-icon"/>,
             hide: () => !permission[user.role].find(r => r.indexOf("promotion") == 0)
