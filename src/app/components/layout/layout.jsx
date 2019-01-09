@@ -13,7 +13,7 @@ export class Layout extends React.Component {
     render() {
 
         let isMobile = responsive.le("sm");
-        let {children, activeRoute, customerClass} = this.props;
+        let {children, activeRoute, hidden} = this.props;
 
         return (
             <div className="app-layout">
@@ -22,11 +22,13 @@ export class Layout extends React.Component {
                         <NavMobile
                             activeRoute={activeRoute}
                             routeComp={children}
+                            hidden={hidden}
                         />
                     ) : (
                         <NavDesktop
                             activeRoute={activeRoute}
                             routeComp={children}
+                            hidden={hidden}
                         />
                     )}
                 </div>

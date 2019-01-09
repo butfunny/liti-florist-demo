@@ -13,6 +13,7 @@ import {Input} from "../../../components/input/input";
 import {AutoComplete} from "../../../components/auto-complete/auto-complete";
 import {DataTable} from "../../../components/data-table/data-table";
 import sumBy from "lodash/sumBy";
+import {security} from "../../../security/secuiry-fe";
 export class ReportFlower extends React.Component {
 
     constructor(props) {
@@ -224,6 +225,7 @@ export class ReportFlower extends React.Component {
         return (
             <Layout
                 activeRoute="Phiếu Xuất Nhập Kho"
+                hidden={!security.isHavePermission(["warehouse.request.create-report-flower"])}
             >
                 <div className="request-from-supplier">
                     <div className="card">

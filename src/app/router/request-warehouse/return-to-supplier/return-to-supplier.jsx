@@ -15,6 +15,7 @@ import {InputQuantity} from "../../../components/input-quantity/input-quantity";
 import {InputNumber} from "../../../components/input-number/input-number";
 import pick from "lodash/pick";
 import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
+import {security} from "../../../security/secuiry-fe";
 export class ReturnToSupplier extends React.Component {
 
     constructor(props) {
@@ -221,7 +222,7 @@ export class ReturnToSupplier extends React.Component {
         return (
             <Layout
                 activeRoute="Phiếu Xuất Nhập Kho"
-                hidden={false}
+                hidden={!security.isHavePermission(["warehouse.request.return-to-supplier"])}
             >
                 <div className="request-from-supplier">
                     <div className="card">

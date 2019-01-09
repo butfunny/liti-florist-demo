@@ -13,6 +13,7 @@ import {ColumnViewMore} from "../../../components/column-view-more/column-view-m
 import {ImgPreview} from "../../../components/img-repview/img-preview";
 import {InputQuantity} from "../../../components/input-quantity/input-quantity";
 import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
+import {security} from "../../../security/secuiry-fe";
 export class ReturnToBaseRoute extends React.Component {
 
     constructor(props) {
@@ -215,6 +216,7 @@ export class ReturnToBaseRoute extends React.Component {
         return (
             <Layout
                 activeRoute="Phiếu Xuất Nhập Kho"
+                hidden={!security.isHavePermission(["warehouse.request.create-return-to-base"])}
             >
                 <div className="request-from-supplier">
                     <div className="card">

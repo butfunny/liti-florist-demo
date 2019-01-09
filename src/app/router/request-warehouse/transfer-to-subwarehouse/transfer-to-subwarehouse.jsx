@@ -14,6 +14,7 @@ import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
 import {ColumnViewMore} from "../../../components/column-view-more/column-view-more";
 import {ImgPreview} from "../../../components/img-repview/img-preview";
 import {InputQuantity} from "../../../components/input-quantity/input-quantity";
+import {security} from "../../../security/secuiry-fe";
 export class TransferToSubWarehouse extends React.Component {
 
     constructor(props) {
@@ -218,7 +219,7 @@ export class TransferToSubWarehouse extends React.Component {
         return (
             <Layout
                 activeRoute="Phiếu Xuất Nhập Kho"
-                hidden={false}
+                hidden={!security.isHavePermission(["warehouse.request.transfer-to-subwarehouse"])}
             >
                 <div className="request-from-supplier">
                     <div className="card">

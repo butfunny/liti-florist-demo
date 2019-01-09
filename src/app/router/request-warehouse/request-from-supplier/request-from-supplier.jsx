@@ -18,6 +18,7 @@ import {warehouseApi} from "../../../api/warehouse-api";
 import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
 import {InputNumber} from "../../../components/input-number/input-number";
 import {ImgPreview} from "../../../components/img-repview/img-preview";
+import {security} from "../../../security/secuiry-fe";
 export class RequestFromSupplier extends React.Component {
 
     constructor(props) {
@@ -218,7 +219,7 @@ export class RequestFromSupplier extends React.Component {
         return (
             <Layout
                 activeRoute="Phiếu Xuất Nhập Kho"
-                hidden={false}
+                hidden={!security.isHavePermission(["warehouse.request.create-request-from-supplier"])}
             >
                 <div className="request-from-supplier">
                     <div className="card">
