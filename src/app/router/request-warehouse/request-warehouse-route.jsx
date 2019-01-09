@@ -1,7 +1,6 @@
 import React, {Fragment} from "react";
 import {Layout} from "../../components/layout/layout";
 import {ButtonGroup} from "../../components/button-group/button-group";
-import {customerApi} from "../../api/customer-api";
 import {PaginationDataTable} from "../pagination-data-table/pagination-data-table";
 import {warehouseApi} from "../../api/warehouse-api";
 import moment from "moment";
@@ -14,11 +13,8 @@ import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 import {modals} from "../../components/modal/modals";
 import {RequestPreviewModal} from "./request-preview/request-preview-modal";
 import {premisesInfo} from "../../security/premises-info";
-import {SelectTagsColor} from "../../components/select-tags-color/select-tags-color";
 import {SelectTags} from "../../components/select-tags/select-tags";
-import {catalogs} from "../../common/constance";
 import {security} from "../../security/secuiry-fe";
-import union from "lodash/union";
 
 export class RequestWarehouseRoute extends React.Component {
 
@@ -250,20 +246,44 @@ export class RequestWarehouseRoute extends React.Component {
         }, {
             label: "",
             width: "5%",
-            display: (row) => row.status == "pending" && (
-                <ButtonGroup
-                    actions={[{
-                        name: "Chi tiết",
-                        icon: <i className="fa fa-file-text"/>,
-                        click: () => this.viewRequest(row)
-                    }, {
-                        name: "Từ chối",
-                        icon: <i className="fa fa-times text-danger"/>,
-                        click: () => this.rejectRequest(row),
-                        hide: () => row.status == "reject"
-                    }]}
-                />
-            ),
+            display: (row) => {
+
+                const permissions = [{
+                    type: "request-from-supplier",
+                    havePermission: () => security.isHavePermission(["warehouse.request.update-request-from-supplier"])
+                }, {
+                    type: "return-to-supplier",
+                    havePermission: () => security.isHavePermission(["warehouse.request.update-return-to-supplier"])
+                }, {
+                    type: "transfer-to-subwarehouse",
+                    havePermission: () => security.isHavePermission(["warehouse.request.update-transfer-to-subwarehouse"])
+                }, {
+                    type: "return-to-base",
+                    havePermission: () => security.isHavePermission(["warehouse.request.update-transfer-to-subwarehouse"])
+                }, {
+                    type: "report-missing",
+                    havePermission: () => security.isHavePermission(["warehouse.request.request.update-report-flower"])
+                }, {
+                    type: "report-error",
+                    havePermission: () => security.isHavePermission(["warehouse.request.request.update-report-flower"])
+                }];
+
+
+                return row.status == "pending" && permissions.find(p => p.type == row.requestType).havePermission() && (
+                    <ButtonGroup
+                        actions={[{
+                            name: "Chi tiết",
+                            icon: <i className="fa fa-file-text"/>,
+                            click: () => this.viewRequest(row)
+                        }, {
+                            name: "Từ chối",
+                            icon: <i className="fa fa-times text-danger"/>,
+                            click: () => this.rejectRequest(row),
+                            hide: () => row.status == "reject"
+                        }]}
+                    />
+                )
+            },
             minWidth: "50"
         }];
 
@@ -279,31 +299,45 @@ export class RequestWarehouseRoute extends React.Component {
                         </div>
 
                         <div className="card-body">
-                            <ButtonGroup
-                                className="btn btn-primary"
-                                customText="Thêm Phiếu"
-                                actions={[{
-                                    icon: <i className="fa fa-arrow-right text-primary" aria-hidden="true"/>,
-                                    name: "Nhập hàng từ nhà cung cấp",
-                                    click: () => history.push("/request-warehouse/request-from-supplier")
-                                }, {
-                                    icon: <i className="fa fa-arrow-left text-success" aria-hidden="true"/>,
-                                    name: "Trả hàng",
-                                    click: () => history.push("/request-warehouse/return-to-supplier")
-                                }, {
-                                    icon: <i className="fa fa-exchange text-primary" aria-hidden="true"/>,
-                                    name: "Xuất kho",
-                                    click: () => history.push("/request-warehouse/transfer-to-subwarehouse")
-                                }, {
-                                    icon: <i className="fa fa-retweet text-success" aria-hidden="true"/>,
-                                    name: "Trả kho",
-                                    click: () => history.push("/request-warehouse/return-to-base")
-                                }, {
-                                    icon: <i className="fa fa-exclamation text-danger" aria-hidden="true"/>,
-                                    name: "Báo cáo hao hụt/hủy hỏng",
-                                    click: () => history.push("/request-warehouse/report-flower")
-                                }]}
-                            />
+                            { security.isHavePermission([
+                                "warehouse.request.create-request-from-supplier",
+                                "warehouse.request.create-return-to-supplier",
+                                "warehouse.request.create-transfer-to-subwarehouse",
+                                "warehouse.request.create-return-to-base",
+                                "warehouse.request.create-report-flower"
+                                ]
+                            ) && (
+                                <ButtonGroup
+                                    className="btn btn-primary"
+                                    customText="Thêm Phiếu"
+                                    actions={[{
+                                        icon: <i className="fa fa-arrow-right text-primary" aria-hidden="true"/>,
+                                        name: "Nhập hàng từ nhà cung cấp",
+                                        click: () => history.push("/request-warehouse/request-from-supplier"),
+                                        hide: () => !security.isHavePermission(["warehouse.request.create-request-from-supplier"])
+                                    }, {
+                                        icon: <i className="fa fa-arrow-left text-success" aria-hidden="true"/>,
+                                        name: "Trả hàng",
+                                        click: () => history.push("/request-warehouse/return-to-supplier"),
+                                        hide: () => !security.isHavePermission(["warehouse.request.create-return-to-supplier"])
+                                    }, {
+                                        icon: <i className="fa fa-exchange text-primary" aria-hidden="true"/>,
+                                        name: "Xuất kho",
+                                        click: () => history.push("/request-warehouse/transfer-to-subwarehouse"),
+                                        hide: () => !security.isHavePermission(["warehouse.request.create-transfer-to-subwarehouse"])
+                                    }, {
+                                        icon: <i className="fa fa-retweet text-success" aria-hidden="true"/>,
+                                        name: "Trả kho",
+                                        click: () => history.push("/request-warehouse/return-to-base"),
+                                        hide: () => !security.isHavePermission(["warehouse.request.create-return-to-base"])
+                                    }, {
+                                        icon: <i className="fa fa-exclamation text-danger" aria-hidden="true"/>,
+                                        name: "Báo cáo hao hụt/hủy hỏng",
+                                        click: () => history.push("/request-warehouse/report-flower"),
+                                        hide: () => !security.isHavePermission(["warehouse.request.create-report-flower"])
+                                    }]}
+                                />
+                            )}
 
 
                             <div className="filter-wrapper">
