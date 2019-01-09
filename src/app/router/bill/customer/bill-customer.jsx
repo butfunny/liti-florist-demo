@@ -129,7 +129,7 @@ export class BillCustomer extends React.Component {
                                 <div>
                                     <span
                                             className="text-danger"> Đang nợ {formatNumber(bill.customerInfo.spend.totalOwe)} </span>
-                                    <div style={{marginTop: "10px"}}>
+                                    <div style={{marginTop: "5px", marginBottom: "5px"}}>
                                         <Checkbox label="Thanh toán nợ" value={bill.payOwe}
                                                   onChange={(value) => onChangeBill({...bill, payOwe: value})}/>
                                     </div>
@@ -265,6 +265,7 @@ export class BillCustomer extends React.Component {
                                 label="VIP sale"
                                 value={bill.vipSaleType}
                                 list={["Giảm giá 5%", "Tăng 10% định lượng hoa"]}
+                                onChange={(vipSaleType) => onChangeBill({...bill, vipSaleType})}
                             />
                         )}
 
