@@ -53,12 +53,10 @@ export class BillCatalog extends React.Component {
         const filteredCatalogs = catalogs.filter(c => c.name.toLowerCase().indexOf(keyword.toLowerCase()) > -1);
 
         return (
-            <div className="bill-catalog">
-                <b>Danh mục sản phẩm </b>
-                <input className="form-control"
-                       value={keyword}
-                       onChange={(e) => this.setState({keyword: e.target.value})}
-                       placeholder="Tìm kiếm"/>
+            <div className="bill-catalog card">
+                <div className="card-title">
+                    Danh mục sản phẩm
+                </div>
 
                 { filteredCatalogs.map((catalog, index) => (
                     <div className="product" key={index} onClick={() => onAddItem(catalog)}>
@@ -67,15 +65,7 @@ export class BillCatalog extends React.Component {
                             <span className="badge">{formatNumber(catalog.price)}</span>
                         </div>
                         <div className="product-edit">
-                            <button className="btn btn-info btn-sm" onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                this.editCatalog(catalog)
-                            }}>
-                                <i className="fa fa-pencil"/>
-                            </button>
-
-                            <button className="btn btn-danger btn-sm" onClick={(e) => {
+                            <button className="btn btn-danger btn-small" onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
                                 this.removeCatalog(catalog)

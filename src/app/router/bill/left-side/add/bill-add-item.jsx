@@ -49,7 +49,7 @@ export class BillAddItem extends React.Component {
         return (
             <div className="card bill-add-item">
                 <div className="card-title">
-                    Thêm SP
+                    Thêm sản phẩm
                 </div>
 
                 <Form
