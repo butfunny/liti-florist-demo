@@ -56,7 +56,7 @@ export class Customers extends React.Component {
             display: (row) => {
                 const getTotalPay = (customerId, isOwe) => {
                     let _bills = [];
-                    if (isOwe) _bills = bills.filter(b => b.to && b.to.paymentType == "Nợ");
+                    if (isOwe) _bills = bills.filter(b => b.isOwe);
 
                     const customerBills = _bills.filter(b => b.customerId == customerId);
                     return sum(customerBills.map(b => getTotalBill(b)))

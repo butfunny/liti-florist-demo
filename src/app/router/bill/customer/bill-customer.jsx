@@ -192,11 +192,11 @@ export class BillCustomer extends React.Component {
 
                                 if (phone.length > 3) {
                                     return customerApi.getCustomerByPhone(phone).then((resp) => {
-                                        return [{isNew: true, customerPhone: phone}].concat(resp.customers)
+                                        return resp.customers
                                     })
                                 }
                                 this.setState({isNotVip: false});
-                                return Promise.resolve([{isNew: true, customerPhone: phone}])
+                                return Promise.resolve([])
                             }}
                             onSelect={(updatedCustomer) => {
                                 if (updatedCustomer.isNew) {
@@ -225,10 +225,7 @@ export class BillCustomer extends React.Component {
                             onChange={(value) => onChange({...customer, customerPhone: value})}
                             objectKey="customerPhone"
                             object={customer}
-                            displayAs={(customer) => {
-                                if (customer.isNew) return <span>Khách hàng mới: <b>{customer.customerPhone}</b></span>;
-                                return `${customer.customerPhone} - ${customer.customerName}`
-                            }}
+                            displayAs={(customer) => `${customer.customerPhone} - ${customer.customerName}`}
                             noPopup
                         />
 
