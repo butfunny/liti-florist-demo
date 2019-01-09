@@ -351,11 +351,16 @@ export class BillRoute extends RComponent {
 
 
                                         <div className="text-right btn-action">
-                                            <button type="button" className="btn btn-warning"
+                                            <button type="button" className="btn btn-link"
+                                                    style={{
+                                                        marginRight: "10px"
+                                                    }}
                                                     onClick={() => this.saveDraftBill(bill)}
                                                     disabled={bill.items.length == 0 || savingDraft}
-                                            >Lưu đơn sẵn {savingDraft && <span className="btn-inner--icon"><i
-                                                className="fa fa-spinner fa-pulse"/></span>}
+                                            >
+                                                <span className="btn-text">Lưu đơn sẵn</span>
+                                                {savingDraft && <span className="loading-icon"><i className="fa fa-spinner fa-pulse"/></span>}
+
                                             </button>
 
                                             <button type="button"
@@ -370,10 +375,10 @@ export class BillRoute extends RComponent {
                                                         bill.to.receiverPhone.length == 0 ||
                                                         bill.to.receiverPlace.length == 0
                                                     }
-                                                    className="btn btn-info btn-icon"
+                                                    className="btn btn-primary "
                                                     onClick={() => this.submitBill(bill)}>
-                                                <span className="btn-inner--text">Bán Hàng</span>
-                                                {saving && <span className="btn-inner--icon"><i
+                                                <span className="btn-text">Bán Hàng</span>
+                                                {saving && <span className="loading-icon"><i
                                                     className="fa fa-spinner fa-pulse"/></span>}
                                             </button>
                                         </div>

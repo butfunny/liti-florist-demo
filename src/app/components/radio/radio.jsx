@@ -15,7 +15,7 @@ export class Radio extends React.Component {
                 <div className={classnames("checkbox-value", value && "checked")}
                      onClick={() => onChange(!value)}
                 >
-                    <i className="ni ni-check-bold" />
+                    {value && <div className="radio-value"/>}
                 </div>
 
                 <label className="checkbox-label"

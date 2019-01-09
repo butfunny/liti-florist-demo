@@ -16,6 +16,7 @@ import uniq from "lodash/uniq"
 import {paymentTypes, viaTypes} from "../../../common/constance";
 import {Select} from "../../../components/select/select";
 import {InputTag2} from "../../../components/input-tag/input-tag-2";
+import {Radio} from "../../../components/radio/radio";
 
 export class BillInfo extends React.Component {
 
@@ -178,7 +179,7 @@ export class BillInfo extends React.Component {
                 </div>
 
                 <div className="row">
-                    <div className="col">
+                    <div className="col tag-sale">
                         <InputTag
                             label="Sale"
                             tags={bill.sales}
@@ -190,24 +191,17 @@ export class BillInfo extends React.Component {
                         { billSaleSelected && (
                             <div className="bill-sale">
                                 <b>{billSaleSelected.username}</b>
+                                <Radio
+                                    label="Online"
+                                    value={billSaleSelected.isOnl}
+                                    onChange={() => onChangeBill({...bill, sales: bill.sales.map(s => s.username == billSaleSelected.username ? ({...s, isOnl: true}) : s)})}
+                                />
 
-                                <div className="custom-control custom-radio mb-3"
-                                     onClick={() => onChangeBill({...bill, sales: bill.sales.map(s => s.username == billSaleSelected.username ? ({...s, isOnl: true}) : s)})}
-                                >
-                                    <input name="custom-radio-1" className="custom-control-input"
-                                           checked={billSaleSelected.isOnl}
-                                           onChange={() => {}}
-                                           type="radio"/>
-                                    <label className="custom-control-label" htmlFor="customRadio1">Online</label>
-                                </div>
-                                <div className="custom-control custom-radio mb-3"
-                                     onClick={() => onChangeBill({...bill, sales: bill.sales.map(s => s.username == billSaleSelected.username ? ({...s, isOnl: false}) : s)})}
-                                >
-                                    <input name="custom-radio-1" className="custom-control-input" id="customRadio2"
-                                           onChange={() => {}}
-                                           checked={!billSaleSelected.isOnl} type="radio"/>
-                                    <label className="custom-control-label" htmlFor="customRadio2">Offline</label>
-                                </div>
+                                <Radio
+                                    label="Offline"
+                                    value={!billSaleSelected.isOnl}
+                                    onChange={() => onChangeBill({...bill, sales: bill.sales.map(s => s.username == billSaleSelected.username ? ({...s, isOnl: false}) : s)})}
+                                />
                             </div>
                         )}
                     </div>
