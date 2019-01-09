@@ -10,6 +10,9 @@ import {permissionInfo} from "../../../../security/premises-info";
 import {userInfo} from "../../../../security/user-info";
 import {InputTag} from "../../../../components/input-tag/input-tag";
 import {InputTag2} from "../../../../components/input-tag/input-tag-2";
+import {Select} from "../../../../components/select/select";
+import {SelectTagsColor} from "../../../../components/select-tags-color/select-tags-color";
+import {SelectTags} from "../../../../components/select-tags/select-tags";
 
 export class BillAddItem extends React.Component {
 
@@ -44,83 +47,79 @@ export class BillAddItem extends React.Component {
 
 
         return (
-            <Form
-                onSubmit={() => {
-                    onChangeItem({price, name, type, color: color.join(", "), size});
-                    this.setState({price: "", name: "", type: "", color: [], size: ""});
-                }}
-                formValue={this.state}
-                validations={validations}
-                className="bill-add-item"
-                render={(getInvalidPath, invalidPaths) => (
-                    <Fragment>
-                        <b>Thêm sản phẩm</b>
+            <div className="card bill-add-item">
+                <div className="card-title">
+                    Thêm SP
+                </div>
 
-                        <select className="form-control"
-                                style={{
-                                    marginBottom: "5px",
-                                    color: "black"
-                                }}
-                                value={type} onChange={(e) => this.setState({type: e.target.value})}>
-                            <option value="" disabled>Loại*</option>
-                            { types.map((t, index) => (
-                                <option value={t} key={index}>
-                                    {t}
-                                </option>
-                            ))}
-                        </select>
+                <Form
+                    onSubmit={() => {
+                        onChangeItem({price, name, type, color: color.join(", "), size});
+                        this.setState({price: "", name: "", type: "", color: [], size: ""});
+                    }}
+                    formValue={this.state}
+                    validations={validations}
+                    render={(getInvalidPath, invalidPaths) => (
+                        <div className="card-body">
 
-                        <select className="form-control"
-                                style={{
-                                    marginBottom: "5px",
-                                    color: "black"
-                                }}
-                                value={size} onChange={(e) => this.setState({size: e.target.value})}>
-                            <option value="" disabled>Size*</option>
-                            { sizes.map((t, index) => (
-                                <option value={t} key={index}>
-                                    {t}
-                                </option>
-                            ))}
-                        </select>
+                            <Select
+                                label="Loại*"
+                                list={types}
+                                value={type}
+                                onChange={(type) => this.setState({type})}
+                            />
 
-                        <InputTag2
-                            tags={color}
-                            onChange={(c) => this.setState({color: c})}
-                            list={colors}
-                        />
+                            <Select
+                                label="Size*"
+                                list={sizes}
+                                value={size}
+                                onChange={(size) => this.setState({size})}
+                            />
 
-                        <Input
-                            placeholder="Miêu tả*"
-                            value={name}
-                            onChange={(e) => this.setState({name: e.target.value})}
-                        />
+                            <SelectTagsColor
+                                label="Màu*"
+                                tags={color}
+                                onChange={(color) => this.setState({color})}
+                            />
 
-                        <InputNumber
-                            placeholder="Giá*"
-                            value={price}
-                            onChange={(price) => this.setState({price})}
-                        />
-                        <div className="form-group">
-                            <button type="submit"
-                                className="btn btn-info btn-sm"
-                                disabled={invalidPaths.length > 0}>
-                                Thêm
-                            </button>
 
-                            <button className="btn btn-info btn-sm btn-icon"
-                                    onClick={() => {
-                                        onChangeCatalog({price, name, type, size, color: color.join(", ")});
-                                        this.setState({price: "", name: "", type: "", color: [], size: ""});
-                                    }}
-                                    disabled={invalidPaths.length > 0 || saving}>
-                                <span className="btn-inner--text">Thêm danh mục</span>
-                                { saving && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
-                            </button>
+                            <Input
+                                label="Miêu tả*"
+                                value={name}
+                                onChange={(e) => this.setState({name: e.target.value})}
+                            />
+
+                            <InputNumber
+                                label="Giá*"
+                                value={price}
+                                onChange={(price) => this.setState({price})}
+                            />
+
+
+                            <div className="row">
+                                <button type="submit"
+                                        style={{marginRight: "10px"}}
+                                        className="btn btn-primary"
+                                        disabled={invalidPaths.length > 0}>
+                                    Thêm
+                                </button>
+
+
+                                <button className="btn btn-primary"
+                                        onClick={() => {
+                                            onChangeCatalog({price, name, type, size, color: color.join(", ")});
+                                            this.setState({price: "", name: "", type: "", color: [], size: ""});
+                                        }}
+                                        disabled={invalidPaths.length > 0 || saving}>
+                                    <span className="btn-text">Thêm danh mục</span>
+                                    { saving && <span className="loading-icon"><i className="fa fa-spinner fa-pulse"/></span>}
+                                </button>
+                            </div>
+
                         </div>
-                    </Fragment>
-                )}
-            />
+                    )}
+                />
+            </div>
         );
     }
 }

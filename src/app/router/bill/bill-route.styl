@@ -29,4 +29,22 @@
   .btn-action {
     margin-bottom 100px;
   }
+
+  .row {
+
+    @media (min-width 769px) {
+      display flex;
+      flex-flow row wrap;
+
+      .col-md-4 {
+        width calc(30% - 12px);
+        margin-right 12px;
+      }
+
+      .col-md-8 {
+        width calc(70% - 12px);
+        margin-left 12px;
+      }
+    }
+  }
 }

@@ -96,25 +96,25 @@ export class LeftSide extends RComponent {
                     colors={colors.map(t => t.name)}
                 />
 
-                <BillCatalog
-                    catalogs={catalogs}
-                    onChangeCatalogs={(catalogs) => this.setState({catalogs})}
-                    onAddItem={(item) => this.addItem(item)}
-                />
+                {/*<BillCatalog*/}
+                    {/*catalogs={catalogs}*/}
+                    {/*onChangeCatalogs={(catalogs) => this.setState({catalogs})}*/}
+                    {/*onAddItem={(item) => this.addItem(item)}*/}
+                {/*/>*/}
 
-                { permission[user.role].indexOf("bill.editProductType") > -1 && (
-                    <BillAddType
-                        types={types}
-                        onChange={(types) => this.setState({types})}
-                    />
-                )}
+                {/*{ permission[user.role].indexOf("bill.editProductType") > -1 && (*/}
+                    {/*<BillAddType*/}
+                        {/*types={types}*/}
+                        {/*onChange={(types) => this.setState({types})}*/}
+                    {/*/>*/}
+                {/*)}*/}
 
-                { permission[user.role].indexOf("bill.editProductColor") > -1 && (
-                    <BillAddColor
-                        types={colors}
-                        onChange={(colors) => this.setState({colors})}
-                    />
-                )}
+                {/*{ permission[user.role].indexOf("bill.editProductColor") > -1 && (*/}
+                    {/*<BillAddColor*/}
+                        {/*types={colors}*/}
+                        {/*onChange={(colors) => this.setState({colors})}*/}
+                    {/*/>*/}
+                {/*)}*/}
 
 
 
