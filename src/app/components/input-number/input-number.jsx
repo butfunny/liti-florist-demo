@@ -6,7 +6,7 @@ export class InputNumber extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: formatNumber(props.value)
+            value: props.value == "" ? "" : formatNumber(props.value)
         }
     }
 

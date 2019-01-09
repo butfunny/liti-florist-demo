@@ -301,13 +301,13 @@ export class BillRoute extends RComponent {
                             />
                         </div>
 
-                        {/*<div className="col-md-8 card">*/}
-                            {/*<BillView*/}
-                                {/*activePromotions={activePromotions}*/}
-                                {/*bill={bill}*/}
-                                {/*onChangeBill={(bill) => this.setState({bill})}*/}
-                                {/*onChangeItems={(items) => this.setState({bill: {...bill, items}})}*/}
-                            {/*/>*/}
+                        <div className="col-md-8">
+                            <BillView
+                                activePromotions={activePromotions}
+                                bill={bill}
+                                onChangeBill={(bill) => this.setState({bill})}
+                                onChangeItems={(items) => this.setState({bill: {...bill, items}})}
+                            />
 
                             {/*<Form*/}
                                 {/*formValue={bill.customer}*/}
@@ -380,7 +380,7 @@ export class BillRoute extends RComponent {
                                     {/*</Fragment>*/}
                                 {/*)}*/}
                             {/*/>*/}
-                        {/*</div>*/}
+                        </div>
                     </div>
                 </div>
             </Layout>
