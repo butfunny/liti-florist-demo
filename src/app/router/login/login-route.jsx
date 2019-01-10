@@ -5,6 +5,7 @@ import {required, minLength} from "../../components/form/validations";
 import {Form} from "../../components/form/form";
 import {security} from "../../security/secuiry-fe";
 import {userInfo} from "../../security/user-info";
+import {cache} from "../../common/cache"
 
 export class LoginRoute extends React.Component {
 
@@ -15,7 +16,10 @@ export class LoginRoute extends React.Component {
             password: "",
             submitting: false,
             error: false
+
         };
+
+
 
         cache.set(null, "active-premises");
     }
