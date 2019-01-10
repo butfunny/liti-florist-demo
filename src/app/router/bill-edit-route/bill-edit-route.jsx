@@ -104,8 +104,6 @@ export class BillEditRoute extends React.Component {
 
         };
 
-        console.log(isCanEditBill(bill));
-
 
         return (
             <Layout
@@ -187,9 +185,9 @@ export class BillEditRoute extends React.Component {
                                                         bill.to.receiverPhone.length == 0 ||
                                                         bill.to.receiverPlace.length == 0
                                                     }
-                                                    className="btn btn-info btn-icon" onClick={() => this.submitBill()}>
-                                                <span className="btn-inner--text">Cập nhật</span>
-                                                { saving && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
+                                                    className="btn btn-primary" onClick={() => this.submitBill()}>
+                                                <span className="btn-text">Cập nhật</span>
+                                                { saving && <span className="loading-icon"><i className="fa fa-spinner fa-pulse"/></span>}
                                             </button>
                                         </div>
                                     </Fragment>
