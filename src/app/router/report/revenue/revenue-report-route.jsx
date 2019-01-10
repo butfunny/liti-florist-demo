@@ -75,7 +75,6 @@ export class RevenueReportRoute extends React.Component {
 
 
 
-
         return (
             <Layout activeRoute="Doanh Thu">
 
