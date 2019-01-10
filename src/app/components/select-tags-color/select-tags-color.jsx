@@ -4,6 +4,7 @@ import {SelectColor} from "../select-color/select-color";
 import uniq from "lodash/uniq"
 import {productApi} from "../../api/product-api";
 import {Select} from "../select/select";
+import {ClickOutside} from "../click-outside/click-outside";
 export class SelectTagsColor extends React.Component {
 
     constructor(props) {
@@ -22,7 +23,7 @@ export class SelectTagsColor extends React.Component {
 
 
         let {placeHolder, tags, isErrorTag, list, onChange, noPlaceholder, label, error} = this.props;
-        let {selected, value, selectedIndex, selectedTag, focus, colors} = this.state;
+        let {selected, value, selectedIndex, selectedTag, focus, colors, open} = this.state;
 
 
         return (
@@ -36,7 +37,8 @@ export class SelectTagsColor extends React.Component {
                                 background: tagItem,
                                 width: "40px",
                                 height: "19px",
-                                borderRadius: "3px"
+                                borderRadius: "3px",
+                                border: "1px solid #dedede"
                             }}
                         />
 
@@ -64,23 +66,36 @@ export class SelectTagsColor extends React.Component {
                 </div>
 
                 <div className="input-wrapper auto-complete">
-                    <Select
-                        value={" "}
-                        onChange={(item) => {
-                            onChange(uniq(tags.concat(item)));
-                        }}
-                        list={colors.filter(item => tags.findIndex(t => t == item) == -1)}
-                        displayAs={(color) => (
-                            <div className="tag-value"
-                                 style={{
-                                     background: color,
-                                     width: "100%",
-                                     height: "19px",
-                                     borderRadius: "3px"
-                                 }}
-                            />
+
+                    <div className={classnames("liti-input select has-value", open && "focus")} onClick={() => this.setState({open: true})}>
+                        <div className="select-text">
+                            &nbsp;
+                            <i className={classnames("fa sort-icon", !open ? "fa-angle-down" : "fa-angle-up")}/>
+                        </div>
+
+                        { open && (
+                            <ClickOutside onClickOut={() => this.setState({open: false})}>
+                                <div className="select-dropdown"
+                                >
+                                    { colors.map((color, index) => (
+                                        <div className="color-item"
+                                             style={{background: color}}
+                                             key={index}
+                                             onClick={() => {
+                                                 setTimeout(() => {
+                                                     this.setState({open: false});
+                                                 });
+                                                 onChange(uniq(tags.concat(color)));
+                                             }}
+                                        >
+                                        </div>
+                                    ))}
+                                </div>
+                            </ClickOutside>
                         )}
-                    />
+
+                    </div>
+
                 </div>
             </div>
         );

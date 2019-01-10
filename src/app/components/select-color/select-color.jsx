@@ -1,5 +1,5 @@
 import React, {Fragment} from "react";
-import {CompactPicker} from "react-color";
+import {SwatchesPicker} from "react-color";
 import classnames from "classnames";
 import {ClickOutside} from "../click-outside/click-outside";
 export class SelectColor extends React.Component {
@@ -43,7 +43,7 @@ export class SelectColor extends React.Component {
                 { open && (
                     <ClickOutside onClickOut={() => this.setState({open: false})}>
                         <div className="picker-dropdown-wrapper">
-                            <CompactPicker
+                            <SwatchesPicker
                                 color={value}
                                 onChange={(color) => {
                                     onChange(color.hex, () => {
