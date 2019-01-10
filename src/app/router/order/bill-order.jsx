@@ -500,9 +500,9 @@ export class BillOrderRoute extends RComponent {
                                 <DatePicker
                                     className="col"
                                     label="Tới Ngày"
-                                    value={from}
-                                    onChange={(from) => {
-                                        this.setState({from})
+                                    value={to}
+                                    onChange={(to) => {
+                                        this.setState({to})
                                     }}
                                 />
 

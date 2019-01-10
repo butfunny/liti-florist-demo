@@ -17,7 +17,7 @@ export const customerApi = {
         return api.put(`/api/customer/${id}`, customer)
     },
     getCustomerBirthDate: () => {
-        return api.get(`/api//customers-birthday`);
+        return api.get(`/api/customers-birthday`);
     },
     getCustomersAll: () => {
         return api.get("/api/get-customers")

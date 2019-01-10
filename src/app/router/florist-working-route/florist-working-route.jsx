@@ -92,7 +92,8 @@ export class FloristWorkingRoute extends RComponent {
                     quantity: i.submitQuantity,
                     supplierID: i.supplierID,
                     baseProductID: i.baseProductID,
-                    id: i._id
+                    id: i._id,
+                    oriPrice: i.oriPrice
                 }
             }),
             billID: bill._id,

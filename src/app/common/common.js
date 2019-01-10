@@ -40,12 +40,21 @@ export const getTotalBill = (bill) => {
         discount += 30;
     }
 
-    if (bill.promotion) {
-        discount += bill.promotion.discount
+    if (bill.promotion && bill.promotion.discount) {
+        discount += bill.promotion.discount;
     }
+
 
     return Math.round(totalBillItems - totalBillItems * Math.min(discount, 100) / 100)
 
+};
+
+export const getBillProfit = (bill) => {
+    if (bill.selectedFlower) {
+        return sumBy(bill.selectedFlower, (item) => item.price - (item.oriPrice || 0))
+    }
+
+    return 0;
 };
 
 export const getTotalBillItems = (bill) => {
