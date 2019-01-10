@@ -6,6 +6,7 @@ import sumBy from "lodash/sumBy";
 import {modals} from "../../../components/modal/modals";
 import {CustomerBillModal} from "../../customers/customer-bill-modal";
 import {CSVLink} from "react-csv";
+import {DataTable} from "../../../components/data-table/data-table";
 export class RevenueReportBill extends React.Component {
 
     constructor(props) {
@@ -27,7 +28,7 @@ export class RevenueReportBill extends React.Component {
 
     render() {
 
-        let {bills, filterType, lastInitBills} = this.props;
+        let {bills, filterType, lastInitBills, loading} = this.props;
 
         let premises = premisesInfo.getPremises();
         premises = premises.map(p => ({
@@ -56,63 +57,49 @@ export class RevenueReportBill extends React.Component {
         let columns = [{
             label: "Cửa Hàng",
             display: (premise) => premise.name,
-            width: "20%",
-            minWidth: "150"
+            width: "33.33%",
+            minWidth: "150",
+            sortBy: (premise) => premise.name
         }, {
-            label: "Cửa Hàng",
-            display: (premise) => premise.name,
-            width: "20%",
-            minWidth: "150"
-        }]
+            label: "Tổng Đơn",
+            display: (premise) => formatNumber(premise.totalBill),
+            width: "33.33%",
+            minWidth: "150",
+            sortBy: (premise) => premise.totalBill
+        }, {
+            label: "Tổng Tiền",
+            display: (premise) => (
+                <div>
+                    {formatNumber(premise.totalGet)}
+                    { filterType == "Trong Tuần" && premise.totalGet != premise.totalLastGet && (
+                        <span style={{paddingLeft: "5px"}}>
+                            { premise.totalGet > premise.totalLastGet ? (
+                                <span className="text-success"><i className="fa fa-arrow-up"/> ({formatNumber(premise.totalGet - premise.totalLastGet)})</span>
+                            ) : (
+                                <span className="text-danger"><i className="fa fa-arrow-down"/> ({formatNumber(premise.totalGet - premise.totalLastGet)})</span>
+                            )}
+                        </span>
+                    )}
+                </div>
+            ),
+            width: "33.33%",
+            minWidth: "150",
+            sortBy: (premise) => premise.totalGet
+        }];
 
 
         return (
-            <div>
-
-                {/*<CSVLink*/}
-                    {/*data={CSVdata}*/}
-                    {/*filename={"bao-cao-doanh-thu-cua-hang.csv"}*/}
-                    {/*className="btn btn-info btn-icon btn-excel btn-sm">*/}
-                    {/*<span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>*/}
-                    {/*<span className="btn-inner--text">Xuất Excel</span>*/}
-                {/*</CSVLink>*/}
-
-                <table className="table table-hover">
-                    <thead>
-                    <tr>
-                        <th scope="col">Cửa Hàng</th>
-                        <th scope="col">Tổng Thu</th>
-                        <th scope="col" style={{width: "150px"}}/>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    { sortBy(premises, c => -c.totalGet).map((premise, index) => (
-                        <tr key={index}>
-                            <td>
-                                <div>{premise.name}</div>
-                                Số đơn: {premise.totalBill}
-                            </td>
-
-                            <td>
-                                {formatNumber(premise.totalGet)}
-                            </td>
-
-                            <td>
-                                { filterType == "Trong Tuần" && premise.totalGet != premise.totalLastGet && (
-                                    <span>
-                                        { premise.totalGet > premise.totalLastGet ? (
-                                            <span className="text-info"><i className="fa fa-arrow-up"/> ({formatNumber(premise.totalGet - premise.totalLastGet)})</span>
-                                        ) : (
-                                            <span className="text-danger"><i className="fa fa-arrow-down"/> ({formatNumber(premise.totalGet - premise.totalLastGet)})</span>
-                                        )}
-                                    </span>
-                                )}
-                            </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
-            </div>
+            <DataTable
+                loading={loading}
+                columns={columns}
+                rows={premises}
+                rowStyling={(premise) => {
+                    if (filterType == "Trong Tuần" && && premise.totalGet != premise.totalLastGet) {
+                        if (premise.totalGet > premise.totalLastGet) return {}
+                        return {}
+                    }
+                }}
+            />
         );
     }
 }

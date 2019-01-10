@@ -156,11 +156,14 @@ export class RevenueReportRoute extends React.Component {
                         />
                     </div>
 
-                    <RevenueReportBill
-                        bills={bills}
-                        lastInitBills={lastInitBills}
-                        filterType={filterType}
-                    />
+                    { bills && (
+                        <RevenueReportBill
+                            loading={loading}
+                            bills={bills}
+                            lastInitBills={lastInitBills}
+                            filterType={filterType}
+                        />
+                    )}
                 </div>
 
                 {/*{ !loading && (*/}
