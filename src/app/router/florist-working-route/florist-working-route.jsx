@@ -202,9 +202,9 @@ export class FloristWorkingRoute extends RComponent {
 
                     { bill && (
                         <div className="card-body">
-                            <div className="row">
+                            <div>
                                 {bill.items.map((item, index) => (
-                                    <div key={index}>
+                                    <div key={index} style={{marginBottom: "10px"}}>
                                         <b>{item.quantity}</b> {item.flowerType} {item.name} {item.sale &&
                                     <span className="text-primary">({item.sale}%)</span>} {item.vat ?
                                         <span className="text-primary"> - {item.vat}% VAT</span> : ""}

@@ -1,3 +1,4 @@
+const {getTotalBill} = require("../common/common");
 const _ = require('lodash');
 const Security = require("../security/security-be");
 const BillDao = require("../dao/bill-dao");
@@ -71,9 +72,17 @@ module.exports = function(app) {
     });
 
     app.delete("/bill/:bid",Security.authorDetails, function (req, res) {
-        BillDao.remove({_id: req.params.bid}, function () {
-            res.end();
-        })
+        BillDao.findOne({_id: req.params.bid}, (err, bill) => {
+            BillDao.remove({_id: req.params.bid}, function () {
+                BillDao.find({customerId: bill.customerId}, (err, bills) => {
+                    let totalPay = _.sumBy(bills, b => getTotalBill(b));
+                    CustomerDao.findOneAndUpdate({_id: bill.customerId}, {totalPay: totalPay, totalBill: bills.length}, () => {
+                        res.end();
+                    })
+                })
+            })
+        });
+
     });
 
     app.put("/bill/update-image/:bid", Security.authorDetails, (req, res) => {
@@ -83,8 +92,13 @@ module.exports = function(app) {
     });
 
     app.put("/bill-update-status/:bid", Security.authorDetails, (req, res) => {
-        BillDao.updateOne({_id: req.params.bid}, {status: req.body.status, reason: req.body.reason}, (err) => {
-            res.end();
+        BillDao.findOneAndUpdate({_id: req.params.bid}, {status: req.body.status, reason: req.body.reason}, (err, bill) => {
+            BillDao.find({customerId: bill.customerId}, (err, bills) => {
+                let totalPay = _.sumBy(bills, b => getTotalBill(b));
+                CustomerDao.findOneAndUpdate({_id: bill.customerId}, {totalPay: totalPay, totalBill: bills.length}, () => {
+                    res.end();
+                })
+            });
         })
     });
 
