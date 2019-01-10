@@ -147,13 +147,6 @@ export class RevenueReportRoute extends React.Component {
                                 </button>
                             </div>
                         )}
-
-                        <Select
-                            label="Báo Cáo Theo"
-                            value={viewType}
-                            onChange={(viewType) => this.setState({viewType})}
-                            list={["Khách Hàng", "Cửa Hàng"]}
-                        />
                     </div>
 
                     { bills && (

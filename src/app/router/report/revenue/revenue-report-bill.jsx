@@ -95,8 +95,8 @@ export class RevenueReportBill extends React.Component {
                 rows={premises}
                 rowStyling={(premise) => {
                     if (filterType == "Trong Tuần" && premise.totalGet != premise.totalLastGet) {
-                        if (premise.totalGet > premise.totalLastGet) return {}
-                        return {}
+                        if (premise.totalGet > premise.totalLastGet) return {background: "rgb(29,201,183, .1)"};
+                        return {background: "rgb(253,57,122, .1)"};
                     }
                 }}
             />
