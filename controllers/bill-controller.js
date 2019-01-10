@@ -88,6 +88,12 @@ module.exports = function(app) {
         })
     });
 
+    app.put("/bill-move-premises/:bid", Security.authorDetails, (req, res) => {
+        BillDao.updateOne({_id: req.params.bid}, {premises_id: req.body.premises_id}, (err) => {
+            res.end();
+        })
+    });
+
     app.put("/bill/:bid", Security.authorDetails, (req, res) => {
         delete req.body._id;
         BillDao.updateOne({_id: req.params.bid}, req.body, () => {

@@ -27,7 +27,7 @@ export class DataTable extends React.Component {
 
     render() {
 
-        let {columns, rows, onClickRow, rowStyling} = this.props;
+        let {columns, rows, onClickRow, rowStyling, loading} = this.props;
         let {sortByFunc, sortIndexCol, isDesc} = this.state;
 
 
@@ -61,7 +61,7 @@ export class DataTable extends React.Component {
                     </div>
 
 
-                    { !rows && (
+                    { (loading || !rows) && (
                         <div className="loading-overlay">
                             <div className="loading-box">
                                 Đang Tải... <span className="loading-icon"><i className="fa fa-spinner fa-pulse"/></span>

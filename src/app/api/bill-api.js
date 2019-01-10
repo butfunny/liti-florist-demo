@@ -46,5 +46,8 @@ export const billApi = {
     },
     getBillImages: () => {
         return api.get("/api/bill-images")
+    },
+    moveBill: (id, data) => {
+        return api.put("/api/bill-move-premises/" + id, data)
     }
 };

@@ -41,6 +41,7 @@ import {ColumnViewMore} from "../../components/column-view-more/column-view-more
 import {ButtonGroup} from "../../components/button-group/button-group";
 import {ImgPreview} from "../../components/img-repview/img-preview";
 import {DataTable} from "../../components/data-table/data-table";
+import {MoveBillModal} from "./move-bill-modal";
 
 export class BillOrderRoute extends RComponent {
 
@@ -140,6 +141,21 @@ export class BillOrderRoute extends RComponent {
             }).then(() => {
                 this.getBills();
             })
+        })
+    }
+
+    moveBill(bill) {
+        const modal = modals.openModal({
+            content: (
+                <MoveBillModal
+                    billID={bill._id}
+                    onClose={() => {
+                        this.getBills();
+                        modal.close();
+                    }}
+                    onDismiss={() => modal.close()}
+                />
+            )
         })
     }
 
@@ -431,7 +447,7 @@ export class BillOrderRoute extends RComponent {
                     }, {
                         name: "Chuyển Đơn",
                         icon: <i className="fa fa-share "/>,
-                        click: () => console.log("Move")
+                        click: () => this.moveBill(bill)
                     }, {
                         name: "Khiếu Nại",
                         icon: <i className="fa fa-flag text-danger"/>,
@@ -567,6 +583,7 @@ export class BillOrderRoute extends RComponent {
                         </div>
 
                         <DataTable
+                            loading={loading}
                             rows={billsFiltered}
                             columns={columns}
                             rowStyling={(bill) => {
