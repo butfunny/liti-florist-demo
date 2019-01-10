@@ -15,7 +15,9 @@ export class LoginRoute extends React.Component {
             password: "",
             submitting: false,
             error: false
-        }
+        };
+
+        cache.set(null, "active-premises");
     }
 
     submit() {
