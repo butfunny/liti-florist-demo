@@ -22,11 +22,11 @@ export const navItems = (user) => {
         child: [{
             label: "Đơn Chính",
             to: "/orders",
-            hide: () => permission[user.role].indexOf("bill.view") == -1
+            hide: () => !security.isHavePermission(["bill.view"])
         }, {
             label: "Đơn Sẵn",
             to: "/draft",
-            hide: () => permission[user.role].indexOf("bill.view") == -1
+            hide: () => !security.isHavePermission(["bill.view"])
         }, {
             label: "Đơn Chờ Làm",
             to: "/florist",

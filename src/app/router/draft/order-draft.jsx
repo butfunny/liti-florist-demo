@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Fragment} from "react";
 import {Layout} from "../../components/layout/layout";
 import {billApi} from "../../api/bill-api";
 import sortBy from "lodash/sortBy";
@@ -7,8 +7,11 @@ import moment from "moment";
 import {formatNumber, getTotalBill} from "../../common/common";
 import {UploadBtn} from "../order/bill-order";
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
-import {permissionInfo} from "../../security/premises-info";
+import {permissionInfo, premisesInfo} from "../../security/premises-info";
 import {userInfo} from "../../security/user-info";
+import {ColumnViewMore} from "../../components/column-view-more/column-view-more";
+import {ButtonGroup} from "../../components/button-group/button-group";
+import {DataTable} from "../../components/data-table/data-table";
 export class OrderDraft extends React.Component {
 
     constructor(props) {
@@ -19,6 +22,13 @@ export class OrderDraft extends React.Component {
 
         billApi.getBillDraftList().then((bills) => {
             this.setState({bills})
+        });
+
+        premisesInfo.onChange(() => {
+            this.setState({bills: null});
+            billApi.getBillDraftList().then((bills) => {
+                this.setState({bills})
+            });
         })
     }
 
@@ -40,97 +50,88 @@ export class OrderDraft extends React.Component {
         let {bills} = this.state;
         let {history} = this.props;
 
+        let columns = [{
+            label: "Thời gian",
+            display: (bill) => moment(bill.deliverTime).format("DD/MM/YYYY HH:mm"),
+            width: "30%",
+            minWidth: "100",
+            sortBy: (bill) => bill.deliverTime
+        }, {
+            label: "Thông tin đơn",
+            display: (bill) => (
+                <ColumnViewMore
+                    header={bill.items.map((item, index) => (
+                        <div key={index}>
+                            <b>{item.quantity}</b> {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>} {item.vat ? <span className="text-primary"> - {item.vat}% VAT</span> : ""}
+                        </div>
+                    ))}
+                    renderViewMoreBody={() => (
+                        <Fragment>
+                            {bill.vipSaleType && (
+                                <div>VIP: <b>{bill.vipSaleType}</b></div>
+                            )}
 
-        const permission = permissionInfo.getPermission();
-        const user = userInfo.getUser();
+                            {bill.promotion && (
+                                <span>{bill.promotion.name}: <b>{bill.promotion.discount}%</b></span>
+                            )}
+
+                            <div style={{
+                                marginTop: "10px"
+                            }}>
+                                {bill.to.paymentType == "Nợ" ? <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> : <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
+                            </div>
+
+                            <div>Hình thức thanh toán: {bill.to.paymentType}</div>
+
+                            <div>
+                                Ghi chú: {bill.to.notes}
+                            </div>
+
+                            <div>
+                                Nội dung thiệp: {bill.to.cardContent}
+                            </div>
+                        </Fragment>
+                    )}
+                    viewMoreText="Chi Tiết"
+                    isShowViewMoreText={true}
+                />
+            ),
+            width: "65%",
+            minWidth: "250"
+        }, {
+            label: "",
+            width: "5%",
+            minWidth: "50",
+            display: (bill) => (
+                <ButtonGroup
+                    actions={[{
+                        name: "Sửa",
+                        icon: <i className="fa fa-pencil text-primary"/>,
+                        click: () => history.push(`/edit-bill-draft/${bill._id}`)
+                    }, {
+                        name: "Xóa",
+                        icon: <i className="fa fa-trash text-danger"/>,
+                        click: () => this.remove(bill)
+                    }]}
+                />
+            )
+        }];
+
 
         return (
             <Layout activeRoute="Đơn Sẵn">
-                { permission[user.role].indexOf("bill.view") == -1 ? (
-                    <div>
-                        Bạn không có quyền truy cập vào trang này vui lòng chọn những trang bạn có quyền trên thanh nav
-                    </div>
-                ) : (
-                    <div className="order-draft">
-                        <div className="ct-page-title">
-                            <h1 className="ct-title">Đơn Sẵn</h1>
+                <div className="order-draft">
+                    <div className="card">
+                        <div className="card-title">
+                            Đơn Sẵn
                         </div>
 
-                        <table className="table table-hover">
-                            <thead>
-                            <tr>
-                                <th scope="col"
-                                    style={{width: "200px"}}
-                                >Thời gian</th>
-                                <th scope="col">Thông Tin Đơn</th>
-                                <th
-                                    style={{width: "200px"}}
-                                    scope="col"/>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            { bills && bills.map((bill, index) => (
-                                <tr key={index}>
-                                    <td>
-                                        {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
-                                        <div>Sale: <b>{bill.sales.length > 0 ? bill.sales.map(s => s.username).join(", ") : (bill.to || {}).saleEmp}</b></div>
-                                        <div>Florist: <b>{bill.florists.length > 0 ? bill.florists.map(s => s.username).join(", ") : (bill.to || {}).florist}</b></div>
-                                        <div>Nhân viên ship: <b>{bill.ships.length > 0 && bill.ships.map(s => s.username).join(", ")}</b></div>
-
-                                    </td>
-                                    <td>
-                                        <div>
-                                            { bill.items.map((item, index) => (
-                                                <div key={index}>
-                                                    <b>{item.quantity}</b> {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>} {item.vat ? <span className="text-primary"> - {item.vat}% VAT</span> : ""}
-                                                </div>
-                                            ))}
-
-                                            {bill.vipSaleType && (
-                                                <div>VIP: <b>{bill.vipSaleType}</b></div>
-                                            )}
-
-                                            {bill.promotion && (
-                                                <span>{bill.promotion.name}: <b>{bill.promotion.discount}%</b></span>
-                                            )}
-
-                                            <div style={{
-                                                marginTop: "10px"
-                                            }}>
-                                                {bill.to.paymentType == "Nợ" ? <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> : <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
-                                            </div>
-
-                                            <div>Hình thức thanh toán: {bill.to.paymentType}</div>
-
-                                            <div>
-                                                Ghi chú: {bill.to.notes}
-                                            </div>
-
-                                            <div>
-                                                Nội dung thiệp: {bill.to.cardContent}
-                                            </div>
-                                        </div>
-
-
-                                    </td>
-
-                                    <td>
-                                        <button className="btn btn-outline-primary btn-sm"
-                                                onClick={() => history.push(`/edit-bill-draft/${bill._id}`)}>
-                                            <i className="fa fa-pencil"/>
-                                        </button>
-
-                                        <button className="btn btn-outline-danger btn-sm"
-                                                onClick={() => this.remove(bill)}>
-                                            <i className="fa fa-trash"/>
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
+                        <DataTable
+                            rows={bills}
+                            columns={columns}
+                        />
                     </div>
-                )}
+                </div>
             </Layout>
         );
     }

@@ -19,7 +19,7 @@ export class ColumnViewMore extends React.Component {
 
         return (
             <div className="column-view-more">
-                {header} {isShowViewMoreText && <span className="show-info" onClick={() => this.setState({showInfo: !showInfo})}>{showInfo ? "Ẩn" : viewMoreText}</span>}
+                <div className="column-header">{header}</div> {isShowViewMoreText && <span className="show-info" onClick={() => this.setState({showInfo: !showInfo})}>{showInfo ? "Ẩn" : viewMoreText}</span>}
 
                 { subText && (
                     <div className="sub-text">
