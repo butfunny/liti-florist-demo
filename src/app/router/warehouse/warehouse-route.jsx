@@ -236,6 +236,7 @@ export class WarehouseRoute extends React.Component {
                         <div className="card-body">
                             <Select
                                 label="Kho"
+                                className="first-margin"
                                 value={selectedBase}
                                 list={bases.map(b => b.value)}
                                 displayAs={(base) => bases.find(b => b.value == base).label}

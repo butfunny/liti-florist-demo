@@ -38,6 +38,7 @@ export class NavMobile extends RComponent {
         });
 
 
+
         return (
             <nav className="nav-mobile">
                 <NavHeader
@@ -46,7 +47,7 @@ export class NavMobile extends RComponent {
                 />
 
                 <div className="app-route">
-                    { (isHavePermission || !hidden) ? routeComp : (
+                    { (isHavePermission && !hidden) ? routeComp : (
                         <div className="card">
                             <div className="card-title">
                                 Bạn không có quyền truy cập vào trang này vui lòng chọn những trang bạn có quyền trên thanh nav

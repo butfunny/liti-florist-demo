@@ -15,7 +15,7 @@ export class ReportBillModal extends React.Component {
         let {type, list, onDismiss, onClose} = this.props;
 
         return (
-            <div className="app-modal-box bill-catalog">
+            <div className="app-modal-box bill-report-modal">
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title">Lý do {type}</h5>
@@ -40,7 +40,7 @@ export class ReportBillModal extends React.Component {
 
                     <div className="modal-footer">
                         <button type="button" className="btn btn-link  ml-auto" data-dismiss="modal" onClick={() => onDismiss()}>Đóng</button>
-                        <button type="submit" className="btn btn-info btn-icon" onClick={() => onClose(reasons)}>
+                        <button type="submit" className="btn btn-primary btn-icon" onClick={() => onClose(reasons)}>
                             Lưu
                         </button>
 

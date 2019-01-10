@@ -61,8 +61,9 @@ export class ColorSetting extends React.Component {
                     Màu
                 </div>
 
-                <div className="select-color-action">
+                <div className="card-body select-color-action">
                     <SelectColor
+                        className="first-margin"
                         label="Chọn Màu"
                         value={color}
                         onChange={(color) => this.setState({color})}

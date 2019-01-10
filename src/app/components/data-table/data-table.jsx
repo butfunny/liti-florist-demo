@@ -27,7 +27,7 @@ export class DataTable extends React.Component {
 
     render() {
 
-        let {columns, rows, onClickRow} = this.props;
+        let {columns, rows, onClickRow, rowStyling} = this.props;
         let {sortByFunc, sortIndexCol, isDesc} = this.state;
 
 
@@ -84,7 +84,7 @@ export class DataTable extends React.Component {
                                      onClick={() => onClickRow && onClickRow(row)}>
                                     {columns.map((column, index) => (
                                         <div
-                                            style={{minWidth: `${column.minWidth}px`, width: `${column.width}`}}
+                                            style={{minWidth: `${column.minWidth}px`, width: `${column.width}`, ...rowStyling && rowStyling(row)}}
                                             className={classnames("ge-col", column.className)} key={index}>
                                             {column.display(row, i)}
                                         </div>

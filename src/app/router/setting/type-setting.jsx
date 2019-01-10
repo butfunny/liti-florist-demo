@@ -58,8 +58,9 @@ export class TypeSetting extends React.Component {
                     Loại
                 </div>
 
-                <div className="select-color-action">
+                <div className="card-body select-color-action">
                     <Input
+                        className="first-margin"
                         onKeyDown={(e) => e.key == "Enter" && type.length > 0 && types.map(c => c.name).indexOf(type) == -1 && this.addType()}
                         label="Tên Loại"
                         value={type}

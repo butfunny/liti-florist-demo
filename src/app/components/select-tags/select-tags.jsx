@@ -14,11 +14,11 @@ export class SelectTags extends React.Component {
 
     render() {
 
-        let {placeholder, tags, isErrorTag, list, onChange, noPlaceholder, label, error} = this.props;
+        let {placeholder, tags, isErrorTag, list, onChange, noPlaceholder, label, error, className} = this.props;
         let {selected, value, selectedIndex, selectedTag, focus} = this.state;
 
         return (
-            <div className={classnames("input-tag select-tags", error && "has-error", tags && tags.length > 0 && "has-value", selected && "focus")}>
+            <div className={classnames("input-tag select-tags", error && "has-error", className, tags && tags.length > 0 && "has-value", selected && "focus")}>
 
                 { tags.map((tagItem, index) => (
                     <div className="tag-item" key={index}>

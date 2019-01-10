@@ -34,6 +34,13 @@ import {uploadApi} from "../../api/upload-api";
 import {getCSVData} from "./excel";
 import {ReportBillModal} from "./report-bill-modal";
 import {paymentTypes} from "../../common/constance";
+import {Select} from "../../components/select/select";
+import {SelectTags} from "../../components/select-tags/select-tags";
+import {security} from "../../security/secuiry-fe";
+import {ColumnViewMore} from "../../components/column-view-more/column-view-more";
+import {ButtonGroup} from "../../components/button-group/button-group";
+import {ImgPreview} from "../../components/img-repview/img-preview";
+import {DataTable} from "../../components/data-table/data-table";
 
 export class BillOrderRoute extends RComponent {
 
@@ -51,8 +58,8 @@ export class BillOrderRoute extends RComponent {
             keyword: "",
             logs: [],
             showOwe: false,
-            statusFiltered: "Tất cả",
-            paymentTypeFiltered: "Tất cả"
+            statusFiltered: [],
+            paymentTypeFiltered: []
         };
 
         premisesInfo.onChange(() => {
@@ -66,13 +73,18 @@ export class BillOrderRoute extends RComponent {
     getBills() {
 
         this.setState({loading: true});
-        billApi.getBills(premisesInfo.getActivePremise()._id, {from: this.state.from, to: this.state.to}).then(({bills, customers, logs}) => {
-            this.setState({bills: bills.map(bill => {
-                return {
-                    ...bill,
-                    lastTime: new Date(bill.delivery_time).getTime() - new Date().getTime() < 0 ? 999999999 + Math.abs(new Date(bill.delivery_time).getTime() - new Date().getTime()) : new Date(bill.delivery_time).getTime() - new Date().getTime()
-                }
-            }), customers, logs, loading: false})
+        billApi.getBills(premisesInfo.getActivePremise()._id, {
+            from: this.state.from,
+            to: this.state.to
+        }).then(({bills, customers, logs}) => {
+            this.setState({
+                bills: bills.map(bill => {
+                    return {
+                        ...bill,
+                        lastTime: new Date(bill.delivery_time).getTime() - new Date().getTime() < 0 ? 999999999 + Math.abs(new Date(bill.delivery_time).getTime() - new Date().getTime()) : new Date(bill.delivery_time).getTime() - new Date().getTime()
+                    }
+                }), customers, logs, loading: false
+            })
         })
     }
 
@@ -186,7 +198,12 @@ export class BillOrderRoute extends RComponent {
                         list={reasons.find(r => r.type == value).value}
                         onDismiss={() => modal.close()}
                         onClose={(reasons) => {
-                            this.setState({bills: this.state.bills.map(b => b._id == bill._id ? {...b, status: value} : b)});
+                            this.setState({
+                                bills: this.state.bills.map(b => b._id == bill._id ? {
+                                    ...b,
+                                    status: value
+                                } : b)
+                            });
                             billApi.updateBillStatus(bill._id, {status: value, reason: reasons.join(", ")});
                             modal.close();
                         }}
@@ -210,21 +227,36 @@ export class BillOrderRoute extends RComponent {
 
         const getCustomer = (id) => customers.find(c => c._id == id) || {};
 
-        const isMobile = responsive.le("xs");
+        const formattedBills = bills ? bills.map(b => ({
+            ...b,
+            customer: getCustomer(b.customerId),
+            logs: logs.filter(l => l.bill_id == b._id)
+        })) : [];
+        const status = ["Chờ xử lý", "Đang xử lý", "Chờ giao", "Done", "Khiếu Nại", "Huỷ Đơn"];
 
-        const formattedBills = bills ? bills.map(b => ({...b, customer: getCustomer(b.customerId), logs: logs.filter(l => l.bill_id == b._id)})) : [];
+        let billsFiltered = bills ? filteredByKeys(formattedBills, ["customer.customerName", "customer.customerPhone", "bill_number"], keyword) : [];
+        billsFiltered = billsFiltered.filter(i => {
 
-        let billsFiltered = bills ? filteredByKeys(formattedBills, ["customer.customerName","customer.customerPhone", "bill_number"], keyword) : [];
+            const filterStatus = (i) => {
+                if (statusFiltered.length == 0) return true;
 
-        billsFiltered = billsFiltered.filter(b => {
-            if (statusFiltered != "Tất cả") return b.status == statusFiltered;
-            return true;
+                for (let s of statusFiltered) {
+                    if (i.status == s) return true;
+                }
+                return false;
+            };
+
+
+            const filterType = (i) => {
+                if (paymentTypeFiltered.length == 0) return true;
+                for (let type of paymentTypeFiltered) {
+                    if (i.to.paymentType == type) return true;
+                }
+            };
+
+            return filterType(i) && filterStatus(i);
         });
 
-        billsFiltered = billsFiltered.filter(b => {
-            if (paymentTypeFiltered != "Tất cả") return b.to.paymentType == paymentTypeFiltered;
-            return true;
-        });
 
         const user = userInfo.getUser();
 
@@ -233,338 +265,320 @@ export class BillOrderRoute extends RComponent {
         startDay.setHours(0, 0, 0, 0);
 
 
-        const status = ["Tất cả", "Chờ xử lý", "Đang xử lý", "Chờ giao", "Done", "Khiếu Nại", "Huỷ Đơn"];
-
         const permission = permissionInfo.getPermission();
 
         const isCanEditBill = (bill) => {
             if (["Chờ xử lý", "Đang xử lý", "Chờ giao"].indexOf(bill.status) > -1) {
-                return permission[user.role].indexOf("bill.edit") > -1
+                return security.isHavePermission(["bill.edit"])
             }
-            return permission[user.role].indexOf("bill.editDoneBill") > -1
-
+            return security.isHavePermission(["bill.editDoneBill"])
         };
+
+
+        let columns = [{
+            label: "Thời gian",
+            display: (bill) => (
+                <Fragment>
+                    {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
+                    <div><b>{bill.bill_number}</b></div>
+                    <div>Sale: <b>{bill.sales.length > 0 ? bill.sales.map(s => s.username).join(", ") : (bill.to || {}).saleEmp}</b>
+                    </div>
+                    <div>Florist: <b>{bill.florists.length > 0 ? bill.florists.map(s => s.username).join(", ") : (bill.to || {}).florist}</b>
+                    </div>
+                    <div>Ship: <b>{bill.ships.length > 0 && bill.ships.map(s => s.username).join(", ")}</b>
+                    </div>
+
+                    {bill.logs.length > 0 && (
+                        <div>
+                            <span className="text-danger">(Đã chỉnh sửa)</span>
+                            <div>
+                                <span className="text-primary" style={{cursor: "pointer"}}
+                                      onClick={() => this.showLog(bill.logs)}>
+                                    Chi tiết
+                                </span>
+                            </div>
+                        </div>
+                    )}
+
+                    {bill.image && (
+                        <ImgPreview src={bill.image} className="bill-image" alt=""/>
+                    )}
+                </Fragment>
+            ),
+            width: "20%",
+            minWidth: "150",
+            sortBy: (bill) => bill.deliverTime
+        }, {
+            label: "Thông tin đơn",
+            display: (bill) => (
+                <div>
+                    {bill.items.map((item, index) => (
+                        <div key={index}>
+                            <b>{item.quantity}</b> {item.flowerType} {item.name} {item.sale &&
+                        <span className="text-primary">({item.sale}%)</span>} {item.vat ?
+                            <span className="text-primary"> - {item.vat}% VAT</span> : ""}
+                            {item.color && (
+                                <div className="text-small">Màu: {item.color.split(", ").map((c, i) => (
+                                    <div key={i}
+                                         style={{
+                                             background: c,
+                                             display: "inline-block",
+                                             marginRight: "5px",
+                                             width: "15px",
+                                             height: "10px"
+                                         }}
+                                    />
+                                ))}</div>)}
+                            {item.size && (<div className="text-small">Size: <b>{item.size}</b></div>)}
+                        </div>
+                    ))}
+
+                    {bill.vipSaleType && (
+                        <div>VIP: <b>{bill.vipSaleType}</b></div>
+                    )}
+
+                    {bill.promotion && (
+                        <span>{bill.promotion.name}: <b>{bill.promotion.discount}%</b></span>
+                    )}
+
+                    <div style={{
+                        marginTop: "10px"
+                    }}>
+                        {bill.to.paymentType == "Nợ" ?
+                            <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> :
+                            <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
+                    </div>
+
+                    <div>Hình thức thanh toán: {bill.to.paymentType}</div>
+
+                    <div>
+                        Ghi chú: {bill.to.notes}
+                    </div>
+
+                    <div>
+                        Nội dung thiệp: {bill.to.cardContent}
+                    </div>
+                </div>
+            ),
+            width: "30%",
+            minWidth: "250"
+        }, {
+            label: "Thông tin khách",
+            display: (bill) => (
+                <Fragment>
+                    <div>
+                        Bên mua:
+
+                        <b>
+                            <div>
+                                {bill.customer.customerName}
+                            </div>
+                            <div>
+                                {bill.customer.customerPhone}
+                            </div>
+                            <div>
+                                {bill.customer.customerPlace}
+                            </div>
+                        </b>
+                    </div>
+
+                    <div style={{marginTop: "10px"}}>
+                        Bên nhận:
+                        <b>
+                            <div>
+                                {bill.to.receiverName}
+                            </div>
+                            <div>
+                                {bill.to.receiverPhone}
+                            </div>
+                            <div>
+                                {bill.to.receiverPlace}
+                            </div>
+                        </b>
+                    </div>
+                </Fragment>
+            ),
+            width: "30%",
+            minWidth: "250"
+        }, {
+            label: "Trạng Thái",
+            width: "15%",
+            minWidth: "100",
+            display: (bill) => bill.status
+        }, {
+            label: "",
+            width: "5%",
+            minWidth: "50",
+            display: (bill) => (
+                <ButtonGroup
+                    actions={[{
+                        name: "Thêm Ảnh",
+                        icon: <i className="fa fa-camera "/>,
+                        type: "upload",
+                        onUpload: (e) => {
+                            console.log(e);
+                            this.handleChange(e, bill);
+                        }
+                    }, {
+                        name: "Sửa",
+                        icon: <i className="fa fa-pencil "/>,
+                        hide: () => !isCanEditBill(bill),
+                        click: () => history.push(`/edit-bill/${bill._id}`)
+                    }, {
+                        name: "In",
+                        icon: <i className="fa fa-print "/>,
+                        click: () => this.print(bill)
+                    }, {
+                        name: "Chuyển Đơn",
+                        icon: <i className="fa fa-share "/>,
+                        click: () => console.log("Move")
+                    }, {
+                        name: "Khiếu Nại",
+                        icon: <i className="fa fa-flag text-danger"/>,
+                        click: () => this.handleChangeStatus(bill, "Khiếu Nại"),
+                        hide: () => bill.status != "Done"
+                    }, {
+                        name: "Hủy Đơn",
+                        icon: <i className="fa fa-flag text-danger"/>,
+                        click: () => this.handleChangeStatus(bill, "Huỷ Đơn"),
+                        hide: () => bill.status != "Done"
+                    }, {
+                        name: `Xóa ${bill.status}`,
+                        icon: <i className="fa fa-eraser text-success"/>,
+                        click: () => this.handleChangeStatus(bill, "Done"),
+                        hide: () => ["Khiếu Nại", "Huỷ Đơn"].indexOf(bill.status) == -1
+                    }, {
+                        name: "Xóa Đơn",
+                        icon: <i className="fa fa-trash text-danger"/>,
+                        click: () => this.remove(bill),
+                        hide: () => !security.isHavePermission(["bill.delete"])
+                    }]}
+                />
+            )
+        }];
+
 
         return (
             <Layout
                 activeRoute="Đơn Chính"
             >
-                { permission[user.role].indexOf("bill.view") == -1 ? (
-                    <div>
-                        Bạn không có quyền truy cập vào trang này vui lòng chọn những trang bạn có quyền trên thanh nav
-                    </div>
-                ) : (
-                    <div className="bill-report-route">
-                        <div className="ct-page-title">
-                            <h1 className="ct-title">Đơn Hàng</h1>
+                <div className="bill-report-route">
+
+                    <div className="card">
+                        <div className="card-title">
+                            Lọc
                         </div>
 
+                        <div className="card-body">
+                            <div className="row first-margin"
+                            >
+                                <DatePicker
+                                    className="col"
+                                    label="Từ Ngày"
+                                    value={from}
+                                    onChange={(from) => {
+                                        this.setState({from})
+                                    }}
+                                />
 
-                        <h6>
-                            Tổng Đơn: <b className="text-primary">{bills ? bills.length : 0}</b>
-                        </h6>
-                        <h6>
-                            Khách Mới: <b className="text-primary">{bills ? bills.filter(b => b.isNewCustomer).length : 0}</b>
-                        </h6>
-                        <h6>
-                            Tổng Cộng: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBill(b))) : 0}</b>
-                        </h6>
-                        <h6>
-                            Tổng Thu: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => (b.status != "Done" || b.isOwe) ? 0 : getTotalBill(b))) : 0}</b>
-                        </h6>
-                        <h6>
-                            Tổng Thu chưa bao gồm VAT: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBillWithoutVAT(b))) : 0}</b>
-                        </h6>
+                                <DatePicker
+                                    className="col"
+                                    label="Tới Ngày"
+                                    value={from}
+                                    onChange={(from) => {
+                                        this.setState({from})
+                                    }}
+                                />
 
-
-                        <div className="report-header row">
-                            <div className="col-md-4">
-                                <div className="form-group">
-                                    <label className="control-label"><b>Từ ngày</b></label>
-                                    <DatePicker
-                                        value={from}
-                                        onChange={(from) => {
-                                            this.setState({from})
-                                        }}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="col-md-4">
-                                <div className="form-group">
-                                    <label className="control-label"><b>Tới ngày</b></label>
-                                    <DatePicker
-                                        value={to}
-                                        onChange={(to) => this.setState({to})}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="col-md-4">
-                                <button className="btn btn-info btn-sm btn-get btn-icon"
+                                <button className="btn btn-primary"
+                                        onClick={() => this.getBills()}
                                         disabled={loading}
-                                        onClick={() => this.getBills()}>
-                                    Xem Hoá Đơn
-
-                                    { loading && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
+                                >
+                                    <span className="btn-text">Lọc</span>
+                                    {loading &&
+                                    <span className="loading-icon"><i className="fa fa-spinner fa-pulse"/></span>}
                                 </button>
                             </div>
-
                         </div>
+                    </div>
 
 
-                        { bills && !loading && permission[user.role].indexOf("bill.excel") > -1 && (
-                            <CSVLink
-                                data={getCSVData(billsFiltered)}
-                                filename={"baocao.csv"}
-                                className="btn btn-info btn-icon btn-excel btn-sm">
-                                <span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>
-                                <span className="btn-inner--text">Xuất Excel</span>
-                            </CSVLink>
-                        )}
+                    <div className="card">
+                        <div className="card-title">
+                            Đơn Hàng
 
-                        <div className="form-group">
-                            <div className="control-label">
-                                Trạng thái
+                            <span className="text-small text-primary">{bills ? bills.length : 0} Đơn</span>
+
+                            {bills && !loading && permission[user.role].indexOf("bill.excel") > -1 && (
+                                <CSVLink
+                                    data={getCSVData(billsFiltered)}
+                                    filename={"baocao.csv"}
+                                    className="btn btn-primary btn-small">
+                                    <span className="btn-text">Xuất Excel</span>
+                                    <span className="loading-icon"><i className="fa fa-file-excel-o"/></span>
+                                </CSVLink>
+                            )}
+
+                            <div className="text-info margin-top">
+                                Khách Mới: <b
+                                className="text-primary">{bills ? bills.filter(b => b.isNewCustomer).length : 0}</b>
                             </div>
 
-                            <select
-                                className="form-control"
-                                value={statusFiltered} onChange={(e) => this.setState({statusFiltered: e.target.value})}>
-                                {status.map((item, index) => (
-                                    <option key={index} value={item}>{item}</option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="form-group">
-                            <div className="control-label">
-                                Hình thức thanh toán
+                            <div className="text-info">
+                                Tổng Cộng: <b
+                                className="text-primary">{bills ? formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBill(b))) : 0}</b>
                             </div>
 
-                            <select
-                                className="form-control"
-                                value={paymentTypeFiltered} onChange={(e) => this.setState({paymentTypeFiltered: e.target.value})}>
-                                {paymentTypes.map((item, index) => (
-                                    <option key={index} value={item}>{item}</option>
-                                ))}
-                            </select>
+                            <div className="text-info">
+                                Tổng Thu: <b
+                                className="text-primary">{bills ? formatNumber(sumBy(bills, b => (b.status != "Done" || b.isOwe) ? 0 : getTotalBill(b))) : 0}</b>
+                            </div>
+
+                            <div className="text-info">
+                                Tổng Thu chưa bao gồm VAT: <b
+                                className="text-primary">{bills ? formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBillWithoutVAT(b))) : 0}</b>
+                            </div>
                         </div>
 
-                        <div className="form-group">
+                        <div className="card-body">
+                            <div className="row-filter first-margin">
+                                <SelectTags
+                                    className="col"
+                                    tags={statusFiltered}
+                                    onChange={(statusFiltered) => this.setState({statusFiltered})}
+                                    list={status}
+                                    label="Trạng Thái"
+                                />
+
+                                <SelectTags
+                                    className="col"
+                                    tags={paymentTypeFiltered}
+                                    onChange={(paymentTypeFiltered) => this.setState({paymentTypeFiltered})}
+                                    list={paymentTypes.slice(1)}
+                                    label="Hình Thức Thanh Toán"
+                                />
+                            </div>
+
                             <Input
+                                label="Tìm kiếm"
                                 value={keyword}
                                 onChange={(e) => this.setState({keyword: e.target.value})}
-                                placeholder="Tìm kiếm"
                             />
                         </div>
 
-
-                        <div className="report-body">
-                            { isMobile ? (
-                                <ReportTableMobile
-                                    bills={sortBy(billsFiltered, "lastTime")}
-                                    history={history}
-                                    onRemove={(bill) => this.remove(bill)}
-                                    user={user}
-                                    onUpdateBill={(bill, status) => this.updateBill(bill, status)}
-                                    onShowLog={(logs) => this.showLog(logs)}
-                                    onRemoveOwe={(bill) => this.removeOwe(bill)}
-                                    onChangeImage={(e, bill) => this.handleChange(e, bill)}
-                                    uploading={uploading}
-                                    onChangeStatus={(bill, value) => this.handleChangeStatus(bill, value)}
-                                    isCanEditBill={isCanEditBill}
-
-                                />
-                            ) : (
-                                <table className="table table-hover">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col"
-                                            style={{width: "200px"}}
-                                        >Thời gian</th>
-                                        <th scope="col">Thông Tin Đơn</th>
-                                        <th scope="col"
-                                            style={{width: "150px"}}
-                                        >Tình trạng</th>
-                                        <th
-                                            style={{width: "200px"}}
-                                            scope="col"/>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    { bills && sortBy(billsFiltered, "lastTime").map((bill, index) => (
-                                        <tr key={index} className={classnames(new Date(bill.deliverTime).getTime() < new Date().getTime() + 1800000 && bill.status == "Chờ xử lý" &&  "text-danger", (bill.status == "Khiếu Nại" || bill.status == "Huỷ Đơn") && "text-warning")}>
-                                            <td>
-                                                {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
-                                                <div><b>{bill.bill_number}</b></div>
-                                                <div>Sale: <b>{bill.sales.length > 0 ? bill.sales.map(s => s.username).join(", ") : (bill.to || {}).saleEmp}</b></div>
-                                                <div>Florist: <b>{bill.florists.length > 0 ? bill.florists.map(s => s.username).join(", ") : (bill.to || {}).florist}</b></div>
-                                                <div>Nhân viên ship: <b>{bill.ships.length > 0 && bill.ships.map(s => s.username).join(", ")}</b></div>
-
-                                                { bill.logs.length > 0 && (
-                                                    <div>
-                                                        <span className="text-danger">(Đã chỉnh sửa)</span>
-                                                        <div>
-                                                        <span className="text-primary" style={{cursor: "pointer"}} onClick={() => this.showLog(bill.logs)}>
-                                                            Chi tiết
-                                                        </span>
-                                                        </div>
-                                                    </div>
-                                                )}
-
-                                                { bill.image && (
-                                                    <img src={bill.image} className="bill-image" alt=""/>
-                                                )}
-                                            </td>
-                                            <td>
-                                                <div>
-                                                    { bill.items.map((item, index) => (
-                                                        <div key={index}>
-                                                            <b>{item.quantity}</b> {item.flowerType} {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>} {item.vat ? <span className="text-primary"> - {item.vat}% VAT</span> : ""}
-                                                            <div className="text-small">Màu: <b>{item.color}</b></div>
-                                                            <div className="text-small">Size: <b>{item.size}</b></div>
-                                                        </div>
-                                                    ))}
-
-                                                    {bill.vipSaleType && (
-                                                        <div>VIP: <b>{bill.vipSaleType}</b></div>
-                                                    )}
-
-                                                    {bill.promotion && (
-                                                        <span>{bill.promotion.name}: <b>{bill.promotion.discount}%</b></span>
-                                                    )}
-
-                                                    <div style={{
-                                                        marginTop: "10px"
-                                                    }}>
-                                                        {bill.isOwe ? <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> : <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
-                                                    </div>
-
-                                                    <div>Hình thức thanh toán: <b>{bill.to.paymentType}</b></div>
-                                                    {bill.to.mcc && <div>MCC: <b>{bill.to.mcc}</b></div>}
-
-                                                    <div>
-                                                        Ghi chú: <b>{bill.to.notes}</b>
-                                                    </div>
-
-                                                    <div>
-                                                        Nội dung thiệp: <b>{bill.to.cardContent}</b>
-                                                    </div>
-
-                                                    <div style={{
-                                                        marginTop: "10px"
-                                                    }}>
-                                                        Bên mua:
-
-                                                        <b>
-                                                            <div>
-                                                                {bill.customer.customerName}
-                                                            </div>
-                                                            <div>
-                                                                {bill.customer.customerPhone}
-                                                            </div>
-                                                            <div>
-                                                                {bill.customer.customerPlace}
-                                                            </div>
-                                                        </b>
-                                                    </div>
-
-                                                    <div style={{
-                                                        marginTop: "10px"
-                                                    }}>
-                                                        Bên nhận:
-                                                        <b>
-                                                            <div>
-                                                                {bill.to.receiverName}
-                                                            </div>
-                                                            <div>
-                                                                {bill.to.receiverPhone}
-                                                            </div>
-                                                            <div>
-                                                                {bill.to.receiverPlace}
-                                                            </div>
-                                                        </b>
-                                                    </div>
-                                                </div>
-
-
-                                            </td>
-                                            <td>
-                                                { (bill.status == "Done" || bill.status == "Khiếu Nại" || bill.status == "Huỷ Đơn") ? (
-                                                    <select value={bill.status} onChange={(e) => this.handleChangeStatus(bill, e.target.value)}>
-                                                        <option value="Done">Done</option>
-                                                        <option value="Khiếu Nại">Khiếu Nại</option>
-                                                        <option value="Huỷ Đơn">Huỷ Đơn</option>
-                                                    </select>
-                                                ) : (
-                                                    <span>{bill.status}</span>
-                                                )}
-                                            </td>
-
-                                            <td>
-
-                                                <UploadBtn
-                                                    uploading={uploading}
-                                                    bill={bill}
-                                                    onChange={(e) => this.handleChange(e, bill)}
-                                                />
-
-                                                {isCanEditBill(bill) && (
-                                                    <button className="btn btn-outline-primary btn-sm"
-                                                            onClick={() => history.push(`/edit-bill/${bill._id}`)}>
-                                                        <i className="fa fa-pencil"/>
-                                                    </button>
-                                                )}
-
-
-                                                <button className="btn btn-outline-dark btn-sm"
-                                                        onClick={() => this.print(bill)}>
-                                                    <i className="fa fa-print"/>
-                                                </button>
-
-                                                {permission[user.role].indexOf("bill.delete") > -1 && (
-                                                    <button className="btn btn-outline-danger btn-sm"
-                                                            onClick={() => this.remove(bill)}>
-                                                        <i className="fa fa-trash"/>
-                                                    </button>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    </tbody>
-                                </table>
-                            )}
-                        </div>
-
+                        <DataTable
+                            rows={billsFiltered}
+                            columns={columns}
+                            rowStyling={(bill) => {
+                                if (new Date(bill.deliverTime).getTime() < new Date().getTime() + 1800000 && bill.status == "Chờ xử lý") return {background: "rgba(253,57,122, .1)"};
+                                if (bill.status == "Khiếu Nại" || bill.status == "Huỷ Đơn") return {background: "rgba(255,184,34, .1)"};
+                                if (bill.status == "Done") return {background: "rgb(29,201,183, .1)"}
+                            }}
+                        />
                     </div>
-                )}
+
+                </div>
             </Layout>
         );
-    }
-}
-
-export class UploadBtn extends React.Component {
-
-    render() {
-
-        let {bill, onChange, uploading} = this.props;
-
-        return (
-            <Fragment>
-                <button className="btn btn-outline-success btn-sm"
-                        onClick={() => this.inputUpload.click()}>
-
-
-                    { uploading == bill._id ? <i className="fa fa-spinner fa-pulse"/> : <i className="fa fa-camera"/>}
-                </button>
-
-                <input className="input-upload"
-                       ref={elem => this.inputUpload = elem}
-                       type="file"
-                       onChange={(e) => onChange(e)}
-                />
-            </Fragment>
-        )
     }
 }
