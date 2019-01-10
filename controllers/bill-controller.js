@@ -35,7 +35,9 @@ module.exports = function(app) {
 
     app.post("/bills-all", Security.authorDetails, function(req, res) {
         BillDao.find({deliverTime: {$gte: req.body.from, $lt: req.body.to}, oldData: false}, function(err, bills) {
-            res.json(bills);
+            CustomerDao.find({_id: {$in: bills.map(b => b.customerId)}}, (err, customers) => {
+                res.json({bills, customers})
+            });
         });
     });
 

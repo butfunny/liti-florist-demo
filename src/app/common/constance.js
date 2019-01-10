@@ -196,6 +196,10 @@ export const permissions = [{
     value: "warehouse.view-ori-price",
     label: "Xem giá gốc",
     father: "Kho"
+}, {
+    value: "memories",
+    label: "Xem Đơn",
+    father: "Ngày Này Năm Xưa"
 }];
 
 export const catalogs = ["Hoa chính", "Hoa lá phụ/Lá", "Phụ kiện", "Cost"];
