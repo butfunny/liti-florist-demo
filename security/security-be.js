@@ -33,8 +33,13 @@ module.exports = {
     authorDetails: (req, res, next) => {
         decode(req).then((decodedAuth) => {
                 UserDao.findOne({_id: decodedAuth._id}, {"password": 0}, (err, user) => {
-                    req.user = user;
-                    next();
+                    if (user) {
+                        req.user = user;
+                        next();
+                    } else {
+                        res.status(401).end();
+                    }
+
                 })
             }, () => {
                 res.status(401).end();
