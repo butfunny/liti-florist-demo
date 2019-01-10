@@ -20,7 +20,7 @@ export class Input extends React.Component {
 
 
     render() {
-        let {label, className, value, readOnly, icon, error, type, onChange, onKeyDown, info, style, textArea} = this.props;
+        let {label, className, value, readOnly, icon, error, type, onChange, onKeyDown, info, style, textArea, onFocus, onBlur} = this.props;
         let {focus} = this.state;
 
         const hasValue = () => {
@@ -34,8 +34,14 @@ export class Input extends React.Component {
                 { textArea ? (
                     <textarea
                         ref={input => this.input = input}
-                        onFocus={() => this.setState({focus: true})}
-                        onBlur={() => this.setState({focus: false})}
+                        onFocus={() => {
+                            onFocus && onFocus();
+                            this.setState({focus: true})
+                        }}
+                        onBlur={() => {
+                            onBlur && onBlur();
+                            this.setState({focus: false});
+                        }}
                         value={value || ""}
                         onChange={onChange}
                         readOnly={readOnly}
@@ -45,8 +51,14 @@ export class Input extends React.Component {
                 ) : (
                     <input
                         ref={input => this.input = input}
-                        onFocus={() => this.setState({focus: true})}
-                        onBlur={() => this.setState({focus: false})}
+                        onFocus={() => {
+                            onFocus && onFocus();
+                            this.setState({focus: true})
+                        }}
+                        onBlur={() => {
+                            onBlur && onBlur();
+                            this.setState({focus: false});
+                        }}
                         value={value || ""}
                         onChange={onChange}
                         type={type}

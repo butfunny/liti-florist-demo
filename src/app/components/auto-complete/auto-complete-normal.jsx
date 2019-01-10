@@ -95,7 +95,7 @@ export class AutoCompleteNormal extends React.Component {
                                onMouseEnter={() => this.setState({selectedIndex: index})}
                                onMouseLeave={() => this.setState({selectedIndex: -1})}
                                onMouseDown={() => {
-                                   this.setState({value: item});
+                                   this.setState({value: item, selected: false});
                                    onSelect(item)
                                }}
                                key={index}>

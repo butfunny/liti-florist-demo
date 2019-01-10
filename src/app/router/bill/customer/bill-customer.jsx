@@ -140,7 +140,7 @@ export class BillCustomer extends React.Component {
                                 <div>
                                     Khách đã tiêu trên 15,000,000 <b
                                     onClick={() => this.createVip()}
-                                    className="text-action">Tạo tài khoản VIP</b>
+                                    className="text-success text-action">Tạo tài khoản VIP?</b>
                                 </div>
                             )}
                         </div>

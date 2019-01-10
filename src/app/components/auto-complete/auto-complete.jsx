@@ -87,7 +87,7 @@ export class AutoComplete extends React.Component {
         let {selected, selectedIndex, list, loading, value} = this.state;
 
         return (
-            <div className={classnames("auto-complete", className)}>
+            <div className={classnames("auto-complete", className, selected && "focused")}>
                 <Input
                     {...this.props}
                     className={null}
