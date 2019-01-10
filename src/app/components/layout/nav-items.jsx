@@ -14,7 +14,7 @@ export const navItems = (user) => {
     return [{
         label: "Hoá Đơn",
         to: "/",
-        hide: () => permission[user.role].indexOf("bill.create") == -1,
+        hide: () => !security.isHavePermission(["bill.edit", "bill.create"]),
         icon: <i className="fa fa-file-text-o nav-icon"/>
     }, {
         label: "Đơn Hàng",

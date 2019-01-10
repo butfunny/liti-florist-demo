@@ -16,6 +16,7 @@ import {PrintService} from "../../common/print-service/print-service";
 import {BillPrint} from "../bill/print/bill-print";
 import {securityApi} from "../../api/security-api";
 import {promotionApi} from "../../api/promotion-api";
+import {security} from "../../security/secuiry-fe";
 
 const initBill = {
     items: [],
@@ -189,7 +190,11 @@ export class BillDraft extends React.Component {
         let {bill, saving, locations, florists, sales, ships, savingDraft, activePromotions, selectedPromotion} = this.state;
 
         return (
-            <Layout>
+            <Layout
+                activeRoute="Hoá Đơn"
+                hidden={!security.isHavePermission(["bill.edit"])}
+
+            >
                 <div className="bill-route">
                     <div className="row">
                         <div className="col-md-4">
