@@ -104,7 +104,7 @@ export class SupplierRoute extends React.Component {
                             Nhà Cung Cấp
                         </div>
 
-                        <div className="select-color-action">
+                        <div className="card-body select-color-action">
                             <Input
                                 onKeyDown={(e) => e.key == "Enter" && supplier.length > 0 && suppliers.map(c => c.name).indexOf(supplier) == -1 && this.addSupplier()}
                                 label="Tên Nhà Cung Cấp"
@@ -114,6 +114,7 @@ export class SupplierRoute extends React.Component {
                             />
 
                             <button className="btn btn-primary"
+                                    style={{top: "9px"}}
                                     disabled={supplier.length == 0 || suppliers.map(c => c.name).indexOf(supplier) > -1}
                                     onClick={() => this.addType()}>
                                     <span className="btn-text">
