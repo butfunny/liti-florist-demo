@@ -126,35 +126,3 @@ export const navItems = (user) => {
             }],
         }]
 };
-
-//
-// {
-//     label: "Cơ Sở",
-//       child: [{
-//     label: "Quản Lý Cơ Sở",
-//     to: "/manage-premises",
-//     hide: () => user.role != "admin"
-// }, ..._premises],
-// }, {
-//     label: "Tài Khoản",
-//       child: [{
-//         label: "Đổi Mật Khẩu",
-//         click: () => {
-
-//         }
-//     }, {
-//         label: "Quản Lý Nhân Viên",
-//         to: "/manage-user",
-//         hide: () => user.role != "admin"
-//     },{
-//         label: "Phân Quyền",
-//         to: "/manage-role",
-//         hide: () => user.role != "admin"
-//     }, {
-//         label: "Thoát",
-//         click: () => {
-//             security.logout();
-//         }
-//
-//     }]
-// }

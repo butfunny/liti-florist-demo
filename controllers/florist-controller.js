@@ -81,7 +81,7 @@ module.exports = (app) => {
 
 
     app.post("/ship/bills", Security.authorDetails, (req, res) => {
-        BillDao.find({deliverTime: {$gte: req.body.from, $lt: req.body.to}, $or: [{status: "Done"}, {status: "Chờ giao"}]}, (err, bills) => {
+        BillDao.find({deliverTime: {$gte: req.body.from, $lt: req.body.to}, $or: [{status: "Done"}, {status: "Chờ Giao"}]}, (err, bills) => {
             res.json(bills.filter(bill => {
                 if (bill.ships && bill.ships.length > 0) {
                     return bill.ships.find(f => f.user_id == req.user._id)

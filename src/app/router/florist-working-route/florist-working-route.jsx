@@ -179,9 +179,10 @@ export class FloristWorkingRoute extends RComponent {
         }];
 
         const getTotal = sumBy(items, item => item.submitQuantity * item.price);
+        const getSubTotal = (bill) => sumBy(bill.items, item => item.quantity * item.price);
 
 
-        const isDisabled = bill ? getTotal > (getTotalBill(bill) + (getTotalBill(bill) * 10 / 100)) : true;
+        const isDisabled = bill ? getTotal > (getSubTotal(bill) + (getSubTotal(bill) * 10 / 100)) : true;
 
         return (
             <Layout
@@ -224,8 +225,28 @@ export class FloristWorkingRoute extends RComponent {
                                 ))}
                             </div>
 
-                            <div className="row">
-                                Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b>
+                            <div style={{marginTop: "10px"}}>
+                                {bill.vipSaleType && (
+                                    <div>VIP: <b>{bill.vipSaleType}</b></div>
+                                )}
+
+                                {bill.promotion && (
+                                    <span>{bill.promotion.name}: <b>{bill.promotion.discount}%</b></span>
+                                )}
+
+                                <div>Hình thức thanh toán: {bill.to.paymentType}</div>
+
+                                <div>
+                                    Ghi chú: {bill.to.notes}
+                                </div>
+
+                                <div>
+                                    Nội dung thiệp: {bill.to.cardContent}
+                                </div>
+                            </div>
+
+                            <div style={{marginTop: "10px", marginBottom: "24px"}}>
+                                Tiền Hoa: <b>{formatNumber(getSubTotal(bill))}</b>
                             </div>
 
                             <AutoComplete
@@ -262,7 +283,7 @@ export class FloristWorkingRoute extends RComponent {
                     { bill && (
                         <div className="card-body">
                             <div className="text-right">
-                                Tiền Hàng: <b className={classnames(getTotal > getTotalBill(bill) && "text-danger")}>{formatNumber(getTotal)}</b> / <b>{formatNumber(getTotalBill(bill))}</b>
+                                Tiền Hàng: <b className={classnames(getTotal > getSubTotal(bill) && "text-danger")}>{formatNumber(getTotal)}</b> / <b>{formatNumber(getSubTotal(bill))}</b>
 
                                 <div>
                                     <button
