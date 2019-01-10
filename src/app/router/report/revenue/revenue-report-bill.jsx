@@ -53,17 +53,29 @@ export class RevenueReportBill extends React.Component {
         };
 
 
+        let columns = [{
+            label: "Cửa Hàng",
+            display: (premise) => premise.name,
+            width: "20%",
+            minWidth: "150"
+        }, {
+            label: "Cửa Hàng",
+            display: (premise) => premise.name,
+            width: "20%",
+            minWidth: "150"
+        }]
+
 
         return (
             <div>
 
-                <CSVLink
-                    data={CSVdata}
-                    filename={"bao-cao-doanh-thu-cua-hang.csv"}
-                    className="btn btn-info btn-icon btn-excel btn-sm">
-                    <span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>
-                    <span className="btn-inner--text">Xuất Excel</span>
-                </CSVLink>
+                {/*<CSVLink*/}
+                    {/*data={CSVdata}*/}
+                    {/*filename={"bao-cao-doanh-thu-cua-hang.csv"}*/}
+                    {/*className="btn btn-info btn-icon btn-excel btn-sm">*/}
+                    {/*<span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>*/}
+                    {/*<span className="btn-inner--text">Xuất Excel</span>*/}
+                {/*</CSVLink>*/}
 
                 <table className="table table-hover">
                     <thead>

@@ -78,67 +78,80 @@ export class RevenueReportCustomer extends React.Component {
 
 
         return (
-            <div className="revenue-report-customer">
-                <Input
-                    value={keyword}
-                    onChange={(e) => this.setState({keyword: e.target.value})}
-                    placeholder="Tìm kiếm khách hàng theo tên hoặc số điện thoại"
-                />
+            <div className="card bill-report-route">
 
-                <CSVLink
-                    data={CSVdata}
-                    filename={"bao-cao-doanh-thu-khach-hang.csv"}
-                    className="btn btn-info btn-icon btn-excel btn-sm">
-                    <span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>
-                    <span className="btn-inner--text">Xuất Excel</span>
-                </CSVLink>
+                <div className="card-title">
+                    Báo cáo chi tiêu của khách hàng
 
-                <table className="table table-hover">
-                    <thead>
-                    <tr>
-                        <th scope="col">Thông Tin Khách</th>
-                        <th scope="col">Tổng Chi</th>
-                        <th scope="col" style={{width: "150px"}}/>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    { sortBy(customerFiltered, c => -c.totalPay).map((customer, index) => (
-                        <tr key={index}>
-                            <td>
-                                <div>{customer.customerName}</div>
-                                {customer.customerPhone}
+                    <CSVLink
+                        style={{top: "5px"}}
+                        data={CSVdata}
+                        filename={"bao-cao-doanh-thu-khach-hang.csv"}
+                        className="btn btn-primary btn-small">
+                        <span className="btn-text">Xuất Excel</span>
+                        <span className="loading-icon"><i className="fa fa-file-excel-o"/></span>
+                    </CSVLink>
+
+                </div>
+
+                <div className="card-body">
+                    <Input
+                        className="first-margin"
+                        label="Tìm kiếm"
+                        value={keyword}
+                        onChange={(e) => this.setState({keyword: e.target.value})}
+                        placeholder="Tìm kiếm khách hàng theo tên hoặc số điện thoại"
+                    />
+                </div>
 
 
-                                <div>
-                                    <b>Số tiền đã chi tại từng cơ sở: </b>
-                                </div>
 
-                                { premises.map((p, index) => (
-                                    <div key={index}>
-                                        {p.name}: {formatNumber(getPayOfPremises(customer._id, p._id, bills).pay)} - {getPayOfPremises(customer._id, p._id, bills).total} lần
-                                    </div>
-                                ))}
-                            </td>
+                {/*<table className="table table-hover">*/}
+                    {/*<thead>*/}
+                    {/*<tr>*/}
+                        {/*<th scope="col">Thông Tin Khách</th>*/}
+                        {/*<th scope="col">Tổng Chi</th>*/}
+                        {/*<th scope="col" style={{width: "150px"}}/>*/}
+                    {/*</tr>*/}
+                    {/*</thead>*/}
+                    {/*<tbody>*/}
+                    {/*{ sortBy(customerFiltered, c => -c.totalPay).map((customer, index) => (*/}
+                        {/*<tr key={index}>*/}
+                            {/*<td>*/}
+                                {/*<div>{customer.customerName}</div>*/}
+                                {/*{customer.customerPhone}*/}
 
-                            <td>
-                                {formatNumber(customer.totalPay)}
-                            </td>
 
-                            <td>
-                                { filterType == "Trong Tuần" && (
-                                    <span>
-                                        { customer.totalPay > customer.totalLastPay ? (
-                                            <span className="text-info"><i className="fa fa-arrow-up"/> ({formatNumber(customer.totalPay - customer.totalLastPay)})</span>
-                                        ) : (
-                                            <span className="text-danger"><i className="fa fa-arrow-up"/> ({formatNumber(customer.totalLastPay - customer.totalPay)})</span>
-                                        )}
-                                    </span>
-                                )}
-                            </td>
-                        </tr>
-                    ))}
-                    </tbody>
-                </table>
+                                {/*<div>*/}
+                                    {/*<b>Số tiền đã chi tại từng cơ sở: </b>*/}
+                                {/*</div>*/}
+
+                                {/*{ premises.map((p, index) => (*/}
+                                    {/*<div key={index}>*/}
+                                        {/*{p.name}: {formatNumber(getPayOfPremises(customer._id, p._id, bills).pay)} - {getPayOfPremises(customer._id, p._id, bills).total} lần*/}
+                                    {/*</div>*/}
+                                {/*))}*/}
+                            {/*</td>*/}
+
+                            {/*<td>*/}
+                                {/*{formatNumber(customer.totalPay)}*/}
+                            {/*</td>*/}
+
+                            {/*<td>*/}
+                                {/*{ filterType == "Trong Tuần" && (*/}
+                                    {/*<span>*/}
+                                        {/*{ customer.totalPay > customer.totalLastPay ? (*/}
+                                            {/*<span className="text-info"><i className="fa fa-arrow-up"/> ({formatNumber(customer.totalPay - customer.totalLastPay)})</span>*/}
+                                        {/*) : (*/}
+                                            {/*<span className="text-danger"><i className="fa fa-arrow-up"/> ({formatNumber(customer.totalLastPay - customer.totalPay)})</span>*/}
+                                        {/*)}*/}
+                                    {/*</span>*/}
+                                {/*)}*/}
+                            {/*</td>*/}
+                        {/*</tr>*/}
+                    {/*))}*/}
+                    {/*</tbody>*/}
+                {/*</table>*/}
             </div>
         );
     }
