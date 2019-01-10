@@ -58,7 +58,7 @@ export class RevenueReportRoute extends React.Component {
     }
 
     getReport() {
-        this.setState({loading: true, bills: [], customers: [], vips: []});
+        this.setState({loading: true});
         let {from, to} = this.state;
         billApi.getReportAll({from, to}).then(({bills, customers, vips}) => {
             this.setState({bills, customers, vips, loading: false})
