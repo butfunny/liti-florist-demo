@@ -17,6 +17,7 @@ import {DataTable} from "../../components/data-table/data-table";
 import {productApi} from "../../api/product-api";
 import sumBy from "lodash/sumBy";
 import {floristApi} from "../../api/florist-api";
+import moment from "moment";
 export class FloristWorkingRoute extends RComponent {
 
     constructor(props) {
@@ -269,7 +270,7 @@ export class FloristWorkingRoute extends RComponent {
                                 objectKey="productID"
                                 object={this.state}
                                 onChange={(value) => this.setState({productID: value})}
-                                displayAs={(product) => <span><b>{product.name}</b> - {product.catalog} - {suppliers.find(s => s._id == product.supplierID).name}</span>}
+                                displayAs={(product) => <span>{moment(product.created).format("DD/MM/YYYY")} <b>{product.name}</b> - {product.catalog} - {suppliers.find(s => s._id == product.supplierID).name}</span>}
                                 noPopup
                                 label="Tên/Mã Sản Phẩm"
                             />

@@ -5,5 +5,6 @@ module.exports = mongoose.model('WarehouseDao', {
     quantity: Number,
     supplierID: String,
     price: Number,
-    oriPrice: Number
+    oriPrice: Number,
+    created: Date
 }, "warehouse");

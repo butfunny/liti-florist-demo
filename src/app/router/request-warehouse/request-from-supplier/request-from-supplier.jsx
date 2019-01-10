@@ -95,7 +95,7 @@ export class RequestFromSupplier extends React.Component {
 
         warehouseApi.createRequest({
             ...request,
-            items: request.items.map(item => ({supplierID: request.supplierID, ...pick(item, ["parentID", "oriPrice", "price", "quantity"])})),
+            items: request.items.map(item => ({supplierID: request.supplierID, created: new Date(), ...pick(item, ["parentID", "oriPrice", "price", "quantity"])})),
             requestType: "request-from-supplier",
             created: new Date(),
             status: "pending"

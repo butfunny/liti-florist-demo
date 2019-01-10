@@ -14,6 +14,7 @@ import {AutoComplete} from "../../../components/auto-complete/auto-complete";
 import {DataTable} from "../../../components/data-table/data-table";
 import sumBy from "lodash/sumBy";
 import {security} from "../../../security/secuiry-fe";
+import moment from "moment";
 export class ReportFlower extends React.Component {
 
     constructor(props) {
@@ -297,7 +298,7 @@ export class ReportFlower extends React.Component {
                                     objectKey="productID"
                                     object={this.state}
                                     onChange={(value) => this.setState({productID: value})}
-                                    displayAs={(product) => <span><b>{product.name}</b> - {product.catalog} - {suppliers.find(s => s._id == product.supplierID).name}</span>}
+                                    displayAs={(product) => <span>{moment(product.created).format("DD/MM/YYYY")} - <b>{product.name}</b> - {product.catalog} - {suppliers.find(s => s._id == product.supplierID).name}</span>}
                                     noPopup
                                     label="Tên/Mã Sản Phẩm"
                                 />

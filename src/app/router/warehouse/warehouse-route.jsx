@@ -14,6 +14,7 @@ import {SelectTags} from "../../components/select-tags/select-tags";
 import {catalogs} from "../../common/constance";
 import {productApi} from "../../api/product-api";
 import {security} from "../../security/secuiry-fe";
+import moment from "moment";
 export class WarehouseRoute extends React.Component {
 
     constructor(props) {
@@ -108,10 +109,10 @@ export class WarehouseRoute extends React.Component {
         let premises = premisesInfo.getPremises();
 
         let columns = [{
-            label: "Mã SP",
+            label: "Ngày Nhập Kho",
             width: "10%",
-            display: (row) => row.productID,
-            sortBy: (row) => row.productID,
+            display: (row) => moment(row.created).format("DD/MM/YYYY hh:MM"),
+            sortBy: (row) => row.created,
             minWidth: "150"
         }, {
             label: "Tên",
@@ -276,7 +277,7 @@ export class WarehouseRoute extends React.Component {
                         </div>
 
                         <DataTable
-                            rows={sortBy(itemsFiltered, i => -i.quantity)}
+                            rows={sortBy(itemsFiltered, i => i.created)}
                             columns={columns}
                         />
                     </div>

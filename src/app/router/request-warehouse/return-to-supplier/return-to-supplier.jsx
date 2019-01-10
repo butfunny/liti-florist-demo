@@ -16,6 +16,7 @@ import {InputNumber} from "../../../components/input-number/input-number";
 import pick from "lodash/pick";
 import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
 import {security} from "../../../security/secuiry-fe";
+import moment from "moment"
 export class ReturnToSupplier extends React.Component {
 
     constructor(props) {
@@ -274,7 +275,7 @@ export class ReturnToSupplier extends React.Component {
                                 objectKey="productID"
                                 object={this.state}
                                 onChange={(value) => this.setState({productID: value})}
-                                displayAs={(product) => <span>{suppliers.find(s => s._id == product.supplierID).name} - <b>{product.name}</b> - {product.catalog}</span>}
+                                displayAs={(product) => <span>{moment(product.created).format("DD/MM/YYYY")} - <b>{product.name}</b> - {product.catalog} - {suppliers.find(s => s._id == product.supplierID).name}</span>}
                                 noPopup
                                 label="Tên/Mã Sản Phẩm"
                             />

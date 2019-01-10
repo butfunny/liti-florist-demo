@@ -14,6 +14,7 @@ import {ImgPreview} from "../../../components/img-repview/img-preview";
 import {InputQuantity} from "../../../components/input-quantity/input-quantity";
 import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
 import {security} from "../../../security/secuiry-fe";
+import moment from "moment";
 export class ReturnToBaseRoute extends React.Component {
 
     constructor(props) {
@@ -276,7 +277,7 @@ export class ReturnToBaseRoute extends React.Component {
                                     objectKey="productID"
                                     object={this.state}
                                     onChange={(value) => this.setState({productID: value})}
-                                    displayAs={(product) => <span><b>{product.name}</b> - {product.catalog} - {suppliers.find(s => s._id == product.supplierID).name}</span>}
+                                    displayAs={(product) => <span>{moment(product.created).format("DD/MM/YYYY")} - <b>{product.name}</b> - {product.catalog} - {suppliers.find(s => s._id == product.supplierID).name}</span>}
                                     noPopup
                                     label="Tên/Mã Sản Phẩm"
                                 />
