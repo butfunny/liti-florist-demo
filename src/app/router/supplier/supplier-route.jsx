@@ -27,9 +27,9 @@ export class SupplierRoute extends React.Component {
         this.setState({adding: true});
         productApi.createSupplier({name: supplier}).then((newSupplier) => {
             if (newSupplier.error) {
-                this.setState({error: true, adding: false})
+                this.setState({error: true, adding: false, supplier: ""})
             } else {
-                this.setState({adding: false, suppliers: suppliers.concat(newSupplier)})
+                this.setState({adding: false, supplier: "", suppliers: suppliers.concat(newSupplier)})
             }
         });
     }
@@ -116,7 +116,7 @@ export class SupplierRoute extends React.Component {
                             <button className="btn btn-primary"
                                     style={{top: "9px"}}
                                     disabled={supplier.length == 0 || suppliers.map(c => c.name).indexOf(supplier) > -1}
-                                    onClick={() => this.addType()}>
+                                    onClick={() => this.addSupplier()}>
                                     <span className="btn-text">
                                         Thêm
                                     </span>
