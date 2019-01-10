@@ -36,7 +36,12 @@ export const navItems = (user) => {
             to: "/ship",
             hide: () => user.role != "ship"
         }],
-        hide: () => user.role != "ship" && user.role != "florist" && user.role != "sale" && !permission[user.role].find(r => r.indexOf("bill") > -1)
+        hide: () => user.role != "ship" && user.role != "florist" && !permission[user.role].find(r => r.indexOf("bill") > -1)
+    }, {
+        label: "Doanh Thu Của Tôi",
+        hide: () => ["florist", "ship", "sale"].indexOf(user.role) == -1,
+        icon: <i className="fa fa-money nav-icon"/>,
+        to: "/salary"
     }, {
         label: "Báo Cáo",
         icon: <i className="fa fa-bar-chart nav-icon"/>,
@@ -58,8 +63,7 @@ export const navItems = (user) => {
             hide: () => permission[user.role].indexOf("report.report-promotion") == -1
         }],
         hide: () => !permission[user.role].find(r => r.indexOf("report") > -1)
-    },
-        {
+    }, {
             label: "Khách Hàng",
             icon: <i className="fa fa-users nav-icon"/>,
             child: [{
@@ -72,7 +76,7 @@ export const navItems = (user) => {
                 hide: () => permission[user.role].indexOf("customer.vip.view") == -1
             }],
             hide: () => !permission[user.role].find(r => r.indexOf("customer") > -1)
-        }, {
+    }, {
             label: "Chiến Dịch Khuyến Mại",
             to: "/promotion",
             icon: <i className="fa fa-gift nav-icon"/>,

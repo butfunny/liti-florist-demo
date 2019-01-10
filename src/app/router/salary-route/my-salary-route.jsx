@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Fragment} from "react";
 import {Layout} from "../../components/layout/layout";
 import {premisesInfo} from "../../security/premises-info";
 import {cache} from "../../common/cache";
@@ -12,6 +12,8 @@ import sortBy from "lodash/sortBy";
 import {userInfo} from "../../security/user-info";
 import sumBy from "lodash/sumBy"
 import {paymentTypes} from "../../common/constance";
+import {DataTable} from "../../components/data-table/data-table";
+import {ColumnViewMore} from "../../components/column-view-more/column-view-more";
 
 export class MySalaryRoute extends React.Component {
 
@@ -51,123 +53,149 @@ export class MySalaryRoute extends React.Component {
         let billsFiltered = bills ? bills.filter(b => b.bill_number.toLowerCase().indexOf(keyword.toLowerCase()) > -1) : bills;
         const user = userInfo.getUser();
 
-        if (selectedType == "Đơn Onl") {
-            billsFiltered = bills.filter(b => getSalary(user, b).isOnl);
-        }
+        let columns = [{
+            label: "Thời Gian",
+            display: (bill) => moment(bill.deliverTime).format("DD/MM/YYYY HH:mm"),
+            width: "20%",
+            minWidth: "150",
+            sortBy: (bill) => bill.bill_number
+        }, {
+            label: "Mã Đơn",
+            display: (bill) => (
+                <ColumnViewMore
+                    header={bill.bill_number}
+                    renderViewMoreBody={() => (
+                        <Fragment>
+                            {bill.items.map((item, index) => (
+                                <div key={index}>
+                                    <b>{item.quantity}</b> {item.flowerType} {item.name} {item.sale &&
+                                <span className="text-primary">({item.sale}%)</span>} {item.vat ?
+                                    <span className="text-primary"> - {item.vat}% VAT</span> : ""}
+                                    {item.color && (
+                                        <div className="text-small">Màu: {item.color.split(", ").map((c, i) => (
+                                            <div key={i}
+                                                 style={{
+                                                     background: c,
+                                                     display: "inline-block",
+                                                     marginRight: "5px",
+                                                     width: "15px",
+                                                     height: "10px"
+                                                 }}
+                                            />
+                                        ))}</div>)}
+                                    {item.size && (<div className="text-small">Size: <b>{item.size}</b></div>)}
+                                </div>
+                            ))}
 
-        if (selectedType == "Đơn Off") {
-            billsFiltered = bills.filter(b => !getSalary(user, b).isOnl);
-        }
+                            {bill.vipSaleType && (
+                                <div>VIP: <b>{bill.vipSaleType}</b></div>
+                            )}
+
+                            {bill.promotion && (
+                                <span>{bill.promotion.name}: <b>{bill.promotion.discount}%</b></span>
+                            )}
+
+                            <div style={{
+                                marginTop: "10px"
+                            }}>
+                                {bill.to.paymentType == "Nợ" ?
+                                    <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> :
+                                    <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
+                            </div>
+
+                            <div>Hình thức thanh toán: {bill.to.paymentType}</div>
+
+                            <div>
+                                Ghi chú: {bill.to.notes}
+                            </div>
+
+                            <div>
+                                Nội dung thiệp: {bill.to.cardContent}
+                            </div>
+                        </Fragment>
+                    )}
+                    viewMoreText="Chi Tiết"
+                    subText={getSalary(user, bill).isOnl && <span className="text-primary">(Đơn onl)</span>}
+                    isShowViewMoreText={true}
+                />
+            ),
+            width: "55%",
+            minWidth: "300"
+        }, {
+            label: "Thu",
+            width: "25%",
+            minWidth: "150",
+            display: (bill) => (
+                <span>
+                    {formatNumber(getSalary(user, bill).money)} {getSalary(user, bill).percent && <span className="text-primary">({getSalary(user, bill).percent}%)</span>}
+                </span>
+            )
+        }];
+
+
 
 
         return (
             <Layout
-                activeRoute="Doanh Thu"
+                activeRoute="Doanh Thu Của Tôi"
             >
                 <div className="my-salary-route bill-report-route">
-                    <div className="ct-page-title">
-                        <h1 className="ct-title">Doanh Thu</h1>
-                    </div>
 
 
-                    <div className="report-header row">
-                        <div className="col-md-4">
-                            <div className="form-group">
-                                <label className="control-label">Từ ngày</label>
+                    <div className="card">
+                        <div className="card-title">
+                            Doanh Thu
+
+                            <span className="text-small text-primary">Tổng thu {formatNumber(sumBy(bills, b => getSalary(user, b).money))}</span>
+                        </div>
+
+                        <div className="card-body">
+
+                            <div className="row first-margin"
+                            >
                                 <DatePicker
+                                    className="col"
+                                    label="Từ Ngày"
                                     value={from}
                                     onChange={(from) => {
                                         this.setState({from})
                                     }}
                                 />
-                            </div>
-                        </div>
 
-                        <div className="col-md-4">
-                            <div className="form-group">
-                                <label className="control-label">Tới ngày</label>
                                 <DatePicker
-                                    value={to}
-                                    onChange={(to) => this.setState({to})}
+                                    className="col"
+                                    label="Tới Ngày"
+                                    value={from}
+                                    onChange={(from) => {
+                                        this.setState({from})
+                                    }}
                                 />
+
+                                <button className="btn btn-primary"
+                                        onClick={() => this.getBills()}
+                                        disabled={loading}
+                                >
+                                    <span className="btn-text">Lọc</span>
+                                    { loading &&
+                                    <span className="loading-icon"><i className="fa fa-spinner fa-pulse"/></span>
+                                    }
+                                </button>
                             </div>
+
+                            <Input
+                                className="first-margin"
+                                value={keyword}
+                                onChange={(e) => this.setState({keyword: e.target.value})}
+                                label="Tìm mã đơn"
+                            />
                         </div>
 
-                        <div className="col-md-4">
-                            <button className="btn btn-info btn-sm btn-get btn-icon"
-                                    disabled={loading}
-                                    onClick={() => this.getBills()}>
-                                Xem Doanh Thu
-
-                                {loading &&
-                                <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
-                            </button>
-                        </div>
-
-                    </div>
-
-                    <div className="form-group">
-                        <Input
-                            value={keyword}
-                            onChange={(e) => this.setState({keyword: e.target.value})}
-                            placeholder="Tìm mã đơn"
+                        <DataTable
+                            columns={columns}
+                            rows={billsFiltered}
+                            loading={loading}
                         />
                     </div>
-
-                    <h6>Doanh thu {moment(from).format("DD/MM/YYYY")} - {moment(to).format("DD/MM/YYYY")} : <b>{formatNumber(sumBy(bills, b => getSalary(user, b).money))}</b>
-                    </h6>
-
-                    {user.role == "sale" && (
-                        <select
-                            className="form-control"
-                            value={selectedType}
-                            onChange={(e) => this.setState({selectedType: e.target.value})}>
-                            <option value="Tất cả">Tất cả</option>
-                            <option value="Đơn Onl">Đơn Onl</option>
-                            <option value="Đơn Off">Đơn Off</option>
-                        </select>
-                    )}
-
-                    <table className="table table-hover">
-                        <thead>
-                        <tr>
-                            <th scope="col">Mã Đơn</th>
-                            <th scope="col">Thông Tin Đơn</th>
-                            <th scope="col">Tiền Thu</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {bills && billsFiltered.map((bill, index) => (
-                            <tr key={index}>
-                                <td>
-                                    <div>Mã đơn hàng: <b>{bill.bill_number}</b> {getSalary(user, bill).isOnl &&
-                                    <span className="text-primary">(Đơn onl)</span>}</div>
-                                    {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
-                                </td>
-                                <td>
-                                    <div>
-                                        {bill.items.map((item, index) => (
-                                            <div key={index}>
-                                                <b>{item.quantity}</b> {item.flowerType} {item.name} {item.sale &&
-                                            <span className="text-primary">({item.sale}%)</span>}
-                                            </div>
-                                        ))}
-
-                                        <div style={{
-                                            marginTop: "10px"
-                                        }}>
-                                            <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    {formatNumber(getSalary(user, bill).money)} {getSalary(user, bill).percent &&
-                                <span className="text-primary">({getSalary(user, bill).percent}%)</span>}
-                                </td>
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
                 </div>
             </Layout>
         );

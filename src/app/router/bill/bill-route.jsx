@@ -55,6 +55,7 @@ export class BillRoute extends RComponent {
 
         const user = userInfo.getUser();
         let route = security.getDefaultRoute(user);
+        console.log(route);
         if (route != "/") props.history.push(route);
 
 

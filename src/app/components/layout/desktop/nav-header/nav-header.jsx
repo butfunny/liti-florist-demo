@@ -114,10 +114,6 @@ class UserNav extends RComponent {
         let {mobile} = this.props;
 
         const list = [{
-            label: "Doanh Thu",
-            hide: ["sale", "florist", "ship"].indexOf(user.role) == -1,
-            to: "/salary"
-        }, {
             label: "Đổi Mật Khẩu",
             click: () => {
                 const modal = modals.openModal({

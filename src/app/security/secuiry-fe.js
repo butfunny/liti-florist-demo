@@ -107,9 +107,14 @@ export let security = {
                     to = found.to;
                     return true;
                 }
+            } else {
+                if (!n.hide()) {
+                    to = n.to;
+                    return true
+                }
             }
 
-            return !n.hide();
+
         });
 
         return to ? to : route.to
