@@ -15,6 +15,9 @@ import {catalogs} from "../../common/constance";
 import {productApi} from "../../api/product-api";
 import {security} from "../../security/secuiry-fe";
 import moment from "moment";
+import minBy from "lodash/minBy";
+import maxBy from "lodash/maxBy";
+import {DatePicker} from "../../components/date-picker/date-picker";
 export class WarehouseRoute extends React.Component {
 
     constructor(props) {
@@ -25,20 +28,27 @@ export class WarehouseRoute extends React.Component {
             keyword: "",
             filteredColors: [],
             filteredTypes: [],
-            suppliers: []
+            suppliers: [],
+            from: null,
+            to: null
         };
 
         productApi.suppliers().then((suppliers) => this.setState({suppliers}))
     }
 
     componentDidMount() {
-        this.loadData("all");
+        this.loadData("all").then((products) => {
+            this.setState({
+                from: new Date(minBy(products, p => new Date(p.created).getTime()).created),
+                to: new Date(maxBy(products, p => new Date(p.created).getTime()).created)
+            })
+        });
     }
 
     loadData(baseID) {
         this.setState({items: null});
         if (baseID == "all") {
-            warehouseApi.searchProductInBase("").then(({products, flowers}) => {
+            return warehouseApi.searchProductInBase("").then(({products, flowers}) => {
                 this.setState({items: products.map(p => {
                         let flower = flowers.find(f => f._id == p.parentID);
                         return {
@@ -46,10 +56,11 @@ export class WarehouseRoute extends React.Component {
                             ...p
                         }
                     })
-                })
+                });
+                return Promise.resolve(products);
             })
         } else {
-            warehouseApi.searchProductInSubWarehouse({keyword: name, premisesID: baseID}).then(({products, flowers}) => {
+            return warehouseApi.searchProductInSubWarehouse({keyword: "", premisesID: baseID}).then(({products, flowers}) => {
                 this.setState({items: products.map(p => {
                         let flower = flowers.find(f => f._id == p.parentID);
                         return {
@@ -57,7 +68,8 @@ export class WarehouseRoute extends React.Component {
                             ...p
                         }
                     })
-                })
+                });
+                return Promise.resolve();
             })
         }
     }
@@ -181,7 +193,7 @@ export class WarehouseRoute extends React.Component {
         }];
 
 
-        let {selectedBase, keyword, filteredColors, filteredTypes, items} = this.state;
+        let {selectedBase, keyword, filteredColors, filteredTypes, items, from, to} = this.state;
 
 
         let bases = [{
@@ -220,8 +232,18 @@ export class WarehouseRoute extends React.Component {
                 }
             };
 
+            const filterDateTime = (i) => {
+                let dateFrom = new Date(from);
+                dateFrom.setHours(0, 0,0 ,0);
 
-            return filterKeyword(i) && filterType(i) && filterColor(i);
+                let dateTo = new Date(to);
+                dateTo.setHours(23, 59, 59, 99);
+                return new Date(i.created).getTime() >= dateFrom.getTime() && new Date(i.created).getTime() <= dateTo.getTime();
+
+            };
+
+
+            return filterKeyword(i) && filterType(i) && filterColor(i) && filterDateTime(i);
         });
 
         return (
@@ -266,6 +288,28 @@ export class WarehouseRoute extends React.Component {
                                     />
                                 </div>
                             </div>
+
+                            { from && (
+                                <div className="filter-wrapper">
+                                    <div className="filter-col">
+                                        <DatePicker
+                                            label="Từ ngày"
+                                            value={from}
+                                            onChange={(from) => this.setState({from})}
+                                        />
+                                    </div>
+
+                                    <div className="filter-col">
+                                        <DatePicker
+                                            label="Tới ngày"
+                                            value={to}
+                                            onChange={(to) => this.setState({to})}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+
 
                             <Input
                                 style={{marginBottom: "5px", marginTop: "24px"}}
