@@ -176,7 +176,7 @@ export class FloristWorkingRoute extends RComponent {
                 />
             ),
             className: "number content-menu-action",
-            minWidth: "150",
+            minWidth: "175",
             sortBy: (row) => row.quantity
         }];
 
