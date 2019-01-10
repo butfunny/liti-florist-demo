@@ -7,7 +7,12 @@ import moment from "moment";
 import {formatNumber, getTotalBill} from "../../common/common";
 import classnames from "classnames";
 import {userInfo} from "../../security/user-info";
-export class FloristRoute extends React.Component {
+import {ImgPreview} from "../../components/img-repview/img-preview";
+import {ButtonGroup} from "../../components/button-group/button-group";
+import {security} from "../../security/secuiry-fe";
+import {DataTable} from "../../components/data-table/data-table";
+import {RComponent} from "../../components/r-component/r-component";
+export class FloristRoute extends RComponent {
 
     constructor(props) {
         super(props);
@@ -24,11 +29,15 @@ export class FloristRoute extends React.Component {
             loading: false
         };
 
-        this.getBills();
+
+        this.onMount(() => {
+            this.getBills();
+        })
     }
 
     getBills() {
         let {from, to} = this.state;
+        this.setState({loading: true});
         floristApi.getBills({from, to}).then((bills) => {
             this.setState({
                 bills: bills.map(bill => {
@@ -36,7 +45,8 @@ export class FloristRoute extends React.Component {
                         ...bill,
                         lastTime: new Date(bill.deliverTime).getTime() - new Date().getTime() < 0 ? 999999999 + Math.abs(new Date(bill.deliverTime).getTime() - new Date().getTime()) : new Date(bill.deliverTime).getTime() - new Date().getTime()
                     }
-                })
+                }),
+                loading: false
             })
         })
     }
@@ -48,114 +58,143 @@ export class FloristRoute extends React.Component {
 
         const user = userInfo.getUser();
 
-        return (
-            <Layout
-                activeRoute="Đơn Hàng">
-                <div className="florist-route bill-report-route">
-                    <div className="ct-page-title">
-                        <h1 className="ct-title">Đơn Hàng</h1>
+        let columns = [{
+            label: "Mã Đơn",
+            display: (bill) => (
+                <div>
+                    <div>{moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}</div>
+                    <div style={{marginTop: "5px"}}>{bill.bill_number}</div>
+                    <div style={{marginTop: "5px"}}>Florist: <b>{bill.florists.length > 0 ? bill.florists.map(s => s.username).join(", ") : (bill.to || {}).florist}</b></div>
+                </div>
+            ),
+            width: "20%",
+            minWidth: "150",
+            sortBy: (bill) => bill.bill_number
+        }, {
+            label: "Thông tin đơn",
+            display: (bill) => (
+                <div>
+                    {bill.items.map((item, index) => (
+                        <div key={index}>
+                            <b>{item.quantity}</b> {item.flowerType} {item.name} {item.sale &&
+                             <span className="text-primary">({item.sale}%)</span>} {item.vat ?
+                            <span className="text-primary"> - {item.vat}% VAT</span> : ""}
+                            {item.color && (
+                                <div className="text-small">Màu: {item.color.split(", ").map((c, i) => (
+                                    <div key={i}
+                                         style={{
+                                             background: c,
+                                             display: "inline-block",
+                                             marginRight: "5px",
+                                             width: "15px",
+                                             height: "10px"
+                                         }}
+                                    />
+                                ))}</div>)}
+                            {item.size && (<div className="text-small">Size: <b>{item.size}</b></div>)}
+                        </div>
+                    ))}
+
+                    {bill.vipSaleType && (
+                        <div>VIP: <b>{bill.vipSaleType}</b></div>
+                    )}
+
+                    {bill.promotion && (
+                        <span>{bill.promotion.name}: <b>{bill.promotion.discount}%</b></span>
+                    )}
+
+                    <div style={{
+                        marginTop: "10px"
+                    }}>
+                        {bill.to.paymentType == "Nợ" ?
+                            <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> :
+                            <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
                     </div>
 
-                    <div className="report-header row">
-                        <div className="col-md-4">
-                            <div className="form-group">
-                                <label className="control-label">Từ ngày</label>
+                    <div>Hình thức thanh toán: {bill.to.paymentType}</div>
+
+                    <div>
+                        Ghi chú: {bill.to.notes}
+                    </div>
+
+                    <div>
+                        Nội dung thiệp: {bill.to.cardContent}
+                    </div>
+                </div>
+            ),
+            width: "50%",
+            minWidth: "300"
+        }, {
+            label: "Trạng Thái",
+            width: "20%",
+            minWidth: "100",
+            display: (bill) => bill.status
+        }, {
+            label: "",
+            width: "10%",
+            minWidth: "100",
+            display: (bill) => bill.florists && bill.florists[0].user_id == user._id && bill.status == "Chờ xử lý" && (
+                <button className="btn btn-primary btn-small"
+                    onClick={() => history.push(`/florist-working/${bill._id}`)}
+                >
+                    Làm Đơn
+                </button>
+            )
+
+        }];
+
+        return (
+            <Layout
+                activeRoute="Đơn Chờ Làm">
+                <div className="florist-route bill-report-route">
+                    <div className="card">
+                        <div className="card-title">
+                            Lọc
+                        </div>
+
+                        <div className="card-body">
+                            <div className="row first-margin"
+                            >
                                 <DatePicker
+                                    className="col"
+                                    label="Từ Ngày"
                                     value={from}
                                     onChange={(from) => {
                                         this.setState({from})
                                     }}
                                 />
-                            </div>
-                        </div>
 
-                        <div className="col-md-4">
-                            <div className="form-group">
-                                <label className="control-label">Tới ngày</label>
                                 <DatePicker
-                                    value={to}
-                                    onChange={(to) => this.setState({to})}
+                                    className="col"
+                                    label="Tới Ngày"
+                                    value={from}
+                                    onChange={(from) => {
+                                        this.setState({from})
+                                    }}
                                 />
+
+                                <button className="btn btn-primary"
+                                        onClick={() => this.getBills()}
+                                        disabled={loading}
+                                >
+                                    <span className="btn-text">Lọc</span>
+                                    { loading &&
+                                        <span className="loading-icon"><i className="fa fa-spinner fa-pulse"/></span>
+                                    }
+                                </button>
                             </div>
                         </div>
 
-                        <div className="col-md-4">
-                            <button className="btn btn-info btn-sm btn-get btn-icon"
-                                    disabled={loading}
-                                    onClick={() => this.getBills()}>
-                                Xem Đơn
-
-                                {loading &&
-                                <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
-                            </button>
-                        </div>
-                    </div>
-
-
-                    <div className="report-body">
-                        <table className="table table-hover">
-                            <thead>
-                            <tr>
-                                <th scope="col">Thông Tin Đơn</th>
-                                <th scope="col">Làm Đơn</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            { bills && sortBy(bills, "lastTime").map((bill, index) => (
-                                <tr key={index} className={classnames(new Date(bill.deliverTime).getTime() < new Date().getTime() + 1800000 && bill.status == "Chờ xử lý" &&  "text-danger")}>
-                                    <td>
-                                        {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
-                                        <div>Mã đơn hàng: <b>{bill.bill_number}</b></div>
-                                        <div>Nhân viên bán: <b>{bill.sales && <b>{bill.sales.map(f => f.username).join(", ")}</b>}</b></div>
-                                        <div>Florist: <b>{bill.florists && <b>{bill.florists.map(f => f.username).join(", ")}</b>}</b></div>
-                                        <div>Nhân viên ship: <b>{bill.ships && <b>{bill.ships.map(f => f.username).join(", ")}</b>}</b></div>
-
-                                        <div>-------</div>
-                                        Sản phẩm:
-
-                                        <div>
-                                            { bill.items.map((item, index) => (
-                                                <div key={index}>
-                                                    <b>{item.quantity}</b> {item.flowerType} {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>}
-                                                </div>
-                                            ))}
-
-                                            <div style={{
-                                                marginTop: "10px"
-                                            }}>
-                                                {bill.payment_type == "Nợ" ? <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> : <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
-                                            </div>
-
-
-                                            <div>
-                                                Ghi chú: {bill.to.notes}
-                                            </div>
-
-                                            <div>
-                                                Nội dung thiệp: {bill.to.cardContent}
-                                            </div>
-
-                                        </div>
-
-
-                                    </td>
-
-                                    <td>
-                                        { bill.florists && bill.florists[0].user_id == user._id && bill.status == "Chờ xử lý" && (
-                                            <button className="btn btn-outline-primary btn-sm"
-                                                    onClick={() => history.push(`/florist-working/${bill._id}`)}>
-                                                <i className="fa fa-hand-lizard-o" aria-hidden="true"/>
-                                            </button>
-                                        )}
-
-                                        { bill.florists && bill.florists[0].user_id == user._id && bill.status != "Chờ xử lý" && (
-                                            <span>Done</span>
-                                        )}
-                                    </td>
-                                </tr>
-                            ))}
-                            </tbody>
-                        </table>
+                        <DataTable
+                            columns={columns}
+                            rows={bills && sortBy(bills, "lastTime")}
+                            loading={loading}
+                            rowStyling={(bill) => {
+                                if (new Date(bill.deliverTime).getTime() < new Date().getTime() + 1800000 && bill.status == "Chờ xử lý") return {background: "rgba(253,57,122, .1)"};
+                                if (bill.status == "Khiếu Nại" || bill.status == "Huỷ Đơn") return {background: "rgba(255,184,34, .1)"};
+                                if (bill.status == "Done" || bill.status.toLowerCase() == "Chờ Giao".toLowerCase()) return {background: "rgb(29,201,183, .1)"}
+                            }}
+                        />
                     </div>
                 </div>
             </Layout>

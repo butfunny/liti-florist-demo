@@ -313,7 +313,7 @@ export class ReportFlower extends React.Component {
 
                                 <div className="card-body">
                                     <div className="text-right">
-                                        Tổng Tiền: <b>{formatNumber(sumBy(request.items, item => item.quantity * item.price))}</b>
+                                        Tổng Tiền: <b>{formatNumber(sumBy(request.items, item => item.submitQuantity * item.price))}</b>
 
                                         <div style={{marginTop: "12px"}}>
                                             <button className="btn btn-primary"

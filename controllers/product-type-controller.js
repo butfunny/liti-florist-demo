@@ -72,7 +72,7 @@ module.exports = function(app) {
         });
     });
 
-    app.get("/suppliers",Security.isAdmin, function (req, res) {
+    app.get("/suppliers",Security.authorDetails, function (req, res) {
         SupplierDao.find({}, (err, types) => {
             res.json(types);
         })
