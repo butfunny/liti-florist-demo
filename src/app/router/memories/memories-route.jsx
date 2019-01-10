@@ -131,7 +131,7 @@ export class MemoriesRoute extends React.Component {
             >
                 <div className="card memories-route">
                     <div className="card-title">
-                        Khách mua hàng ngày {moment(selectedDate).format("DD/MM/YYYY")}
+                        Danh sách khách mua hàng ngày {moment(selectedDate).format("DD/MM/YYYY")}
                     </div>
 
                     <div className="card-body">
