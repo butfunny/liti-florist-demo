@@ -19,6 +19,8 @@ import {confirmModal} from "../../../components/confirm-modal/confirm-modal";
 import {InputNumber} from "../../../components/input-number/input-number";
 import {ImgPreview} from "../../../components/img-repview/img-preview";
 import {security} from "../../../security/secuiry-fe";
+import {DatePicker} from "../../../components/date-picker/date-picker";
+import {TimePicker} from "../../../components/time-picker/time-picker";
 export class RequestFromSupplier extends React.Component {
 
     constructor(props) {
@@ -28,7 +30,8 @@ export class RequestFromSupplier extends React.Component {
             request: {
                 items: [],
                 requestName: "",
-                receivedName: ""
+                receivedName: "",
+                created: new Date()
             },
             productID: ""
         };
@@ -95,9 +98,9 @@ export class RequestFromSupplier extends React.Component {
 
         warehouseApi.createRequest({
             ...request,
-            items: request.items.map(item => ({supplierID: request.supplierID, created: new Date(), ...pick(item, ["parentID", "oriPrice", "price", "quantity"])})),
+            items: request.items.map(item => ({supplierID: request.supplierID, created: request.created, ...pick(item, ["parentID", "oriPrice", "price", "quantity"])})),
             requestType: "request-from-supplier",
-            created: new Date(),
+            created: request.created,
             status: "pending"
         }).then(() => {
             confirmModal.alert("Gửi phiếu thành công");
@@ -105,7 +108,8 @@ export class RequestFromSupplier extends React.Component {
                 request: {
                     items: [],
                     requestName: "",
-                    receivedName: ""
+                    receivedName: "",
+                    created: request.created
                 }
             })
         })
@@ -256,6 +260,21 @@ export class RequestFromSupplier extends React.Component {
                                     label="Người Nhận*"
                                     value={request.receivedName}
                                     onChange={(e) => this.setState({request: {...request, receivedName: e.target.value}})}
+                                />
+                            </div>
+
+                            <div className="row">
+                                <DatePicker
+                                    className="col"
+                                    label="Ngày nhập"
+                                    value={request.created}
+                                    onChange={(deliverTime) => this.setState({request: {...request, created: deliverTime}})}
+                                />
+
+                                <TimePicker
+                                    className="col"
+                                    value={request.created}
+                                    onChange={(deliverTime) => this.setState({request: {...request, created: deliverTime}})}
                                 />
                             </div>
 
