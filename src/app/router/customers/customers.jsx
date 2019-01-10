@@ -102,7 +102,7 @@ export class Customers extends React.Component {
                     for (let bill of customerBills) {
                         for (let item of bill.items) {
                             let found = ret.find(r => r.name == item.name);
-                            if (found) found.count++;
+                            if (found) found.count += item.quantity;
                             else ret.push({name: item.name, count: 1})
                         }
                     }
@@ -130,18 +130,114 @@ export class Customers extends React.Component {
         }, {
             label: "Màu",
             width: "5%",
-            display: (row) => "Màu",
-            minWidth: "100"
+            display: (row) => {
+                const customerBills = bills.filter(b => b.customerId == row._id);
+                const mapBillDescription = () => {
+                    let ret = [];
+                    for (let bill of customerBills) {
+                        for (let item of bill.items) {
+                            let colors = item.color ? item.color.split(", ") : [];
+                            for (let color of colors) {
+                                let found = ret.find(r => r.color == color);
+                                if (found) found.count++;
+                                else ret.push({color, count: 1})
+                            }
+                        }
+                    }
+
+                    return sortBy(ret, r => -r.count);
+                };
+
+                const descriptions = mapBillDescription();
+                if (descriptions.length == 0) return null;
+
+                return (
+                    <ColumnViewMore
+                        header={<Fragment><span className="text-primary">{descriptions[0].count}</span> <div style={{background: descriptions[0].color, width: "15px", height: "10px", display: "inline-block"}}/></Fragment>}
+                        isShowViewMoreText={descriptions.length > 1}
+                        renderViewMoreBody={() => descriptions.slice(1).map((item, index) => (
+                            <div className="info-item" key={index}>
+                                <span className="text-primary">{item.count}</span> <div style={{background: item.color, width: "15px", height: "10px", display: "inline-block"}}/>
+                            </div>
+                        ))}
+                    />
+                )
+            },
+            minWidth: "125"
         }, {
             label: "Size",
             width: "5%",
-            display: (row) => "Size",
-            minWidth: "100"
+            display: (row) => {
+                const customerBills = bills.filter(b => b.customerId == row._id);
+                const mapBillDescription = () => {
+                    let ret = [];
+                    for (let bill of customerBills) {
+                        for (let item of bill.items) {
+                            if (item.size) {
+                                let found = ret.find(r => r.size == item.size);
+                                if (found) found.count++;
+                                else ret.push({size: item.size, count: 1})
+                            }
+                        }
+                    }
+
+                    return sortBy(ret, r => -r.count);
+                };
+
+                const descriptions = mapBillDescription();
+
+                if (descriptions.length == 0) return null;
+
+                return (
+                    <ColumnViewMore
+                        header={<Fragment><span className="text-primary">{descriptions[0].count}</span> {descriptions[0].size}</Fragment>}
+                        isShowViewMoreText={descriptions.length > 1}
+                        renderViewMoreBody={() => descriptions.slice(1).map((item, index) => (
+                            <div className="info-item" key={index}>
+                                <span className="text-primary">{item.count}</span> {item.size}
+                            </div>
+                        ))}
+                    />
+                )
+            },
+            minWidth: "125"
         }, {
             label: "Loại",
             width: "5%",
-            display: (row) => "Loại",
-            minWidth: "100"
+            display: (row) => {
+                const customerBills = bills.filter(b => b.customerId == row._id);
+                const mapBillDescription = () => {
+                    let ret = [];
+                    for (let bill of customerBills) {
+                        for (let item of bill.items) {
+                            if (item.flowerType) {
+                                let found = ret.find(r => r.flowerType == item.flowerType);
+                                if (found) found.count++;
+                                else ret.push({flowerType: item.flowerType, count: 1})
+                            }
+                        }
+                    }
+
+                    return sortBy(ret, r => -r.count);
+                };
+
+                const descriptions = mapBillDescription();
+
+                if (descriptions.length == 0) return null;
+
+                return (
+                    <ColumnViewMore
+                        header={<Fragment><span className="text-primary">{descriptions[0].count}</span> {descriptions[0].flowerType}</Fragment>}
+                        isShowViewMoreText={descriptions.length > 1}
+                        renderViewMoreBody={() => descriptions.slice(1).map((item, index) => (
+                            <div className="info-item" key={index}>
+                                <span className="text-primary">{item.count}</span> {item.flowerType}
+                            </div>
+                        ))}
+                    />
+                )
+            },
+            minWidth: "125"
         }];
 
 
