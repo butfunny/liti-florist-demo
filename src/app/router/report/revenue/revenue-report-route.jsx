@@ -18,6 +18,7 @@ import {paymentTypes} from "../../../common/constance";
 import {RevenueReportSupplier} from "./revenue-report-supplier";
 import {Select} from "../../../components/select/select";
 import {CSVLink} from "react-csv";
+import {ReportEmployee} from "./report-employee";
 
 
 export class RevenueReportRoute extends React.Component {
@@ -33,7 +34,7 @@ export class RevenueReportRoute extends React.Component {
             bills: [],
             customers: [],
             vips: [],
-            viewType: "Khách Hàng",
+            viewType: "Cửa Hàng",
             lastInitBills: [],
             filterType: "Trong Tuần",
             initBills: {}
@@ -147,37 +148,36 @@ export class RevenueReportRoute extends React.Component {
                                 </button>
                             </div>
                         )}
+
+                        <Select
+                            className="first-margin"
+                            label="Doanh Thu Theo"
+                            value={viewType}
+                            list={["Cửa Hàng", "Nhân Viên"]}
+                            onChange={(viewType) => this.setState({viewType})}
+                        />
                     </div>
 
                     { bills && (
-                        <RevenueReportBill
-                            loading={loading}
-                            bills={bills}
-                            lastInitBills={lastInitBills}
-                            filterType={filterType}
-                        />
+                        <Fragment>
+                            {viewType == "Cửa Hàng" ? (
+                                <RevenueReportBill
+                                    loading={loading}
+                                    bills={bills}
+                                    lastInitBills={lastInitBills}
+                                    filterType={filterType}
+                                />
+                            ) : (
+                                <ReportEmployee
+                                    loading={loading}
+                                    bills={bills}
+                                    lastInitBills={lastInitBills}
+                                    filterType={filterType}
+                                />
+                            )}
+                        </Fragment>
                     )}
                 </div>
-
-                {/*{ !loading && (*/}
-                    {/*<Fragment>*/}
-                        {/*{ viewType == "Cửa Hàng" ? (*/}
-                            {/*<RevenueReportBill*/}
-                                {/*bills={bills}*/}
-                                {/*lastInitBills={lastInitBills}*/}
-                                {/*filterType={filterType}*/}
-                            {/*/>*/}
-                        {/*) :  (*/}
-                            {/*<RevenueReportCustomer*/}
-                                {/*bills={bills}*/}
-                                {/*customers={customers}*/}
-                                {/*lastInitBills={lastInitBills}*/}
-                                {/*filterType={filterType}*/}
-                            {/*/>*/}
-                        {/*)}*/}
-
-                    {/*</Fragment>*/}
-                {/*)}*/}
 
 
 

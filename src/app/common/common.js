@@ -188,10 +188,12 @@ export const getTotalBillWithouDiscount = (bill) => {
 
 
 export const getSalary = (user, bill) => {
-    const billTotal = getTotalBill(bill);
+
+    const billTotal = getSubTotalBill(bill);
     let charge = 0;
 
     if (bill.status != "Done") {
+        console.log(111111);
         return 0;
     }
 

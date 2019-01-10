@@ -5,7 +5,7 @@ import {billApi} from "../../../api/bill-api";
 import {productApi} from "../../../api/product-api";
 import {ReportBillItem} from "./report-bill-item";
 import {securityApi} from "../../../api/security-api";
-import {ReportEmployee} from "./report-employee";
+import {ReportEmployee} from "../revenue/report-employee";
 import {ReportNotSuccessBill} from "./report-not-success-bill";
 import {ReportBillFrom} from "./report-bill-from";
 import {getStartAndLastDayOfWeek} from "../../../common/common";
