@@ -136,6 +136,12 @@ export const getTotalBillWithoutVAT = (bill) => {
 
 };
 
+export const getSubTotalBill = (bill) => {
+    return sumBy(bill.items, item => {
+        return item.price * item.quantity;
+    });
+}
+
 export const getTotalBillWithouDiscount = (bill) => {
 
     let totalBillItems = sumBy(bill.items, item => {

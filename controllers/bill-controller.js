@@ -7,6 +7,7 @@ const LogsDao = require("../dao/logs-dao");
 const CustomerDao = require("../dao/customer-dao");
 const VipDao = require("../dao/vip-dao");
 const WareHouseDao = require("../dao/warehouse-dao");
+const FlowesrDao = require("../dao/flowers-dao");
 const nodemailer = require("nodemailer");
 
 module.exports = function(app) {
@@ -170,14 +171,14 @@ module.exports = function(app) {
             let ret = [];
             for (let flower of flowers) {
                 for (let item of flower) {
-                    ret.push(item.itemID);
+                    ret.push(item.parentID);
                 }
             }
 
-            WareHouseDao.find({_id: {$in: ret}}, (err, items) => {
+            FlowesrDao.find({_id: {$in: ret}}, (err, flowers) => {
                 res.json({
                     bills,
-                    items
+                    flowers
                 })
             });
 
