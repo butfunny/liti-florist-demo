@@ -4,6 +4,8 @@ export let formatNumber = (numb = 0) => parseInt(numb).toString().replace(/(\d)(
 
 export const getTotalBill = (bill) => {
 
+    if (bill.to.paymentType.indexOf("Free") == -1) return 0;
+
     let totalBillItems = sumBy(bill.items, item => {
         let price = item.price * item.quantity;
         if (item.sale) {
