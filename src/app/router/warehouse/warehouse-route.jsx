@@ -18,6 +18,7 @@ import moment from "moment";
 import minBy from "lodash/minBy";
 import maxBy from "lodash/maxBy";
 import {DatePicker} from "../../components/date-picker/date-picker";
+import {ColumnViewMore} from "../../components/column-view-more/column-view-more";
 export class WarehouseRoute extends React.Component {
 
     constructor(props) {
@@ -130,12 +131,42 @@ export class WarehouseRoute extends React.Component {
             label: "Tên",
             width: "25%",
             display: (row) => (
-                <div className="product-name">
-                    <ImgPreview src={row.image}/> {row.name}
-                    <div style={{fontSize: "12px"}}>
-                        Nhà cung cấp: {this.state.suppliers.find(s => s._id == row.supplierID).name}
-                    </div>
-                </div>
+
+                <ColumnViewMore
+                    header={(
+                        <div className="product-name">
+                            <ImgPreview src={row.image}/> {row.name}
+                        </div>
+                    )}
+                    isShowViewMoreText
+                    renderViewMoreBody={() => (
+                        <Fragment>
+                            <div className="info-item">
+                                Màu: { row.colors.map((color, index) => (
+                                <div key={index}
+                                     style={{
+                                         background: color,
+                                         height: "15px",
+                                         width: "25px",
+                                         display: "inline-block",
+                                         marginRight: "5px"
+                                     }}
+                                />
+                            )) }
+                            </div>
+
+                            <div className="info-item">
+                                Đơn Vị Tính: {row.unit}
+                            </div>
+
+                            <div className="info-item">
+                                Dài: {row.lengthiness}
+                            </div>
+                        </Fragment>
+                    )}
+                />
+
+
             ),
             sortBy: (row) => row.name,
             minWidth: "250"
@@ -150,22 +181,12 @@ export class WarehouseRoute extends React.Component {
             width: "15%",
             display: (row) => row.catalog,
             sortBy: (row) => row.catalog,
-            minWidth: "150"
+            minWidth: "100"
         }, {
-            label: "Màu",
+            label: "NCC",
             width: "15%",
-            display: (row) => row.colors.map((color, index) => (
-                <div key={index}
-                     style={{
-                         background: color,
-                         height: "15px",
-                         width: "25px",
-                         display: "inline-block",
-                         marginRight: "5px"
-                     }}
-                />
-            )),
-            minWidth: "150"
+            display: (row) => this.state.suppliers.find(s => s._id == row.supplierID).name,
+            minWidth: "100"
         }, {
             label: "Giá Gốc",
             width: "10%",
@@ -179,17 +200,11 @@ export class WarehouseRoute extends React.Component {
             sortBy: (row) => row.price,
             minWidth: "100"
         }, {
-            label: "DVT",
-            width: "5%",
-            display: (row) => row.unit,
-            sortBy: (row) => row.unit,
-            minWidth: "50"
-        }, {
-            label: "Dài",
-            width: "5%",
-            display: (row) => row.lengthiness,
+            label: "Tổng Tồn",
+            width: "10%",
+            display: (row) => formatNumber(row.price * row.quantity),
             sortBy: (row) => row.lengthiness,
-            minWidth: "50",
+            minWidth: "100",
         }];
 
 
