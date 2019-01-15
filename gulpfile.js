@@ -295,17 +295,19 @@ gulp.task("update-customer-same", () => {
     mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/payment", {useNewUrlParser: true});
     const CustomerDao = require("./dao/customer-dao");
     const BillDao = require("./dao/bill-dao");
+    const VipDao = require("./dao/vip-dao");
 
     const updateCustomerSame = (customer) => {
         return new Promise((resolve, reject)=>{
             CustomerDao.findOne({customerPhone: customer.customerPhone}, (err, found) => {
                 if (found._id.toString() != customer._id) {
                     BillDao.updateMany({customerId: customer._id}, {customerId: found._id}, (err, bill) => {
-                        console.log(err);
-                        CustomerDao.deleteOne({_id: customer._id}, () => {
-                            console.log("removed same customer: " + customer._id);
-                            resolve();
-                        })
+                        VipDao.updateMany({customerId: customer._id}, {customerId: found._id}, () => {
+                            CustomerDao.deleteOne({_id: customer._id}, () => {
+                                console.log("removed same customer: " + customer._id);
+                                resolve();
+                            })
+                        });
                     })
 
 
