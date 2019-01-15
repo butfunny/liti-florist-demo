@@ -24,25 +24,6 @@ export class SettingRoute extends React.Component {
     };
 
 
-    updatePay() {
-        let {customers} = this.state;
-
-        const upload = (index) => {
-            if (index == customers.length - 1) {
-                this.setState({uploading: false});
-                confirmModal.alert(`Thêm thành công ${customers.length} sản phẩm`);
-            } else {
-                let item = customers[index];
-                this.setState({doneIndex: index + 1});
-                customerApi.updateCustomerPay(item._id).then(() => {
-                    upload(index + 1)
-                })
-            }
-        };
-
-        upload(0);
-    }
-
     render() {
 
         let {customers, doneIndex} = this.state;
@@ -61,15 +42,6 @@ export class SettingRoute extends React.Component {
                     { security.isHavePermission(["bill.editProductType"]) && (
                         <TypeSetting/>
                     )}
-
-
-                    { user.username == "cuongnguyen" && (
-                        <button
-                            disabled={!customers}
-                            className="btn btn-primary"
-                            onClick={() => this.updatePay()}>Cập nhật khách hàng ({doneIndex} / {customers ? customers.length : 0})</button>
-                    )}
-
 
                 </div>
             </Layout>

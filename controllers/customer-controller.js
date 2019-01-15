@@ -9,14 +9,28 @@ const {getTotalBill} = require("../common/common");
 
 module.exports = (app) => {
     app.post("/customer", Security.authorDetails, function(req, res) {
-        CustomerDao.create(req.body, function(err, customer) {
-            SMSService.sendMessage({
-                to: "84" + (customer.customerPhone.replace(/ /g, "")).substring(1),
-                text: "Cam on QK da trai nghiem san pham dich vu cua LITI FLORIST. Hi vong QK hai long voi san pham dich vu cua chung toi. Moi gop y vui long LH CSKH:02435766338"
-            });
+        if (req.body.customerPhone.length > 0) {
+            CustomerDao.findOne({customerPhone: req.body.customerPhone}, (err, customer) => {
+                if (customer) {
+                    res.json(customer);
+                } else {
+                    CustomerDao.create(req.body, function(err, customer) {
+                        SMSService.sendMessage({
+                            to: "84" + (customer.customerPhone.replace(/ /g, "")).substring(1),
+                            text: "Cam on QK da trai nghiem san pham dich vu cua LITI FLORIST. Hi vong QK hai long voi san pham dich vu cua chung toi. Moi gop y vui long LH CSKH:02435766338"
+                        });
 
-            res.json(customer);
-        });
+                        res.json(customer);
+                    });
+                }
+            })
+        } else {
+            CustomerDao.create(req.body, function(err, customer) {
+                res.json(customer);
+            });
+        }
+
+
     });
 
     app.get("/find-customers-by-phone/:pn",Security.authorDetails, function (req, res) {

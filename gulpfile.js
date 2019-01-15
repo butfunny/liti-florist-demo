@@ -1,3 +1,4 @@
+const {getTotalBill} = require("./common/common");
 const gulp = require("gulp");
 const nodemon = require('gulp-nodemon');
 const spawn = require('child_process').spawn;
@@ -5,7 +6,7 @@ const run = require('gulp-run');
 const fs = require('fs');
 const fse = require('fs-extra');
 const crypto = require("crypto");
-
+const _ = require("lodash");
 
 function makeid() {
     let text = "";
@@ -203,7 +204,8 @@ gulp.task("update-vip-deadline", () => {
             mongoose.disconnect();
         })
     })
-})
+});
+
 
 gulp.task("update-customer-birthdate", () => {
     const mongoose = require('mongoose');
@@ -232,4 +234,111 @@ gulp.task("update-customer-birthdate", () => {
             mongoose.disconnect();
         })
     })
+});
+
+gulp.task("update-customer-pay", () => {
+    const mongoose = require('mongoose');
+    mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/payment", {useNewUrlParser: true});
+    const CustomerDao = require("./dao/customer-dao");
+    const BillDao = require("./dao/bill-dao");
+
+
+    const updateCustomerPay = (customerId) => {
+        return new Promise((resolve, reject)=>{
+            BillDao.find({customerId: customerId}, (err, bills) => {
+                let totalPay = _.sumBy(bills, b => getTotalBill(b));
+                CustomerDao.findOneAndUpdate({_id: customerId}, {totalPay: totalPay, totalBill: bills.length}, () => {
+                    resolve();
+                })
+            })
+        })
+    };
+
+
+    CustomerDao.find({}, (err, customers) => {
+
+        const upload = (index) => {
+            if (index == customers.length - 1) {
+                console.log("finished");
+                mongoose.disconnect();
+            } else {
+                let item = customers[index];
+                console.log(`${index}/${customers.length}`);
+                updateCustomerPay(item.id).then(() => {
+                    upload(index + 1)
+                })
+            }
+        };
+
+        upload(0);
+
+        // for (let customer of customers) {
+        //     CustomerDao.find({customerPhone: customer.customerPhone}, (err, found) => {
+        //         if (found._id != customer._id) {
+        //             BillDao.findOneAndUpdate({customerId: found._id}, {customerId: customer._id}, (err, bill) => {
+        //                 console.log("updated bill: " + bill._id);
+        //                 CustomerDao.remove({_id: found._id}, () => {
+        //                     console.log("removed same customer: " + found._id);
+        //                 })
+        //             })
+        //         }
+        //     })
+
+        // }
+
+    })
+
+});
+
+gulp.task("update-customer-same", () => {
+    const mongoose = require('mongoose');
+    mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/payment", {useNewUrlParser: true});
+    const CustomerDao = require("./dao/customer-dao");
+    const BillDao = require("./dao/bill-dao");
+
+    const updateCustomerSame = (customer) => {
+        return new Promise((resolve, reject)=>{
+            CustomerDao.findOne({customerPhone: customer.customerPhone}, (err, found) => {
+                if (found._id.toString() != customer._id) {
+                    BillDao.updateMany({customerId: customer._id}, {customerId: found._id}, (err, bill) => {
+                        console.log(err);
+                        CustomerDao.deleteOne({_id: customer._id}, () => {
+                            console.log("removed same customer: " + customer._id);
+                            resolve();
+                        })
+                    })
+
+
+                } else {
+                    resolve();
+                }
+            })
+        })
+    };
+
+
+    CustomerDao.find({}, (err, customers) => {
+
+        const upload = (index) => {
+            if (index == customers.length) {
+                console.log("finished");
+                mongoose.disconnect();
+            } else {
+                let item = customers[index];
+                console.log(`${index}/${customers.length}`);
+                if (!item.customerPhone || item.customerPhone.length == 0) {
+                    upload(index + 1);
+                } else {
+                    updateCustomerSame(item).then(() => {
+                        upload(index + 1)
+                    })
+                }
+            }
+        };
+
+        upload(0);
+
+
+    })
+
 });
