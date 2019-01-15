@@ -5,7 +5,7 @@ import {DatePicker} from "../../../components/date-picker/date-picker";
 import groupBy from "lodash/groupBy";
 import countBy from "lodash/countBy";
 import {
-    formatNumber,
+    formatNumber, getBillProfit,
     getStartAndLastDayOfWeek,
     getTotalBill,
     getTotalBillWithoutVAT,
@@ -19,8 +19,11 @@ import {ReportBillItem} from "../bill/report-bill-item";
 import {productApi} from "../../../api/product-api";
 import {userInfo} from "../../../security/user-info";
 import {permissionInfo} from "../../../security/premises-info";
-import {PermissionDenie} from "../revenue/revenue-report-route";
 import {CSVLink} from "react-csv";
+import {Select} from "../../../components/select/select";
+import {RevenueReportBill} from "../revenue/revenue-report-bill";
+import {ReportEmployee} from "../revenue/report-employee";
+import {ReportCustomerBuyCount} from "./report-customer-buy-count";
 export class ReportCustomerRoute extends React.Component {
 
     constructor(props) {
@@ -34,7 +37,7 @@ export class ReportCustomerRoute extends React.Component {
             bills: [],
             customers: [],
             vips: [],
-            viewType: "Khách Hàng",
+            viewType: "Số Lần Mua",
             customersBirth: null
         };
 
@@ -65,20 +68,10 @@ export class ReportCustomerRoute extends React.Component {
 
     render() {
 
-        let {loading, from, to, bills, vips, customersBirth, types, colors} = this.state;
+        let {loading, from, to, bills, vips, customersBirth, types, colors, viewType, customers} = this.state;
 
         let groupedBills = keysToArray(groupBy(bills, "customerId"));
 
-        const user = userInfo.getUser();
-        const permission = permissionInfo.getPermission();
-
-        if (permission[user.role].indexOf("report.report-customer") == -1) {
-            return (
-                <Layout activeRoute="Báo Cáo">
-                    <PermissionDenie />
-                </Layout>
-            )
-        };
 
         let csvData = [[
             "Số lần mua hàng",
@@ -86,11 +79,10 @@ export class ReportCustomerRoute extends React.Component {
         ]];
 
         const groups = [
-            {label: "0 -> 2", logic: (b) => b.value.length <= 2},
-            {label: "3 -> 6", logic: (b) => b.value.length <= 6 && b.value.length >= 3},
-            {label: "7 -> 10", logic: (b) => b.value.length <= 10 && b.value.length >= 7},
-            {label: "11 -> 12", logic: (b) => b.value.length <= 12 && b.value.length >= 11},
-            {label: "13+", logic: (b) => b.value.length > 12},
+            {label: "0 -> 1", logic: (b) => b.value.length <= 1},
+            {label: "2 -> 4", logic: (b) => b.value.length <= 4 && b.value.length >= 2},
+            {label: "5 -> 10", logic: (b) => b.value.length <= 10 && b.value.length >= 5},
+            {label: "11+", logic: (b) => b.value.length >= 11}
         ];
 
         for (let item of groups) {
@@ -116,151 +108,227 @@ export class ReportCustomerRoute extends React.Component {
             ])
         }
 
+        const components = {
+            "Số Lần Mua": (
+                <ReportCustomerBuyCount
+                    groupedBills={groupedBills}
+                    loading={loading}
+                    customers={customers}
+                />
+            )
+        }
+
 
         return (
             <Layout activeRoute="Khách Hàng">
-                <div className="report-route bill-report-route">
-                    <div className="ct-page-title">
-                        <h1 className="ct-title">Báo cáo khách hàng</h1>
+
+                <div className="card bill-report-route">
+                    <div className="card-title">
+                        Báo cáo khách hàng
+
+                        <div className="text-info margin-top">
+                            Tổng số lần mua: <b className="text-primary">{bills.length}</b>
+                        </div>
+
+                        <div className="text-info">
+                            Khách mới: <b className="text-primary">{bills.filter(b => b.isNewCustomer).length}</b>
+                        </div>
+
+                        <div className="text-info">
+                            Khách làm thẻ VIP: <b className="text-primary">{vips.filter(v => new Date(v.created).getTime() > from.getTime() && new Date(v.created).getTime() < to.getTime()).length} </b>
+                        </div>
                     </div>
 
-                    <div className="report-header row">
-                        <div className="col-md-4">
-                            <div className="form-group">
-                                <label className="control-label">Từ ngày</label>
-                                <DatePicker
-                                    value={from}
-                                    onChange={(from) => {
-                                        this.setState({from})
-                                    }}
-                                />
-                            </div>
-                        </div>
+                    <div className="card-body">
+                        <div className="row first-margin"
+                        >
+                            <DatePicker
+                                className="col"
+                                label="Từ Ngày"
+                                value={from}
+                                onChange={(from) => {
+                                    this.setState({from})
+                                }}
+                            />
 
-                        <div className="col-md-4">
-                            <div className="form-group">
-                                <label className="control-label">Tới ngày</label>
-                                <DatePicker
-                                    value={to}
-                                    onChange={(to) => this.setState({to})}
-                                />
-                            </div>
-                        </div>
+                            <DatePicker
+                                className="col"
+                                label="Tới Ngày"
+                                value={to}
+                                onChange={(to) => {
+                                    this.setState({to})
+                                }}
+                            />
 
-                        <div className="col-md-4">
-                            <button className="btn btn-info btn-sm btn-get btn-icon"
+                            <button className="btn btn-primary"
+                                    onClick={() => this.getReport()}
                                     disabled={loading}
-                                    onClick={() => this.getReport()}>
-                                Xem Hoá Đơn
-
-                                { loading && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
+                            >
+                                <span className="btn-text">Xem</span>
+                                {loading &&
+                                <span className="loading-icon"><i className="fa fa-spinner fa-pulse"/></span>}
                             </button>
                         </div>
+
+                        <Select
+                            className="first-margin"
+                            label="Theo"
+                            value={viewType}
+                            list={["Số Lần Mua"]}
+                            onChange={(viewType) => this.setState({viewType})}
+                        />
                     </div>
 
-                    { !loading && (
-                        <div className="form-group">
-                            <h6>
-                                Tổng số lần mua: <b className="text-primary">{bills.length}</b>
-                            </h6>
 
-                            <h6>
-                                Khách mới: <b className="text-primary">{bills.filter(b => b.isNewCustomer).length}</b>
-                            </h6>
+                    {components[viewType]}
 
-                            <h6>
-                                Khách làm thẻ VIP: <b className="text-primary">
-                                {vips.filter(v => new Date(v.created).getTime() > from.getTime() && new Date(v.created).getTime() < to.getTime()).length}
-                            </b>
-                            </h6>
-
-                            <div className="row">
-                                <div className="col-md-6">
-
-                                    {!loading && (
-                                        <CSVLink
-                                            data={csvData}
-                                            filename={`bao-cao-so-lan-mua-hang.csv`}
-                                            className="btn btn-info btn-icon btn-excel btn-sm">
-                                            <span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>
-                                            <span className="btn-inner--text">Xuất Excel</span>
-                                        </CSVLink>
-                                    )}
-
-                                    <table className="table table-hover">
-                                        <thead>
-                                        <tr>
-                                            <th scope="col">Số lần mua hàng</th>
-                                            <th scope="col">Số khách</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-
-                                        { groups.map((item, index) => (
-                                            <tr key={index}>
-                                                <td>{item.label}</td>
-                                                <td>{groupedBills.filter(item.logic).length}</td>
-                                            </tr>
-                                        ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                <ReportBillItem
-                                    bills={bills}
-                                    types={types}
-                                    colors={colors}
-                                    loading={loading}
-                                />
-
-                                <div className="form-group col-md-6">
-
-
-                                    {customersBirth && (
-                                        <CSVLink
-                                            data={csvDataBirth}
-                                            filename={`bao-cao-sinh-nhat-khach.csv`}
-                                            className="btn btn-info btn-icon btn-excel btn-sm">
-                                            <span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>
-                                            <span className="btn-inner--text">Xuất Excel</span>
-                                        </CSVLink>
-                                    )}
-
-                                    <table className="table table-hover">
-                                        <thead>
-                                        <tr>
-                                            <th scope="col">Khách sinh nhật trong tháng {new Date().getMonth() + 1}</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        { !customersBirth && (
-                                            <tr>
-                                                <td>Đang tải....</td>
-                                            </tr>
-                                        )}
-
-                                        { customersBirth && customersBirth.map((customer, index) => (
-                                            <tr key={index}>
-                                                <td>
-                                                    {customer.customerName} - {customer.customerPhone}
-                                                    <div>
-                                                        Sinh nhật: <b>{moment(customer.birthDate).format("DD/MM/YYYY")}</b>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-
-
-
-                        </div>
-                    )}
 
                 </div>
+
+
+
+                {/*<div className="report-route bill-report-route">*/}
+                    {/*<div className="ct-page-title">*/}
+                        {/*<h1 className="ct-title">Báo cáo khách hàng</h1>*/}
+                    {/*</div>*/}
+
+                    {/*<div className="report-header row">*/}
+                        {/*<div className="col-md-4">*/}
+                            {/*<div className="form-group">*/}
+                                {/*<label className="control-label">Từ ngày</label>*/}
+                                {/*<DatePicker*/}
+                                    {/*value={from}*/}
+                                    {/*onChange={(from) => {*/}
+                                        {/*this.setState({from})*/}
+                                    {/*}}*/}
+                                {/*/>*/}
+                            {/*</div>*/}
+                        {/*</div>*/}
+
+                        {/*<div className="col-md-4">*/}
+                            {/*<div className="form-group">*/}
+                                {/*<label className="control-label">Tới ngày</label>*/}
+                                {/*<DatePicker*/}
+                                    {/*value={to}*/}
+                                    {/*onChange={(to) => this.setState({to})}*/}
+                                {/*/>*/}
+                            {/*</div>*/}
+                        {/*</div>*/}
+
+                        {/*<div className="col-md-4">*/}
+                            {/*<button className="btn btn-info btn-sm btn-get btn-icon"*/}
+                                    {/*disabled={loading}*/}
+                                    {/*onClick={() => this.getReport()}>*/}
+                                {/*Xem Hoá Đơn*/}
+
+                                {/*{ loading && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}*/}
+                            {/*</button>*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
+
+                    {/*{ !loading && (*/}
+                        {/*<div className="form-group">*/}
+                            {/*<h6>*/}
+                                {/*Tổng số lần mua: <b className="text-primary">{bills.length}</b>*/}
+                            {/*</h6>*/}
+
+                            {/*<h6>*/}
+                                {/*Khách mới: <b className="text-primary">{bills.filter(b => b.isNewCustomer).length}</b>*/}
+                            {/*</h6>*/}
+
+                            {/*<h6>*/}
+                                {/*Khách làm thẻ VIP: <b className="text-primary">*/}
+                                {/*{vips.filter(v => new Date(v.created).getTime() > from.getTime() && new Date(v.created).getTime() < to.getTime()).length}*/}
+                            {/*</b>*/}
+                            {/*</h6>*/}
+
+                            {/*<div className="row">*/}
+                                {/*<div className="col-md-6">*/}
+
+                                    {/*{!loading && (*/}
+                                        {/*<CSVLink*/}
+                                            {/*data={csvData}*/}
+                                            {/*filename={`bao-cao-so-lan-mua-hang.csv`}*/}
+                                            {/*className="btn btn-info btn-icon btn-excel btn-sm">*/}
+                                            {/*<span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>*/}
+                                            {/*<span className="btn-inner--text">Xuất Excel</span>*/}
+                                        {/*</CSVLink>*/}
+                                    {/*)}*/}
+
+                                    {/*<table className="table table-hover">*/}
+                                        {/*<thead>*/}
+                                        {/*<tr>*/}
+                                            {/*<th scope="col">Số lần mua hàng</th>*/}
+                                            {/*<th scope="col">Số khách</th>*/}
+                                        {/*</tr>*/}
+                                        {/*</thead>*/}
+                                        {/*<tbody>*/}
+
+                                        {/*{ groups.map((item, index) => (*/}
+                                            {/*<tr key={index}>*/}
+                                                {/*<td>{item.label}</td>*/}
+                                                {/*<td>{groupedBills.filter(item.logic).length}</td>*/}
+                                            {/*</tr>*/}
+                                        {/*))}*/}
+                                        {/*</tbody>*/}
+                                    {/*</table>*/}
+                                {/*</div>*/}
+
+                                {/*<ReportBillItem*/}
+                                    {/*bills={bills}*/}
+                                    {/*types={types}*/}
+                                    {/*colors={colors}*/}
+                                    {/*loading={loading}*/}
+                                {/*/>*/}
+
+                                {/*<div className="form-group col-md-6">*/}
+
+
+                                    {/*{customersBirth && (*/}
+                                        {/*<CSVLink*/}
+                                            {/*data={csvDataBirth}*/}
+                                            {/*filename={`bao-cao-sinh-nhat-khach.csv`}*/}
+                                            {/*className="btn btn-info btn-icon btn-excel btn-sm">*/}
+                                            {/*<span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>*/}
+                                            {/*<span className="btn-inner--text">Xuất Excel</span>*/}
+                                        {/*</CSVLink>*/}
+                                    {/*)}*/}
+
+                                    {/*<table className="table table-hover">*/}
+                                        {/*<thead>*/}
+                                        {/*<tr>*/}
+                                            {/*<th scope="col">Khách sinh nhật trong tháng {new Date().getMonth() + 1}</th>*/}
+                                        {/*</tr>*/}
+                                        {/*</thead>*/}
+                                        {/*<tbody>*/}
+                                        {/*{ !customersBirth && (*/}
+                                            {/*<tr>*/}
+                                                {/*<td>Đang tải....</td>*/}
+                                            {/*</tr>*/}
+                                        {/*)}*/}
+
+                                        {/*{ customersBirth && customersBirth.map((customer, index) => (*/}
+                                            {/*<tr key={index}>*/}
+                                                {/*<td>*/}
+                                                    {/*{customer.customerName} - {customer.customerPhone}*/}
+                                                    {/*<div>*/}
+                                                        {/*Sinh nhật: <b>{moment(customer.birthDate).format("DD/MM/YYYY")}</b>*/}
+                                                    {/*</div>*/}
+                                                {/*</td>*/}
+                                            {/*</tr>*/}
+                                        {/*))}*/}
+                                        {/*</tbody>*/}
+                                    {/*</table>*/}
+                                {/*</div>*/}
+                            {/*</div>*/}
+
+
+
+
+                        {/*</div>*/}
+                    {/*)}*/}
+
+                {/*</div>*/}
             </Layout>
         );
     }
