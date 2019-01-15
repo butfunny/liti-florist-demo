@@ -8,10 +8,19 @@ import {securityApi} from "../../../api/security-api";
 import {ReportEmployee} from "../revenue/report-employee";
 import {ReportNotSuccessBill} from "./report-not-success-bill";
 import {ReportBillFrom} from "./report-bill-from";
-import {getStartAndLastDayOfWeek} from "../../../common/common";
+import {
+    formatNumber,
+    getBillProfit,
+    getStartAndLastDayOfWeek,
+    getTotalBill,
+    getTotalBillWithoutVAT
+} from "../../../common/common";
 import {userInfo} from "../../../security/user-info";
 import {permissionInfo} from "../../../security/premises-info";
 import {PermissionDenie} from "../revenue/revenue-report-route";
+import sumBy from "lodash/sumBy";
+import {Select} from "../../../components/select/select";
+import {RevenueReportBill} from "../revenue/revenue-report-bill";
 export class ReportBillRoute extends React.Component {
 
     constructor(props) {
@@ -25,7 +34,7 @@ export class ReportBillRoute extends React.Component {
             bills: [],
             customers: [],
             vips: [],
-            viewType: "Nhân Viên",
+            viewType: "Đơn Huỷ",
             types: [],
             colors: [],
             sales: [],
@@ -84,22 +93,6 @@ export class ReportBillRoute extends React.Component {
         }
 
         const components = {
-            "Sản Phẩm": (
-                <ReportBillItem
-                    bills={bills}
-                    types={types}
-                    colors={colors}
-                />
-            ),
-            "Nhân Viên": (
-                <ReportEmployee
-                    bills={bills}
-                    sales={sales}
-                    florists={florists}
-                    ships={ships}
-                    loading={loading}
-                />
-            ),
             "Đơn Huỷ": (
                 <ReportNotSuccessBill
                     bills={bills.filter(b => b.status == "Huỷ Đơn")}
@@ -126,61 +119,55 @@ export class ReportBillRoute extends React.Component {
 
         return (
             <Layout activeRoute="Đơn Hàng">
-                <div className="report-route bill-report-route">
-                    <div className="ct-page-title">
-                        <h1 className="ct-title">Báo cáo đơn hàng</h1>
+
+                <div className="card bill-report-route">
+                    <div className="card-title">
+                        Báo cáo đơn hàng
+                        <span className="text-small text-primary">{bills ? bills.length : 0} Đơn</span>
+
                     </div>
 
-                    <div className="report-header row">
-                        <div className="col-md-4">
-                            <div className="form-group">
-                                <label className="control-label">Từ ngày</label>
-                                <DatePicker
-                                    value={from}
-                                    onChange={(from) => {
-                                        this.setState({from})
-                                    }}
-                                />
-                            </div>
-                        </div>
+                    <div className="card-body">
+                        <div className="row first-margin"
+                        >
+                            <DatePicker
+                                className="col"
+                                label="Từ Ngày"
+                                value={from}
+                                onChange={(from) => {
+                                    this.setState({from})
+                                }}
+                            />
 
-                        <div className="col-md-4">
-                            <div className="form-group">
-                                <label className="control-label">Tới ngày</label>
-                                <DatePicker
-                                    value={to}
-                                    onChange={(to) => this.setState({to})}
-                                />
-                            </div>
-                        </div>
+                            <DatePicker
+                                className="col"
+                                label="Tới Ngày"
+                                value={to}
+                                onChange={(to) => {
+                                    this.setState({to})
+                                }}
+                            />
 
-                        <div className="col-md-4">
-                            <button className="btn btn-info btn-sm btn-get btn-icon"
+                            <button className="btn btn-primary"
+                                    onClick={() => this.getReport()}
                                     disabled={loading}
-                                    onClick={() => this.getReport()}>
-                                Xem Hoá Đơn
-
-                                { loading && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}
+                            >
+                                <span className="btn-text">Xem</span>
+                                {loading &&
+                                <span className="loading-icon"><i className="fa fa-spinner fa-pulse"/></span>}
                             </button>
                         </div>
 
-                    </div>
-
-                    <div className="form-group">
-                        <label>Báo cáo theo</label>
-                        <select className="form-control"
-                                value={viewType}
-                                onChange={(e) => this.setState({viewType: e.target.value})}
-                        >
-                            <option value="Nhân Viên">Nhân Viên</option>
-                            <option value="Đơn Huỷ">Đơn Huỷ</option>
-                            <option value="Đơn Khiếu Nại">Đơn Khiếu Nại</option>
-                            <option value="Kênh Mua Hàng">Kênh Mua Hàng</option>
-                        </select>
+                        <Select
+                            className="first-margin"
+                            label="Theo"
+                            value={viewType}
+                            list={["Đơn Huỷ", "Đơn Khiếu Nại", "Kênh Mua Hàng", "Hình Thức Thanh Toán", "Màu", "Loại"]}
+                            onChange={(viewType) => this.setState({viewType})}
+                        />
                     </div>
 
                     { components[viewType]}
-
 
                 </div>
             </Layout>

@@ -195,7 +195,6 @@ export const getSalary = (user, bill) => {
     let charge = 0;
 
     if (bill.status != "Done") {
-        console.log(111111);
         return 0;
     }
 
