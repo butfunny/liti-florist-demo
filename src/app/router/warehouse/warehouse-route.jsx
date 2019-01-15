@@ -186,7 +186,8 @@ export class WarehouseRoute extends React.Component {
             label: "NCC",
             width: "15%",
             display: (row) => this.state.suppliers.find(s => s._id == row.supplierID).name,
-            minWidth: "100"
+            minWidth: "100",
+            sortBy: (row) => this.state.suppliers.find(s => s._id == row.supplierID).name
         }, {
             label: "Giá Gốc",
             width: "10%",
