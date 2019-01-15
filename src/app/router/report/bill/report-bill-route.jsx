@@ -21,6 +21,7 @@ import {PermissionDenie} from "../revenue/revenue-report-route";
 import sumBy from "lodash/sumBy";
 import {Select} from "../../../components/select/select";
 import {RevenueReportBill} from "../revenue/revenue-report-bill";
+import {ReportBillPaymentType} from "./report-bill-payment-type";
 export class ReportBillRoute extends React.Component {
 
     constructor(props) {
@@ -71,7 +72,7 @@ export class ReportBillRoute extends React.Component {
     }
 
     getReport() {
-        this.setState({loading: true, bills: [], customers: [], vips: []});
+        this.setState({loading: true});
         let {from, to} = this.state;
         billApi.getReportAll({from, to}).then(({bills, customers, vips, items}) => {
             this.setState({bills, customers, vips, items, loading: false})
@@ -111,6 +112,12 @@ export class ReportBillRoute extends React.Component {
             ),
             "Kênh Mua Hàng": (
                 <ReportBillFrom
+                    bills={bills}
+                    loading={loading}
+                />
+            ),
+            "Hình Thức Thanh Toán": (
+                <ReportBillPaymentType
                     bills={bills}
                     loading={loading}
                 />

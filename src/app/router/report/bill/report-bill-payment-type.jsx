@@ -1,13 +1,12 @@
 import React, {Fragment} from "react";
-import sortBy from "lodash/sortBy";
-import {formatNumber, getTotalBill} from "../../../common/common";
-import {viaTypes} from "../../../common/constance";
-import {getCSVData} from "../../order/excel";
-import {CSVLink} from "react-csv";
-import moment from "moment";
 import {ColumnViewMore} from "../../../components/column-view-more/column-view-more";
+import moment from "moment";
+import {formatNumber, getTotalBill} from "../../../common/common";
+import {paymentTypes, viaTypes} from "../../../common/constance";
+import sortBy from "lodash/sortBy";
 import {DataTable} from "../../../components/data-table/data-table";
-export class ReportBillFrom extends React.Component {
+
+export class ReportBillPaymentType extends React.Component {
 
     constructor(props) {
         super(props);
@@ -17,27 +16,13 @@ export class ReportBillFrom extends React.Component {
 
         let {bills, loading} = this.props;
 
-        let types = viaTypes.map((type) => ({
+        let types = paymentTypes.slice(1).map((type) => ({
             name: type,
-            bills: bills.filter(b => b.to && b.to.buyerFrom == type)
+            bills: bills.filter(b => b.to && b.to.paymentType == type)
         }));
 
-        let csvData = [[
-            "Kênh mua hàng",
-            "Số đơn"
-        ]];
-
-        for (let item of sortBy(types, c => -c.total)) {
-            csvData.push([
-                item.name,
-                item.total
-            ])
-        }
-
-
-
         let columns = [{
-            label: "Kênh Mua Hàng",
+            label: "Tên",
             display: (row) => row.name,
             width: "30%",
             minWidth: "150",
@@ -147,6 +132,5 @@ export class ReportBillFrom extends React.Component {
                 rows={sortBy(types, c => -c.bills.length)}
             />
         );
-
     }
 }
