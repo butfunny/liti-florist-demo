@@ -37,7 +37,8 @@ export class RevenueReportRoute extends React.Component {
             viewType: "Cửa Hàng",
             lastInitBills: [],
             filterType: "Trong Tuần",
-            initBills: {}
+            initBills: {},
+            showFree: false
         };
 
         this.getInitReport();
@@ -69,7 +70,7 @@ export class RevenueReportRoute extends React.Component {
 
 
     render() {
-        let {loading, from, to, viewType, filterType, initBills, lastInitBills} = this.state;
+        let {loading, from, to, viewType, filterType, initBills, lastInitBills, showFree} = this.state;
 
         let {customers, items, bills} = filterType == "Trong Tuần" ? initBills : this.state;
 
@@ -99,7 +100,19 @@ export class RevenueReportRoute extends React.Component {
                         </div>
 
                         <div className="text-info">
-                            Tổng Đơn Free: <b className="text-primary">{bills ? bills.filter(b => getTotalBill(b) == 0 || b.to.paymentType == "Free").length : 0}</b>
+                            Tổng Đơn Free: <b className="text-primary">{bills ? bills.filter(b => b.to && b.to.paymentType && b.to.paymentType.indexOf("Free") > -1).length : 0}</b>
+                            <span className="text-primary" style={{cursor: "pointer", paddingLeft: "5px"}} onClick={() => this.setState({showFree: !showFree})}>{showFree ? "Ẩn" : "Chi tiết"}</span>
+
+
+                            { showFree && (
+                                <div className="free-info" style={{paddingLeft: "10px"}}>
+                                    {["Free MKT", "Free BGĐ", "Free DVKH", "Free"].map((text, index) => (
+                                        <div style={{marginTop: "5px", fontSize: "11px"}} key={index}>
+                                            {text} : <span className="text-primary">{bills ? bills.filter(b => b.to && b.to.paymentType && b.to.paymentType == text).length : 0}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
 
                         </div>
 
