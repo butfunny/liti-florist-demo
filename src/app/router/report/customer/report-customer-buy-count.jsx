@@ -3,6 +3,7 @@ import {roles} from "../../../common/constance";
 import {formatNumber} from "../../../common/common";
 import {DataTable} from "../../../components/data-table/data-table";
 import {ColumnViewMore} from "../../../components/column-view-more/column-view-more";
+import sortBy from "lodash/sortBy";
 export class ReportCustomerBuyCount extends React.Component {
 
     constructor(props) {
@@ -38,11 +39,11 @@ export class ReportCustomerBuyCount extends React.Component {
             display: (row) => (
                 <ColumnViewMore
                     viewMoreText={`Xem toàn bộ ${groupedBills.filter(b => row.logic(b)).length} khách`}
-                    renderViewMoreBody={() => groupedBills.filter(b => row.logic(b)).map((customer, index) => {
+                    renderViewMoreBody={() => sortBy(groupedBills.filter(b => row.logic(b)), c => -c.value.length).map((customer, index) => {
                         let c = customers.find(c => c._id == customer.key);
                         return (
-                            <div key={index}>
-                                {c.customerName} - {c.customerPhone}
+                            <div key={index} className="info-item">
+                                {c.customerName} - {c.customerPhone} <span className="text-primary">({customer.value.length} lần)</span>
                             </div>
                         )
                     })}
