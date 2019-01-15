@@ -93,7 +93,11 @@ export class BillInfo extends React.Component {
                             onChange({...to, receiverPhone: value})
                         }}
                         displayAs={(location) => location}
-                        defaultList={uniq(!bill.customerInfo ? [] : bill.customerInfo.locations.map(l => l.receiverPhone)).filter(l => l != null && l.length > 0)}
+                        defaultList={uniq(!bill.customerInfo ? []
+                            : bill.customerInfo.locations
+                            .filter(l => l.receiverPhone != null && l.receiverPhone.length > 0 && l.receiverName && l.receiverName.indexOf(to.receiverName) > -1)
+                            .map(l => l.receiverPhone))
+                        }
                     />
                 </div>
 
@@ -135,7 +139,7 @@ export class BillInfo extends React.Component {
                         defaultList={
                             uniq(!bill.customerInfo ? []
                                 : bill.customerInfo.locations
-                                .filter(l => l.receiverPlace != null && l.receiverPlace.length > 0 && l.receiverPhone && l.receiverPhone.indexOf(to.receiverPhone) > -1)
+                                .filter(l => l.receiverPlace != null && l.receiverPlace.length > 0 && l.receiverName && l.receiverName.indexOf(to.receiverName) > -1)
                                 .map(l => l.receiverPlace))}
                         info={error ? "Không tính được khoảng cách vui lòng tư tính tiền ship" : distance ? `Khoảng cách ${distance.text}` : ""}
                     />
