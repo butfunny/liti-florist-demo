@@ -252,6 +252,10 @@ export class BillOrderRoute extends RComponent {
         let billsFiltered = bills ? filteredByKeys(formattedBills, ["customer.customerName", "customer.customerPhone", "bill_number"], keyword) : [];
         billsFiltered = billsFiltered.filter(i => {
 
+            if (showOwe) {
+                return i.isOwe
+            }
+
             const filterStatus = (i) => {
                 if (statusFiltered.length == 0) return true;
 
@@ -546,6 +550,11 @@ export class BillOrderRoute extends RComponent {
                                 className="text-primary">{bills ? formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBill(b))) : 0}</b>
                             </div>
 
+                            <div className="text-info text-danger">
+                                Đơn Nợ: <b
+                                className="text-danger">{bills ? bills.filter(b => b.isOwe).length : 0}</b>
+                            </div>
+
                             <div className="text-info">
                                 Tổng Thu: <b
                                 className="text-primary">{bills ? formatNumber(sumBy(bills, b => (b.status != "Done" || b.isOwe) ? 0 : getTotalBill(b))) : 0}</b>
@@ -580,6 +589,12 @@ export class BillOrderRoute extends RComponent {
                                 label="Tìm kiếm"
                                 value={keyword}
                                 onChange={(e) => this.setState({keyword: e.target.value})}
+                            />
+
+                            <Checkbox
+                                value={showOwe}
+                                onChange={(showOwe) => this.setState({showOwe})}
+                                label="Lọc Nợ"
                             />
                         </div>
 
