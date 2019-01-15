@@ -203,7 +203,7 @@ export class WarehouseRoute extends React.Component {
             label: "Tổng Tồn",
             width: "10%",
             display: (row) => formatNumber(row.price * row.quantity),
-            sortBy: (row) => row.lengthiness,
+            sortBy: (row) => row.price * row.quantity,
             minWidth: "100",
         }];
 
