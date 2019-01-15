@@ -134,10 +134,9 @@ export class BillOrderRoute extends RComponent {
             description: "Bạn có chắc chắn muốn xoá nợ hoá đơn này?"
         }).then(() => {
             billApi.updateBill(bill._id, {
-                ...omit(bill, ["_id"]),
                 reason: "Xoá nợ.",
                 update_time: new Date(),
-                payment_type: "Đã trả nợ."
+                isOwe: false
             }).then(() => {
                 this.getBills();
             })
@@ -360,12 +359,12 @@ export class BillOrderRoute extends RComponent {
                     <div style={{
                         marginTop: "10px"
                     }}>
-                        {bill.to.paymentType == "Nợ" ?
+                        {bill.isOwe ?
                             <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> :
                             <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
                     </div>
 
-                    <div>Hình thức thanh toán: {bill.to.paymentType}</div>
+                    <div>Hình thức thanh toán: {bill.to.paymentType} { bill.to.paymentType == "Nợ" && !bill.isOwe && <span className="text-success">(Đã trả nợ)</span>}</div>
 
                     <div>
                         Ghi chú: {bill.to.notes}
@@ -431,10 +430,7 @@ export class BillOrderRoute extends RComponent {
                         name: "Thêm Ảnh",
                         icon: <i className="fa fa-camera "/>,
                         type: "upload",
-                        onUpload: (e) => {
-                            console.log(e);
-                            this.handleChange(e, bill);
-                        }
+                        onUpload: (e) => this.handleChange(e, bill)
                     }, {
                         name: "Sửa",
                         icon: <i className="fa fa-pencil "/>,
@@ -448,6 +444,11 @@ export class BillOrderRoute extends RComponent {
                         name: "Chuyển Đơn",
                         icon: <i className="fa fa-share "/>,
                         click: () => this.moveBill(bill)
+                    }, {
+                        name: "Xóa Nợ",
+                        icon: <i className="fa fa-pencil "/>,
+                        hide: () => !bill.isOwe,
+                        click: () => this.removeOwe(bill)
                     }, {
                         name: "Khiếu Nại",
                         icon: <i className="fa fa-flag text-danger"/>,

@@ -110,7 +110,6 @@ module.exports = function(app) {
     app.put("/bill/:bid", Security.authorDetails, (req, res) => {
         delete req.body._id;
         BillDao.updateOne({_id: req.params.bid}, req.body, () => {
-
             var transporter = nodemailer.createTransport('smtps://litiflorist.dev%40gmail.com:manhcuong94@smtp.gmail.com');
 
             var mailOptions = {
