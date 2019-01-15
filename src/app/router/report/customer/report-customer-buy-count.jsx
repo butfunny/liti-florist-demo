@@ -36,7 +36,7 @@ export class ReportCustomerBuyCount extends React.Component {
             minWidth: "150",
         }, {
             label: "Chi Tiết",
-            display: (row) => (
+            display: (row) => groupedBills.filter(b => row.logic(b)).length > 0 && (
                 <ColumnViewMore
                     viewMoreText={`Xem toàn bộ ${groupedBills.filter(b => row.logic(b)).length} khách`}
                     renderViewMoreBody={() => sortBy(groupedBills.filter(b => row.logic(b)), c => -c.value.length).map((customer, index) => {

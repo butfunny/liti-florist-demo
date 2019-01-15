@@ -24,6 +24,10 @@ import {Select} from "../../../components/select/select";
 import {RevenueReportBill} from "../revenue/revenue-report-bill";
 import {ReportEmployee} from "../revenue/report-employee";
 import {ReportCustomerBuyCount} from "./report-customer-buy-count";
+import {ReportCustomerType} from "./report-customer-type";
+import {ReportCustomerColor} from "./report-customer-color";
+import {ColumnViewMore} from "../../../components/column-view-more/column-view-more";
+import {DataTable} from "../../../components/data-table/data-table";
 export class ReportCustomerRoute extends React.Component {
 
     constructor(props) {
@@ -115,8 +119,47 @@ export class ReportCustomerRoute extends React.Component {
                     loading={loading}
                     customers={customers}
                 />
+            ),
+            "Loại": (
+                <ReportCustomerType
+                    groupedBills={groupedBills}
+                    loading={loading}
+                    customers={customers}
+                    bills={bills}
+                    types={types}
+                />
+            ),
+            "Màu": (
+                <ReportCustomerColor
+                    groupedBills={groupedBills}
+                    loading={loading}
+                    customers={customers}
+                    bills={bills}
+                    colors={colors}
+                />
             )
-        }
+        };
+
+
+        let columns = [{
+            label: "Tên",
+            display: (customer) => customer.customerName,
+            sortBy: (customer) => customer.customerName,
+            width: "33.33%",
+            minWidth: "150",
+        }, {
+            label: "Số Điện Thoại",
+            display: (customer) => customer.customerPhone,
+            sortBy: (customer) => customer.customerPhone,
+            width: "33.33%",
+            minWidth: "150",
+        }, {
+            label: "Sinh Nhật",
+            display: (customer) => moment(customer.birthDate).format("DD/MM/YYYY"),
+            sortBy: (customer) => moment(customer.birthDate).format("DD/MM/YYYY"),
+            width: "33.33%",
+            minWidth: "150",
+        }];
 
 
         return (
@@ -174,7 +217,7 @@ export class ReportCustomerRoute extends React.Component {
                             className="first-margin"
                             label="Theo"
                             value={viewType}
-                            list={["Số Lần Mua"]}
+                            list={["Số Lần Mua", "Loại", "Màu"]}
                             onChange={(viewType) => this.setState({viewType})}
                         />
                     </div>
@@ -182,153 +225,21 @@ export class ReportCustomerRoute extends React.Component {
 
                     {components[viewType]}
 
+                </div>
+
+                <div className="card">
+                    <div className="card-title">
+                        Khách sinh nhật trong tháng {new Date().getMonth() + 1}
+                    </div>
+
+                    <DataTable
+                        columns={columns}
+                        rows={customersBirth}
+                        loading={!customersBirth}
+                    />
 
                 </div>
 
-
-
-                {/*<div className="report-route bill-report-route">*/}
-                    {/*<div className="ct-page-title">*/}
-                        {/*<h1 className="ct-title">Báo cáo khách hàng</h1>*/}
-                    {/*</div>*/}
-
-                    {/*<div className="report-header row">*/}
-                        {/*<div className="col-md-4">*/}
-                            {/*<div className="form-group">*/}
-                                {/*<label className="control-label">Từ ngày</label>*/}
-                                {/*<DatePicker*/}
-                                    {/*value={from}*/}
-                                    {/*onChange={(from) => {*/}
-                                        {/*this.setState({from})*/}
-                                    {/*}}*/}
-                                {/*/>*/}
-                            {/*</div>*/}
-                        {/*</div>*/}
-
-                        {/*<div className="col-md-4">*/}
-                            {/*<div className="form-group">*/}
-                                {/*<label className="control-label">Tới ngày</label>*/}
-                                {/*<DatePicker*/}
-                                    {/*value={to}*/}
-                                    {/*onChange={(to) => this.setState({to})}*/}
-                                {/*/>*/}
-                            {/*</div>*/}
-                        {/*</div>*/}
-
-                        {/*<div className="col-md-4">*/}
-                            {/*<button className="btn btn-info btn-sm btn-get btn-icon"*/}
-                                    {/*disabled={loading}*/}
-                                    {/*onClick={() => this.getReport()}>*/}
-                                {/*Xem Hoá Đơn*/}
-
-                                {/*{ loading && <span className="btn-inner--icon"><i className="fa fa-spinner fa-pulse"/></span>}*/}
-                            {/*</button>*/}
-                        {/*</div>*/}
-                    {/*</div>*/}
-
-                    {/*{ !loading && (*/}
-                        {/*<div className="form-group">*/}
-                            {/*<h6>*/}
-                                {/*Tổng số lần mua: <b className="text-primary">{bills.length}</b>*/}
-                            {/*</h6>*/}
-
-                            {/*<h6>*/}
-                                {/*Khách mới: <b className="text-primary">{bills.filter(b => b.isNewCustomer).length}</b>*/}
-                            {/*</h6>*/}
-
-                            {/*<h6>*/}
-                                {/*Khách làm thẻ VIP: <b className="text-primary">*/}
-                                {/*{vips.filter(v => new Date(v.created).getTime() > from.getTime() && new Date(v.created).getTime() < to.getTime()).length}*/}
-                            {/*</b>*/}
-                            {/*</h6>*/}
-
-                            {/*<div className="row">*/}
-                                {/*<div className="col-md-6">*/}
-
-                                    {/*{!loading && (*/}
-                                        {/*<CSVLink*/}
-                                            {/*data={csvData}*/}
-                                            {/*filename={`bao-cao-so-lan-mua-hang.csv`}*/}
-                                            {/*className="btn btn-info btn-icon btn-excel btn-sm">*/}
-                                            {/*<span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>*/}
-                                            {/*<span className="btn-inner--text">Xuất Excel</span>*/}
-                                        {/*</CSVLink>*/}
-                                    {/*)}*/}
-
-                                    {/*<table className="table table-hover">*/}
-                                        {/*<thead>*/}
-                                        {/*<tr>*/}
-                                            {/*<th scope="col">Số lần mua hàng</th>*/}
-                                            {/*<th scope="col">Số khách</th>*/}
-                                        {/*</tr>*/}
-                                        {/*</thead>*/}
-                                        {/*<tbody>*/}
-
-                                        {/*{ groups.map((item, index) => (*/}
-                                            {/*<tr key={index}>*/}
-                                                {/*<td>{item.label}</td>*/}
-                                                {/*<td>{groupedBills.filter(item.logic).length}</td>*/}
-                                            {/*</tr>*/}
-                                        {/*))}*/}
-                                        {/*</tbody>*/}
-                                    {/*</table>*/}
-                                {/*</div>*/}
-
-                                {/*<ReportBillItem*/}
-                                    {/*bills={bills}*/}
-                                    {/*types={types}*/}
-                                    {/*colors={colors}*/}
-                                    {/*loading={loading}*/}
-                                {/*/>*/}
-
-                                {/*<div className="form-group col-md-6">*/}
-
-
-                                    {/*{customersBirth && (*/}
-                                        {/*<CSVLink*/}
-                                            {/*data={csvDataBirth}*/}
-                                            {/*filename={`bao-cao-sinh-nhat-khach.csv`}*/}
-                                            {/*className="btn btn-info btn-icon btn-excel btn-sm">*/}
-                                            {/*<span className="btn-inner--icon"><i className="fa fa-file-excel-o"/></span>*/}
-                                            {/*<span className="btn-inner--text">Xuất Excel</span>*/}
-                                        {/*</CSVLink>*/}
-                                    {/*)}*/}
-
-                                    {/*<table className="table table-hover">*/}
-                                        {/*<thead>*/}
-                                        {/*<tr>*/}
-                                            {/*<th scope="col">Khách sinh nhật trong tháng {new Date().getMonth() + 1}</th>*/}
-                                        {/*</tr>*/}
-                                        {/*</thead>*/}
-                                        {/*<tbody>*/}
-                                        {/*{ !customersBirth && (*/}
-                                            {/*<tr>*/}
-                                                {/*<td>Đang tải....</td>*/}
-                                            {/*</tr>*/}
-                                        {/*)}*/}
-
-                                        {/*{ customersBirth && customersBirth.map((customer, index) => (*/}
-                                            {/*<tr key={index}>*/}
-                                                {/*<td>*/}
-                                                    {/*{customer.customerName} - {customer.customerPhone}*/}
-                                                    {/*<div>*/}
-                                                        {/*Sinh nhật: <b>{moment(customer.birthDate).format("DD/MM/YYYY")}</b>*/}
-                                                    {/*</div>*/}
-                                                {/*</td>*/}
-                                            {/*</tr>*/}
-                                        {/*))}*/}
-                                        {/*</tbody>*/}
-                                    {/*</table>*/}
-                                {/*</div>*/}
-                            {/*</div>*/}
-
-
-
-
-                        {/*</div>*/}
-                    {/*)}*/}
-
-                {/*</div>*/}
             </Layout>
         );
     }
