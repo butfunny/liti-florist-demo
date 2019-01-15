@@ -3,7 +3,7 @@ const isEmpty = require("lodash/isEmpty");
 
 module.exports = {
     getTotalBill: (bill) => {
-        if (bill.status == "Done" || bill.status == "Khiếu Nại" && bill.to.paymentType.indexOf("Free") == -1) {
+        if ((bill.status == "Done" || bill.status == "Khiếu Nại") && bill.to.paymentType.indexOf("Free") == -1) {
             let totalBillItems = sumBy(bill.items, item => {
                 let price = item.price * item.quantity;
                 if (item.sale) {
