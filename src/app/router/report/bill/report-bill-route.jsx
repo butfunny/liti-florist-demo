@@ -22,6 +22,8 @@ import sumBy from "lodash/sumBy";
 import {Select} from "../../../components/select/select";
 import {RevenueReportBill} from "../revenue/revenue-report-bill";
 import {ReportBillPaymentType} from "./report-bill-payment-type";
+import {ReportBillColor} from "./report-bill-color";
+import {ReportBillType} from "./report-bill-type";
 export class ReportBillRoute extends React.Component {
 
     constructor(props) {
@@ -120,6 +122,20 @@ export class ReportBillRoute extends React.Component {
                 <ReportBillPaymentType
                     bills={bills}
                     loading={loading}
+                />
+            ),
+            "Màu": (
+                <ReportBillColor
+                    bills={bills}
+                    loading={loading}
+                    colors={colors}
+                />
+            ),
+            "Loại": (
+                <ReportBillType
+                    bills={bills}
+                    loading={loading}
+                    types={types}
                 />
             )
         };
