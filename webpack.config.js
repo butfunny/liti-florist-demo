@@ -14,13 +14,19 @@ module.exports = {
         rules: [
             {
                 test: /\.jsx?$/,
-                use: [
-                    {
-                        loader: 'babel-loader', options: {
-                            presets: ["env", "stage-0", "react"]
-                        }
+                use: {
+                    loader: 'babel-loader', options: {
+                        presets: ["@babel/preset-env", "@babel/preset-react"],
+                        plugins: [
+                            "@babel/plugin-syntax-dynamic-import",
+                            "@babel/plugin-syntax-import-meta",
+                            "@babel/plugin-proposal-class-properties",
+                            "@babel/plugin-proposal-json-strings",
+                            "@babel/plugin-proposal-optional-chaining"
+                        ]
                     }
-                ],
+                }
+                ,
                 exclude: /node_modules/,
             },
             {

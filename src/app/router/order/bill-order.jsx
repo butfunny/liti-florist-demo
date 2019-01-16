@@ -5,7 +5,6 @@ import {billApi} from "../../api/bill-api";
 import {permissionInfo, premisesInfo} from "../../security/premises-info";
 import {cache} from "../../common/cache";
 import {responsive} from "../../common/responsive/responsive";
-import {ReportTableMobile} from "./report-table-mobile";
 import moment from "moment";
 import {
     filteredByKeys,

@@ -17,7 +17,6 @@ import {
 } from "../../../common/common";
 import {userInfo} from "../../../security/user-info";
 import {permissionInfo} from "../../../security/premises-info";
-import {PermissionDenie} from "../revenue/revenue-report-route";
 import sumBy from "lodash/sumBy";
 import {Select} from "../../../components/select/select";
 import {RevenueReportBill} from "../revenue/revenue-report-bill";

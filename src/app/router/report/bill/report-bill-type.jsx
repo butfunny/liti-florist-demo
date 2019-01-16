@@ -1,7 +1,7 @@
 import React, {Fragment} from "react";
 import sumBy from "lodash/sumBy";
 import {ColumnViewMore} from "../../../components/column-view-more/column-view-more";
-import moment from "./report-bill-payment-type";
+import moment from "moment";
 import {formatNumber, getTotalBill} from "../../../common/common";
 import {DataTable} from "../../../components/data-table/data-table";
 import sortBy from "lodash/sortBy";
