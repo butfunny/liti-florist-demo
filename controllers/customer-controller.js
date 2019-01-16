@@ -65,7 +65,7 @@ module.exports = (app) => {
 
     app.post("/customers", (req, res) => {
         let {skip, keyword, sortKey, isDesc} = req.body;
-        CustomerDao.find({$or: [{customerPhone: new RegExp(".*" + keyword + ".*")}, {customerName: new RegExp(".*" + keyword + ".*")}]}).sort({[sortKey] : isDesc ? -1 : 1}).skip(skip).limit(15).exec((err, customers) => {
+        CustomerDao.find({$or: [{customerPhone: new RegExp(".*" + keyword + ".*")}, {customerName: new RegExp(".*" + keyword + ".*")}]}).sort({[!sortKey ? "totalPay" : sortKey] : isDesc == null ? -1  : isDesc ? -1 : 1}).skip(skip).limit(15).exec((err, customers) => {
             CustomerDao.countDocuments({$or: [{customerPhone: new RegExp(".*" + keyword + ".*")}, {customerName: new RegExp(".*" + keyword + ".*")}]}, (err, count) => {
                 BillDao.find({customerId: {$in: customers.map(c => c._id)}}, (err, bills) => {
                     VipDao.find({customerId: {$in: customers.map(c => c._id)}}, (err, vips) => {
