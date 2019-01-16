@@ -40,8 +40,8 @@ export class WarehouseRoute extends React.Component {
     componentDidMount() {
         this.loadData("all").then((products) => {
             this.setState({
-                from: new Date(minBy(products, p => new Date(p.created).getTime()).created),
-                to: new Date(maxBy(products, p => new Date(p.created).getTime()).created)
+                from: new Date(minBy(products.filter(p => p.quantity > 0), p => new Date(p.created).getTime()).created),
+                to: new Date(maxBy(products.filter(p => p.quantity > 0), p => new Date(p.created).getTime()).created)
             })
         });
     }
