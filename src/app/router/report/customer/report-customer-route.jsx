@@ -225,7 +225,7 @@ export class ReportCustomerRoute extends React.Component {
                             className="first-margin"
                             label="Theo"
                             value={viewType}
-                            list={["Số Lần Mua", "Loại", "Màu"]}
+                            list={["Chi Tiêu", "Số Lần Mua", "Loại", "Màu"]}
                             onChange={(viewType) => this.setState({viewType})}
                         />
                     </div>
