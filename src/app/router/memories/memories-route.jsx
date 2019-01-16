@@ -7,6 +7,7 @@ import {premisesInfo} from "../../security/premises-info";
 import {DataTable} from "../../components/data-table/data-table";
 import {ColumnViewMore} from "../../components/column-view-more/column-view-more";
 import {formatNumber, getSalary, getTotalBill} from "../../common/common";
+import {Select} from "../../components/select/select";
 export class MemoriesRoute extends React.Component {
 
     constructor(props) {
@@ -16,7 +17,8 @@ export class MemoriesRoute extends React.Component {
         today.setFullYear(today.getFullYear() - 1);
 
         this.state = {
-            selectedDate: today
+            selectedDate: today,
+            selectedBase: premisesInfo.getActivePremise()._id
         };
 
     }
@@ -47,7 +49,7 @@ export class MemoriesRoute extends React.Component {
 
     render() {
 
-        let {selectedDate, loading, bills, customers} = this.state;
+        let {selectedDate, loading, bills, customers, selectedBase} = this.state;
 
         let columns = [{
             label: "Tên",
@@ -63,7 +65,7 @@ export class MemoriesRoute extends React.Component {
             minWidth: "100"
         }, {
             label: "Mã Đơn Hàng",
-            display: (row) => bills.filter(b => b.customerId == row._id).map((bill, index) => (
+            display: (row) => bills.filter(b => b.customerId == row._id && b.premises_id == selectedBase).map((bill, index) => (
                 <ColumnViewMore
                     key={index}
                     header={bill.bill_number}
@@ -125,6 +127,13 @@ export class MemoriesRoute extends React.Component {
             minWidth: "200"
         }];
 
+        let premises = premisesInfo.getPremises();
+
+        let bases = premises.map((p) => ({
+            value: p._id,
+            label: p.name
+        }));
+
         return (
             <Layout
                 activeRoute="Ngày Này Năm Xưa"
@@ -141,11 +150,20 @@ export class MemoriesRoute extends React.Component {
                             value={selectedDate}
                             onChange={(selectedDate) => this.setState({selectedDate}, () => this.getBills())}
                         />
+
+                        <Select
+                            label="Cơ Sở"
+                            className="first-margin"
+                            value={selectedBase}
+                            list={bases.map(b => b.value)}
+                            displayAs={(base) => bases.find(b => b.value == base).label}
+                            onChange={(selectedBase) => this.setState({selectedBase})}
+                        />
                     </div>
 
                     <DataTable
                         columns={columns}
-                        rows={customers}
+                        rows={customers?.filter(row => bills?.filter(b => b.customerId == row._id && b.premises_id == selectedBase).length > 0)}
                         loading={loading}
                     />
                 </div>
