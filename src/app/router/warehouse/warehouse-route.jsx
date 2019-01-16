@@ -223,6 +223,8 @@ export class WarehouseRoute extends React.Component {
 
         let itemsFiltered = items && items.filter(i => {
 
+            if (i.quantity == 0) return false;
+
             const filterKeyword = (i) => {
                 let keys = ["productID", "name", "unit"];
                 for (let key of keys) {
