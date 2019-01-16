@@ -21,7 +21,7 @@ export class DataTable extends React.Component {
         let {isDesc} = this.state;
         this.setState({
             sortByFunc: column.sortBy,
-            sortIndexCol: index, isDesc: isDesc === null ? true : isDesc === true ? false : null
+            sortIndexCol: index, isDesc: isDesc === null ? false : isDesc === false ? true : null
         });
     }
 
@@ -51,7 +51,7 @@ export class DataTable extends React.Component {
                                     {column.label}
 
                                     {(sortIndexCol == index && isDesc !== null) && (
-                                        <i className={classnames("fa sort-icon", isDesc ? "fa-angle-down" : "fa-angle-up")}/>
+                                        <i className={classnames("fa sort-icon", isDesc ? "fa-angle-up" : "fa-angle-down")}/>
                                     )}
                                 </span>
 
