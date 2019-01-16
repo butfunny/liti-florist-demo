@@ -28,6 +28,7 @@ import {ReportCustomerType} from "./report-customer-type";
 import {ReportCustomerColor} from "./report-customer-color";
 import {ColumnViewMore} from "../../../components/column-view-more/column-view-more";
 import {DataTable} from "../../../components/data-table/data-table";
+import {ReportCustomerSpend} from "./report-customer-spend";
 export class ReportCustomerRoute extends React.Component {
 
     constructor(props) {
@@ -41,7 +42,7 @@ export class ReportCustomerRoute extends React.Component {
             bills: [],
             customers: [],
             vips: [],
-            viewType: "Số Lần Mua",
+            viewType: "Chi Tiêu",
             customersBirth: null
         };
 
@@ -113,6 +114,13 @@ export class ReportCustomerRoute extends React.Component {
         }
 
         const components = {
+            "Chi Tiêu": (
+                <ReportCustomerSpend
+                    bills={bills}
+                    customers={customers}
+                    loading={loading}
+                />
+            ),
             "Số Lần Mua": (
                 <ReportCustomerBuyCount
                     groupedBills={groupedBills}
