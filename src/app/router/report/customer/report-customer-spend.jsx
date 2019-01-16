@@ -61,7 +61,6 @@ export class ReportCustomerSpend extends React.Component {
         },
         width: "33.33%",
         minWidth: "150",
-        sortBy: (row) => sumBy(this.props.bills.filter(b => b.customerId == row._id), b => getTotalBill(b))
     }];
 
     render() {
