@@ -18,11 +18,9 @@ export class ReportCustomerSpend extends React.Component {
         display: (row) => row.customerName,
         width: "33.33%",
         minWidth: "150",
-        sortBy: (row) => row.customerName
     }, {
         label: "Số Điện Thoại",
         display: (row) => row.customerPhone,
-        sortBy: (row) => row.customerPhone,
         width: "33.33%",
         minWidth: "100",
     }, {
