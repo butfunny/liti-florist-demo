@@ -34,7 +34,7 @@ export class ReportDiscountRoute extends React.Component {
     }
 
     getReport() {
-        this.setState({loading: true, bills: [], customers: [], vips: []});
+        this.setState({loading: true});
         let {from, to} = this.state;
         billApi.getReportAll({from, to}).then(({bills, customers, vips, items}) => {
             this.setState({bills, customers, vips, items, loading: false})
