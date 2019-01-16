@@ -19,6 +19,7 @@ import minBy from "lodash/minBy";
 import maxBy from "lodash/maxBy";
 import {DatePicker} from "../../components/date-picker/date-picker";
 import {ColumnViewMore} from "../../components/column-view-more/column-view-more";
+import {PaginationDataTableOffline} from "../../components/data-table/pagination-data-table-offline";
 export class WarehouseRoute extends React.Component {
 
     constructor(props) {
@@ -338,7 +339,7 @@ export class WarehouseRoute extends React.Component {
                             />
                         </div>
 
-                        <DataTable
+                        <PaginationDataTableOffline
                             rows={sortBy(itemsFiltered, i => i.created)}
                             columns={columns}
                         />
