@@ -24,7 +24,7 @@ export class AutoCompleteNormal extends React.Component {
         let {selectedIndex} = this.state;
         let {onSelect, defaultList, value} = this.props;
 
-        const filtered =  defaultList.filter(item => item.toLowerCase().indexOf(value.toLowerCase()) > -1);
+        const filtered =  defaultList.filter(item => item.toLowerCase().indexOf(value.toLowerCase()) > -1).slice(0, 5);
         let index = selectedIndex;
 
         if (e.keyCode == 38) { // Up
@@ -90,7 +90,7 @@ export class AutoCompleteNormal extends React.Component {
 
                 {selected && list.length > 0 && (
                     <div className="dropdown-menu dropdown-menu-center show">
-                        {list.map((item, index) => (
+                        {list.slice(0, 5).map((item, index) => (
                             <a className={classnames("dropdown-item", selectedIndex == index && "active")}
                                onMouseEnter={() => this.setState({selectedIndex: index})}
                                onMouseLeave={() => this.setState({selectedIndex: -1})}

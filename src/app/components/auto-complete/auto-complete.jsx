@@ -32,7 +32,7 @@ export class AutoComplete extends React.Component {
         let {selectedIndex, list} = this.state;
         let {onSelect, objectKey} = this.props;
 
-        const filtered = list;
+        const filtered = list.slice(0, 5);
         let index = selectedIndex;
 
         if (e.keyCode == 38) { // Up
@@ -105,9 +105,9 @@ export class AutoComplete extends React.Component {
                 {loading && <i className="fa fa-spinner fa-pulse"/>}
 
 
-                {!loading && selected && list.slice(0, 10).length > 0 && (
+                {!loading && selected && list.slice(0, 5).length > 0 && (
                     <div className="dropdown-menu">
-                        {list.map((item, index) => (
+                        {list.slice(0, 5).map((item, index) => (
                             <a className={classnames("dropdown-item", selectedIndex == index && "active")}
                                onMouseEnter={() => this.setState({selectedIndex: index})}
                                onMouseLeave={() => this.setState({selectedIndex: -1})}
