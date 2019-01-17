@@ -62,7 +62,8 @@ export class GalleryRoute extends React.Component {
                     )),
                     price: getSubTotalBill(bill),
                     colors: uniq(bill.items.map((item => item.color)).join(", ").split(", ")),
-                    noRemove: true
+                    noRemove: true,
+                    billItems: bill.items
                 }))));
 
                 this.setState({photos: _photos})
@@ -218,6 +219,11 @@ export class GalleryRoute extends React.Component {
                 for (let key of keys) {
                     if (`${i.flowerType || ""}${i[key]}`.toLowerCase().indexOf(keyword.toLowerCase()) > -1) return true;
                 }
+
+                for (let item of (i.billItems || [])) {
+                    if (item.name.toLowerCase().indexOf(keyword.toLowerCase()) > -1) return true;
+                }
+
                 return false;
             };
 
