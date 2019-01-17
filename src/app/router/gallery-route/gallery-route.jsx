@@ -216,7 +216,7 @@ export class GalleryRoute extends React.Component {
             const filterKeyword = (i) => {
                 let keys = ["title"];
                 for (let key of keys) {
-                    if (`${i.flowerType}${i[key]}`.toLowerCase().indexOf(keyword.toLowerCase()) > -1) return true;
+                    if (`${i.flowerType || ""}${i[key]}`.toLowerCase().indexOf(keyword.toLowerCase()) > -1) return true;
                 }
                 return false;
             };
@@ -234,7 +234,7 @@ export class GalleryRoute extends React.Component {
             const filterType = (i) => {
                 if (filteredTypes.length == 0) return true;
                 for (let type of filteredTypes) {
-                    if (i.flowerType.toLowerCase() == type.toLowerCase()) return true;
+                    if (i.flowerType?.toLowerCase() == type.toLowerCase()) return true;
                 }
             };
 
