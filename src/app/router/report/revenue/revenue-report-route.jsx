@@ -171,24 +171,20 @@ export class RevenueReportRoute extends React.Component {
                         />
                     </div>
 
-                    { bills && (
-                        <Fragment>
-                            {viewType == "Cửa Hàng" ? (
-                                <RevenueReportBill
-                                    loading={loading}
-                                    bills={bills}
-                                    lastInitBills={lastInitBills}
-                                    filterType={filterType}
-                                />
-                            ) : (
-                                <ReportEmployee
-                                    loading={loading}
-                                    bills={bills}
-                                    lastInitBills={lastInitBills}
-                                    filterType={filterType}
-                                />
-                            )}
-                        </Fragment>
+                    {viewType == "Cửa Hàng" ? (
+                        <RevenueReportBill
+                            loading={loading}
+                            bills={bills || []}
+                            lastInitBills={lastInitBills}
+                            filterType={filterType}
+                        />
+                    ) : (
+                        <ReportEmployee
+                            loading={loading}
+                            bills={bills || []}
+                            lastInitBills={lastInitBills}
+                            filterType={filterType}
+                        />
                     )}
                 </div>
 
