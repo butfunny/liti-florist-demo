@@ -20,7 +20,7 @@ export class InputTag2 extends React.Component {
         let {list, onChange, tags} = this.props;
         let {selectedIndex, value} = this.state;
 
-        const filtered = list.filter(item => tags.indexOf(item) == -1 && item.toLowerCase().indexOf(value.toLowerCase()) > -1);
+        const filtered = list.filter(item => tags.indexOf(item) == -1 && item.toLowerCase().indexOf(value.toLowerCase()) > -1).slice(0, 5);
         let index = selectedIndex;
 
         if (e.keyCode == 38) { // Up

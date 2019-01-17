@@ -20,7 +20,7 @@ export class InputTag extends React.Component {
         let {list, onChange, tags} = this.props;
         let {selectedIndex, value} = this.state;
 
-        const filtered = list.filter(item => tags.map(u => u.user_id).indexOf(item.user_id) == -1 && item.username.toLowerCase().indexOf(value.toLowerCase()) > -1);
+        const filtered = list.filter(item => tags.map(u => u.user_id).indexOf(item.user_id) == -1 && item.username.toLowerCase().indexOf(value.toLowerCase()) > -1).slice(0, 5);
         let index = selectedIndex;
 
         if (e.keyCode == 38) { // Up
@@ -158,7 +158,7 @@ export class InputTag extends React.Component {
 
                     {selected && filteredList.length > 0 && (
                         <div className="dropdown-menu dropdown-menu-center show">
-                            {filteredList.map((item, index) => (
+                            {filteredList.slice(0, 5).map((item, index) => (
                                 <a className={classnames("dropdown-item", selectedIndex == index && "active")}
                                    onMouseEnter={() => this.setState({selectedIndex: index})}
                                    onMouseLeave={() => this.setState({selectedIndex: -1})}
