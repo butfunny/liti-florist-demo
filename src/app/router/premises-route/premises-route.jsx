@@ -112,10 +112,6 @@ export class PremisesRoute extends React.Component {
                         name: "Sửa",
                         icon: <i className="fa fa-pencil-square-o"/>,
                         click: () => this.editPremises(row)
-                    }, {
-                        name: "Xóa",
-                        icon: <i className="fa fa-trash text-danger"/>,
-                        click: () => this.remove(row)
                     }]}
                 />
             ),
