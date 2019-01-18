@@ -29,9 +29,9 @@ export class BillPrint extends React.Component {
 
         return (
             <div>
-                <span style={{float: "right", fontSize: "14px", marginTop: "10px"}}>
+                <b style={{float: "right", fontSize: "14px", marginTop: "10px"}}>
                                 {premisesInfo.getActivePremise().name}
-                    </span>
+                    </b>
                 <div className="row" style={{marginLeft: "5px"}}>
 
                     <div className="col-md-6 col-xs-7">
