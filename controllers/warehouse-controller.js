@@ -5,6 +5,7 @@ const SubWareHouseDao = require("../dao/subwarehouse-dao");
 const RequestWarehouseDao = require("../dao/request-warehouse-dao");
 const RequestMissingDao = require("../dao/request-missing-dao");
 const FlowersDao = require("../dao/flowers-dao");
+const BillDao = require("../dao/bill-dao");
 
 module.exports = (app) => {
 
@@ -270,11 +271,16 @@ module.exports = (app) => {
         FlowersDao.find({$and: query}, (err, flowers) => {
             WareHouseDao.find({parentID: {$in: flowers.map(f => f._id)}}, (err, products) => {
                 RequestWarehouseDao.find({requestType: "transfer-to-subwarehouse", status: "accepted"}, (err, requests) => {
-                    res.json({
-                        products,
-                        flowers,
-                        requests
-                    })
+                    BillDao.find({"selectedFlower.baseProductID": {$in : products.map(p => p._id)}}, (err, bills) => {
+                        res.json({
+                            products,
+                            flowers,
+                            requests,
+                            bills
+                        })
+                    });
+
+
                 });
             })
         });
@@ -287,10 +293,15 @@ module.exports = (app) => {
 
         FlowersDao.find({$and: query}, (err, flowers) => {
             SubWareHouseDao.find({$and: [{parentID: {$in: flowers.map(f => f._id)}}, {premisesID}]}, (err, products) => {
-                res.json({
-                    products,
-                    flowers
-                })
+                BillDao.find({"selectedFlower.id": {$in : products.map(p => p._id)}, premises_id: premisesID}, (err, bills) => {
+                    res.json({
+                        products,
+                        flowers,
+                        bills
+                    })
+                });
+
+
             })
         });
     });

@@ -33,7 +33,8 @@ export class WarehouseRoute extends React.Component {
             suppliers: [],
             from: null,
             to: null,
-            filteredSuppliers: "all"
+            filteredSuppliers: "all",
+            loading: false
         };
 
         productApi.suppliers().then((suppliers) => this.setState({suppliers}))
@@ -43,15 +44,15 @@ export class WarehouseRoute extends React.Component {
         this.loadData("all").then((products) => {
             this.setState({
                 from: new Date(minBy(products.filter(p => p.quantity > 0), p => new Date(p.created).getTime()).created),
-                to: new Date(maxBy(products.filter(p => p.quantity > 0), p => new Date(p.created).getTime()).created)
+                to: new Date(maxBy(products.filter(p => p.quantity > 0), p => new Date(p.created).getTime()).created),
             })
         });
     }
 
     loadData(baseID) {
-        this.setState({items: null});
+        this.setState({loading: true});
         if (baseID == "all") {
-            return warehouseApi.searchProductInBase("").then(({products, flowers, requests}) => {
+            return warehouseApi.searchProductInBase("").then(({products, flowers, requests, bills}) => {
 
                 const getExported = (product) => {
                     let count = 0;
@@ -65,25 +66,52 @@ export class WarehouseRoute extends React.Component {
                     return count;
                 };
 
+                const getUsed = (product) => {
+                    let count = 0;
 
-                this.setState({items: products.map(p => {
+                    for (let bill of bills) {
+                        for (let item of bill.selectedFlower) {
+                            if (item.baseProductID == product._id) count += item.quantity
+                        }
+                    }
+
+                    return count;
+                };
+
+
+                this.setState({loading: false, items: products.map(p => {
                         let flower = flowers.find(f => f._id == p.parentID);
                         return {
                             ...flower,
                             ...p,
-                            exported: getExported(p)
+                            exported: getExported(p),
+                            used: getUsed(p)
                         }
                     })
                 });
                 return Promise.resolve(products);
             })
         } else {
-            return warehouseApi.searchProductInSubWarehouse({keyword: "", premisesID: baseID}).then(({products, flowers}) => {
-                this.setState({items: products.map(p => {
+            return warehouseApi.searchProductInSubWarehouse({keyword: "", premisesID: baseID}).then(({products, flowers, bills}) => {
+
+                const getUsed = (product) => {
+                    let count = 0;
+
+                    for (let bill of bills) {
+                        for (let item of bill.selectedFlower) {
+                            if (item.id == product._id) count += item.quantity
+                        }
+                    }
+
+                    return count;
+                };
+
+                this.setState({loading: false, items: products.map(p => {
                         let flower = flowers.find(f => f._id == p.parentID);
                         return {
                             ...flower,
-                            ...p
+                            ...p,
+                            used: getUsed(p)
                         }
                     })
                 });
@@ -167,8 +195,8 @@ export class WarehouseRoute extends React.Component {
         }, {
             label: "Đã Bán",
             width: "5%",
-            display: (row) => row.catalog,
-            sortBy: (row) => row.catalog,
+            display: (row) => row.used,
+            sortBy: (row) => row.used,
             minWidth: "100"
         }, {
             label: "Loại",
@@ -203,7 +231,7 @@ export class WarehouseRoute extends React.Component {
         }];
 
 
-        let {selectedBase, keyword, filteredColors, filteredTypes, items, from, to, filteredSuppliers, suppliers} = this.state;
+        let {selectedBase, keyword, filteredColors, filteredTypes, items, from, to, filteredSuppliers, suppliers, loading} = this.state;
 
 
         let bases = [{
@@ -345,6 +373,7 @@ export class WarehouseRoute extends React.Component {
                         <PaginationDataTableOffline
                             rows={sortBy(itemsFiltered, i => i.created)}
                             columns={columns}
+                            loading={loading}
                         />
                     </div>
                 </div>
