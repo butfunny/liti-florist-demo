@@ -121,7 +121,13 @@ export class RequestWarehouseRoute extends React.Component {
         let columns = [{
             label: "Thời gian",
             width: "20%",
-            display: (row) => moment(row.created).format("DD/MM/YYYY HH:mm"),
+            display: (row) => (
+                <div>
+                    {moment(row.created).format("DD/MM/YYYY HH:mm")}
+                    <br/>
+                     <span style={{fontSize: "11px"}}>Hạn Sử Dụng: {moment(row.expireDate).format("DD/MM/YYYY")}</span>
+                </div>
+            ),
             minWidth: "150",
             sortKey: "created"
         }, {

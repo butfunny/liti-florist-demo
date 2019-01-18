@@ -31,7 +31,8 @@ export class RequestFromSupplier extends React.Component {
                 items: [],
                 requestName: "",
                 receivedName: "",
-                created: new Date()
+                created: new Date(),
+                expireDate: new Date()
             },
             productID: ""
         };
@@ -109,7 +110,8 @@ export class RequestFromSupplier extends React.Component {
                     items: [],
                     requestName: "",
                     receivedName: "",
-                    created: request.created
+                    created: request.created,
+                    expireDate: new Date()
                 }
             })
         })
@@ -277,6 +279,13 @@ export class RequestFromSupplier extends React.Component {
                                     onChange={(deliverTime) => this.setState({request: {...request, created: deliverTime}})}
                                 />
                             </div>
+
+                            <DatePicker
+                                className="col"
+                                label="Hạn Sử Dụng"
+                                value={request.expireDate}
+                                onChange={(deliverTime) => this.setState({request: {...request, expireDate: deliverTime}})}
+                            />
 
 
                             <AutoComplete
