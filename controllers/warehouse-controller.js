@@ -307,4 +307,17 @@ module.exports = (app) => {
     });
 
 
+    app.post("/warehouse/report-supplier", Security.authorDetails, (req, res) => {
+        BillDao.find({$or: [{deliverTime: {$gte: req.body.from, $lt: req.body.to}, oldData: false}, {created: {$gte: req.body.from, $lt: req.body.to}, oldData: false}]}, (err, bills) => {
+            res.json(bills)
+        });
+    });
+
+    app.post("/warehouse/report-all-items", Security.authorDetails, (req, res) => {
+        RequestWarehouseDao.find({}, (err, requests) => {
+            FlowersDao.find({}, (err, flowers) => {
+                res.json({requests, flowers})
+            })
+        })
+    })
 };
