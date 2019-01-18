@@ -60,5 +60,13 @@ module.exports = mongoose.model('BillDao', {
     },
     image: String,
     reason: String,
-    selectedFlower: [JSON],
+    selectedFlower: [{
+        baseProductID: String,
+        oriPrice: String,
+        id: String,
+        parentID: String,
+        price: Number,
+        quantity: Number,
+        supplierID: String
+    }],
 }, "bills");

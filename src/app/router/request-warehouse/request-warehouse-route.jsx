@@ -125,7 +125,7 @@ export class RequestWarehouseRoute extends React.Component {
                 <div>
                     {moment(row.created).format("DD/MM/YYYY HH:mm")}
                     <br/>
-                     <span style={{fontSize: "11px"}}>Hạn Sử Dụng: {moment(row.expireDate).format("DD/MM/YYYY")}</span>
+                    {row.expireDate && <span style={{fontSize: "11px"}}>Hạn Sử Dụng: {moment(row.expireDate).format("DD/MM/YYYY")}</span>}
                 </div>
             ),
             minWidth: "150",

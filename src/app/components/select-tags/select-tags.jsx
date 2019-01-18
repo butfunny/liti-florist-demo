@@ -14,7 +14,7 @@ export class SelectTags extends React.Component {
 
     render() {
 
-        let {placeholder, tags, isErrorTag, list, onChange, noPlaceholder, label, error, className} = this.props;
+        let {placeholder, tags, isErrorTag, list, onChange, noPlaceholder, label, error, className, displayAs} = this.props;
         let {selected, value, selectedIndex, selectedTag, focus} = this.state;
 
         return (

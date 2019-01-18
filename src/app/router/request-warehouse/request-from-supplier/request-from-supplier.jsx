@@ -99,10 +99,11 @@ export class RequestFromSupplier extends React.Component {
 
         warehouseApi.createRequest({
             ...request,
-            items: request.items.map(item => ({supplierID: request.supplierID, created: request.created, ...pick(item, ["parentID", "oriPrice", "price", "quantity"])})),
+            items: request.items.map(item => ({supplierID: request.supplierID, created: request.created, expireDate: request.expireDate, ...pick(item, ["parentID", "oriPrice", "price", "quantity"])})),
             requestType: "request-from-supplier",
             created: request.created,
-            status: "pending"
+            status: "pending",
+            expireDate: request.expireDate
         }).then(() => {
             confirmModal.alert("Gửi phiếu thành công");
             this.setState({

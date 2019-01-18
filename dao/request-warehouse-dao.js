@@ -11,5 +11,6 @@ module.exports = mongoose.model('RequestWarehouseDao', {
     reason: String,
     requestType: String,
     supplierID: String,
-    premisesID: String
+    premisesID: String,
+    expireDate: Date
 }, "request_warehouse");

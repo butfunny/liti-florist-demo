@@ -32,7 +32,8 @@ export class WarehouseRoute extends React.Component {
             filteredTypes: [],
             suppliers: [],
             from: null,
-            to: null
+            to: null,
+            filteredSuppliers: "all"
         };
 
         productApi.suppliers().then((suppliers) => this.setState({suppliers}))
@@ -76,47 +77,6 @@ export class WarehouseRoute extends React.Component {
         }
     }
 
-    // handleChangeInput(e) {
-    //     if (e.target.files[0]) {
-    //         readXlsxFile(e.target.files[0]).then((rows) => {
-    //             if (rows[0] && isEqual(["Mã", "Tên hàng", "Danh mục", "Đơn vị tính", "Số lượng", "Giá gốc", "Giá bán", "Màu sắc", "Nhà cung cấp", "Xuất xứ"], rows[0])) {
-    //                 this.setState({uploading: true});
-    //
-    //                 const upload = (index) => {
-    //                     if (index == rows.length - 1) {
-    //                         this.setState({uploading: false});
-    //                         confirmModal.alert(`Thêm thành công ${rows.length - 1} sản phẩm`);
-    //                         warehouseApi.getItems().then(({warehouseItems, subWarehouseItems}) => {
-    //                             this.setState({items: warehouseItems, subWarehouseItems, loading: false})
-    //                         })
-    //                     } else {
-    //                         let item = rows[index];
-    //                         warehouseApi.createItem({
-    //                             productId: item[0],
-    //                             name: item[1],
-    //                             catalog: item[2],
-    //                             unit: item[3],
-    //                             oriPrice: item[5],
-    //                             price: item[6],
-    //                             quantity: item[4],
-    //                             color: item[7],
-    //                             supplier: item[8],
-    //                             country: item[9]
-    //                         }).then(() => {
-    //                             upload(index + 1)
-    //                         })
-    //                     }
-    //                 };
-    //
-    //                 upload(1);
-    //
-    //             } else {
-    //                 confirmModal.alert("Sai định dạng file");
-    //             }
-    //         })
-    //     }
-    // }
-
     render() {
 
 
@@ -124,9 +84,15 @@ export class WarehouseRoute extends React.Component {
 
         let columns = [{
             label: "Ngày Nhập Kho",
-            width: "10%",
+            width: "5%",
             display: (row) => moment(row.created).format("DD/MM/YYYY hh:MM"),
             sortBy: (row) => row.created,
+            minWidth: "150"
+        }, {
+            label: "Hạn Sử Dụng",
+            width: "5%",
+            display: (row) => row.expireDate && moment(row.expireDate).format("DD/MM/YYYY hh:MM"),
+            sortBy: (row) => row.expireDate,
             minWidth: "150"
         }, {
             label: "Tên",
@@ -210,7 +176,7 @@ export class WarehouseRoute extends React.Component {
         }];
 
 
-        let {selectedBase, keyword, filteredColors, filteredTypes, items, from, to} = this.state;
+        let {selectedBase, keyword, filteredColors, filteredTypes, items, from, to, filteredSuppliers, suppliers} = this.state;
 
 
         let bases = [{
@@ -223,15 +189,17 @@ export class WarehouseRoute extends React.Component {
 
 
         let itemsFiltered = items && items.filter(i => {
-
-            if (i.quantity == 0) return false;
-
             const filterKeyword = (i) => {
                 let keys = ["productID", "name", "unit"];
                 for (let key of keys) {
                     if (i[key].toLowerCase().indexOf(keyword.toLowerCase()) > -1) return true;
                 }
                 return false;
+            };
+
+            const filterSupplier = (i) => {
+                if (filteredSuppliers == "all") return true;
+                return filteredSuppliers == i.supplierID
             };
 
             const filterColor = (i) => {
@@ -262,7 +230,7 @@ export class WarehouseRoute extends React.Component {
             };
 
 
-            return filterKeyword(i) && filterType(i) && filterColor(i) && filterDateTime(i);
+            return filterKeyword(i) && filterType(i) && filterColor(i) && filterDateTime(i) && filterSupplier(i);
         });
 
         return (
@@ -327,6 +295,14 @@ export class WarehouseRoute extends React.Component {
                                     </div>
                                 </div>
                             )}
+
+                            <Select
+                                label="Lọc Theo Nhà Cung Cấp"
+                                value={filteredSuppliers}
+                                onChange={(filteredSuppliers) => this.setState({filteredSuppliers})}
+                                list={[{_id: "all", name: "Tất Cả"}, ...suppliers].map(s => s._id)}
+                                displayAs={(id) => [{_id: "all", name: "Tất Cả"}, ...suppliers].find(s => s._id == id)?.name}
+                            />
 
 
 
