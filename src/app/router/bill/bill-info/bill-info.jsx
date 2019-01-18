@@ -242,7 +242,7 @@ export class BillInfo extends React.Component {
 
 
                 <Input
-                    label="Nội Đung Thiệp"
+                    label="Nội Dung Thiệp"
                     textArea
                     value={to.cardContent}
                     onChange={(e) => onChange({...to, cardContent: e.target.value})}

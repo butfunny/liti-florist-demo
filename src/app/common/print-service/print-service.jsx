@@ -15,7 +15,7 @@ export const PrintService = {
                 <link href="/assets/css/style.css" rel="stylesheet" type="text/css"/>
             </head>
             
-            <body>
+            <body style="background: white; color: black">
                 ${$container[0].outerHTML}
             </body>
             </html>

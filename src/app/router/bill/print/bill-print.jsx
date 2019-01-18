@@ -1,7 +1,7 @@
 import React, {Fragment} from "react";
 import {formatNumber, getTotalBill} from "../../../common/common";
 import moment from "moment";
-import {premisesAllInfo} from "../../../security/premises-info";
+import {premisesAllInfo, premisesInfo} from "../../../security/premises-info";
 import sumBy from "lodash/sumBy";
 
 export class BillPrint extends React.Component {
@@ -29,11 +29,17 @@ export class BillPrint extends React.Component {
 
         return (
             <div>
+                <span style={{float: "right", fontSize: "10px", marginTop: "10px"}}>
+                                {premisesInfo.getActivePremise().name}
+                    </span>
                 <div className="row" style={{marginLeft: "5px"}}>
+
                     <div className="col-md-6 col-xs-7">
                         <div className="row">
                             <img src="/assets/img/liti-logo.png" style={{width: "70px", height: "70px", marginLeft: "10px"}}/>
                         </div>
+
+
                         <div className="row" style={{marginTop: "5px"}}>
                             <span style={{fontSize: "10px"}}>
 
