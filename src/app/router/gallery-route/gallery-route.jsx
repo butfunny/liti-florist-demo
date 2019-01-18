@@ -23,6 +23,7 @@ import {catalogs} from "../../common/constance";
 import {Input} from "../../components/input/input";
 const regexBreakLine = /(?:\r\n|\r|\n)/g;
 import uniq from "lodash/uniq";
+
 export class GalleryRoute extends React.Component {
 
     constructor(props) {
@@ -292,11 +293,14 @@ export class GalleryRoute extends React.Component {
                         />
                     </div>
 
+
+
                     <DataTable
                         rows={itemsFiltered}
                         columns={columns}
                     />
                 </div>
+
 
 
 

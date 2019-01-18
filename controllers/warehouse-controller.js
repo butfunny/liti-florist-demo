@@ -57,12 +57,20 @@ module.exports = (app) => {
             if (request.requestType == "request-from-supplier") {
                 let promises = [];
 
+                const createItem = (item) => {
+                    return new Promise((resolve, reject)=>{
+                        WareHouseDao.create(item, () => {
+                            resolve();
+                        })
+                    })
+                };
+
                 for (let item of request.items) {
-                    promises.push(WareHouseDao.create(item))
+                    promises.push(createItem(item))
                 }
 
                 Promise.all(promises).then(() => {
-                    RequestWarehouseDao.updateOne({_id: req.params.id}, {status: "accepted"}, () => {
+                    RequestWarehouseDao.findOneAndUpdate({_id: request._id}, {status: "accepted"}, () => {
                         res.end();
                     })
                 })
@@ -82,7 +90,16 @@ module.exports = (app) => {
 
                     for (let item of items) {
                         let requestItem = request.items.find(i => i.id == item._id);
-                        promises.push(WareHouseDao.updateOne({_id: item._id}, {quantity: item.quantity - requestItem.quantity}))
+
+                        const updateItem = () => {
+                            return new Promise((resolve, reject)=>{
+                                WareHouseDao.updateOne({_id: item._id}, {quantity: item.quantity - requestItem.quantity}, () => {
+                                    resolve();
+                                })
+                            })
+                        };
+
+                        promises.push(updateItem())
                     }
 
                     Promise.all(promises).then(() => {
