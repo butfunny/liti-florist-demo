@@ -125,6 +125,10 @@ export const permissions = [{
     label: "Xoá Chiến Dịch",
     father: "Khuyến Mại"
 }, {
+    value: "warehouse.manage-supplier",
+    label: "Quản Lý Nhà Cung Cấp",
+    father: "Kho"
+}, {
     value: "warehouse.products.view",
     label: "Xem Danh Sách Sản Phẩm",
     father: "Kho"

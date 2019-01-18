@@ -123,7 +123,7 @@ export const navItems = (user) => {
         }, {
             label: "Quản Lý Nhà Cung Cấp",
             to: "/manage-supplier",
-            hide: () => user.role != "admin"
+            hide: () => !security.isHavePermission(["warehouse.manage-supplier"])
         }, {
             to: "/manage-role",
             label: "Phân Quyền",
