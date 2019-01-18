@@ -242,6 +242,10 @@ export class GalleryRoute extends React.Component {
                 for (let type of filteredTypes) {
                     if (i.flowerType?.toLowerCase() == type.toLowerCase()) return true;
                 }
+
+                for (let item of (i.billItems || [])) {
+                    if (filteredTypes.indexOf(item.flowerType) > -1) return true;
+                }
             };
 
             return filterKeyword(i) && filterType(i) && filterColor(i);
