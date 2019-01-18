@@ -21,6 +21,7 @@ import {SelectTagsColor} from "../../components/select-tags-color/select-tags-co
 import {SelectTags} from "../../components/select-tags/select-tags";
 import {catalogs} from "../../common/constance";
 import {Input} from "../../components/input/input";
+
 const regexBreakLine = /(?:\r\n|\r|\n)/g;
 import uniq from "lodash/uniq";
 
@@ -35,7 +36,6 @@ export class GalleryRoute extends React.Component {
             types: [],
             keyword: ""
         };
-
 
 
         photosApi.getPhotos().then(({photos, flowers}) => {
@@ -124,7 +124,7 @@ export class GalleryRoute extends React.Component {
         let columns = [{
             label: "Ảnh",
             width: "10%",
-            display: (row) => <div className="product-image"><ImgPreview src={row.url} /></div>,
+            display: (row) => <div className="product-image"><ImgPreview src={row.url}/></div>,
             minWidth: "100"
         }, {
             label: "Tên",
@@ -169,7 +169,7 @@ export class GalleryRoute extends React.Component {
                                     Đơn Vị Tính: {product.unit}
                                 </div>
 
-                                { product.lengthiness && (
+                                {product.lengthiness && (
                                     <div className="info-item">
                                         Chiều Dài Cành Hoa: {product.lengthiness}
                                     </div>
@@ -206,7 +206,9 @@ export class GalleryRoute extends React.Component {
         }, {
             label: "",
             width: "5%",
-            display: (row) => security.isHavePermission(["gallery"]) && !row.noRemove && <button className="btn btn-danger btn-small" onClick={() => this.remove(row)}><i className="fa fa-trash"/></button>,
+            display: (row) => security.isHavePermission(["gallery"]) && !row.noRemove &&
+                <button className="btn btn-danger btn-small" onClick={() => this.remove(row)}><i
+                    className="fa fa-trash"/></button>,
             sortBy: (row) => row.flowerType,
             minWidth: "50"
         }];
@@ -255,56 +257,156 @@ export class GalleryRoute extends React.Component {
         return (
             <Layout activeRoute="Kho Ảnh">
 
-                <div className="card gallery-route warehouse-route products-route">
-                    <div className="card-title">
-                        Kho Ảnh
-                    </div>
-
-                    <div className="card-body">
-
-                        {security.isHavePermission(["gallery"]) && <button type="button" className="btn btn-primary" onClick={() => this.addPhoto()}>Thêm ảnh</button>}
-
-                        <div className="filter-wrapper">
-                            <div className="filter-col">
-                                <SelectTagsColor
-                                    label="Lọc Theo Màu"
-                                    tags={filteredColors}
-                                    onChange={(filteredColors) => this.setState({filteredColors})}
-                                />
-                            </div>
-
-                            <div className="filter-col">
-                                <SelectTags
-                                    label="Lọc Theo Loại"
-                                    tags={filteredTypes}
-                                    onChange={(filteredTypes) => this.setState({filteredTypes})}
-                                    list={types}
-                                    placeholder="Chọn Loại"
-                                />
-                            </div>
+                <div className="gallery-route">
+                    <div className="card  warehouse-route products-route">
+                        <div className="card-title">
+                            Kho Ảnh
                         </div>
 
-                        <Input
-                            style={{marginBottom: "5px", marginTop: "24px"}}
-                            value={keyword}
-                            onChange={(e) => this.setState({keyword: e.target.value})}
-                            label="Tìm kiếm"
-                            info="Tên, mã, đơn vị tính"
-                        />
+                        <div className="card-body">
+
+                            {security.isHavePermission(["gallery"]) &&
+                            <button type="button" className="btn btn-primary" onClick={() => this.addPhoto()}>Thêm
+                                ảnh</button>}
+
+                            <div className="filter-wrapper">
+                                <div className="filter-col">
+                                    <SelectTagsColor
+                                        label="Lọc Theo Màu"
+                                        tags={filteredColors}
+                                        onChange={(filteredColors) => this.setState({filteredColors})}
+                                    />
+                                </div>
+
+                                <div className="filter-col">
+                                    <SelectTags
+                                        label="Lọc Theo Loại"
+                                        tags={filteredTypes}
+                                        onChange={(filteredTypes) => this.setState({filteredTypes})}
+                                        list={types}
+                                        placeholder="Chọn Loại"
+                                    />
+                                </div>
+                            </div>
+
+                            <Input
+                                style={{marginBottom: "5px", marginTop: "24px"}}
+                                value={keyword}
+                                onChange={(e) => this.setState({keyword: e.target.value})}
+                                label="Tìm kiếm"
+                                info="Tên, mã, đơn vị tính"
+                            />
+                        </div>
+
                     </div>
 
-
-
-                    <DataTable
-                        rows={itemsFiltered}
-                        columns={columns}
-                    />
+                    <div className="row">
+                        {itemsFiltered.map((row, index) => (
+                            <div className="col" key={index}>
+                                <ImageCard
+                                    row={row}
+                                />
+                            </div>
+                        ))}
+                    </div>
                 </div>
-
-
-
 
             </Layout>
         );
+    }
+}
+
+class ImageCard extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            open: false
+        }
+    }
+
+    render() {
+
+        let {row} = this.props;
+        let {open} = this.state;
+
+        return (
+            <div className="card">
+                <ImgPreview src={row.url}/>
+                <div className="card-title">
+                    <div className="color-wrapper">
+                        {row.colors.map((color, index) => (
+                            <div
+                                key={index}
+                                style={{
+                                    background: color,
+                                    height: "15px",
+                                    width: "25px",
+                                    display: "inline-block",
+                                    marginRight: "5px",
+                                    border: "1px solid #dedede"
+                                }}
+                            />
+                        ))}
+                    </div>
+
+                    { row.items.length > 0 && (
+                        <div className="more-info" onClick={() => this.setState({open: !open})}>
+                            { open ? "Ẩn" : "Chi tiết"}
+                        </div>
+                    )}
+                </div>
+
+                { open && (
+                    <div className="card-body">
+                        { row.items.map((product, index) => {
+                            return (
+                                <ColumnViewMore
+                                    key={index}
+                                    header={
+                                        <div className="product-name">
+                                            <ImgPreview src={product.image}/> {product.quantity} - {product.name}
+                                        </div>
+                                    }
+                                    renderViewMoreBody={() => (
+                                        <Fragment>
+                                            <div className="info-item">
+                                                {product.productID} - {product.catalog}
+                                            </div>
+
+                                            <div className="info-item">
+                                                Màu:
+                                                {product.colors.map((color, index) => (
+                                                    <div key={index}
+                                                         style={{
+                                                             background: color,
+                                                             height: "15px",
+                                                             width: "25px",
+                                                             display: "inline-block",
+                                                             marginLeft: "5px"
+                                                         }}
+                                                    />
+                                                ))}
+                                            </div>
+
+                                            <div className="info-item">
+                                                Đơn Vị Tính: {product.unit}
+                                            </div>
+
+                                            {product.lengthiness && (
+                                                <div className="info-item">
+                                                    Chiều Dài Cành Hoa: {product.lengthiness}
+                                                </div>
+                                            )}
+                                        </Fragment>
+                                    )}
+                                    viewMoreText="Chi Tiết"
+                                    isShowViewMoreText
+                                />
+                            )
+                        }) }
+                    </div>
+                )}
+            </div>
+        )
     }
 }
