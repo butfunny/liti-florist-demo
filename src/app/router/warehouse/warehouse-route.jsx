@@ -51,12 +51,27 @@ export class WarehouseRoute extends React.Component {
     loadData(baseID) {
         this.setState({items: null});
         if (baseID == "all") {
-            return warehouseApi.searchProductInBase("").then(({products, flowers}) => {
+            return warehouseApi.searchProductInBase("").then(({products, flowers, requests}) => {
+
+                const getExported = (product) => {
+                    let count = 0;
+
+                    for (let request of requests) {
+                        for (let item of request.items) {
+                            if (item.id == product._id) count += item.quantity
+                        }
+                    }
+
+                    return count;
+                };
+
+
                 this.setState({items: products.map(p => {
                         let flower = flowers.find(f => f._id == p.parentID);
                         return {
                             ...flower,
-                            ...p
+                            ...p,
+                            exported: getExported(p)
                         }
                     })
                 });
@@ -142,10 +157,22 @@ export class WarehouseRoute extends React.Component {
             width: "5%",
             display: (row) => row.quantity,
             sortBy: (row) => row.quantity,
-            minWidth: "50"
+            minWidth: "100"
+        }, {
+            label: "Xuất",
+            width: "5%",
+            display: (row) => row.exported,
+            sortBy: (row) => row.exported,
+            minWidth: "100"
+        }, {
+            label: "Đã Bán",
+            width: "5%",
+            display: (row) => row.catalog,
+            sortBy: (row) => row.catalog,
+            minWidth: "100"
         }, {
             label: "Loại",
-            width: "15%",
+            width: "5%",
             display: (row) => row.catalog,
             sortBy: (row) => row.catalog,
             minWidth: "100"

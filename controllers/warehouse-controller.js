@@ -269,10 +269,13 @@ module.exports = (app) => {
 
         FlowersDao.find({$and: query}, (err, flowers) => {
             WareHouseDao.find({parentID: {$in: flowers.map(f => f._id)}}, (err, products) => {
-                res.json({
-                    products,
-                    flowers
-                })
+                RequestWarehouseDao.find({requestType: "transfer-to-subwarehouse", status: "accepted"}, (err, requests) => {
+                    res.json({
+                        products,
+                        flowers,
+                        requests
+                    })
+                });
             })
         });
     });
