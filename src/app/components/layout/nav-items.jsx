@@ -61,6 +61,10 @@ export const navItems = (user) => {
             label: "Khuyến Mại",
             to: "/report-discount",
             hide: () => permission[user.role].indexOf("report.report-promotion") == -1
+        }, {
+            label: "Nhà Cung Cấp",
+            to: "/report-supplier",
+            hide: () => !security.isHavePermission(["report.report-supplier"])
         }],
         hide: () => !permission[user.role].find(r => r.indexOf("report") > -1)
     }, {

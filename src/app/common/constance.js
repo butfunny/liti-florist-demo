@@ -97,6 +97,10 @@ export const permissions = [{
     label: "Báo cáo chiến dịch khuyến mại",
     father: "Báo Cáo"
 }, {
+    value: "report.report-supplier",
+    label: "Báo cáo nhà cung cấp",
+    father: "Báo Cáo"
+}, {
     value: "gallery",
     label: "Tải ảnh vào kho ảnh",
     father: "Kho Ảnh"

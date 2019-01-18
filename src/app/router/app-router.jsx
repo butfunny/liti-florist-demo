@@ -35,6 +35,7 @@ import {TransferToSubWarehouse} from "./request-warehouse/transfer-to-subwarehou
 import {ReturnToBaseRoute} from "./request-warehouse/return-to-base/return-to-base";
 import {ReportFlower} from "./request-warehouse/report-flower/report-flower";
 import {MemoriesRoute} from "./memories/memories-route";
+import {ReportSupplier} from "./report/supplier/report-supplier";
 export class AppRouter extends React.Component {
 
     constructor(props) {
@@ -83,6 +84,7 @@ export class AppRouter extends React.Component {
                     <Route exact path="/report-customer" component={requireAuthen(ReportCustomerRoute)} />
                     <Route exact path="/report-discount" component={requireAuthen(ReportDiscountRoute)} />
                     <Route exact path="/report-bill" component={requireAuthen(ReportBillRoute)} />
+                    <Route exact path="/report-supplier" component={requireAuthen(ReportSupplier)} />
                     <Route exact path="/gallery" component={requireAuthen(GalleryRoute)} />
                     <Route exact path="/manage-role" component={requireAuthenAdmin(ManageRole)} />
                     <Route exact path="/setting" component={requireAuthen(SettingRoute)} />

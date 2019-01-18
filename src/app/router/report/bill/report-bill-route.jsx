@@ -83,16 +83,6 @@ export class ReportBillRoute extends React.Component {
     render() {
         let {loading, from, to, bills, viewType, types, colors, sales, florists, ships, customers} = this.state;
 
-        const user = userInfo.getUser();
-        const permission = permissionInfo.getPermission();
-
-        if (permission[user.role].indexOf("report.report-bill") == -1) {
-            return (
-                <Layout activeRoute="Báo Cáo">
-                    <PermissionDenie />
-                </Layout>
-            )
-        }
 
         const components = {
             "Đơn Huỷ": (
