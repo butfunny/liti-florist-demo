@@ -7,11 +7,14 @@ import sum from "lodash/sum";
 import {premisesInfo} from "../../../security/premises-info";
 import {DataTable} from "../../../components/data-table/data-table";
 import {PaginationDataTableOffline} from "../../../components/data-table/pagination-data-table-offline";
+import {getCSVData} from "../../order/excel";
+import {CSVLink} from "react-csv";
 export class ReportCustomerSpend extends React.Component {
 
     constructor(props) {
         super(props);
     }
+
 
     columns = [{
         label: "Tên",
@@ -65,16 +68,52 @@ export class ReportCustomerSpend extends React.Component {
 
         let {customers, bills, loading} = this.props;
 
+        const getCSVData = () => {
+            let header = [
+                "Tên",
+                "Số Điện Thoại",
+                "Tổng Chi"
+            ];
 
+            let csvData = [header];
+
+
+            for (let customer of customers) {
+                csvData.push([
+                    customer.customerName,
+                    customer.customerPhone,
+                    sumBy(this.props.bills.filter(b => b.customerId == customer._id), b => getTotalBill(b))
+                ])
+            }
+
+            return csvData;
+        };
 
 
 
         return (
-            <PaginationDataTableOffline
-                loading={loading}
-                rows={sortBy(customers, row => -sumBy(bills.filter(b => b.customerId == row._id), b => getTotalBill(b)))}
-                columns={this.columns}
-            />
+            <div className="customer-spend-report">
+
+                <div className="export-to-csv">
+                    { !loading && (
+                        <CSVLink
+                            data={getCSVData()}
+                            filename={"bao-cao-chi-tieu-khach-hang.csv"}
+                            className="btn btn-primary btn-small">
+                            <span className="btn-text">Xuất Excel</span>
+                            <span className="loading-icon"><i className="fa fa-file-excel-o"/></span>
+                        </CSVLink>
+                    )}
+
+                </div>
+
+
+                <PaginationDataTableOffline
+                    loading={loading}
+                    rows={sortBy(customers, row => -sumBy(bills.filter(b => b.customerId == row._id), b => getTotalBill(b)))}
+                    columns={this.columns}
+                />
+            </div>
         );
     }
 }
