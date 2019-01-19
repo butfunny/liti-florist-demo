@@ -20,6 +20,8 @@ import maxBy from "lodash/maxBy";
 import {DatePicker} from "../../components/date-picker/date-picker";
 import {ColumnViewMore} from "../../components/column-view-more/column-view-more";
 import {PaginationDataTableOffline} from "../../components/data-table/pagination-data-table-offline";
+import {AutoCompleteNormal} from "../../components/auto-complete/auto-complete-normal";
+import uniq from "lodash/uniq";
 export class WarehouseRoute extends React.Component {
 
     constructor(props) {
@@ -255,13 +257,16 @@ export class WarehouseRoute extends React.Component {
                 for (let key of keys) {
                     if (i[key].toLowerCase().indexOf(keyword.toLowerCase()) > -1) return true;
                 }
-                return false;
+
+                let supplierName = suppliers.find(s => s._id == i.supplierID).name;
+                return supplierName.toLowerCase().indexOf(keyword.toLowerCase()) > -1;
+
             };
 
-            const filterSupplier = (i) => {
-                if (filteredSuppliers == "all") return true;
-                return filteredSuppliers == i.supplierID
-            };
+            // const filterSupplier = (i) => {
+            //     if (filteredSuppliers == "all") return true;
+            //     return filteredSuppliers == i.supplierID
+            // };
 
             const filterColor = (i) => {
                 if (filteredColors.length == 0) return true;
@@ -291,7 +296,7 @@ export class WarehouseRoute extends React.Component {
             };
 
 
-            return filterKeyword(i) && filterType(i) && filterColor(i) && filterDateTime(i) && filterSupplier(i);
+            return filterKeyword(i) && filterType(i) && filterColor(i) && filterDateTime(i);
         });
 
         return (
@@ -357,14 +362,6 @@ export class WarehouseRoute extends React.Component {
                                 </div>
                             )}
 
-                            <Select
-                                label="Lọc Theo Nhà Cung Cấp"
-                                value={filteredSuppliers}
-                                onChange={(filteredSuppliers) => this.setState({filteredSuppliers})}
-                                list={[{_id: "all", name: "Tất Cả"}, ...suppliers].map(s => s._id)}
-                                displayAs={(id) => [{_id: "all", name: "Tất Cả"}, ...suppliers].find(s => s._id == id)?.name}
-                            />
-
 
 
                             <Input
@@ -372,7 +369,7 @@ export class WarehouseRoute extends React.Component {
                                 value={keyword}
                                 onChange={(e) => this.setState({keyword: e.target.value})}
                                 label="Tìm kiếm"
-                                info="Tên, mã, đơn vị tính"
+                                info="Tên, mã, đơn vị tính, ncc"
                             />
                         </div>
 
