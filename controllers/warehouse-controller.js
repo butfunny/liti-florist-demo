@@ -27,10 +27,8 @@ module.exports = (app) => {
     app.get("/warehouse/detail-request/:id", Security.authorDetails, (req, res) => {
         RequestWarehouseDao.findOne({_id: req.params.id}, (err, request) => {
             if (request.requestType == "request-from-supplier") {
-                WareHouseDao.find({parentID: {$in: request.items.map(i => i.parentID)}}, (err, flowersInWarehouse) => {
-                    res.json({
-                        flowersInWarehouse
-                    })
+                res.json({
+                    flowersInWarehouse: []
                 })
             }
 
@@ -59,7 +57,16 @@ module.exports = (app) => {
 
                 const createItem = (item) => {
                     return new Promise((resolve, reject)=>{
-                        WareHouseDao.create(item, () => {
+                        WareHouseDao.create({
+                            importedQuantity : item.quantity,
+                            supplierID: item.supplierID,
+                            created: item.created,
+                            expireDate: item.expireDate,
+                            parentID: item.parentID,
+                            oriPrice: item.oriPrice,
+                            price: item.price,
+                            quantity: item.quantity
+                        }, (err, item) => {
                             resolve();
                         })
                     })

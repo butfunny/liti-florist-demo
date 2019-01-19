@@ -7,5 +7,6 @@ module.exports = mongoose.model('WarehouseDao', {
     price: Number,
     oriPrice: Number,
     created: Date,
-    expireDate: Date
+    expireDate: Date,
+    importedQuantity: Number
 }, "warehouse");

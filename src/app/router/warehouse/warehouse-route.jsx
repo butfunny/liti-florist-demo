@@ -181,6 +181,12 @@ export class WarehouseRoute extends React.Component {
             sortBy: (row) => row.name,
             minWidth: "250"
         }, {
+            label: "Đã Nhập",
+            width: "5%",
+            display: (row) => row.importedQuantity,
+            sortBy: (row) => row.importedQuantity,
+            minWidth: "100"
+        }, {
             label: "Tồn",
             width: "5%",
             display: (row) => row.quantity,

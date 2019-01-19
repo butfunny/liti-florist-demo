@@ -8,7 +8,8 @@ module.exports = mongoose.model('RequestWarehouseDao', {
         oriPrice: Number,
         price: Number,
         quantity: Number,
-        id: String
+        id: String,
+        importedQuantity: Number
     }],
     toWarehouse: String,
     fromWarehouse: String,
