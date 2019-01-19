@@ -67,12 +67,20 @@ export class ReportCustomerSpend extends React.Component {
     render() {
 
         let {customers, bills, loading} = this.props;
+        let premises = premisesInfo.getPremises();
+
+        const getPayOfPremises = (customerId, premises_id) => {
+            const customerBills = this.props.bills.filter(b => b.customerId == customerId && b.premises_id == premises_id);
+            return sum(customerBills.map(b => getTotalBill(b)))
+        };
+
 
         const getCSVData = () => {
             let header = [
                 "Tên",
                 "Số Điện Thoại",
-                "Tổng Chi"
+                "Tổng Chi",
+                ...premises.map(p => p.name)
             ];
 
             let csvData = [header];
@@ -82,7 +90,8 @@ export class ReportCustomerSpend extends React.Component {
                 csvData.push([
                     customer.customerName,
                     customer.customerPhone,
-                    sumBy(this.props.bills.filter(b => b.customerId == customer._id), b => getTotalBill(b))
+                    sumBy(this.props.bills.filter(b => b.customerId == customer._id), b => getTotalBill(b)),
+                    ...premises.map(p => getPayOfPremises(customer._id, p._id))
                 ])
             }
 
