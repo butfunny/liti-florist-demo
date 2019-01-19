@@ -154,7 +154,7 @@ export class ReportSupplier extends React.Component {
 
         return (
             <Layout activeRoute="Nhà Cung Cấp">
-                <div className="card report-supplier ">
+                <div className="card report-supplier bill-report-route ">
                     <div className="card-title">
                         Báo cáo nhà cung cấp
 
