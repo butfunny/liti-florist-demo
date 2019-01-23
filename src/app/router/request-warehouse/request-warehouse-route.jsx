@@ -271,7 +271,7 @@ export class RequestWarehouseRoute extends React.Component {
                     havePermission: () => security.isHavePermission(["warehouse.request.request.update-report-flower"])
                 }, {
                     type: "report-error",
-                    havePermission: () => security.isHavePermission(["warehouse.request.request.update-report-flower"])
+                    havePermission: () => security.isHavePermission(["warehouse.request.update-report-flower"])
                 }];
 
 
