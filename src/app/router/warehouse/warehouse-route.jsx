@@ -24,6 +24,7 @@ import {AutoCompleteNormal} from "../../components/auto-complete/auto-complete-n
 import uniq from "lodash/uniq";
 import {modals} from "../../components/modal/modals";
 import {ManagePriceModal} from "./manage-price-modal";
+import classnames from "classnames"
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 export class WarehouseRoute extends React.Component {
 
@@ -149,6 +150,17 @@ export class WarehouseRoute extends React.Component {
 
 
         let premises = premisesInfo.getPremises();
+        let oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+        let diffDays = (firstDate, secondDate) => {
+            let _firstDate = new Date(firstDate);
+            _firstDate.setHours(0, 0, 0, 0);
+
+            let _secondDate = new Date(secondDate);
+            _secondDate.setHours(0, 0, 0 ,0);
+
+            return Math.round(Math.abs((_firstDate.getTime() - _secondDate.getTime())/(oneDay)));
+
+        };
 
         let columns = [{
             label: "Ngày Nhập Kho",
@@ -159,7 +171,13 @@ export class WarehouseRoute extends React.Component {
         }, {
             label: "Hạn Sử Dụng",
             width: "5%",
-            display: (row) => row.expireDate && moment(row.expireDate).format("DD/MM/YYYY hh:MM"),
+            display: (row) => row.expireDate && (
+                <div>
+                    {moment(row.expireDate).format("DD/MM/YYYY")}
+                    <br/>
+                    <span className={classnames(diffDays(new Date(), new Date(row.expireDate)) < 0 && "text-danger")}>{diffDays(new Date(), new Date(row.expireDate))} ngày</span>
+                </div>
+            ),
             sortBy: (row) => row.expireDate,
             minWidth: "150"
         }, {
