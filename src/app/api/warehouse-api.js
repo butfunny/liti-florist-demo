@@ -27,6 +27,9 @@ export const warehouseApi = {
     },
     getReportAllItems: () => {
         return api.post(`/api/warehouse/report-all-items`)
+    },
+    updateWarehousePrice: (id, data) => {
+        return api.put(`/api/warehouse/update-price/${id}`, data)
     }
 
 };

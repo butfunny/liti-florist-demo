@@ -343,5 +343,17 @@ module.exports = (app) => {
                 res.json({requests, flowers})
             })
         })
+    });
+
+    app.put("/warehouse/update-price/:id", Security.authorDetails, (req, res) => {
+        if (req.body.isSubWarehouse) {
+            SubWareHouseDao.findOneAndUpdate({_id: req.params.id}, {price: req.body.price, oriPrice: req.body.oriPrice}, (err) => {
+                res.end();
+            })
+        } else {
+            WareHouseDao.findOneAndUpdate({_id: req.params.id}, {price: req.body.price, oriPrice: req.body.oriPrice}, (err) => {
+                res.end();
+            })
+        }
     })
 };

@@ -22,6 +22,9 @@ import {ColumnViewMore} from "../../components/column-view-more/column-view-more
 import {PaginationDataTableOffline} from "../../components/data-table/pagination-data-table-offline";
 import {AutoCompleteNormal} from "../../components/auto-complete/auto-complete-normal";
 import uniq from "lodash/uniq";
+import {modals} from "../../components/modal/modals";
+import {ManagePriceModal} from "./manage-price-modal";
+import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 export class WarehouseRoute extends React.Component {
 
     constructor(props) {
@@ -120,6 +123,26 @@ export class WarehouseRoute extends React.Component {
                 return Promise.resolve();
             })
         }
+    }
+
+    updatePriceRow(row) {
+
+        let {selectedBase, items} = this.state;
+
+        const modal = modals.openModal({
+            content: (
+                <ManagePriceModal
+                    product={row}
+                    onDismiss={() => modal.close()}
+                    isSubWarehouse={selectedBase != "all"}
+                    onClose={(product) => {
+                        this.setState({items: items.map(i => i._id == product._id ? product : i)});
+                        modal.close();
+                        confirmModal.alert("Điều chỉnh thành công")
+                    }}
+                />
+            )
+        })
     }
 
     render() {
@@ -236,6 +259,13 @@ export class WarehouseRoute extends React.Component {
             display: (row) => formatNumber(row.price * row.quantity),
             sortBy: (row) => row.price * row.quantity,
             minWidth: "100",
+        }, {
+            label: "",
+            width: "5%",
+            display: (row) => <button
+                onClick={() => this.updatePriceRow(row)}
+                className="btn btn-primary btn-small"><i className="fa fa-pencil "/></button>,
+            minWidth: "50",
         }];
 
 
