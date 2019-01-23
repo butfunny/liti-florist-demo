@@ -36,6 +36,7 @@ import {ReturnToBaseRoute} from "./request-warehouse/return-to-base/return-to-ba
 import {ReportFlower} from "./request-warehouse/report-flower/report-flower";
 import {MemoriesRoute} from "./memories/memories-route";
 import {ReportSupplier} from "./report/supplier/report-supplier";
+import {FloristEditRoute} from "./florist-working-route/florist-edit-route";
 export class AppRouter extends React.Component {
 
     constructor(props) {
@@ -77,6 +78,7 @@ export class AppRouter extends React.Component {
                     <Route exact path="/florist" component={requireAuthen(FloristRoute)} />
                     <Route exact path="/ship" component={requireAuthen(ShipRoute)} />
                     <Route exact path="/florist-working/:id" component={requireAuthen(FloristWorkingRoute)} />
+                    <Route exact path="/florist-edit/:id" component={requireAuthen(FloristEditRoute)} />
                     <Route exact path="/salary" component={requireAuthen(MySalaryRoute)} />
                     <Route exact path="/draft" component={requireAuthen(OrderDraft)} />
                     <Route exact path="/edit-bill-draft/:id" component={requireAuthen(BillDraft)} />

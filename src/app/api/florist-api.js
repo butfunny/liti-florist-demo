@@ -9,5 +9,8 @@ export const floristApi = {
     },
     getMySalary: (data) => {
         return api.post(`/api/salary`, data)
+    },
+    editBill: (data) => {
+        return api.put(`/api/florist/edit-bill`, data)
     }
 };

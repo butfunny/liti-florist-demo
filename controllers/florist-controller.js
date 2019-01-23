@@ -116,5 +116,66 @@ module.exports = (app) => {
             }))
         })
 
+    });
+
+    app.put("/florist/edit-bill", Security.authorDetails, (req, res) => {
+        BillDao.findOne({_id: req.body.billID}, (err, bill) => {
+            let lastSelectedFlower = bill.selectedFlower;
+
+
+            SubWareHouseDao.find({_id: {$in: lastSelectedFlower.map(i => i.id)}}, (err, items) => {
+                let promises = [];
+                for (let item of items) {
+                    let requestItem = lastSelectedFlower.find(i => i.id == item._id);
+                    const updateWarehouse = () => {
+                        return new Promise((resolve, reject)=>{
+                            SubWareHouseDao.findOne({_id: item._id}, (err, premisesItem) => {
+                                SubWareHouseDao.updateOne({_id: premisesItem._id}, {quantity: premisesItem.quantity + requestItem.quantity}, () => {
+                                    resolve();
+                                })
+                            })
+                        })
+                    };
+                    promises.push(updateWarehouse())
+                }
+
+                Promise.all(promises).then(() => {
+
+                    SubWareHouseDao.find({_id: {$in: req.body.selectedFlower.map(i => i.id)}}, (err, items) => {
+                        let promises = [];
+                        for (let item of items) {
+                            let requestItem = req.body.selectedFlower.find(i => i.id == item._id);
+                            if (requestItem.quantity > item.quantity) {
+                                res.json({error: "Kho không đủ số lượng."});
+                                return;
+                            }
+                        }
+
+                        for (let item of items) {
+                            let requestItem = req.body.selectedFlower.find(i => i.id == item._id);
+                            const updateWarehouse = () => {
+                                return new Promise((resolve, reject)=>{
+                                    SubWareHouseDao.findOne({_id: item._id}, (err, premisesItem) => {
+                                        SubWareHouseDao.updateOne({_id: premisesItem._id}, {quantity: premisesItem.quantity - requestItem.quantity}, () => {
+                                            resolve();
+                                        })
+                                    })
+                                })
+                            };
+                            promises.push(updateWarehouse())
+                        }
+
+                        Promise.all(promises).then(() => {
+                            BillDao.findOneAndUpdate({_id: req.body.billID}, {selectedFlower: req.body.selectedFlower}, (err, bill) => {
+                                res.end();
+                            });
+                        })
+                    })
+
+                })
+            })
+
+        })
+
     })
 };

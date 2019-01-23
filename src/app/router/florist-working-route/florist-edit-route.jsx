@@ -1,24 +1,22 @@
 import React, {Fragment} from "react";
 import {Layout} from "../../components/layout/layout";
-import {billApi} from "../../api/bill-api";
-import classnames from "classnames";
-import {warehouseApi} from "../../api/warehouse-api";
-import {premisesInfo} from "../../security/premises-info";
-import {InputNumber} from "../../components/input-number/input-number";
-import {FloristItem} from "./florist-item";
-import {FloristCartBottom} from "./cart/florist-cart-bottom";
-import {RComponent} from "../../components/r-component/r-component";
-import {AutoComplete} from "../../components/auto-complete/auto-complete";
-import {ColumnViewMore} from "../../components/column-view-more/column-view-more";
-import {ImgPreview} from "../../components/img-repview/img-preview";
-import {InputQuantity} from "../../components/input-quantity/input-quantity";
-import {formatNumber, getTotalBill} from "../../common/common";
-import {DataTable} from "../../components/data-table/data-table";
 import {productApi} from "../../api/product-api";
-import sumBy from "lodash/sumBy";
-import {floristApi} from "../../api/florist-api";
+import {billApi} from "../../api/bill-api";
+import {premisesInfo} from "../../security/premises-info";
+import {ImgPreview} from "../../components/img-repview/img-preview";
+import {formatNumber} from "../../common/common";
+import {InputQuantity} from "../../components/input-quantity/input-quantity";
+import {AutoComplete} from "../../components/auto-complete/auto-complete";
+import {warehouseApi} from "../../api/warehouse-api";
 import moment from "moment";
-export class FloristWorkingRoute extends RComponent {
+import {DataTable} from "../../components/data-table/data-table";
+import classnames from "classnames";
+import sumBy from "lodash/sumBy";
+import {AutoCompleteNormal} from "../../components/auto-complete/auto-complete-normal";
+import uniq from "lodash/uniq";
+import {floristApi} from "../../api/florist-api";
+import {confirmModal} from "../../components/confirm-modal/confirm-modal";
+export class FloristEditRoute extends React.Component {
 
     constructor(props) {
         super(props);
@@ -27,24 +25,37 @@ export class FloristWorkingRoute extends RComponent {
             items: [],
             keyword: "",
             suppliers: []
-
         };
 
-        productApi.suppliers().then((suppliers) => this.setState({suppliers}))
+        productApi.suppliers().then((suppliers) => this.setState({suppliers}));
 
         billApi.getBillById(props.match.params.id).then(({bill}) => {
-            this.setState({bill})
+            warehouseApi.searchProductInSubWarehouse({keyword: "", premisesID: premisesInfo.getActivePremise()._id}).then(({products, flowers}) => {
+                const updateProductQuantity = () => {
+                    return products.map((p) => {
+                        let found = bill.selectedFlower.find(item => item.id == p._id);
+                        let flower = flowers.find(f => f._id == p.parentID);
+
+                        if (found) {
+                            return {...flower, ...p, quantity: found.quantity + p.quantity}
+                        }
+                        return {...flower, ...p};
+                    })
+                };
+
+                this.setState({
+                    products: updateProductQuantity(),
+                    flowers,
+                    bill
+                })
+            });
+
         });
 
 
         premisesInfo.onChange(() => {
             props.history.push("/florist")
         })
-
-        //
-        // warehouseApi.getItemsById(premisesInfo.getActivePremise()._id).then(({items, subItems}) => {
-        //     this.setState({items, subItems})
-        // })
     }
 
     handleSelectProduct(product) {
@@ -62,6 +73,8 @@ export class FloristWorkingRoute extends RComponent {
         })
     }
 
+
+
     handleChangeQuantity(row, _quantity) {
         let items = [...this.state.items];
         let itemFound = items.find(i => i._id == row._id);
@@ -78,12 +91,13 @@ export class FloristWorkingRoute extends RComponent {
         })
     }
 
+
     submit() {
         let {items, bill} = this.state;
         let {history} = this.props;
         this.setState({submitting: true});
 
-        floristApi.submitBill({
+        floristApi.editBill({
             selectedFlower: items.map(i => {
                 return {
                     parentID: i.parentID,
@@ -95,20 +109,21 @@ export class FloristWorkingRoute extends RComponent {
                     oriPrice: i.oriPrice
                 }
             }),
-            billID: bill._id,
-            status: bill.ships.length == 0 ? "Done" : "Chờ Giao"
+            billID: bill._id
         }).then(() => {
+            confirmModal.alert("Cập nhật thành công");
             history.push(`/florist`);
         })
     }
 
 
 
+
+
     render() {
 
-        let {bill, items, suppliers, submitting} = this.state;
+        let {bill, items, suppliers, submitting, products, flowers} = this.state;
         let {history} = this.props;
-
 
         let columns = [{
             label: "Thông Tin SP",
@@ -178,11 +193,38 @@ export class FloristWorkingRoute extends RComponent {
             sortBy: (row) => row.quantity
         }];
 
+
+
+
         const getTotal = sumBy(items, item => item.submitQuantity * item.price);
         const getSubTotal = (bill) => sumBy(bill.items, item => item.quantity * item.price);
 
-
         const isDisabled = bill ? getTotal > (getSubTotal(bill) + (getSubTotal(bill) * 10 / 100)) : true;
+
+
+        let lastColumns = [{
+            label: "Thông Tin Hoa",
+            width: "90%",
+            display: (row) => {
+
+                let product = flowers.find(p => p._id == row.parentID);
+
+                return (
+                    <div className="product-name">
+                        <ImgPreview src={product.image}/> {product.name}
+                    </div>
+                )
+            },
+            minWidth: "150",
+        }, {
+            label: "Số Lượng",
+            width: "10%",
+            display: (row) => row.quantity,
+            minWidth: "175",
+            sortBy: (row) => row.quantity
+        }];
+
+
 
         return (
             <Layout
@@ -249,31 +291,42 @@ export class FloristWorkingRoute extends RComponent {
                                 Tiền Hoa: <b>{formatNumber(getSubTotal(bill))}</b>
                             </div>
 
-                            <AutoComplete
-                                asyncGet={(name) => {
-                                    if (name.length > 0) {
-                                        return warehouseApi.searchProductInSubWarehouse({keyword: name, premisesID: premisesInfo.getActivePremise()._id}).then(({products, flowers}) => {
-                                            return products.filter(p => items.map(i => i._id).indexOf(p._id) == -1 && p.quantity > 0).map(p => {
-                                                let flower = flowers.find(f => f._id == p.parentID);
-                                                return {
-                                                    ...flower,
-                                                    ...p
-                                                }
-                                            })
-                                        })
-                                    }
-                                    return Promise.resolve([])
-                                }}
-                                onSelect={(product) => this.handleSelectProduct(product)}
-                                objectKey="productID"
-                                object={this.state}
-                                onChange={(value) => this.setState({productID: value})}
-                                displayAs={(product) => <span>{moment(product.created).format("DD/MM/YYYY")} <b>{product.name}</b> - {product.catalog} - {suppliers.find(s => s._id == product.supplierID).name}</span>}
-                                noPopup
-                                label="Tên/Mã Sản Phẩm"
-                            />
+
+                            <b>Định lượng hiện tại</b>
                         </div>
                     )}
+
+                    { bill && products && (
+                        <DataTable
+                            columns={lastColumns}
+                            rows={bill.selectedFlower}
+                        />
+                    )}
+
+                    <div className="card-body">
+
+                        <div style={{marginTop: "10px", marginBottom: "24px"}}>
+                            <b>Định lượng mới</b>
+                        </div>
+
+                        <AutoComplete
+                            asyncGet={(name) => {
+                                if (name.length > 0) {
+                                    return Promise.resolve(products.filter(product => {
+                                        return product.quantity > 0 && (product.productID.toLowerCase().indexOf(name.toLowerCase()) > -1 || product.name.toLowerCase().indexOf(name.toLowerCase()) > -1)                                    }))
+                                }
+                                return Promise.resolve([])
+                            }}
+                            onSelect={(product) => this.handleSelectProduct(product)}
+                            objectKey="productID"
+                            object={this.state}
+                            onChange={(value) => this.setState({productID: value})}
+                            displayAs={(product) => <span>{moment(product.created).format("DD/MM/YYYY")} <b>{product.name}</b> - {product.catalog} - {suppliers.find(s => s._id == product.supplierID).name}</span>}
+                            noPopup
+                            label="Tên/Mã Sản Phẩm"
+                        />
+                    </div>
+
 
                     <DataTable
                         columns={columns}
@@ -290,7 +343,7 @@ export class FloristWorkingRoute extends RComponent {
                                         onClick={() => this.submit()}
                                         disabled={isDisabled || items.length == 0 || submitting}
                                         className="btn btn-primary" style={{marginTop: "10px"}}>
-                                        <span className="btn-text">Done</span>
+                                        <span className="btn-text">Cập Nhật</span>
                                         {submitting && <span className="loading-icon"><i className="fa fa-spinner fa-pulse"/></span>}
                                     </button>
                                 </div>

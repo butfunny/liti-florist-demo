@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Fragment} from "react";
 import {Layout} from "../../components/layout/layout";
 import {DatePicker} from "../../components/date-picker/date-picker";
 import {floristApi} from "../../api/florist-api";
@@ -133,14 +133,23 @@ export class FloristRoute extends RComponent {
             label: "",
             width: "10%",
             minWidth: "100",
-            display: (bill) => bill.florists && bill.florists[0].user_id == user._id && bill.status == "Chờ xử lý" && (
-                <button className="btn btn-primary btn-small"
-                    onClick={() => history.push(`/florist-working/${bill._id}`)}
-                >
-                    Làm Đơn
-                </button>
+            display: (bill) => bill.florists && bill.florists[0].user_id == user._id  && (
+                <Fragment>
+                    {bill.selectedFlower?.length > 0 ? (
+                        <button className="btn btn-primary btn-small"
+                                onClick={() => history.push(`/florist-edit/${bill._id}`)}
+                        >
+                            Sửa Đơn
+                        </button>
+                    ) : (
+                        <button className="btn btn-primary btn-small"
+                                onClick={() => history.push(`/florist-working/${bill._id}`)}
+                        >
+                            Làm Đơn
+                        </button>
+                    )}
+                </Fragment>
             )
-
         }];
 
         return (
