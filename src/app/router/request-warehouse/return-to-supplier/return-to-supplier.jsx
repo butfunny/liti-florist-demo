@@ -57,7 +57,7 @@ export class ReturnToSupplier extends React.Component {
         this.setState({
             request: {
                 ...this.state.request,
-                items: this.state.request.items.filter(i => i.parentID != row.parentID)
+                items: this.state.request.items.filter(i => i._id != row._id)
             }
         })
     }
