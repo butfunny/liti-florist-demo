@@ -114,7 +114,7 @@ export class ReportFlower extends React.Component {
     render() {
         let {history} = this.props;
         let {request, saving, suppliers} = this.state;
-        const premises = premisesInfo.getPremises();
+        const premises = [{_id: "all", name: "Kho Tổng"}].concat(premisesInfo.getPremises());
 
         let columns = [{
             label: "Thông Tin SP",
@@ -282,7 +282,13 @@ export class ReportFlower extends React.Component {
                                 <AutoComplete
                                     asyncGet={(name) => {
                                         if (name.length > 0) {
-                                            return warehouseApi.searchProductInSubWarehouse({keyword: name, premisesID: request.premisesID}).then(({products, flowers}) => {
+
+                                            let api = warehouseApi.searchProductInSubWarehouse;
+                                            if (request.premisesID == "all") {
+                                                api = warehouseApi.searchProductInBase
+                                            }
+
+                                            return api({keyword: name, premisesID: request.premisesID}).then(({products, flowers}) => {
                                                 return products.filter(p => request.items.map(i => i._id).indexOf(p._id) == -1 && p.quantity > 0).map(p => {
                                                     let flower = flowers.find(f => f._id == p.parentID);
                                                     return {

@@ -115,7 +115,7 @@ export class RequestWarehouseRoute extends React.Component {
             color: "#fd397a"
         }];
 
-        const premises = premisesInfo.getPremises();
+        const premises = [{_id: "all", name: "Kho Tổng"}].concat(premisesInfo.getPremises());
 
 
         let columns = [{
@@ -268,7 +268,7 @@ export class RequestWarehouseRoute extends React.Component {
                     havePermission: () => security.isHavePermission(["warehouse.request.update-transfer-to-subwarehouse"])
                 }, {
                     type: "report-missing",
-                    havePermission: () => security.isHavePermission(["warehouse.request.request.update-report-flower"])
+                    havePermission: () => security.isHavePermission(["warehouse.request.update-report-flower"])
                 }, {
                     type: "report-error",
                     havePermission: () => security.isHavePermission(["warehouse.request.update-report-flower"])

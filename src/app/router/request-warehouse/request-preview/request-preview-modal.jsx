@@ -32,7 +32,7 @@ export class RequestPreviewModal extends React.Component {
 
         let {onDismiss, onClose, suppliers, request, flowers} = this.props;
         let {flowersInWarehouse, saving, error} = this.state;
-        const premises = premisesInfo.getPremises();
+        const premises = [{_id: "all", name: "Kho Tổng"}].concat(premisesInfo.getPremises());
 
         const renderItemInWarehouse = (item) => {
             if (request.requestType == "request-from-supplier") {
@@ -64,7 +64,7 @@ export class RequestPreviewModal extends React.Component {
                     <ColumnViewMore
                         header={
                             <div className="product-name">
-                                <ImgPreview src={product.image}/> {item.quantity} - {product.name}
+                                <ImgPreview src={product.image}/> {product.name}
                             </div>
                         }
                         renderViewMoreBody={() => (

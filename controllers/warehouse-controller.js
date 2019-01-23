@@ -41,7 +41,13 @@ module.exports = (app) => {
             }
 
             if (request.requestType == "return-to-base" || request.requestType == "report-missing" || request.requestType == "report-error") {
-                SubWareHouseDao.find({_id: {$in: request.items.map(i => i.id)}}, (err, flowersInWarehouse) => {
+
+                let schema = SubWareHouseDao;
+                if (request.premisesID == "all") {
+                    schema = WareHouseDao
+                }
+
+                schema.find({_id: {$in: request.items.map(i => i.id)}}, (err, flowersInWarehouse) => {
                     res.json({
                         flowersInWarehouse
                     })
@@ -210,7 +216,14 @@ module.exports = (app) => {
             }
 
             if (request.requestType == "report-missing" || request.requestType == "report-error") {
-                SubWareHouseDao.find({_id: {$in: request.items.map(i => i.id)}}, (err, items) => {
+
+                let schema = SubWareHouseDao;
+
+                if (request.premisesID == "all") {
+                    schema = WareHouseDao
+                }
+
+                schema.find({_id: {$in: request.items.map(i => i.id)}}, (err, items) => {
                     let promises = [];
                     for (let item of items) {
                         let requestItem = request.items.find(i => i.id == item._id);
@@ -224,8 +237,8 @@ module.exports = (app) => {
                         let requestItem = request.items.find(i => i.id == item._id);
                         const updateWarehouse = () => {
                             return new Promise((resolve, reject)=>{
-                                SubWareHouseDao.findOne({_id: item._id}, (err, premisesItem) => {
-                                    SubWareHouseDao.updateOne({_id: premisesItem._id}, {quantity: premisesItem.quantity - requestItem.quantity}, () => {
+                                schema.findOne({_id: item._id}, (err, premisesItem) => {
+                                    schema.updateOne({_id: premisesItem._id}, {quantity: premisesItem.quantity - requestItem.quantity}, () => {
                                         resolve();
                                     })
                                 })
