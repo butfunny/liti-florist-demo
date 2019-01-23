@@ -157,8 +157,7 @@ export class WarehouseRoute extends React.Component {
 
             let _secondDate = new Date(secondDate);
             _secondDate.setHours(0, 0, 0 ,0);
-
-            return Math.round(Math.abs((_firstDate.getTime() - _secondDate.getTime())/(oneDay)));
+            return Math.round((_firstDate.getTime() - _secondDate.getTime())/(oneDay));
 
         };
 
@@ -175,7 +174,7 @@ export class WarehouseRoute extends React.Component {
                 <div>
                     {moment(row.expireDate).format("DD/MM/YYYY")}
                     <br/>
-                    <span className={classnames(diffDays(new Date(), new Date(row.expireDate)) < 0 && "text-danger")}>{diffDays(new Date(), new Date(row.expireDate))} ngày</span>
+                    <span className={classnames(diffDays(new Date(row.expireDate), new Date()) < 0 && "text-danger")}>{diffDays(new Date(row.expireDate), new Date())} ngày</span>
                 </div>
             ),
             sortBy: (row) => row.expireDate,
