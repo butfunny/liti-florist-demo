@@ -49,7 +49,6 @@ export class ReportFlower extends React.Component {
                 items
             }
         })
-
     }
 
     handleRemoveItem(row) {
@@ -283,12 +282,15 @@ export class ReportFlower extends React.Component {
                                     asyncGet={(name) => {
                                         if (name.length > 0) {
 
-                                            let api = warehouseApi.searchProductInSubWarehouse;
+                                            let api = null;
+
                                             if (request.premisesID == "all") {
-                                                api = warehouseApi.searchProductInBase
+                                                api = warehouseApi.searchProductInBase(name)
+                                            } else {
+                                                api = warehouseApi.searchProductInSubWarehouse({keyword: name, premisesID: request.premisesID});
                                             }
 
-                                            return api({keyword: name, premisesID: request.premisesID}).then(({products, flowers}) => {
+                                            return api.then(({products, flowers}) => {
                                                 return products.filter(p => request.items.map(i => i._id).indexOf(p._id) == -1 && p.quantity > 0).map(p => {
                                                     let flower = flowers.find(f => f._id == p.parentID);
                                                     return {

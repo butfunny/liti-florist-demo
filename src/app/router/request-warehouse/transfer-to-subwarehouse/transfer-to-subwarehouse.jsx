@@ -236,13 +236,28 @@ export class TransferToSubWarehouse extends React.Component {
                         </div>
 
                         <div className="card-body">
-                            <Select
-                                label="Xuất tới kho*"
-                                list={premises.map(s => s._id)}
-                                value={request.premisesID}
-                                displayAs={(r) => premises.find(s => s._id == r) ? premises.find(s => s._id == r).name : null}
-                                onChange={(premisesID) => this.setState({request: {...request, premisesID}})}
-                            />
+                            <div className="row">
+                                <Select
+                                    className="col"
+                                    label="Từ kho*"
+                                    list={[{_id: "all", name: "Kho Tổng"}].concat(premises).map(s => s._id)}
+                                    value={request.fromWarehouse}
+                                    displayAs={(r) => [{_id: "all", name: "Kho Tổng"}].concat(premises).find(s => s._id == r) ? [{_id: "all", name: "Kho Tổng"}].concat(premises).find(s => s._id == r).name : null}
+                                    onChange={(premisesID) => this.setState({request: {...request, fromWarehouse: premisesID,
+                                            premisesID: request.premisesID == premisesID ? null : request.premisesID,
+                                            items: []
+                                    }})}
+                                />
+
+                                <Select
+                                    className="col"
+                                    label="Xuất tới kho*"
+                                    list={premises.filter(s => s._id != request.fromWarehouse).map(s => s._id)}
+                                    value={request.premisesID}
+                                    displayAs={(r) => premises.find(s => s._id == r) ? premises.find(s => s._id == r).name : null}
+                                    onChange={(premisesID) => this.setState({request: {...request, premisesID}})}
+                                />
+                            </div>
 
                             <div className="row">
                                 <Input
@@ -260,36 +275,48 @@ export class TransferToSubWarehouse extends React.Component {
                                 />
                             </div>
 
-                            <AutoComplete
-                                asyncGet={(name) => {
-                                    if (name.length > 0) {
-                                        return warehouseApi.searchProductInBase(name).then(({products, flowers}) => {
-                                            return products.filter(p => request.items.map(i => i._id).indexOf(p._id) == -1 && p.quantity > 0).map(p => {
-                                                let flower = flowers.find(f => f._id == p.parentID);
-                                                return {
-                                                    ...flower,
-                                                    ...p
-                                                }
+                            { request.fromWarehouse && (
+                                <AutoComplete
+                                    asyncGet={(name) => {
+                                        if (name.length > 0) {
+
+                                            let api = null;
+                                            if (request.fromWarehouse == "all") {
+                                                api = warehouseApi.searchProductInBase(name)
+                                            } else {
+                                                api = warehouseApi.searchProductInSubWarehouse({keyword: name, premisesID: request.fromWarehouse})
+                                            }
+
+                                            return api.then(({products, flowers}) => {
+                                                return products.filter(p => request.items.map(i => i._id).indexOf(p._id) == -1 && p.quantity > 0).map(p => {
+                                                    let flower = flowers.find(f => f._id == p.parentID);
+                                                    return {
+                                                        ...flower,
+                                                        ...p
+                                                    }
+                                                })
                                             })
-                                        })
-                                    }
-                                    return Promise.resolve([])
-                                }}
-                                onSelect={(product) => this.handleSelectProduct(product)}
-                                objectKey="productID"
-                                object={this.state}
-                                onChange={(value) => this.setState({productID: value})}
-                                displayAs={(product) => <span>{moment(product.created).format("DD/MM/YYYY")} - <b>{product.name}</b> - {product.catalog} - {suppliers.find(s => s._id == product.supplierID).name}</span>}
-                                noPopup
-                                label="Tên/Mã Sản Phẩm"
-                            />
+                                        }
+                                        return Promise.resolve([])
+                                    }}
+                                    onSelect={(product) => this.handleSelectProduct(product)}
+                                    objectKey="productID"
+                                    object={this.state}
+                                    onChange={(value) => this.setState({productID: value})}
+                                    displayAs={(product) => <span>{moment(product.created).format("DD/MM/YYYY")} - <b>{product.name}</b> - {product.catalog} - {suppliers.find(s => s._id == product.supplierID).name}</span>}
+                                    noPopup
+                                    label="Tên/Mã Sản Phẩm"
+                                />
+                            )}
 
                         </div>
 
-                        <DataTable
-                            columns={columns}
-                            rows={request.items}
-                        />
+                        { request.fromWarehouse && (
+                            <DataTable
+                                columns={columns}
+                                rows={request.items}
+                            />
+                        )}
 
                         <div className="card-body">
                             <div className="text-right">
