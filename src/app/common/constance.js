@@ -205,6 +205,10 @@ export const permissions = [{
     label: "Xem giá gốc",
     father: "Kho"
 }, {
+    value: "warehouse.update-price",
+    label: "Cập nhật giá tồn kho",
+    father: "Kho"
+}, {
     value: "memories",
     label: "Xem Đơn",
     father: "Ngày Này Năm Xưa"

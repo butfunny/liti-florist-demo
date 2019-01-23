@@ -259,15 +259,19 @@ export class WarehouseRoute extends React.Component {
             display: (row) => formatNumber(row.price * row.quantity),
             sortBy: (row) => row.price * row.quantity,
             minWidth: "100",
-        }, {
-            label: "",
-            width: "5%",
-            display: (row) => <button
-                onClick={() => this.updatePriceRow(row)}
-                className="btn btn-primary btn-small"><i className="fa fa-pencil "/></button>,
-            minWidth: "50",
         }];
 
+
+        if (security.isHavePermission(["warehouse.update-price"])) {
+            columns.push({
+                label: "",
+                width: "5%",
+                display: (row) => <button
+                    onClick={() => this.updatePriceRow(row)}
+                    className="btn btn-primary btn-small"><i className="fa fa-pencil "/></button>,
+                minWidth: "50",
+            })
+        }
 
         let {selectedBase, keyword, filteredColors, filteredTypes, items, from, to, filteredSuppliers, suppliers, loading} = this.state;
 
