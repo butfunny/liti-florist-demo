@@ -15,6 +15,9 @@ import {RequestPreviewModal} from "./request-preview/request-preview-modal";
 import {premisesInfo} from "../../security/premises-info";
 import {SelectTags} from "../../components/select-tags/select-tags";
 import {security} from "../../security/secuiry-fe";
+import {Select} from "../../components/select/select";
+import {DatePicker} from "../../components/date-picker/date-picker";
+import {RequestWarehouseFilter} from "./request-warehouse-filter";
 
 export class RequestWarehouseRoute extends React.Component {
 
@@ -27,7 +30,10 @@ export class RequestWarehouseRoute extends React.Component {
             suppliers: [],
             flowers: [],
             filteredStatuses: [],
-            filteredTypes: []
+            filteredTypes: [],
+            premisesID: null,
+            from: null,
+            to: null,
         };
 
         productApi.suppliers().then((suppliers) => this.setState({suppliers}))
@@ -96,7 +102,7 @@ export class RequestWarehouseRoute extends React.Component {
 
         let {history} = this.props;
 
-        let {requests, total, suppliers, flowers, filteredStatuses, filteredTypes} = this.state;
+        let {requests, total, suppliers, flowers, filteredStatuses, filteredTypes, premisesID, from, to, loading} = this.state;
 
         const status = [{
             value: "pending",
@@ -369,6 +375,26 @@ export class RequestWarehouseRoute extends React.Component {
                                     />
                                 </div>
                             </div>
+
+                            <div className="filter-wrapper">
+                                <Select
+                                    label="Kho"
+                                    value={premisesID}
+                                    onChange={(premisesID) => this.setState({premisesID}, () => this.table.reset())}
+                                    list={[{_id: null, name: "Tất Cả"}].concat(premises).map(p => p._id)}
+                                    displayAs={(premisesID) => !premisesID ? "Tất Cả" : premises.find(p => p._id == premisesID).name}
+                                />
+                            </div>
+
+
+                            <RequestWarehouseFilter
+                                loading={loading}
+                                onChange={({from, to}) => {
+                                    this.setState({from, to}, () => {
+                                        this.table.reset();
+                                    })
+                                }}
+                            />
                         </div>
 
                         <PaginationDataTable
@@ -379,15 +405,19 @@ export class RequestWarehouseRoute extends React.Component {
                             columns={columns}
                             rows={requests}
                             api={({keyword, page, sortKey, isDesc}) => {
+                                this.setState({loading: true});
                                 return warehouseApi.getRequest({
                                     keyword,
+                                    premisesID,
                                     skip: (page - 1) * 15,
                                     sortKey,
                                     isDesc,
+                                    from,
+                                    to,
                                     filteredStatuses: filteredStatuses.map(s => status.find(status => status.label == s).value),
                                     filteredTypes: filteredTypes.length == 0 ? this.types.filter(t => !t.hide()).map(t => t.value) : filteredTypes.map(s => this.types.find(type => type.label == s).value)
                                 }).then(({requests, total, flowers}) => {
-                                    this.setState({requests, total, flowers});
+                                    this.setState({requests, total, flowers, loading: false});
                                     return Promise.resolve();
                                 })
                             }}

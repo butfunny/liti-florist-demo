@@ -25,7 +25,7 @@ export class Select extends React.Component {
         let {open, top, left, width} = this.state;
 
         return (
-            <div className={classnames("liti-input select", className, error && "has-error", value && "has-value", open && "focus")} onClick={() => this.setState({open: true})}>
+            <div className={classnames("liti-input select", className, error && "has-error", value !== undefined && "has-value", open && "focus")} onClick={() => this.setState({open: true})}>
                 <div className="select-text">
                     {displayAs ? displayAs(value) : value}&nbsp;
 
