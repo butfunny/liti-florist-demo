@@ -1,6 +1,6 @@
 import React from "react";
 import {Layout} from "../../../components/layout/layout";
-import {getStartAndLastDayOfWeek} from "../../../common/common";
+import {formatNumber, getStartAndLastDayOfWeek} from "../../../common/common";
 import {DatePicker} from "../../../components/date-picker/date-picker";
 import {Select} from "../../../components/select/select";
 import {warehouseApi} from "../../../api/warehouse-api";
@@ -8,6 +8,7 @@ import {productApi} from "../../../api/product-api";
 import {DataTable} from "../../../components/data-table/data-table";
 import {ColumnViewMore} from "../../../components/column-view-more/column-view-more";
 import {ImgPreview} from "../../../components/img-repview/img-preview";
+import sumBy from "lodash/sumBy"
 export class ReportSupplier extends React.Component {
 
     constructor(props) {
@@ -48,6 +49,7 @@ export class ReportSupplier extends React.Component {
 
             let ret = [];
             let count = 0;
+            let total = 0;
 
             for (let request of filteredRequests) {
                 for (let product of request.items) {
@@ -57,12 +59,14 @@ export class ReportSupplier extends React.Component {
                             ...product,
                         }
                     );
-                    count += product.quantity
+                    count += product.quantity;
+                    total += product.quantity * product.oriPrice;
                 }
             }
 
             return {
                 count,
+                total,
                 items: ret
             }
         };
@@ -70,6 +74,7 @@ export class ReportSupplier extends React.Component {
         const getTotalFlowersUsed = (supplier) => {
             let count = 0;
             let ret = [];
+            let total = 0;
 
             for (let bill of bills) {
                 for (let product of bill.selectedFlower) {
@@ -79,13 +84,15 @@ export class ReportSupplier extends React.Component {
                             ...flower,
                             ...product
                         });
-                        count += product.quantity
+                        count += product.quantity;
+                        total += product.quantity * product.price
                     }
                 }
             }
 
             return {
                 count,
+                total,
                 items: ret
             }
 
@@ -120,18 +127,20 @@ export class ReportSupplier extends React.Component {
             label: "Số Lượng Nhập",
             width: "40%",
             minWidth: "150",
-            display: (row) => (
-                <ColumnViewMore
-                    header={row.totalFlowerImport.count}
-                    viewMoreText={"Chi tiết"}
-                    renderViewMoreBody={() => row.totalFlowerImport.items.map((item, index) => (
-                        <div className="info-item product-name" key={index}>
-                            <ImgPreview src={item.image}/> {item.name} - <span className="text-primary">{item.quantity}</span>
-                        </div>
-                    ))}
-                    isShowViewMoreText={row.totalFlowerImport.count > 0}
-                />
-            ),
+            display: (row) => {
+                return (
+                    <ColumnViewMore
+                        header={<span>{row.totalFlowerImport.count} - {formatNumber(row.totalFlowerImport.total)}</span>}
+                        viewMoreText={"Chi tiết"}
+                        renderViewMoreBody={() => row.totalFlowerImport.items.map((item, index) => (
+                            <div className="info-item product-name" key={index}>
+                                <ImgPreview src={item.image}/> {item.name} - <span className="text-primary">{item.quantity}</span> - <span className="text-primary">{formatNumber(item.quantity * item.oriPrice)}</span>
+                            </div>
+                        ))}
+                        isShowViewMoreText={row.totalFlowerImport.count > 0}
+                    />
+                )
+            },
             sortBy: (row) => row.totalFlowerImport.count
         }, {
             label: "Số Lượng Bán",
@@ -139,11 +148,11 @@ export class ReportSupplier extends React.Component {
             minWidth: "150",
             display: (row) => (
                 <ColumnViewMore
-                    header={row.totalFlowerUsed.count}
+                    header={<span>{row.totalFlowerUsed.count} - {formatNumber(row.totalFlowerUsed.total)}</span>}
                     viewMoreText={"Chi tiết"}
                     renderViewMoreBody={() => row.totalFlowerUsed.items.map((item, index) => (
                         <div className="info-item product-name" key={index}>
-                            <ImgPreview src={item.image}/> {item.name} - <span className="text-primary">{item.quantity}</span>
+                            <ImgPreview src={item.image}/> {item.name} - <span className="text-primary">{item.quantity}</span> - <span className="text-primary">{formatNumber(item.quantity * item.price)}</span>
                         </div>
                     ))}
                     isShowViewMoreText={row.totalFlowerUsed.count > 0}
