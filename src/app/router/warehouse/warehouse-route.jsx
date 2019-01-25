@@ -26,6 +26,8 @@ import {modals} from "../../components/modal/modals";
 import {ManagePriceModal} from "./manage-price-modal";
 import classnames from "classnames"
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
+import {RequestHistoryModal} from "./request-history-modal";
+
 export class WarehouseRoute extends React.Component {
 
     constructor(props) {
@@ -111,7 +113,9 @@ export class WarehouseRoute extends React.Component {
                 };
 
 
-                this.setState({loading: false, items: products.map(p => {
+                this.setState({
+                    requests,
+                    loading: false, items: products.map(p => {
                         let flower = flowers.find(f => f._id == p.parentID);
                         return {
                             ...flower,
@@ -125,7 +129,10 @@ export class WarehouseRoute extends React.Component {
                 return Promise.resolve(products);
             })
         } else {
-            return warehouseApi.searchProductInSubWarehouse({keyword: "", premisesID: baseID}).then(({products, flowers, bills, requests}) => {
+            return warehouseApi.searchProductInSubWarehouse({
+                keyword: "",
+                premisesID: baseID
+            }).then(({products, flowers, bills, requests}) => {
 
                 const getUsed = (product) => {
                     let count = 0;
@@ -156,7 +163,9 @@ export class WarehouseRoute extends React.Component {
                 };
 
 
-                this.setState({loading: false, items: products.map(p => {
+                this.setState({
+                    requests,
+                    loading: false, items: products.map(p => {
                         let flower = flowers.find(f => f._id == p.parentID);
                         return {
                             ...flower,
@@ -191,18 +200,48 @@ export class WarehouseRoute extends React.Component {
         })
     }
 
+    viewHistory(row) {
+
+        let {requests, suppliers} = this.state;
+
+        const filteredRequest = () => {
+            let ret = [];
+            for (let request of requests) {
+                for (let item of request.items) {
+                    if (item.baseProductID == row._id || item.id == row._id) {
+                        ret.push(request)
+                    }
+                }
+            }
+
+            return ret;
+
+        };
+
+        const modal = modals.openModal({
+            content: (
+                <RequestHistoryModal
+                    requests={filteredRequest()}
+                    onClose={() => modal.close()}
+                    suppliers={suppliers}
+                    product={row}
+                />
+            )
+        })
+    }
+
     render() {
 
 
         let premises = premisesInfo.getPremises();
-        let oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+        let oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
         let diffDays = (firstDate, secondDate) => {
             let _firstDate = new Date(firstDate);
             _firstDate.setHours(0, 0, 0, 0);
 
             let _secondDate = new Date(secondDate);
-            _secondDate.setHours(0, 0, 0 ,0);
-            return Math.round((_firstDate.getTime() - _secondDate.getTime())/(oneDay));
+            _secondDate.setHours(0, 0, 0, 0);
+            return Math.round((_firstDate.getTime() - _secondDate.getTime()) / (oneDay));
 
         };
 
@@ -219,7 +258,8 @@ export class WarehouseRoute extends React.Component {
                 <div>
                     {moment(row.expireDate).format("DD/MM/YYYY")}
                     <br/>
-                    <span className={classnames(diffDays(new Date(row.expireDate), new Date()) < 0 && "text-danger")}>{diffDays(new Date(row.expireDate), new Date())} ngày</span>
+                    <span
+                        className={classnames(diffDays(new Date(row.expireDate), new Date()) < 0 && "text-danger")}>{diffDays(new Date(row.expireDate), new Date())} ngày</span>
                 </div>
             ),
             sortBy: (row) => row.expireDate,
@@ -238,7 +278,7 @@ export class WarehouseRoute extends React.Component {
                     renderViewMoreBody={() => (
                         <Fragment>
                             <div className="info-item">
-                                Màu: { row.colors.map((color, index) => (
+                                Màu: {row.colors.map((color, index) => (
                                 <div key={index}
                                      style={{
                                          background: color,
@@ -248,7 +288,7 @@ export class WarehouseRoute extends React.Component {
                                          marginRight: "5px"
                                      }}
                                 />
-                            )) }
+                            ))}
                             </div>
 
                             <div className="info-item">
@@ -328,6 +368,12 @@ export class WarehouseRoute extends React.Component {
             display: (row) => formatNumber(row.price * row.quantity),
             sortBy: (row) => row.price * row.quantity,
             minWidth: "100",
+        }, {
+            label: "",
+            width: "10%",
+            display: (row) => <button className="btn btn-primary btn-small" onClick={() => this.viewHistory(row)}>Lịch
+                sử</button>,
+            minWidth: "100",
         }];
 
 
@@ -390,7 +436,7 @@ export class WarehouseRoute extends React.Component {
 
             const filterDateTime = (i) => {
                 let dateFrom = new Date(from);
-                dateFrom.setHours(0, 0,0 ,0);
+                dateFrom.setHours(0, 0, 0, 0);
 
                 let dateTo = new Date(to);
                 dateTo.setHours(23, 59, 59, 99);
@@ -445,7 +491,7 @@ export class WarehouseRoute extends React.Component {
                                 </div>
                             </div>
 
-                            { from && (
+                            {from && (
                                 <div className="filter-wrapper">
                                     <div className="filter-col">
                                         <DatePicker
@@ -464,7 +510,6 @@ export class WarehouseRoute extends React.Component {
                                     </div>
                                 </div>
                             )}
-
 
 
                             <Input
