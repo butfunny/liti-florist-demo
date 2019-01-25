@@ -5,9 +5,16 @@ export class RequestWarehouseFilter extends React.Component {
 
     constructor(props) {
         super(props);
+
+        let from = new Date();
+        from.setHours(0, 0,0 ,0);
+
+        let to = new Date();
+        to.setHours(23, 59, 59, 99);
+
         this.state = {
-            from: new Date(),
-            to: new Date(),
+            from: from,
+            to: to,
             filterType: "Toàn Bộ"
         }
     }

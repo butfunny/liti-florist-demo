@@ -489,5 +489,39 @@ module.exports = (app) => {
                 res.end();
             })
         }
+    });
+
+    app.post("/warehouse/request-list-by-date", Security.authorDetails, (req, res) => {
+        let {filteredTypes = [], from, to} = req.body;
+
+        let query = [];
+
+        if (from) {
+            query.push({created: {$gte: from, $lt: to}})
+        }
+
+        if (filteredTypes.length > 0) {
+            query.push({$or: filteredTypes.map(type => ({requestType: type}))})
+        }
+
+
+        RequestWarehouseDao.find({$and: query}).exec((err, requests) => {
+            RequestWarehouseDao.countDocuments({$and: query}, (err, count) => {
+                let flowerIds = [];
+                for (let request of requests) {
+                    flowerIds = flowerIds.concat(request.items.map(i => i.parentID))
+                }
+
+                FlowersDao.find({_id: {$in: flowerIds}}, (err, flowers) => {
+                    res.json({
+                        requests,
+                        flowers,
+                        total: count,
+                    })
+                })
+
+
+            })
+        })
     })
 };

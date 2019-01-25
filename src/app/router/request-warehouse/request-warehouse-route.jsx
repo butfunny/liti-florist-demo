@@ -18,6 +18,8 @@ import {security} from "../../security/secuiry-fe";
 import {Select} from "../../components/select/select";
 import {DatePicker} from "../../components/date-picker/date-picker";
 import {RequestWarehouseFilter} from "./request-warehouse-filter";
+import {CSVLink} from "react-csv";
+import {ExportExcelModal} from "./export-excel-modal";
 
 export class RequestWarehouseRoute extends React.Component {
 
@@ -97,6 +99,17 @@ export class RequestWarehouseRoute extends React.Component {
         label: "Hủy Hỏng",
         hide: () => !security.isHavePermission(["warehouse.request.view-report-flower"])
     }];
+
+    showExcelModal() {
+        const modal = modals.openModal({
+            content: (
+                <ExportExcelModal
+                    onClose={() => modal.close()}
+                    suppliers={this.state.suppliers}
+                />
+            )
+        })
+    }
 
     render() {
 
@@ -395,6 +408,11 @@ export class RequestWarehouseRoute extends React.Component {
                                     })
                                 }}
                             />
+
+                            <button className="btn btn-primary btn-small" onClick={() => this.showExcelModal()}>
+                                <span className="btn-text">Xuất Excel</span>
+                                <span className="loading-icon"><i className="fa fa-file-excel-o"/></span>
+                            </button>
                         </div>
 
                         <PaginationDataTable

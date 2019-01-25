@@ -30,6 +30,9 @@ export const warehouseApi = {
     },
     updateWarehousePrice: (id, data) => {
         return api.put(`/api/warehouse/update-price/${id}`, data)
+    },
+    getRequestByDate: (data) => {
+        return api.post(`/api/warehouse/request-list-by-date`, data)
     }
 
 };
