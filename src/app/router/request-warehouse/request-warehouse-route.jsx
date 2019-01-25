@@ -136,7 +136,7 @@ export class RequestWarehouseRoute extends React.Component {
             display: (row) => {
 
                 const requestTypesRender = {
-                    "request-from-supplier": () => <span><i className="fa fa-arrow-right text-primary" aria-hidden="true"/> Nhập từ <b className="text-primary">{suppliers.find(s => s._id == row.supplierID).name}</b></span>,
+                    "request-from-supplier": () => <span><b className="text-primary">{suppliers.find(s => s._id == row.supplierID).name}</b> <i className="fa fa-arrow-right text-primary" aria-hidden="true"/> {premises.find(p => p._id == (row.toWarehouse ? row.toWarehouse : "all")).name}</span>,
                     "return-to-supplier": () => <span><i className="fa fa-arrow-left text-danger" aria-hidden="true"/> Trả hàng </span>,
                     "transfer-to-subwarehouse": () => <span>{premises.find(p => p._id == (row.fromWarehouse ? row.fromWarehouse : "all")).name} <i className="fa fa-arrow-right text-primary" aria-hidden="true"/> {premises.find(p => p._id == row.premisesID).name} </span>,
                     "return-to-base": () => <span>{premises.find(p => p._id == row.premisesID).name} <i className="fa fa-arrow-right text-danger" aria-hidden="true"/> Kho Tổng </span>,

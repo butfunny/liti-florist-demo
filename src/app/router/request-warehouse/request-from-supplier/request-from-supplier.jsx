@@ -21,6 +21,7 @@ import {ImgPreview} from "../../../components/img-repview/img-preview";
 import {security} from "../../../security/secuiry-fe";
 import {DatePicker} from "../../../components/date-picker/date-picker";
 import {TimePicker} from "../../../components/time-picker/time-picker";
+import {premisesInfo} from "../../../security/premises-info";
 export class RequestFromSupplier extends React.Component {
 
     constructor(props) {
@@ -32,7 +33,8 @@ export class RequestFromSupplier extends React.Component {
                 requestName: "",
                 receivedName: "",
                 created: new Date(),
-                expireDate: new Date()
+                expireDate: new Date(),
+                toWarehouse: "all"
             },
             productID: ""
         };
@@ -230,7 +232,7 @@ export class RequestFromSupplier extends React.Component {
         }];
 
         let {history} = this.props;
-
+        const premises = premisesInfo.getPremises();
 
         return (
             <Layout
@@ -251,13 +253,25 @@ export class RequestFromSupplier extends React.Component {
 
                         <div className="card-body">
 
-                            <Select
-                                label="Nhà Cung Cấp*"
-                                list={suppliers.map(s => s._id)}
-                                value={request.supplierID}
-                                displayAs={(r) => suppliers.find(s => s._id == r)? suppliers.find(s => s._id == r).name : null}
-                                onChange={(supplierID) => this.setState({request: {...request, supplierID}})}
-                            />
+                            <div className="row">
+                                <Select
+                                    className="col"
+                                    label="Nhập về kho*"
+                                    list={[{_id: "all", name: "Kho Tổng"}].concat(premises).map(s => s._id)}
+                                    value={request.toWarehouse}
+                                    displayAs={(r) => [{_id: "all", name: "Kho Tổng"}].concat(premises).find(s => s._id == r) ? [{_id: "all", name: "Kho Tổng"}].concat(premises).find(s => s._id == r).name : null}
+                                    onChange={(premisesID) => this.setState({request: {...request, toWarehouse: premisesID}})}
+                                />
+
+                                <Select
+                                    className="col"
+                                    label="Nhà Cung Cấp*"
+                                    list={suppliers.map(s => s._id)}
+                                    value={request.supplierID}
+                                    displayAs={(r) => suppliers.find(s => s._id == r)? suppliers.find(s => s._id == r).name : null}
+                                    onChange={(supplierID) => this.setState({request: {...request, supplierID}})}
+                                />
+                            </div>
 
                             <div className="row">
                                 <Input

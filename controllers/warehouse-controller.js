@@ -91,7 +91,7 @@ module.exports = (app) => {
                             price: item.price,
                             quantity: item.quantity
                         }, (err, item) => {
-                            resolve();
+                            resolve(item);
                         })
                     })
                 };
@@ -100,10 +100,43 @@ module.exports = (app) => {
                     promises.push(createItem(item))
                 }
 
-                Promise.all(promises).then(() => {
-                    RequestWarehouseDao.findOneAndUpdate({_id: request._id}, {status: "accepted"}, () => {
-                        res.end();
-                    })
+                Promise.all(promises).then((items) => {
+                    if (request.toWarehouse != "all") {
+                        for (let item of items) {
+                            const updateWarehouse = () => {
+                                return new Promise((resolve, reject)=>{
+                                    let newSubWareHouseItem = {
+                                        parentID: item.parentID,
+                                        quantity: item.quantity,
+                                        supplierID: item.supplierID,
+                                        price: item.price,
+                                        oriPrice: item.oriPrice,
+                                        premisesID: request.toWarehouse,
+                                        baseProductID: item._id,
+                                        created: item.created
+                                    };
+
+                                    SubWareHouseDao.create(newSubWareHouseItem, () => {
+                                        WareHouseDao.updateOne({_id: item._id}, {quantity: 0}, () => {
+                                            resolve();
+                                        })
+                                    })
+                                })
+
+                            };
+                            promises.push(updateWarehouse())
+                        }
+
+                        Promise.all(promises).then(() => {
+                            RequestWarehouseDao.findOneAndUpdate({_id: request._id}, {status: "accepted"}, () => {
+                                res.end();
+                            })
+                        })
+                    } else {
+                        RequestWarehouseDao.findOneAndUpdate({_id: request._id}, {status: "accepted"}, () => {
+                            res.end();
+                        })
+                    }
                 })
             }
 
