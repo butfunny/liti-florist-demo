@@ -27,6 +27,9 @@ import {ManagePriceModal} from "./manage-price-modal";
 import classnames from "classnames"
 import {confirmModal} from "../../components/confirm-modal/confirm-modal";
 import {RequestHistoryModal} from "./request-history-modal";
+import {getCSVData} from "../order/excel";
+import {CSVLink} from "react-csv";
+import {subwWarehouseCSVData, warehouseCSVData} from "./warehouse-csv-data";
 
 export class WarehouseRoute extends React.Component {
 
@@ -83,11 +86,11 @@ export class WarehouseRoute extends React.Component {
                     return count;
                 };
 
-                const getError = (product) => {
+                const getError = (product, type) => {
                     let count = 0;
 
                     for (let request of requests) {
-                        if (["report-missing", "report-error"].indexOf(request.requestType) > -1) {
+                        if ([type].indexOf(request.requestType) > -1) {
                             for (let item of request.items) {
                                 if (item.id == product._id) {
                                     count += item.quantity
@@ -122,7 +125,8 @@ export class WarehouseRoute extends React.Component {
                             ...p,
                             exported: getExported(p),
                             used: getUsed(p),
-                            error: getError(p)
+                            missing: getError(p, "report-missing"),
+                            error: getError(p, "report-error")
                         }
                     })
                 });
@@ -146,11 +150,11 @@ export class WarehouseRoute extends React.Component {
                     return count;
                 };
 
-                const getError = (product) => {
+                const getError = (product, type) => {
                     let count = 0;
 
                     for (let request of requests) {
-                        if (["report-missing", "report-error"].indexOf(request.requestType) > -1) {
+                        if (request.requestType == type) {
                             for (let item of request.items) {
                                 if (item.id == product._id) {
                                     count += item.quantity
@@ -171,7 +175,8 @@ export class WarehouseRoute extends React.Component {
                             ...flower,
                             ...p,
                             used: getUsed(p),
-                            error: getError(p)
+                            missing: getError(p, "report-missing"),
+                            error: getError(p, "report-error")
                         }
                     })
                 });
@@ -327,7 +332,13 @@ export class WarehouseRoute extends React.Component {
             minWidth: "100",
             hidden: () => selectedBase != "all"
         }, {
-            label: "Hao Hụt / Hủy Hỏng",
+            label: "Hao Hụt",
+            width: "5%",
+            display: (row) => row.missing,
+            sortBy: (row) => row.missing,
+            minWidth: "120"
+        }, {
+            label: "Hủy Hỏng",
             width: "5%",
             display: (row) => row.error,
             sortBy: (row) => row.error,
@@ -371,8 +382,7 @@ export class WarehouseRoute extends React.Component {
         }, {
             label: "",
             width: "10%",
-            display: (row) => <button className="btn btn-primary btn-small" onClick={() => this.viewHistory(row)}>Lịch
-                sử</button>,
+            display: (row) => <button className="btn btn-primary btn-small" onClick={() => this.viewHistory(row)}>Lịch sử</button>,
             minWidth: "100",
         }];
 
@@ -448,6 +458,7 @@ export class WarehouseRoute extends React.Component {
             return filterKeyword(i) && filterType(i) && filterColor(i) && filterDateTime(i);
         });
 
+
         return (
             <Layout
                 activeRoute="Tồn Kho"
@@ -519,7 +530,31 @@ export class WarehouseRoute extends React.Component {
                                 label="Tìm kiếm"
                                 info="Tên, mã, đơn vị tính, ncc"
                             />
+
+                            { !loading && items && (
+                                <div className="filter-wrapper">
+                                    { selectedBase == "all" ? (
+                                        <CSVLink
+                                            data={warehouseCSVData(items, suppliers)}
+                                            filename={"tonkho.csv"}
+                                            className="btn btn-primary btn-small">
+                                            <span className="btn-text">Xuất Excel</span>
+                                            <span className="loading-icon"><i className="fa fa-file-excel-o"/></span>
+                                        </CSVLink>
+                                    ) : (
+                                        <CSVLink
+                                            data={subwWarehouseCSVData(items, suppliers)}
+                                            filename={"tonkho.csv"}
+                                            className="btn btn-primary btn-small">
+                                            <span className="btn-text">Xuất Excel</span>
+                                            <span className="loading-icon"><i className="fa fa-file-excel-o"/></span>
+                                        </CSVLink>
+                                    )}
+                                </div>
+                            )}
                         </div>
+
+
 
                         <PaginationDataTableOffline
                             rows={sortBy(itemsFiltered, i => i.created)}

@@ -8,5 +8,6 @@ module.exports = mongoose.model('SubWareHouseDao', {
     oriPrice: Number,
     premisesID: String,
     baseProductID: String,
-    created: Date
+    created: Date,
+    expireDate: Date
 }, "sub-warehouse");

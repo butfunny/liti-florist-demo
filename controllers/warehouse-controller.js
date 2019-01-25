@@ -85,7 +85,7 @@ module.exports = (app) => {
                             importedQuantity : item.quantity,
                             supplierID: item.supplierID,
                             created: item.created,
-                            expireDate: item.expireDate,
+                            expireDate: request.expireDate,
                             parentID: item.parentID,
                             oriPrice: item.oriPrice,
                             price: item.price,
@@ -113,7 +113,8 @@ module.exports = (app) => {
                                         oriPrice: item.oriPrice,
                                         premisesID: request.toWarehouse,
                                         baseProductID: item._id,
-                                        created: item.created
+                                        created: item.created,
+                                        expireDate: item.expireDate
                                     };
 
                                     SubWareHouseDao.create(newSubWareHouseItem, () => {
@@ -207,7 +208,8 @@ module.exports = (app) => {
                                                 oriPrice: item.oriPrice,
                                                 premisesID: request.premisesID,
                                                 baseProductID: item._id,
-                                                created: item.created
+                                                created: item.created,
+                                                expireDate: item.expireDate
                                             };
 
                                             SubWareHouseDao.create(newSubWareHouseItem, () => {
@@ -259,7 +261,8 @@ module.exports = (app) => {
                                                 oriPrice: item.oriPrice,
                                                 premisesID: request.premisesID,
                                                 baseProductID: item.baseProductID,
-                                                created: item.created
+                                                created: item.created,
+                                                expireDate: item.expireDate
                                             };
 
                                             SubWareHouseDao.create(newSubWareHouseItem, () => {
