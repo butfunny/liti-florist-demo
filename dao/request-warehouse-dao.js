@@ -9,7 +9,8 @@ module.exports = mongoose.model('RequestWarehouseDao', {
         price: Number,
         quantity: Number,
         id: String,
-        importedQuantity: Number
+        importedQuantity: Number,
+        baseProductID: String
     }],
     toWarehouse: String,
     fromWarehouse: String,

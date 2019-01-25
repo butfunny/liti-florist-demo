@@ -412,7 +412,7 @@ module.exports = (app) => {
 
         FlowersDao.find({$or: [{name: new RegExp(".*" + keyword + ".*", "i")}, {productID: new RegExp(".*" + keyword + ".*", "i")}]}, (err, flowers) => {
             WareHouseDao.find({parentID: {$in: flowers.map(f => f._id)}}, (err, products) => {
-                RequestWarehouseDao.find({requestType: "transfer-to-subwarehouse", status: "accepted"}, (err, requests) => {
+                RequestWarehouseDao.find({status: "accepted"}, (err, requests) => {
                     BillDao.find({"selectedFlower.baseProductID": {$in : products.map(p => p._id)}}, (err, bills) => {
                         res.json({
                             products,
@@ -435,13 +435,17 @@ module.exports = (app) => {
 
         FlowersDao.find({$and: query}, (err, flowers) => {
             SubWareHouseDao.find({$and: [{parentID: {$in: flowers.map(f => f._id)}}, {premisesID}]}, (err, products) => {
-                BillDao.find({"selectedFlower.id": {$in : products.map(p => p._id)}, premises_id: premisesID}, (err, bills) => {
-                    res.json({
-                        products,
-                        flowers,
-                        bills
-                    })
-                });
+                RequestWarehouseDao.find({status: "accepted"}, (err, requests) => {
+                    BillDao.find({"selectedFlower.id": {$in : products.map(p => p._id)}, premises_id: premisesID}, (err, bills) => {
+                        res.json({
+                            products,
+                            flowers,
+                            bills,
+                            requests
+                        })
+                    });
+                })
+
 
 
             })

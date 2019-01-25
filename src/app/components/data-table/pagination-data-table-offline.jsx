@@ -45,7 +45,7 @@ export class PaginationDataTableOffline extends React.Component {
             <div className="data-table data-table-mobile pagination-data-table">
                 <div className="data-table-wrapper">
                     <div className="ge-row ge-table-header">
-                        {columns.filter(col => !col.hideDesktop || !col.hideDesktop()).map((column, index) => (
+                        {columns.filter(col => !col.hidden || !col.hidden()).map((column, index) => (
                             <div
                                 onClick={() => column.sortBy && this.sort(column, index)}
                                 className={classnames("ge-col", column.sortBy && "has-sort-by", column.className)}
@@ -85,7 +85,7 @@ export class PaginationDataTableOffline extends React.Component {
                             {sortedRows().length > 0 && sortedRows().slice((page - 1) * 15, (page - 1) * 15 + 15).map((row, i) => (
                                 <div className={classnames("ge-row ge-data", onClickRow && "on-click-row")} key={i}
                                      onClick={() => onClickRow && onClickRow(row)}>
-                                    {columns.map((column, index) => (
+                                    {columns.filter(col => !col.hidden || !col.hidden()).map((column, index) => (
                                         <div
                                             style={{minWidth: `${column.minWidth}px`, width: `${column.width}`, ...rowStyling && rowStyling(row)}}
                                             className={classnames("ge-col", column.className)} key={index}>

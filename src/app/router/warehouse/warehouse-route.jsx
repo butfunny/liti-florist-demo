@@ -64,13 +64,39 @@ export class WarehouseRoute extends React.Component {
                     let count = 0;
 
                     for (let request of requests) {
-                        for (let item of request.items) {
-                            if (item.id == product._id) count += item.quantity
+                        if (["return-to-base", "transfer-to-subwarehouse"].indexOf(request.requestType) > -1) {
+                            for (let item of request.items) {
+
+                                if (item.baseProductID == product._id) {
+                                    count -= item.quantity
+                                }
+
+                                if (item.id == product._id) {
+                                    count += item.quantity
+                                }
+                            }
                         }
                     }
 
                     return count;
                 };
+
+                const getError = (product) => {
+                    let count = 0;
+
+                    for (let request of requests) {
+                        if (["report-missing", "report-error"].indexOf(request.requestType) > -1) {
+                            for (let item of request.items) {
+                                if (item.id == product._id) {
+                                    count += item.quantity
+                                }
+                            }
+                        }
+                    }
+
+                    return count;
+                };
+
 
                 const getUsed = (product) => {
                     let count = 0;
@@ -91,14 +117,15 @@ export class WarehouseRoute extends React.Component {
                             ...flower,
                             ...p,
                             exported: getExported(p),
-                            used: getUsed(p)
+                            used: getUsed(p),
+                            error: getError(p)
                         }
                     })
                 });
                 return Promise.resolve(products);
             })
         } else {
-            return warehouseApi.searchProductInSubWarehouse({keyword: "", premisesID: baseID}).then(({products, flowers, bills}) => {
+            return warehouseApi.searchProductInSubWarehouse({keyword: "", premisesID: baseID}).then(({products, flowers, bills, requests}) => {
 
                 const getUsed = (product) => {
                     let count = 0;
@@ -112,12 +139,30 @@ export class WarehouseRoute extends React.Component {
                     return count;
                 };
 
+                const getError = (product) => {
+                    let count = 0;
+
+                    for (let request of requests) {
+                        if (["report-missing", "report-error"].indexOf(request.requestType) > -1) {
+                            for (let item of request.items) {
+                                if (item.id == product._id) {
+                                    count += item.quantity
+                                }
+                            }
+                        }
+                    }
+
+                    return count;
+                };
+
+
                 this.setState({loading: false, items: products.map(p => {
                         let flower = flowers.find(f => f._id == p.parentID);
                         return {
                             ...flower,
                             ...p,
-                            used: getUsed(p)
+                            used: getUsed(p),
+                            error: getError(p)
                         }
                     })
                 });
@@ -183,7 +228,6 @@ export class WarehouseRoute extends React.Component {
             label: "Tên",
             width: "25%",
             display: (row) => (
-
                 <ColumnViewMore
                     header={(
                         <div className="product-name">
@@ -227,7 +271,8 @@ export class WarehouseRoute extends React.Component {
             width: "5%",
             display: (row) => row.importedQuantity,
             sortBy: (row) => row.importedQuantity,
-            minWidth: "100"
+            minWidth: "100",
+            hidden: () => selectedBase != "all"
         }, {
             label: "Tồn",
             width: "5%",
@@ -239,7 +284,14 @@ export class WarehouseRoute extends React.Component {
             width: "5%",
             display: (row) => row.exported,
             sortBy: (row) => row.exported,
-            minWidth: "100"
+            minWidth: "100",
+            hidden: () => selectedBase != "all"
+        }, {
+            label: "Hao Hụt / Hủy Hỏng",
+            width: "5%",
+            display: (row) => row.error,
+            sortBy: (row) => row.error,
+            minWidth: "120"
         }, {
             label: "Đã Bán",
             width: "5%",

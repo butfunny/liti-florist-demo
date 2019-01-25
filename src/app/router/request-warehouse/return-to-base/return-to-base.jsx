@@ -55,7 +55,7 @@ export class ReturnToBaseRoute extends React.Component {
         this.setState({
             request: {
                 ...this.state.request,
-                items: this.state.request.items.filter(i => i.parentID != row.parentID)
+                items: this.state.request.items.filter(i => i._id != row._id)
             }
         })
     }
@@ -70,7 +70,8 @@ export class ReturnToBaseRoute extends React.Component {
             price: item.price,
             quantity: item.submitQuantity,
             supplierID: item.supplierID,
-            id: item._id
+            id: item._id,
+            baseProductID: item.baseProductID
         });
 
         warehouseApi.createRequest({

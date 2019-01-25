@@ -70,7 +70,8 @@ export class ReportFlower extends React.Component {
             price: item.price,
             quantity: item.submitQuantity,
             supplierID: item.supplierID,
-            id: item._id
+            id: item._id,
+            baseProductID: item.baseProductID
         });
 
         warehouseApi.createRequest({
