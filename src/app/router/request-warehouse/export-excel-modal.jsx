@@ -104,37 +104,44 @@ export class ExportExcelModal extends React.Component {
         }];
 
 
-        const renderItems = (row) => {
-            return row.items.map((item) => {
-                let product = flowers.find(f => f._id == item.parentID);
-                return `${item.quantity} - ${product.name}`
-            }).join("\n")
-        };
 
         const getCSVData = (requests) => {
             let csvData = [[
                 "Thời gian",
                 "Kiểu",
-                "Người Gửi",
-                "Người Nhận",
+                "Mã Sản Phẩm",
                 "Sản Phẩm",
+                "Số Lượng",
                 "Tổng Tiền",
-                "Trạng Thái",
-                "Lí Do"
+                "Trạng Thái"
             ]];
 
             for (let row of requests) {
-                csvData.push([
-                    moment(row.created).format("DD/MM/YYYY HH:mm"),
-                    requestTypesRender[row.requestType](row),
-                    row.requestName,
-                    row.receivedName,
-                    renderItems(row),
-                    sumBy(row.items, item => item.quantity * item.price),
-                    status.find(r => r.value == row.status).label,
-                    row.reason
-                ])
+
+                for (let item of row.items) {
+                    let product = flowers.find(f => f._id == item.parentID);
+                    csvData.push([
+                        moment(row.created).format("DD/MM/YYYY HH:mm"),
+                        requestTypesRender[row.requestType](row),
+                        product.productID,
+                        product.name,
+                        item.quantity,
+                        item.quantity * item.oriPrice,
+                        status.find(r => r.value == row.status).label
+                    ])
+                }
+
             }
+
+            csvData.push([
+                "",
+                "",
+                "",
+                "",
+                "",
+                sumBy(csvData.slice(1), item => item[5]),
+                ""
+            ]);
 
             return csvData;
         };
