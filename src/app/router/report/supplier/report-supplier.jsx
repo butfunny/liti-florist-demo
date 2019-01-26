@@ -1,6 +1,6 @@
 import React from "react";
 import {Layout} from "../../../components/layout/layout";
-import {formatNumber, getStartAndLastDayOfWeek} from "../../../common/common";
+import {formatNumber, getStartAndLastDayOfWeek, keysToArray} from "../../../common/common";
 import {DatePicker} from "../../../components/date-picker/date-picker";
 import {Select} from "../../../components/select/select";
 import {warehouseApi} from "../../../api/warehouse-api";
@@ -9,6 +9,9 @@ import {DataTable} from "../../../components/data-table/data-table";
 import {ColumnViewMore} from "../../../components/column-view-more/column-view-more";
 import {ImgPreview} from "../../../components/img-repview/img-preview";
 import sumBy from "lodash/sumBy"
+import groupBy from "lodash/groupBy"
+import {modals} from "../../../components/modal/modals";
+import {HistoryItemModal} from "./history-item-modal";
 export class ReportSupplier extends React.Component {
 
     constructor(props) {
@@ -113,6 +116,17 @@ export class ReportSupplier extends React.Component {
         })
     }
 
+    showHistory(items) {
+        const modal = modals.openModal({
+            content: (
+                <HistoryItemModal
+                    items={items}
+                    onClose={() => modal.close()}
+                />
+            )
+        })
+    }
+
     render() {
 
         let {loading, from, to, bills, flowers, requests, suppliers} = this.state;
@@ -132,11 +146,19 @@ export class ReportSupplier extends React.Component {
                     <ColumnViewMore
                         header={<span>{row.totalFlowerImport.count} - {formatNumber(row.totalFlowerImport.total)}</span>}
                         viewMoreText={"Chi tiết"}
-                        renderViewMoreBody={() => row.totalFlowerImport.items.map((item, index) => (
-                            <div className="info-item product-name" key={index}>
-                                <ImgPreview src={item.image}/> {item.name} - <span className="text-primary">{item.quantity}</span> - <span className="text-primary">{formatNumber(item.quantity * item.oriPrice)}</span>
-                            </div>
-                        ))}
+                        renderViewMoreBody={() => keysToArray(groupBy(row.totalFlowerImport.items, f => f.parentID)).map((groupedItem, index) => {
+                            let item = groupedItem.value[0];
+
+                            return (
+                                <div className="info-item product-name" key={index}>
+                                    <ImgPreview src={item.image}/>
+                                    {item.name} - <b className="text-success">{sumBy(groupedItem.value, item => item.quantity)}</b> - <b className="text-success">{formatNumber(sumBy(groupedItem.value, item => item.quantity * item.oriPrice))}</b>
+                                    <span className="text-primary"
+                                          onClick={() => this.showHistory(groupedItem.value)}
+                                          style={{cursor: "pointer", paddingLeft: "10px"}}>Chi tiết</span>
+                                </div>
+                            )
+                        })}
                         isShowViewMoreText={row.totalFlowerImport.count > 0}
                     />
                 )
@@ -150,11 +172,16 @@ export class ReportSupplier extends React.Component {
                 <ColumnViewMore
                     header={<span>{row.totalFlowerUsed.count} - {formatNumber(row.totalFlowerUsed.total)}</span>}
                     viewMoreText={"Chi tiết"}
-                    renderViewMoreBody={() => row.totalFlowerUsed.items.map((item, index) => (
-                        <div className="info-item product-name" key={index}>
-                            <ImgPreview src={item.image}/> {item.name} - <span className="text-primary">{item.quantity}</span> - <span className="text-primary">{formatNumber(item.quantity * item.price)}</span>
-                        </div>
-                    ))}
+                    renderViewMoreBody={() => keysToArray(groupBy(row.totalFlowerUsed.items, f => f.parentID)).map((groupedItem, index) => {
+                        let item = groupedItem.value[0];
+
+                        return (
+                            <div className="info-item product-name" key={index}>
+                                <ImgPreview src={item.image}/>
+                                {item.name} - <b className="text-success">{sumBy(groupedItem.value, item => item.quantity)}</b> - <b className="text-success">{formatNumber(sumBy(groupedItem.value, item => item.quantity * item.price))}</b>
+                            </div>
+                        )
+                    })}
                     isShowViewMoreText={row.totalFlowerUsed.count > 0}
                 />
             ),
