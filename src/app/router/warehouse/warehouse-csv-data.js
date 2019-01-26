@@ -47,8 +47,8 @@ export const subwWarehouseCSVData = (items, suppliers) => {
     let ret = [[
         "Ngày Nhập Kho",
         "Hạn Sử Dụng",
-        "Tên",
         "Mã",
+        "Tên",
         "Tồn",
         "Hao Hụt",
         "Hủy Hỏng",
@@ -64,8 +64,8 @@ export const subwWarehouseCSVData = (items, suppliers) => {
         ret.push([
             moment(row.created).format("DD/MM/YYYY hh:MM"),
             moment(row.expireDate).format("DD/MM/YYYY"),
-            row.name,
             row.productID,
+            row.name,
             row.quantity,
             row.missing,
             row.error,

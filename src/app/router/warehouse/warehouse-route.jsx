@@ -270,6 +270,12 @@ export class WarehouseRoute extends React.Component {
             sortBy: (row) => row.expireDate,
             minWidth: "150"
         }, {
+            label: "Mã",
+            width: "5%",
+            display: (row) => row.productID,
+            sortBy: (row) => row.productID,
+            minWidth: "150"
+        }, {
             label: "Tên",
             width: "25%",
             display: (row) => (
@@ -359,7 +365,7 @@ export class WarehouseRoute extends React.Component {
             label: "NCC",
             width: "15%",
             display: (row) => this.state.suppliers.find(s => s._id == row.supplierID).name,
-            minWidth: "100",
+            minWidth: "150",
             sortBy: (row) => this.state.suppliers.find(s => s._id == row.supplierID).name
         }, {
             label: "Giá Gốc",
