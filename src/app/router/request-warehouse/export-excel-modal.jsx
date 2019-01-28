@@ -111,6 +111,7 @@ export class ExportExcelModal extends React.Component {
                 "Kiểu",
                 "Mã Sản Phẩm",
                 "Sản Phẩm",
+                "Đơn Giá",
                 "Số Lượng",
                 "Tổng Tiền",
                 "Trạng Thái"
@@ -125,6 +126,7 @@ export class ExportExcelModal extends React.Component {
                         requestTypesRender[row.requestType](row),
                         product.productID,
                         product.name,
+                        item.oriPrice,
                         item.quantity,
                         item.quantity * item.oriPrice,
                         status.find(r => r.value == row.status).label
