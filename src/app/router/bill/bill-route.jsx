@@ -367,8 +367,6 @@ export class BillRoute extends RComponent {
                                                     disabled={
                                                         bill.items.length == 0 ||
                                                         saving ||
-                                                        bill.sales.length == 0 ||
-                                                        bill.florists.length == 0 ||
                                                         bill.customer.customerName.length == 0 ||
                                                         bill.customer.customerPhone.length == 0 ||
                                                         bill.to.receiverName.length == 0 ||
