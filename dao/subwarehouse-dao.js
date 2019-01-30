@@ -10,4 +10,4 @@ module.exports = mongoose.model('SubWareHouseDao', {
     baseProductID: String,
     created: Date,
     expireDate: Date
-}, "sub-warehouse");
+}, "sub_warehouse");
