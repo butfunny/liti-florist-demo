@@ -1,4 +1,5 @@
 import React, {Fragment} from "react";
+import ReactDOM from "react-dom";
 import {Layout} from "../../components/layout/layout";
 import {billApi} from "../../api/bill-api";
 import {formatNumber, getSubTotalBill, getTotalBillWithouDiscount} from "../../common/common";
@@ -320,18 +321,27 @@ class ImageCard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            open: false
+            open: false,
+            height: "100%"
         }
+    }
+
+    componentDidMount() {
+        let $elem = $(ReactDOM.findDOMNode(this));
+        this.setState({height: `${$elem.width()}px`})
     }
 
     render() {
 
         let {row} = this.props;
-        let {open} = this.state;
+        let {open, height} = this.state;
 
         return (
             <div className="card">
-                <ImgPreview src={row.url}/>
+                <ImgPreview
+                    style={{height}}
+                    src={row.url}
+                />
                 <div className="card-title">
                     <div className="color-wrapper">
                         {row.colors.map((color, index) => (

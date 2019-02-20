@@ -13,11 +13,12 @@ export class ImgPreview extends React.Component {
     }
 
     render() {
+        let {src, style} = this.props;
+        console.log(style);
 
-        let {src} = this.props;
 
         return (
-            <img className="img-preview" src={src} alt="" onClick={() => this.preview()}/>
+            <img className="img-preview" style={style} src={src} alt="" onClick={() => this.preview()}/>
         );
     }
 }
@@ -29,7 +30,7 @@ class ImagePreviewModal extends React.Component {
         let {src} = this.props;
 
         return (
-            <img src={src} className="image-preview-modal"/>
+            <img src={src}  className="image-preview-modal"/>
         )
     }
 }
