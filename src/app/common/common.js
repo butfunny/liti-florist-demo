@@ -398,7 +398,7 @@ function resizeImages(file, complete) {
 
 function resizeInCanvas(img){
     /////////  3-3 manipulate image
-    var perferedWidth = 750;
+    var perferedWidth = 400;
     var ratio = perferedWidth / img.width;
     var canvas = $("<canvas>")[0];
     canvas.width = img.width * ratio;
