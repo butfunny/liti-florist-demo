@@ -122,98 +122,6 @@ export class GalleryRoute extends React.Component {
         let {colors, types, typeSelected, colorSelected, items, photos} = this.state;
 
 
-        let columns = [{
-            label: "Ảnh",
-            width: "10%",
-            display: (row) => <div className="product-image"><ImgPreview src={row.url}/></div>,
-            minWidth: "100"
-        }, {
-            label: "Tên",
-            width: "25%",
-            display: (row) => row.title,
-            sortBy: (row) => row.title,
-            minWidth: "150"
-        }, {
-            label: "Định Lượng",
-            width: "45%",
-            display: (row) => row.items.map((product, index) => {
-                return (
-                    <ColumnViewMore
-                        key={index}
-                        header={
-                            <div className="product-name">
-                                <ImgPreview src={product.image}/> {product.quantity} - {product.name}
-                            </div>
-                        }
-                        renderViewMoreBody={() => (
-                            <Fragment>
-                                <div className="info-item">
-                                    {product.productID} - {product.catalog}
-                                </div>
-
-                                <div className="info-item">
-                                    Màu:
-                                    {product.colors.map((color, index) => (
-                                        <div key={index}
-                                             style={{
-                                                 background: color,
-                                                 height: "15px",
-                                                 width: "25px",
-                                                 display: "inline-block",
-                                                 marginLeft: "5px"
-                                             }}
-                                        />
-                                    ))}
-                                </div>
-
-                                <div className="info-item">
-                                    Đơn Vị Tính: {product.unit}
-                                </div>
-
-                                {product.lengthiness && (
-                                    <div className="info-item">
-                                        Chiều Dài Cành Hoa: {product.lengthiness}
-                                    </div>
-                                )}
-                            </Fragment>
-                        )}
-                        viewMoreText="Chi Tiết"
-                        isShowViewMoreText
-                    />
-                )
-            }),
-            minWidth: "300"
-        }, {
-            label: "Giá",
-            width: "10%",
-            display: (row) => formatNumber(row.price),
-            sortBy: (row) => row.price,
-            minWidth: "100"
-        }, {
-            label: "Màu",
-            width: "10%",
-            display: (row) => row.colors.map((color, index) => (
-                <div key={index}
-                     style={{
-                         background: color,
-                         height: "15px",
-                         width: "25px",
-                         display: "inline-block",
-                         marginRight: "5px"
-                     }}
-                />
-            )),
-            minWidth: "100"
-        }, {
-            label: "",
-            width: "5%",
-            display: (row) => security.isHavePermission(["gallery"]) && !row.noRemove &&
-                <button className="btn btn-danger btn-small" onClick={() => this.remove(row)}><i
-                    className="fa fa-trash"/></button>,
-            sortBy: (row) => row.flowerType,
-            minWidth: "50"
-        }];
-
         let {filteredColors, filteredTypes, keyword} = this.state;
 
         let itemsFiltered = photos && photos.filter(i => {
@@ -343,6 +251,11 @@ class ImageCard extends React.Component {
                     src={row.url}
                 />
                 <div className="card-title">
+
+                    {row.flowerType} - {row.title}
+                    <br/>
+                    {formatNumber(row.price)}
+
                     <div className="color-wrapper">
                         {row.colors.map((color, index) => (
                             <div
