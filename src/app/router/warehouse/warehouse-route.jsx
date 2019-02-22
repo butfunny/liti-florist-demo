@@ -296,7 +296,8 @@ export class WarehouseRoute extends React.Component {
                                          height: "15px",
                                          width: "25px",
                                          display: "inline-block",
-                                         marginRight: "5px"
+                                         marginRight: "5px",
+                                         border: "1px solid #dedede"
                                      }}
                                 />
                             ))}

@@ -60,7 +60,7 @@ export class GalleryRoute extends React.Component {
                         return item
                     }),
                     title: bill.items.map((item, index) => (
-                        <div key={index}>{item.flowerType} {item.name}</div>
+                        <span key={index}>{item.flowerType} {item.name}</span>
                     )),
                     price: getSubTotalBill(bill),
                     colors: uniq(bill.items.map((item => item.color)).join(", ").split(", ")),
@@ -252,9 +252,9 @@ class ImageCard extends React.Component {
                 />
                 <div className="card-title">
 
-                    {row.flowerType} - {row.title}
-                    <br/>
-                    {formatNumber(row.price)}
+                    <div className="text-small">
+                        {row.title} - <span className="text-danger">{formatNumber(row.price)}</span>
+                    </div>
 
                     <div className="color-wrapper">
                         {row.colors.map((color, index) => (
