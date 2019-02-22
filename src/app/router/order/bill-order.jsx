@@ -546,7 +546,7 @@ export class BillOrderRoute extends RComponent {
 
                             <div className="text-info">
                                 Tổng Cộng: <b
-                                className="text-primary">{bills ? formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBill(b))) : 0}</b>
+                                className="text-primary">{bills ? formatNumber(sumBy(bills, b => getTotalBill(b))) : 0}</b>
                             </div>
 
                             <div className="text-info text-danger">
@@ -556,12 +556,12 @@ export class BillOrderRoute extends RComponent {
 
                             <div className="text-info">
                                 Tổng Thu: <b
-                                className="text-primary">{bills ? formatNumber(sumBy(bills, b => (b.status != "Done" || b.isOwe) ? 0 : getTotalBill(b))) : 0}</b>
+                                className="text-primary">{bills ? formatNumber(sumBy(bills, b => b.isOwe ? 0 : getTotalBill(b))) : 0}</b>
                             </div>
 
                             <div className="text-info">
                                 Tổng Thu chưa bao gồm VAT: <b
-                                className="text-primary">{bills ? formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBillWithoutVAT(b))) : 0}</b>
+                                className="text-primary">{bills ? formatNumber(sumBy(bills, b => getTotalBillWithoutVAT(b))) : 0}</b>
                             </div>
                         </div>
 
