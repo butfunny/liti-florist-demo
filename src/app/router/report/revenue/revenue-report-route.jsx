@@ -88,7 +88,7 @@ export class RevenueReportRoute extends React.Component {
 
 
                         <div className="text-info margin-top">
-                            Tổng Thu: <b className="text-primary">{formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBill(b)))}</b>
+                            Tổng Thu: <b className="text-primary">{formatNumber(sumBy(bills, b => getTotalBill(b)))}</b>
                         </div>
 
                         <div className="text-info">
@@ -96,7 +96,7 @@ export class RevenueReportRoute extends React.Component {
                         </div>
 
                         <div className="text-info">
-                            Tổng Thu chưa bao gồm VAT: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => b.status != "Done" ? 0 : getTotalBillWithoutVAT(b))) : 0}</b>
+                            Tổng Thu chưa bao gồm VAT: <b className="text-primary">{bills ? formatNumber(sumBy(bills, b => getTotalBillWithoutVAT(b))) : 0}</b>
                         </div>
 
                         <div className="text-info">
