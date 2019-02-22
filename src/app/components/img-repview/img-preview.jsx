@@ -14,9 +14,6 @@ export class ImgPreview extends React.Component {
 
     render() {
         let {src, style} = this.props;
-        console.log(style);
-
-
         return (
             <img className="img-preview" style={style} src={src} alt="" onClick={() => this.preview()}/>
         );

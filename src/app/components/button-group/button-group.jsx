@@ -17,9 +17,6 @@ export class ButtonGroup extends RComponent {
 
     }
 
-    handleChange(e, action) {
-        console.log(1123);
-    }
 
 
     render() {
