@@ -43,12 +43,14 @@ export class BillEditRoute extends React.Component {
                 sales: users.filter(u => u.role == "sale").map(mapItem),
                 florists: users.filter(u => u.role == "florist").map(mapItem),
                 ships: users.filter(u => u.role == "ship").map(mapItem)
+            });
+
+            billApi.getBillById(props.match.params.id).then(({bill, customer}) => {
+                this.setState({bill: {...bill, customer: {...customer, ...bill}}})
             })
         });
 
-        billApi.getBillById(props.match.params.id).then(({bill, customer}) => {
-            this.setState({bill: {...bill, customer: {...customer, ...bill}}})
-        })
+
     }
 
     submitBill() {

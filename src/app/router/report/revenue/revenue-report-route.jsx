@@ -103,7 +103,6 @@ export class RevenueReportRoute extends React.Component {
                             Tổng Đơn Free: <b className="text-primary">{bills ? bills.filter(b => b.to && b.to.paymentType && b.to.paymentType.indexOf("Free") > -1).length : 0}</b>
                             <span className="text-primary" style={{cursor: "pointer", paddingLeft: "5px"}} onClick={() => this.setState({showFree: !showFree})}>{showFree ? "Ẩn" : "Chi tiết"}</span>
 
-
                             { showFree && (
                                 <div className="free-info" style={{paddingLeft: "10px"}}>
                                     {["Free MKT", "Free BGĐ", "Free DVKH", "Free"].map((text, index) => (
