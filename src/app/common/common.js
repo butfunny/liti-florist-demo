@@ -53,7 +53,7 @@ export const getTotalBill = (bill) => {
 
 export const getBillProfit = (bill) => {
     if (bill.selectedFlower) {
-        return sumBy(bill.selectedFlower, (item) => item.price - (item.oriPrice || 0))
+        return getTotalBill(bill) - sumBy(bill.selectedFlower, (item) => item.oriPrice || 0);
     }
 
     return 0;
