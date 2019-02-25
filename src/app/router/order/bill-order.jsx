@@ -81,7 +81,7 @@ export class BillOrderRoute extends RComponent {
                 bills: bills.map(bill => {
                     return {
                         ...bill,
-                        lastTime: bill.status == "Done" ? -1 : new Date(bill.delivery_time).getTime() - new Date().getTime() < 0 ? 999999999 + Math.abs(new Date(bill.delivery_time).getTime() - new Date().getTime()) : new Date(bill.delivery_time).getTime() - new Date().getTime()
+                        lastTime: bill.status == "Done" ? 9999999999999999 : new Date(bill.deliverTime).getTime() - new Date().getTime() < 0 ? 999999999 + Math.abs(new Date(bill.deliverTime).getTime() - new Date().getTime()) : new Date(bill.deliverTime).getTime() - new Date().getTime()
                     }
                 }), customers, logs, loading: false
             })
@@ -599,7 +599,7 @@ export class BillOrderRoute extends RComponent {
 
                         <DataTable
                             loading={loading}
-                            rows={sortBy(billsFiltered, "-lastTime")}
+                            rows={sortBy(billsFiltered, b => b.lastTime)}
                             columns={columns}
                             rowStyling={(bill) => {
                                 if (new Date(bill.deliverTime).getTime() < new Date().getTime() + 1800000 && bill.status == "Chờ xử lý") return {background: "rgba(253,57,122, .1)"};
