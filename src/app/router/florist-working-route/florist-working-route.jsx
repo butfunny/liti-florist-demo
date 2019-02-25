@@ -288,7 +288,7 @@ export class FloristWorkingRoute extends RComponent {
                                 <div>
                                     <button
                                         onClick={() => this.submit()}
-                                        disabled={isDisabled || items.length == 0 || submitting}
+                                        disabled={isDisabled || submitting}
                                         className="btn btn-primary" style={{marginTop: "10px"}}>
                                         <span className="btn-text">Done</span>
                                         {submitting && <span className="loading-icon"><i className="fa fa-spinner fa-pulse"/></span>}

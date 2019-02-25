@@ -422,15 +422,7 @@ export class BillOrderRoute extends RComponent {
             label: "Trạng Thái",
             width: "15%",
             minWidth: "100",
-            display: (bill) => (
-                <Select
-                    value={bill.status}
-                    list={status}
-                    onChange={(status) => {
-                        this.updateBill(bill, status)
-                    }}
-                />
-            )
+            display: (bill) => bill.status
         }, {
             label: "",
             width: "5%",
