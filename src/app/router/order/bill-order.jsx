@@ -81,7 +81,7 @@ export class BillOrderRoute extends RComponent {
                 bills: bills.map(bill => {
                     return {
                         ...bill,
-                        lastTime: new Date(bill.delivery_time).getTime() - new Date().getTime() < 0 ? 999999999 + Math.abs(new Date(bill.delivery_time).getTime() - new Date().getTime()) : new Date(bill.delivery_time).getTime() - new Date().getTime()
+                        lastTime: bill.status == "Done" ? -1 : new Date(bill.delivery_time).getTime() - new Date().getTime() < 0 ? 999999999 + Math.abs(new Date(bill.delivery_time).getTime() - new Date().getTime()) : new Date(bill.delivery_time).getTime() - new Date().getTime()
                     }
                 }), customers, logs, loading: false
             })
