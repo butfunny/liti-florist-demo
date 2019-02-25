@@ -523,5 +523,11 @@ module.exports = (app) => {
 
             })
         })
+    });
+
+    app.get("/warehouse/export-excel", Security.authorDetails, (req, res) => {
+        FlowersDao.find({}, (err, flowers) => {
+            res.json(flowers);
+        })
     })
 };

@@ -12,6 +12,10 @@ import {SelectTags} from "../../components/select-tags/select-tags";
 import {catalogs} from "../../common/constance";
 import {ImgPreview} from "../../components/img-repview/img-preview";
 import {security} from "../../security/secuiry-fe";
+import {warehouseApi} from "../../api/warehouse-api";
+import moment from "../request-warehouse/export-excel-modal";
+import sumBy from "lodash/sumBy";
+import {CSVLink} from "react-csv";
 
 export class ProductsRoute extends React.Component {
 
@@ -21,8 +25,15 @@ export class ProductsRoute extends React.Component {
         this.state = {
             flowers: null,
             filteredColors: [],
-            filteredTypes: []
+            filteredTypes: [],
+            excelFlowers: null
         };
+
+
+        warehouseApi.exportExcel().then((excelFlowers) => {
+            this.setState({excelFlowers})
+        })
+
 
     }
 
@@ -77,7 +88,7 @@ export class ProductsRoute extends React.Component {
 
 
     render() {
-        let {flowers, total, filteredColors, filteredTypes} = this.state;
+        let {flowers, total, filteredColors, filteredTypes, excelFlowers} = this.state;
 
         let columns = [{
             label: "Mã SP",
@@ -161,6 +172,36 @@ export class ProductsRoute extends React.Component {
         }];
 
 
+        const getCSVData = (items) => {
+            let csvData = [[
+                "Mã SP",
+                "Tên",
+                "Loại",
+                "Giá Gốc",
+                "Giá Bán",
+                "DVT",
+                "Dài"
+            ]];
+
+            for (let row of items) {
+
+                csvData.push([
+                    row.productID,
+                    row.name,
+                    row.catalog,
+                    row.oriPrice,
+                    row.price,
+                    row.unit,
+                    row.lengthiness,
+                ])
+
+            }
+
+            return csvData;
+        };
+
+
+
         return (
             <Layout
                 activeRoute="Danh Sách Sản Phẩm"
@@ -194,7 +235,19 @@ export class ProductsRoute extends React.Component {
                                 />
                             </div>
                         </div>
+
+                        { excelFlowers && (
+                            <CSVLink
+                                data={getCSVData(excelFlowers)}
+                                filename={"danh-sach-sp.csv"}
+                                className="btn btn-primary btn-small btn-excel" >
+                                <span className="btn-text">Xuất Excel</span>
+                                <span className="loading-icon"><i className="fa fa-file-excel-o"/></span>
+                            </CSVLink>
+                        )}
                     </div>
+
+
 
                     <PaginationDataTable
                         ref={elem => this.table = elem}

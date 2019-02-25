@@ -33,6 +33,8 @@ export const warehouseApi = {
     },
     getRequestByDate: (data) => {
         return api.post(`/api/warehouse/request-list-by-date`, data)
+    },
+    exportExcel: () => {
+        return api.get("/api/warehouse/export-excel");
     }
-
 };
