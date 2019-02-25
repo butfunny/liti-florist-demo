@@ -9,6 +9,7 @@ const VipDao = require("../dao/vip-dao");
 const WareHouseDao = require("../dao/warehouse-dao");
 const FlowesrDao = require("../dao/flowers-dao");
 const nodemailer = require("nodemailer");
+const SMSService = require("../service/sms-service");
 
 module.exports = function(app) {
     app.post("/bill",Security.authorDetails, function(req, res) {
@@ -91,7 +92,19 @@ module.exports = function(app) {
     });
 
     app.put("/bill-update-status/:bid", Security.authorDetails, (req, res) => {
-        BillDao.findOneAndUpdate({_id: req.params.bid}, {status: req.body.status, reason: req.body.reason}, (err, bill) => {
+        BillDao.findOneAndUpdate({_id: req.params.bid}, {status: req.body.status}, (err, bill) => {
+
+            if (req.body.status == "Done") {
+                CustomerDao.findOne({_id: bill.customerId}, (err, customer) => {
+                    if (customer) {
+                        SMSService.sendMessage({
+                            to: "84" + (customer.customerPhone.replace(/ /g, "")).substring(1),
+                            text: `Đon hang ${bill.bill_number} cua Anh (Chi) tai LITI FLORIST da duoc giao thanh cong den nguoi nhan. Cam on Anh (Chi) da su dung san pham dich vu cua LITI FLORIST. L/H CSKH: ‎02435766338`
+                        })
+                    }
+                });
+            }
+
             BillDao.find({customerId: bill.customerId}, (err, bills) => {
                 let totalPay = _.sumBy(bills, b => getTotalBill(b));
                 CustomerDao.findOneAndUpdate({_id: bill.customerId}, {totalPay: totalPay, totalBill: bills.length}, () => {
