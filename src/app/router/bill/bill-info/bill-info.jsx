@@ -240,13 +240,26 @@ export class BillInfo extends React.Component {
 
                 </div>
 
+                <div className="row">
 
-                <Input
-                    label="Nội Dung Thiệp"
-                    textArea
-                    value={to.cardContent}
-                    onChange={(e) => onChange({...to, cardContent: e.target.value})}
-                />
+                    <InputNumber
+                        label="Phụ Thu"
+                        className="col"
+                        value={bill.surcharge}
+                        onChange={(value) => onChangeBill({...bill, surcharge: value})}
+                    />
+
+
+                    <Input
+                        className="col"
+                        label="Nội Dung Thiệp"
+                        textArea
+                        value={to.cardContent}
+                        onChange={(e) => onChange({...to, cardContent: e.target.value})}
+                    />
+                </div>
+
+
             </Fragment>
         );
     }

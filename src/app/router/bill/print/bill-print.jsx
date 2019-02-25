@@ -136,6 +136,9 @@ export class BillPrint extends React.Component {
                             <span>{bill.promotion.name}<br/></span>
                         )}
 
+                        <span>Phí Ship: <br/></span>
+                        <span>Phụ Thu: <br/></span>
+
                         {bill.to.paymentType == "Nợ" ? "Nợ" : "Tổng tiền: "}
                     </div>
                     <div className="col-md-2 col-xs-4 text-right" style={{fontSize: "12px"}}>
@@ -144,18 +147,23 @@ export class BillPrint extends React.Component {
                         <b>{formatNumber(getTotalSale())}</b>
                         <br/>
                         {bill.payOwe && (
-                            <b>{formatNumber(bill.customerInfo.spend.totalOwe)} <br/></b>
+                            <Fragment><b>{formatNumber(bill.customerInfo.spend.totalOwe)}</b><br/></Fragment>
                         )}
 
                         {bill.vipSaleType && (
-                            <b>{bill.vipSaleType} <br/></b>
+                            <Fragment><b>{bill.vipSaleType} </b><br/></Fragment>
                         )}
 
                         {bill.promotion && (
-                            <b>{bill.promotion.discount}% <br/></b>
+                            <Fragment><b>{bill.promotion.discount}%</b><br/></Fragment>
                         )}
 
-                        {formatNumber(getTotalBill(bill))}
+                        <b>{formatNumber(bill.to.shipMoney)}</b>
+                        <br/>
+                        <b>{formatNumber(bill.surcharge)}</b>
+                        <br/>
+
+                        <b>{formatNumber(parseInt(getTotalBill(bill)) + parseInt((bill.to.shipMoney || 0)) + parseInt((bill.surcharge || 0)))}</b>
                     </div>
                 </div>
 

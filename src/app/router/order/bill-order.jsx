@@ -367,6 +367,9 @@ export class BillOrderRoute extends RComponent {
                             <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
                     </div>
 
+                    <div>Phí ship: <b>{formatNumber(bill.to.shipMoney)}</b></div>
+                    <div>Phụ thu: <b>{formatNumber(bill.surcharge)}</b></div>
+
                     <div>Hình thức thanh toán: {bill.to.paymentType} { bill.to.paymentType == "Nợ" && !bill.isOwe && <span className="text-success">(Đã trả nợ)</span>}</div>
 
                     <div>

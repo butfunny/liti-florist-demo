@@ -69,4 +69,5 @@ module.exports = mongoose.model('BillDao', {
         quantity: Number,
         supplierID: String
     }],
+    surcharge: {type : Number, default: 0}
 }, "bills");
