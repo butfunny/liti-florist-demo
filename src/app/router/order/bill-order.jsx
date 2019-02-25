@@ -599,7 +599,7 @@ export class BillOrderRoute extends RComponent {
 
                         <DataTable
                             loading={loading}
-                            rows={billsFiltered}
+                            rows={sortBy(billsFiltered, "-lastTime")}
                             columns={columns}
                             rowStyling={(bill) => {
                                 if (new Date(bill.deliverTime).getTime() < new Date().getTime() + 1800000 && bill.status == "Chờ xử lý") return {background: "rgba(253,57,122, .1)"};
