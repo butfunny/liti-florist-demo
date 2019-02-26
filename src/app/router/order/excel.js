@@ -35,6 +35,12 @@ export const getCSVData = (bills, hasReason) => {
         "Tiền Hàng",
         "Tổng VAT",
         "Tổng Tiền",
+        "Phí Ship",
+        "Phụ Thu",
+        "Người hưởng 1",
+        "Người hưởng 2",
+        "Người hưởng 3",
+        "Người hưởng 4",
     ];
 
     if (hasReason) {
@@ -101,6 +107,12 @@ export const getCSVData = (bills, hasReason) => {
             ret.push(getTotalBillItems(bill));
             ret.push(getTotalBillVAT(bill));
             ret.push(getTotalBill(bill));
+            ret.push(bill.to.shipMoney);
+            ret.push(bill.surcharge);
+            ret.push(bill.surchargeMember[0] ? bill.surchargeMember[0].username : "");
+            ret.push(bill.surchargeMember[1] ? bill.surchargeMember[1].username : "");
+            ret.push(bill.surchargeMember[2] ? bill.surchargeMember[2].username : "");
+            ret.push(bill.surchargeMember[3] ? bill.surchargeMember[3].username : "");
 
             if (hasReason) {
                 ret.push(bill.reason)

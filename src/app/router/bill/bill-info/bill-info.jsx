@@ -249,17 +249,24 @@ export class BillInfo extends React.Component {
                         onChange={(value) => onChangeBill({...bill, surcharge: value})}
                     />
 
-
-                    <Input
+                    <InputTag
                         className="col"
-                        label="Nội Dung Thiệp"
-                        textArea
-                        value={to.cardContent}
-                        onChange={(e) => onChange({...to, cardContent: e.target.value})}
+                        label="Người hưởng"
+                        tags={bill.surchargeMember}
+                        onChange={(surchargeMember) => onChangeBill({...bill, surchargeMember})}
+                        list={sales.map(s => ({...s, isSale: true})).concat(florists)}
                     />
+
                 </div>
 
 
+                <Input
+                    className="col"
+                    label="Nội Dung Thiệp"
+                    textArea
+                    value={to.cardContent}
+                    onChange={(e) => onChange({...to, cardContent: e.target.value})}
+                />
             </Fragment>
         );
     }

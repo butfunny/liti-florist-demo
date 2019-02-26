@@ -369,6 +369,13 @@ export class BillOrderRoute extends RComponent {
 
                     {bill.to.shipMoney > 0 && <div>Phí ship: <b>{formatNumber(bill.to.shipMoney)}</b></div>}
                     {bill.surcharge > 0 && <div>Phụ thu: <b>{formatNumber(bill.surcharge)}</b></div>}
+                    {bill.surchargeMember.length > 0 && (
+                        <div>
+                            Người hưởng: <b>{bill.surchargeMember.map(u => u.username).join(", ")}</b>
+                        </div>
+                    )}
+
+                    <br/>
 
                     <div>Hình thức thanh toán: {bill.to.paymentType} { bill.to.paymentType == "Nợ" && !bill.isOwe && <span className="text-success">(Đã trả nợ)</span>}</div>
 

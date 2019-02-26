@@ -45,7 +45,8 @@ const initBill = {
     sales: [],
     florists: [],
     ships: [],
-    payOwe: false
+    payOwe: false,
+    surchargeMember: []
 };
 
 export class BillRoute extends RComponent {
