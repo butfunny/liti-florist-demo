@@ -25,6 +25,7 @@ import {Input} from "../../components/input/input";
 
 const regexBreakLine = /(?:\r\n|\r|\n)/g;
 import uniq from "lodash/uniq";
+import sortBy from "lodash/sortBy";
 
 export class GalleryRoute extends React.Component {
 
@@ -210,7 +211,7 @@ export class GalleryRoute extends React.Component {
                     </div>
 
                     <div className="row">
-                        {itemsFiltered.map((row, index) => (
+                        {sortBy(itemsFiltered, "created").map((row, index) => (
                             <div className="col" key={index}>
                                 <ImageCard
                                     row={row}

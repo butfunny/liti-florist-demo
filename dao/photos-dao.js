@@ -7,5 +7,6 @@ module.exports = mongoose.model('PhotosDao', {
     flowerType: String,
     title: String,
     items: [JSON],
-    price: Number
+    price: Number,
+    created: {type: Date, default: Date.now}
 }, "photos");
