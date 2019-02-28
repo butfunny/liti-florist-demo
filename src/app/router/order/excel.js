@@ -20,7 +20,6 @@ export const getCSVData = (bills, hasReason) => {
         "Nội dung đơn hàng",
         "Họ và tên khách hàng",
         "Giá trị đơn hàng chưa bao gồm thuế",
-        "Tên cửa hàng",
         "Hình thức thanh toán",
         "Chiết khấu",
         "Ship",
@@ -74,7 +73,6 @@ export const getCSVData = (bills, hasReason) => {
             ret.push(generateBillItemsText(bill.items));
             ret.push(bill.customer.customerName || "");
             ret.push(getTotalBillWithoutVAT(bill));
-            ret.push(premisesInfo.getActivePremise().name);
             ret.push(bill.to.paymentType || "");
             ret.push(getTotalBillDiscount(bill));
             ret.push(bill.ships && bill.ships[0] ? bill.ships[0].username : "");
