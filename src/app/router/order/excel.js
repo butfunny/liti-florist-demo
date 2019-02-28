@@ -11,7 +11,9 @@ import {premisesInfo} from "../../security/premises-info";
 export const getCSVData = (bills, hasReason) => {
 
 
-    let header = ["Ngày bán hàng",
+    let header = [
+        "Ngày giao hàng",
+        "Giờ nhận",
         "Mã đơn hàng",
         "Nội dung đơn hàng",
         "Họ và tên khách hàng",
@@ -28,8 +30,7 @@ export const getCSVData = (bills, hasReason) => {
         "Sale 2",
         "Sale 3",
         "Sale 4",
-        'Ngày giao hàng',
-        "Giờ nhận",
+        'Ngày bán hàng',
         "Ghi chú",
         "Nội dung thiệp",
         "Tiền Hàng",
@@ -62,7 +63,8 @@ export const getCSVData = (bills, hasReason) => {
     if (bills) {
         for (let bill of bills) {
             let ret = [];
-            ret.push(moment(bill.created).format("DD/MM/YYYY"));
+            ret.push(moment(bill.deliverTime).format("DD/MM/YYYY"));
+            ret.push(moment(bill.deliverTime).format("HH:mm"));
             ret.push(bill.bill_number);
             ret.push(generateBillItemsText(bill.items));
             ret.push(bill.customer.customerName || "");
@@ -100,8 +102,7 @@ export const getCSVData = (bills, hasReason) => {
             };
 
 
-            ret.push(moment(bill.deliverTime).format("DD/MM/YYYY"));
-            ret.push(moment(bill.deliverTime).format("HH:mm"));
+            ret.push(moment(bill.created).format("DD/MM/YYYY"));
             ret.push(bill.to.notes || "");
             ret.push(bill.to.cardContent || "");
             ret.push(getTotalBillItems(bill));
