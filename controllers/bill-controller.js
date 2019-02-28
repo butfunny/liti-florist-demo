@@ -131,6 +131,12 @@ module.exports = function(app) {
                 html: 'Nhân viên <b>' + req.user.username + "</b> đã cập nhật đơn hàng mã: <b>" + req.body.bill_number + "</b> với nội dung là: <b>" + req.body.reason + "</b>"
             };
 
+            let {payOwe, customerId} = req.body;
+            if (payOwe) {
+                BillDao.update({customerId: customerId}, {isOwe: false}, {multi: true}, function (err) {})
+            }
+
+
             transporter.sendMail(mailOptions, function(error, info){});
 
             LogsDao.create({
