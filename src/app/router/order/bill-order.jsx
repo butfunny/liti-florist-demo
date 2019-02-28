@@ -60,7 +60,8 @@ export class BillOrderRoute extends RComponent {
             logs: [],
             showOwe: false,
             statusFiltered: [],
-            paymentTypeFiltered: []
+            paymentTypeFiltered: [],
+            showDiscountBill: false
         };
 
         premisesInfo.onChange(() => {
@@ -237,7 +238,7 @@ export class BillOrderRoute extends RComponent {
 
     render() {
 
-        let {bills, customers, keyword, from, to, logs, showOwe, max_day_view_report, statusFiltered, paymentTypeFiltered, loading, uploading} = this.state;
+        let {bills, customers, keyword, from, to, logs, showOwe, max_day_view_report, statusFiltered, paymentTypeFiltered, loading, showDiscountBill} = this.state;
         let {history} = this.props;
 
         const getCustomer = (id) => customers.find(c => c._id == id) || {};
@@ -252,9 +253,24 @@ export class BillOrderRoute extends RComponent {
         let billsFiltered = bills ? filteredByKeys(formattedBills, ["customer.customerName", "customer.customerPhone", "bill_number"], keyword) : [];
         billsFiltered = billsFiltered.filter(i => {
 
-            if (showOwe) {
-                return i.isOwe
-            }
+
+            const filterOwe = (i) => {
+                if (showOwe) return i.isOwe;
+                return true;
+            };
+
+            const filterBillDiscount = (bill) => {
+                if (showDiscountBill) {
+                    for (let item of bill.items) {
+                        if (item.sale) return true;
+                    }
+
+                    return (bill.vipSaleType || (bill.promotion && bill.promotion.discount));
+                } else {
+                    return true;
+                }
+
+            };
 
             const filterStatus = (i) => {
                 if (statusFiltered.length == 0) return true;
@@ -273,7 +289,7 @@ export class BillOrderRoute extends RComponent {
                 }
             };
 
-            return filterType(i) && filterStatus(i);
+            return filterType(i) && filterStatus(i) && filterOwe(i) && filterBillDiscount(i);
         });
 
 
@@ -459,11 +475,6 @@ export class BillOrderRoute extends RComponent {
                         icon: <i className="fa fa-share "/>,
                         click: () => this.moveBill(bill)
                     }, {
-                        name: "Xóa Nợ",
-                        icon: <i className="fa fa-pencil "/>,
-                        hide: () => !bill.isOwe,
-                        click: () => this.removeOwe(bill)
-                    }, {
                         name: "Khiếu Nại",
                         icon: <i className="fa fa-flag text-danger"/>,
                         click: () => this.handleChangeStatus(bill, "Khiếu Nại"),
@@ -615,6 +626,16 @@ export class BillOrderRoute extends RComponent {
                                 onChange={(showOwe) => this.setState({showOwe})}
                                 label="Lọc Nợ"
                             />
+
+                            <div style={{
+                                marginTop: "10px"
+                            }}>
+                                <Checkbox
+                                    value={showDiscountBill}
+                                    onChange={(showDiscountBill) => this.setState({showDiscountBill})}
+                                    label="Lọc Đơn Chiết Khấu"
+                                />
+                            </div>
                         </div>
 
                         <DataTable
