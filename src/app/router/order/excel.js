@@ -7,6 +7,7 @@ import {
     getTotalBillWithoutVAT
 } from "../../common/common";
 import {premisesInfo} from "../../security/premises-info";
+import sortBy from "lodash/sortBy";
 
 export const getCSVData = (bills, hasReason) => {
 
@@ -61,7 +62,7 @@ export const getCSVData = (bills, hasReason) => {
 
 
     if (bills) {
-        for (let bill of bills) {
+        for (let bill of sortBy(bills, b => b.deliverTime)) {
             let ret = [];
             ret.push(moment(bill.deliverTime).format("DD/MM/YYYY"));
             ret.push(moment(bill.deliverTime).format("HH:mm"));
