@@ -15,6 +15,7 @@ export const getCSVData = (bills, hasReason) => {
     let header = [
         "Ngày giao hàng",
         "Giờ nhận",
+        "Cơ sở",
         "Mã đơn hàng",
         "Nội dung đơn hàng",
         "Họ và tên khách hàng",
@@ -60,12 +61,15 @@ export const getCSVData = (bills, hasReason) => {
         return ret;
     };
 
+    const premises = premisesInfo.getPremises();
+
 
     if (bills) {
         for (let bill of sortBy(bills, b => b.deliverTime)) {
             let ret = [];
             ret.push(moment(bill.deliverTime).format("DD/MM/YYYY"));
             ret.push(moment(bill.deliverTime).format("HH:mm"));
+            ret.push(premises.find(p => p._id == bill.premises_id)?.name);
             ret.push(bill.bill_number);
             ret.push(generateBillItemsText(bill.items));
             ret.push(bill.customer.customerName || "");

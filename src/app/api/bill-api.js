@@ -49,5 +49,8 @@ export const billApi = {
     },
     moveBill: (id, data) => {
         return api.put("/api/bill-move-premises/" + id, data)
+    },
+    exportExcelBill: (data) => {
+        return api.post(`/api/bills-report-excel`, data);
     }
 };

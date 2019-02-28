@@ -41,6 +41,7 @@ import {ButtonGroup} from "../../components/button-group/button-group";
 import {ImgPreview} from "../../components/img-repview/img-preview";
 import {DataTable} from "../../components/data-table/data-table";
 import {MoveBillModal} from "./move-bill-modal";
+import {ExportExcelBillModal} from "./export-excel-bill-modal";
 
 export class BillOrderRoute extends RComponent {
 
@@ -539,14 +540,23 @@ export class BillOrderRoute extends RComponent {
 
                             <span className="text-small text-primary">{bills ? bills.length : 0} Đơn</span>
 
-                            {bills && !loading && permission[user.role].indexOf("bill.excel") > -1 && (
-                                <CSVLink
-                                    data={getCSVData(billsFiltered)}
-                                    filename={"baocao.csv"}
+                            {permission[user.role].indexOf("bill.excel") > -1 && (
+                                <button
+                                    onClick={() => {
+                                        const modal = modals.openModal({
+                                            content: (
+                                                <ExportExcelBillModal
+                                                    from={from}
+                                                    to={to}
+                                                    onDismiss={() => modal.close()}
+                                                />
+                                            )
+                                        })
+                                    }}
                                     className="btn btn-primary btn-small">
                                     <span className="btn-text">Xuất Excel</span>
                                     <span className="loading-icon"><i className="fa fa-file-excel-o"/></span>
-                                </CSVLink>
+                                </button>
                             )}
 
                             <div className="text-info margin-top">

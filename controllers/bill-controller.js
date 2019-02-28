@@ -193,6 +193,15 @@ module.exports = function(app) {
             });
 
         })
+    });
+
+    app.post("/bills-report-excel", Security.authorDetails, (req, res) => {
+        BillDao.find({deliverTime: {$gte: req.body.from, $lt: req.body.to}, premises_id: {$in: req.body.selectedPremises}}, function(err, bills) {
+            CustomerDao.find({_id: {$in: bills.map(b => b.customerId)}}, (err, customers) => {
+                res.json({bills, customers});
+            });
+
+        });
     })
 
 };
