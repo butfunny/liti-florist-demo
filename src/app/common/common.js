@@ -425,6 +425,9 @@ export function getStartAndLastDayOfWeek(curr = new Date()) {
     let from = new Date(curr.setDate(first));
     let to = new Date(curr.setDate(last));
 
+    from.setHours(0, 0, 0, 0);
+    to.setHours(23, 59, 59, 99);
+
     return {
         from, to
     }
