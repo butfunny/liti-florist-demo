@@ -8,6 +8,8 @@ module.exports = {
             return 0;
         }
 
+        if (bill.status == "Hủy Đơn") return 0;
+
         if (bill.status != "Khiếu Nại") {
             let totalBillItems = sumBy(bill.items, item => {
                 let price = item.price * item.quantity;

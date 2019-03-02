@@ -449,53 +449,68 @@ export class BillOrderRoute extends RComponent {
             label: "Trạng Thái",
             width: "15%",
             minWidth: "100",
-            display: (bill) => bill.status
+            display: (bill) => (
+                <Select
+                    value={bill.status}
+                    list={status}
+                    onChange={(status) => {
+                        this.updateBill(bill, status)
+                    }}
+                />
+            )
         }, {
             label: "",
             width: "5%",
-            minWidth: "50",
+            minWidth: "100",
             display: (bill) => (
-                <ButtonGroup
-                    actions={[{
-                        name: "Thêm Ảnh",
-                        icon: <i className="fa fa-camera "/>,
-                        type: "upload",
-                        onUpload: (e) => this.handleChange(e, bill)
-                    }, {
-                        name: "Sửa",
-                        icon: <i className="fa fa-pencil "/>,
-                        hide: () => !isCanEditBill(bill),
-                        click: () => history.push(`/edit-bill/${bill._id}`)
-                    }, {
-                        name: "In",
-                        icon: <i className="fa fa-print "/>,
-                        click: () => this.print(bill)
-                    }, {
-                        name: "Chuyển Đơn",
-                        icon: <i className="fa fa-share "/>,
-                        click: () => this.moveBill(bill)
-                    }, {
-                        name: "Khiếu Nại",
-                        icon: <i className="fa fa-flag text-danger"/>,
-                        click: () => this.handleChangeStatus(bill, "Khiếu Nại"),
-                        hide: () => bill.status != "Done"
-                    }, {
-                        name: "Hủy Đơn",
-                        icon: <i className="fa fa-flag text-danger"/>,
-                        click: () => this.handleChangeStatus(bill, "Huỷ Đơn"),
-                        hide: () => bill.status != "Done"
-                    }, {
-                        name: `Xóa ${bill.status}`,
-                        icon: <i className="fa fa-eraser text-success"/>,
-                        click: () => this.handleChangeStatus(bill, "Done"),
-                        hide: () => ["Khiếu Nại", "Huỷ Đơn"].indexOf(bill.status) == -1
-                    }, {
-                        name: "Xóa Đơn",
-                        icon: <i className="fa fa-trash text-danger"/>,
-                        click: () => this.remove(bill),
-                        hide: () => !security.isHavePermission(["bill.delete"])
-                    }]}
-                />
+                <span>
+
+                    <button
+                        style={{
+                            marginRight: "5px"
+                        }}
+                        className="btn btn-primary btn-small" onClick={() => this.print(bill)}>
+                        <i className="fa fa-print "/>
+                    </button>
+
+                    <ButtonGroup
+                        actions={[{
+                            name: "Thêm Ảnh",
+                            icon: <i className="fa fa-camera "/>,
+                            type: "upload",
+                            onUpload: (e) => this.handleChange(e, bill)
+                        }, {
+                            name: "Sửa",
+                            icon: <i className="fa fa-pencil "/>,
+                            hide: () => !isCanEditBill(bill),
+                            click: () => history.push(`/edit-bill/${bill._id}`)
+                        }, {
+                            name: "Chuyển Đơn",
+                            icon: <i className="fa fa-share "/>,
+                            click: () => this.moveBill(bill)
+                        }, {
+                            name: "Khiếu Nại",
+                            icon: <i className="fa fa-flag text-danger"/>,
+                            click: () => this.handleChangeStatus(bill, "Khiếu Nại"),
+                            hide: () => bill.status != "Done"
+                        }, {
+                            name: "Hủy Đơn",
+                            icon: <i className="fa fa-flag text-danger"/>,
+                            click: () => this.handleChangeStatus(bill, "Huỷ Đơn"),
+                        }, {
+                            name: `Xóa ${bill.status}`,
+                            icon: <i className="fa fa-eraser text-success"/>,
+                            click: () => this.handleChangeStatus(bill, "Done"),
+                            hide: () => ["Khiếu Nại", "Huỷ Đơn"].indexOf(bill.status) == -1
+                        }, {
+                            name: "Xóa Đơn",
+                            icon: <i className="fa fa-trash text-danger"/>,
+                            click: () => this.remove(bill),
+                            hide: () => !security.isHavePermission(["bill.delete"])
+                        }]}
+                    />
+
+                </span>
             )
         }];
 
