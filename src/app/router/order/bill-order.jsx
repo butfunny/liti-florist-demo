@@ -452,7 +452,7 @@ export class BillOrderRoute extends RComponent {
             display: (bill) => (
                 <Select
                     value={bill.status}
-                    list={status}
+                    list={status.filter(s => ["Khiếu Nại", "Hủy Đơn"].indexOf(s) == -1)}
                     onChange={(status) => {
                         this.updateBill(bill, status)
                     }}
