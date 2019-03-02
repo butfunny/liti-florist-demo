@@ -114,7 +114,7 @@ export class ShipRoute extends React.Component {
 
                     <div style={{marginTop: "10px"}}>Địa chỉ nhận: <b>{bill.to.receiverPlace}</b></div>
                     <div>Người Nhận: <b>{bill.to.receiverName}</b></div>
-                    <div>SĐT: <b>{formatNumber(bill.to.receiverPhone)}</b></div>
+                    <div>SĐT: <b>{bill.to.receiverPhone}</b></div>
                 </div>
             ),
             width: "50%",
