@@ -83,7 +83,10 @@ export class BillOrderRoute extends RComponent {
                 bills: bills.map(bill => {
                     return {
                         ...bill,
-                        lastTime: new Date(bill.deliverTime).getTime() - new Date().getTime() < 0 ? 999999999 + Math.abs(new Date(bill.deliverTime).getTime() - new Date().getTime()) : new Date(bill.deliverTime).getTime() - new Date().getTime()
+                        lastTime: new Date(bill.deliverTime).getTime() - new Date().getTime() < 0 ? 999999999 + Math.abs(new Date(bill.deliverTime).getTime() - new Date().getTime()) : new Date(bill.deliverTime).getTime() - new Date().getTime(),
+                        sale: bill.sales.length > 0 ? bill.sales.map(s => `${s.username}${s.isOnl ? " (onl)" : ""}`).join(", ") : (bill.to || {}).saleEmp,
+                        florist: bill.florists.length > 0 ? bill.florists.map(s => s.username).join(", ") : (bill.to || {}).florist,
+                        ship: bill.ships.length > 0 && bill.ships.map(s => s.username).join(", ")
                     }
                 }), customers, logs, loading: false
             })
@@ -250,8 +253,9 @@ export class BillOrderRoute extends RComponent {
         })) : [];
         const status = ["Chờ xử lý", "Đang xử lý", "Chờ giao", "Done", "Khiếu Nại", "Huỷ Đơn"];
 
-        let billsFiltered = bills ? filteredByKeys(formattedBills, ["customer.customerName", "customer.customerPhone", "bill_number", "to.receiverName", "to.receiverPhone"], keyword) : [];
+        let billsFiltered = bills ? filteredByKeys(formattedBills, ["customer.customerName", "customer.customerPhone", "bill_number", "to.receiverName", "to.receiverPhone", "sale", "florist", "ship"], keyword) : [];
         billsFiltered = billsFiltered.filter(i => {
+
 
 
             const filterOwe = (i) => {
@@ -314,13 +318,15 @@ export class BillOrderRoute extends RComponent {
             label: "Thời gian",
             display: (bill) => (
                 <Fragment>
-                    {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
                     <div><b>{bill.bill_number}</b></div>
-                    <div>Sale: <b>{bill.sales.length > 0 ? bill.sales.map(s => `${s.username}${s.isOnl ? " (onl)" : ""}`).join(", ") : (bill.to || {}).saleEmp}</b>
+                    {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
+                    <br/>
+                    <br/>
+                    <div>Sale: <b>{bill.sale}</b>
                     </div>
-                    <div>Florist: <b>{bill.florists.length > 0 ? bill.florists.map(s => s.username).join(", ") : (bill.to || {}).florist}</b>
+                    <div>Florist: <b>{bill.florist}</b>
                     </div>
-                    <div>Ship: <b>{bill.ships.length > 0 && bill.ships.map(s => s.username).join(", ")}</b>
+                    <div>Ship: <b>{bill.ship}</b>
                     </div>
 
                     {bill.logs.length > 0 && (
