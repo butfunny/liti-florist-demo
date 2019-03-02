@@ -525,7 +525,7 @@ export class BillOrderRoute extends RComponent {
             <Layout
                 activeRoute="Đơn Chính"
             >
-                <div className="bill-report-route">
+                <div className="bill-report-route bill-report-route-2">
 
                     <div className="card">
                         <div className="card-title">
