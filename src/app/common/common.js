@@ -200,6 +200,31 @@ export const getSalary = (user, bill) => {
         return 0;
     }
 
+    if (user.role == "ship") {
+
+        const getSalary = () => {
+            if (new Date(bill.to.deliverTime).getHours() >= 18 && new Date(bill.to.deliverTime).getMinutes() >= 30) {
+                return 30000
+            }
+
+            if ((bill.to.distance || 0) < 10) {
+                return 15000;
+            }
+
+            return 20000;
+        };
+
+
+        console.log(getSalary());
+
+        return {
+            money: getSalary(),
+            percent: null,
+            isOnl
+        };
+    }
+
+
     let discount = 0;
 
     for (let item of bill.items) {
@@ -262,26 +287,6 @@ export const getSalary = (user, bill) => {
         }
     }
 
-    if (user.role == "ship") {
-
-        const getSalary = () => {
-            if (new Date(bill.to.deliverTime).getHours() >= 18 && new Date(bill.to.deliverTime).getMinutes() >= 30) {
-                return 30000
-            }
-
-            if ((bill.to.distance || 0) < 10) {
-                return 15000;
-            }
-
-            return 20000;
-        };
-
-        return {
-            money: getSalary(),
-            percent: null,
-            isOnl
-        };
-    }
 
     return {
         money: billTotal * charge / 100,
