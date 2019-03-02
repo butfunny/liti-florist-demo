@@ -77,7 +77,7 @@ export class ShipRoute extends React.Component {
                     <div style={{marginTop: "5px"}}>{bill.bill_number}</div>
                     <div>Ship: <b>{bill.ships &&
                     <b>{bill.ships.map(f => f.username).join(", ")}</b>}</b></div>
-                    <div>Phí Ship: <b>{formatNumber(bill.to.shipMoney)}</b></div>
+                    <div>Phí Ship: <b>{typeof bill.to.shipMoney == "string" ? 0 : formatNumber(bill.to.shipMoney)}</b></div>
                 </div>
             ),
             width: "20%",
