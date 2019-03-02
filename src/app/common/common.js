@@ -304,13 +304,13 @@ export const getShipFees = (bill, distance) => {
     if (billTotal >= 600000) {
         if (bill.vipSaleType) {
             if (distance <= 8) return 0;
-            return 5000 * Math.round(distance);
+            return 5000 * distance;
         } else {
             if (distance <= 5) return 0;
-            return 5000 *  Math.round(distance);
+            return 5000 *  distance;
         }
     } else {
-        return 5000 *  Math.round(distance)
+        return 5000 *  distance
     }
 
 
