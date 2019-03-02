@@ -316,7 +316,7 @@ export class BillOrderRoute extends RComponent {
                 <Fragment>
                     {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
                     <div><b>{bill.bill_number}</b></div>
-                    <div>Sale: <b>{bill.sales.length > 0 ? bill.sales.map(s => s.username).join(", ") : (bill.to || {}).saleEmp}</b>
+                    <div>Sale: <b>{bill.sales.length > 0 ? bill.sales.map(s => `${s.username}${s.isOnl ? " (onl)" : ""}`).join(", ") : (bill.to || {}).saleEmp}</b>
                     </div>
                     <div>Florist: <b>{bill.florists.length > 0 ? bill.florists.map(s => s.username).join(", ") : (bill.to || {}).florist}</b>
                     </div>
