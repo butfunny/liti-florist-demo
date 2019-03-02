@@ -250,7 +250,7 @@ export class BillOrderRoute extends RComponent {
         })) : [];
         const status = ["Chờ xử lý", "Đang xử lý", "Chờ giao", "Done", "Khiếu Nại", "Huỷ Đơn"];
 
-        let billsFiltered = bills ? filteredByKeys(formattedBills, ["customer.customerName", "customer.customerPhone", "bill_number"], keyword) : [];
+        let billsFiltered = bills ? filteredByKeys(formattedBills, ["customer.customerName", "customer.customerPhone", "bill_number", "to.receiverName", "to.receiverPhone"], keyword) : [];
         billsFiltered = billsFiltered.filter(i => {
 
 
