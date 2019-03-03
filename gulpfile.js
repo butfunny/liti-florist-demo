@@ -344,3 +344,114 @@ gulp.task("update-customer-same", () => {
     })
 
 });
+
+const convertToTendigit = (number) => {
+    const mapNumbers = {
+        "0169" : "039",
+        "0168" : "038",
+        "0167" : "037",
+        "0166" : "036",
+        "0164" : "034",
+        "0163" : "033",
+        "0162" : "032",
+        "0120" : "070",
+        "0121" : "079",
+        "0122" : "077",
+        "0126" : "076",
+        "0128" : "078",
+        "0124" : "084",
+        "0127" : "081",
+        "0129" : "082",
+        "0123" : "083",
+        "0125" : "085",
+        "0186" : "056",
+        "0188" : "058",
+        "0199" : "059",
+    };
+
+    const first4Letter = number.substr(0, 4);
+
+    if (mapNumbers[first4Letter]) {
+        return `${mapNumbers[first4Letter]}${number.substr(4)}`
+    }
+
+    return number;
+};
+
+gulp.task("update-customer-phone-number", () => {
+    const mongoose = require('mongoose');
+    mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/payment", {useNewUrlParser: true});
+    const CustomerDao = require("./dao/customer-dao");
+
+    const updateCustomerPhoneNumber = (customer) => {
+        return new Promise((resolve, reject)=>{
+            CustomerDao.updateOne({_id: customer._id}, {customerPhone: convertToTendigit(customer.customerPhone)}, () => {
+                resolve();
+            })
+        })
+    };
+
+
+    CustomerDao.find({}, (err, customers) => {
+
+        const upload = (index) => {
+            if (index == customers.length) {
+                console.log("finished");
+                mongoose.disconnect();
+            } else {
+                let item = customers[index];
+                console.log(`${index}/${customers.length}`);
+                if (!item.customerPhone || item.customerPhone.length == 0) {
+                    upload(index + 1);
+                } else {
+                    updateCustomerPhoneNumber(item).then(() => {
+                        upload(index + 1)
+                    })
+                }
+            }
+        };
+
+        upload(0);
+
+
+    })
+
+});
+
+gulp.task("update-customer-receiver-phone", () => {
+    const mongoose = require('mongoose');
+    mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/payment", {useNewUrlParser: true});
+    const BillDao = require("./dao/bill-dao");
+
+    const updateCustomerPhoneNumber = (bill) => {
+        return new Promise((resolve, reject)=>{
+            if (bill.to.receiverPhone && bill.to.receiverPhone.length >= 10) {
+                BillDao.updateOne({_id: bill._id}, {"to.receiverPhone": convertToTendigit(bill.to.receiverPhone)}, () => {
+                    resolve();
+                })
+            }  else {
+                resolve();
+            }
+
+        })
+    };
+
+
+    BillDao.find({}, (err, customers) => {
+
+        const upload = (index) => {
+            if (index == customers.length) {
+                console.log("finished");
+                mongoose.disconnect();
+            } else {
+                let item = customers[index];
+                console.log(`${index}/${customers.length}`);
+                updateCustomerPhoneNumber(item).then(() => {
+                    upload(index + 1)
+                })
+            }
+        };
+
+        upload(0);
+    })
+});
