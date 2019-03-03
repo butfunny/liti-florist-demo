@@ -128,12 +128,12 @@ export class BillInfo extends React.Component {
                         onSelect={(location) => {
                             onChange({...to, receiverPlace: location});
                             this.setState({error: false, distance: null});
-                            this.getDistance(location);
+                            // this.getDistance(location);
                         }}
                         onChange={(value) => {
                             onChange({...to, receiverPlace: value});
                             this.setState({error: false, distance: null});
-                            this.getDistance(value)
+                            // this.getDistance(value)
                         }}
                         displayAs={(location) => location}
                         defaultList={
