@@ -61,6 +61,8 @@ export class BillInfo extends React.Component {
         let {to, onChange, deliverTime, onChangeDeliverTime, bill, onChangeBill, sales, florists, ships} = this.props;
         let {error, distance, selectedSale} = this.state;
 
+        console.log(bill.ships);
+
 
         const billSaleSelected = bill.sales.find(b => b.username == selectedSale);
 
@@ -230,13 +232,29 @@ export class BillInfo extends React.Component {
 
 
                 <div className="row">
-                    <InputTag
-                        className="col"
-                        label="Ship"
-                        tags={bill.ships}
-                        onChange={(ships) => onChangeBill({...bill, ships})}
-                        list={ships}
-                    />
+                    <div className="col tag-sale">
+                        <Select
+                            label="Ship"
+                            value={bill.ships[0]?.username}
+                            onChange={(selectedShip) => onChangeBill({...bill, ships: [ships.find(s => s.username == selectedShip)]})}
+                            list={ships.map(s => s.username)}
+                        />
+
+                        {bill.ships.length > 0 && (
+                            <div className="bill-sale">
+                                <b>Loại Ship</b>
+
+                                {[{value: null, label: "Thường"}, {value: 1, label: "Ngoài Giờ"}, {value: 2, label: "Đơn Xa"}, {value: 3, label: "Đơn Xa và Ngoài Giờ"}].map((item, index) => (
+                                    <Radio
+                                        key={index}
+                                        label={item.label}
+                                        value={bill.ships[0].shipType == item.value}
+                                        onChange={() => onChangeBill({...bill, ships: [{...ships[0], shipType: item.value}]})}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </div>
 
                     <Input
                         className="col"

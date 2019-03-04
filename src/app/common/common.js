@@ -208,6 +208,15 @@ export const getSalary = (user, bill) => {
     if (user.role == "ship") {
 
         const getSalary = () => {
+
+            if (bill.ship[0].shipType !== undefined) {
+                if (bill.ship[0].shipType === null) return 15000;
+                if (bill.ship[0].shipType === "1") return 30000;
+                if (bill.ship[0].shipType === "2") return 20000;
+                if (bill.ship[0].shipType === "3") return 50000;
+            }
+
+
             if (new Date(bill.to.deliverTime).getHours() >= 18 && new Date(bill.to.deliverTime).getMinutes() >= 30) {
                 return 30000
             }
@@ -219,8 +228,6 @@ export const getSalary = (user, bill) => {
             return 20000;
         };
 
-
-        console.log(getSalary());
 
         return {
             money: getSalary(),

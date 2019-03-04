@@ -45,7 +45,8 @@ module.exports = mongoose.model('BillDao', {
     ships: [{
         user_id: String,
         username: String,
-        name: String
+        name: String,
+        shipType: String
     }],
     base_id: Number,
     premises_id: String,
