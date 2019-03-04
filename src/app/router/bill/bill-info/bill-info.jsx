@@ -69,6 +69,13 @@ export class BillInfo extends React.Component {
 
                 <div className="row">
                     <AutoCompleteNormal
+                        topInfo={<a onClick={() => {
+                            onChange({
+                                ...to,
+                                receiverName: bill.customer?.customerName,
+                                receiverPhone: bill.customer?.customerPhone
+                            })
+                        }}>Giống người đặt</a>}
                         label="Người Nhận Hàng*"
                         className="col"
                         value={to.receiverName}

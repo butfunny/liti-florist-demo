@@ -20,7 +20,7 @@ export class Input extends React.Component {
 
 
     render() {
-        let {label, className, value, readOnly, icon, error, type, onChange, onKeyDown, info, style, textArea, onFocus, onBlur} = this.props;
+        let {label, className, value, readOnly, icon, error, type, onChange, onKeyDown, info, style, textArea, onFocus, onBlur, topInfo} = this.props;
         let {focus} = this.state;
 
         const hasValue = () => {
@@ -65,6 +65,12 @@ export class Input extends React.Component {
                         readOnly={readOnly}
                         onKeyDown={onKeyDown}
                     />
+                )}
+
+                { topInfo && (
+                    <div className="top-info">
+                        {topInfo}
+                    </div>
                 )}
 
 
