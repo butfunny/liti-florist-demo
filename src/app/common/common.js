@@ -118,6 +118,10 @@ export const getTotalBillVAT = (bill) => {
 
 export const getTotalBillWithoutVAT = (bill) => {
 
+    if (bill.to && bill.to.paymentType && bill.to.paymentType.indexOf("Free") > -1) return 0;
+    if (bill.status == "Huỷ Đơn") return 0;
+
+
     let totalBillItems = sumBy(bill.items, item => {
         let price = item.price * item.quantity;
         if (item.sale) {
