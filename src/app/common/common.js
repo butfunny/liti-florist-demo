@@ -109,6 +109,7 @@ export const getTotalBillDiscount = (bill) => {
 export const getTotalBillVAT = (bill) => {
     return Math.round(sumBy(bill.items, item => {
         let price = item.price * item.quantity;
+        if (item.sale) price = price * item.sale / 100;
         if (item.vat) return price * item.vat / 100;
         return 0
     }));
