@@ -110,7 +110,7 @@ export const getCSVData = (bills, hasReason) => {
             ret.push(bill.to.cardContent || "");
             ret.push(getTotalBillItems(bill));
             ret.push(getTotalBillVAT(bill));
-            ret.push(getTotalBill(bill) + bill.to.shipMoney + bill.surcharge);
+            ret.push(parseInt(getTotalBill(bill)) + parseInt(bill.to.shipMoney) + parseInt(bill.surcharge));
             ret.push(bill.to.shipMoney);
             ret.push(bill.surcharge);
             ret.push(bill.surchargeMember[0] ? bill.surchargeMember[0].username : "");
