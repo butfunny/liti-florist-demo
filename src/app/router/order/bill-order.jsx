@@ -89,7 +89,7 @@ export class BillOrderRoute extends RComponent {
                         lastTime: new Date(bill.deliverTime).getTime() - new Date().getTime() < 0 ? 999999999 + Math.abs(new Date(bill.deliverTime).getTime() - new Date().getTime()) : new Date(bill.deliverTime).getTime() - new Date().getTime(),
                         sale: bill.sales.length > 0 ? bill.sales.map(s => `${s.username}${s.isOnl ? " (onl)" : ""}`).join(", ") : (bill.to || {}).saleEmp,
                         florist: bill.florists.length > 0 ? bill.florists.map(s => s.username).join(", ") : (bill.to || {}).florist,
-                        ship: bill.ships.length > 0 ? `${bill.ships[0].username} (${shipTypes.find(s => s.value == bill.ships[0].shipType).label})` : null
+                        ship: bill.ships.length > 0 ? `${bill.ships[0].username} ${bill.ships[0].shipType != undefined ? `(${shipTypes.find(s => s.value == bill.ships[0].shipType).label})` : ""}` : null
                     }
                 }), customers, logs, loading: false
             })
