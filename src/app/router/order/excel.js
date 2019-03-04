@@ -75,7 +75,11 @@ export const getCSVData = (bills, hasReason) => {
             ret.push(premises.find(p => p._id == bill.premises_id)?.name);
             ret.push(bill.to.paymentType || "");
             ret.push(getTotalBillDiscount(bill));
-            ret.push(bill.ships && bill.ships[0] ? bill.ships[0].username : "");
+            const shipTypes = [{value: null, label: ""}, {value: "1", label: "NG"}, {value: "2", label: "ĐX"}, {value: "3", label: "ĐXNG"}];
+            ret.push(bill.ships && bill.ships[0] ? `${bill.ships[0].username} ${bill.ships[0].shipType != undefined ? `(${shipTypes.find(s => s.value == bill.ships[0].shipType).label})` : ""}` : "");
+
+
+
 
 
             if (bill.florists) {
