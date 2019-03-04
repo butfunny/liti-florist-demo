@@ -34,7 +34,7 @@ export class BillInfo extends React.Component {
         googleMapsApi.getDistance({from: premisesInfo.getActivePremise().address, to}).then((distance) => {
             this.setState({distance});
             let {deliverTime, onChange, to, bill} = this.props;
-            onChange({...to, shipMoney: getShipFees(bill, distance.value / 1000), distance: distance.value / 1000})
+            onChange({...to, distance: distance.value / 1000})
         }, () => {
             this.setState({error: true, distance: 0})
         })
@@ -128,12 +128,12 @@ export class BillInfo extends React.Component {
                         onSelect={(location) => {
                             onChange({...to, receiverPlace: location});
                             this.setState({error: false, distance: null});
-                            // this.getDistance(location);
+                            this.getDistance(location);
                         }}
                         onChange={(value) => {
                             onChange({...to, receiverPlace: value});
                             this.setState({error: false, distance: null});
-                            // this.getDistance(value)
+                            this.getDistance(value)
                         }}
                         displayAs={(location) => location}
                         defaultList={
