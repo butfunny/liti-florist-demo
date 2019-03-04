@@ -26,6 +26,9 @@ export class BillPrint extends React.Component {
             return 0;
         });
 
+        const shipTypes = [{value: null, label: ""}, {value: "1", label: "NG"}, {value: "2", label: "ĐX"}, {value: "3", label: "ĐXNG"}];
+
+
 
         return (
             <div>
@@ -181,7 +184,7 @@ export class BillPrint extends React.Component {
                     <div className="col-md-3 col-xs-3">
                         SALE:
                         <br/>
-                        {bill.sales && <b>{bill.sales.map(f => f.username).join(", ")}</b>}
+                        {bill.sales && <b>{bill.sales.map(f => f.username).join(", ")} {bill.ships[0].shipType != undefined ? `(${shipTypes.find(s => s.value == bill.ships[0].shipType).label})` : ""}</b>}
                     </div>
                 </div>
 
