@@ -249,7 +249,7 @@ export class BillInfo extends React.Component {
                                         key={index}
                                         label={item.label}
                                         value={(bill.ships[0].shipType || 0) == item.value}
-                                        onChange={() => onChangeBill({...bill, ships: [{...ships[0], shipType: item.value}]})}
+                                        onChange={() => onChangeBill({...bill, ships: [{...bill.ships[0], shipType: item.value}]})}
                                     />
                                 ))}
                             </div>
