@@ -168,7 +168,10 @@ export class BillRoute extends RComponent {
                 }).then(() => {
 
                     this.setState({
-                        bill: initBill,
+                        bill: {
+                            ...initBill,
+                            deliverTime: bill.deliverTime
+                        },
                         saving: false
                     }, () => {
                         let {activePromotions} = this.state;
