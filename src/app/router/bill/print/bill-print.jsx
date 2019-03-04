@@ -179,12 +179,12 @@ export class BillPrint extends React.Component {
                     <div className="col-md-3 col-xs-3">
                         SHIP:
                         <br/>
-                        {bill.ships && <b>{bill.ships.map(f => f.username).join(", ")}</b>}
+                        {bill.ships && <b>{bill.ships.map(f => f.username).join(", ")} {bill.ships[0].shipType != undefined ? `(${shipTypes.find(s => s.value == bill.ships[0].shipType).label})` : ""}</b>}
                     </div>
                     <div className="col-md-3 col-xs-3">
                         SALE:
                         <br/>
-                        {bill.sales && <b>{bill.sales.map(f => f.username).join(", ")} {bill.ships[0].shipType != undefined ? `(${shipTypes.find(s => s.value == bill.ships[0].shipType).label})` : ""}</b>}
+                        {bill.sales && <b>{bill.sales.map(f => f.username).join(", ")}</b>}
                     </div>
                 </div>
 
