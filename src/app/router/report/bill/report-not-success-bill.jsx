@@ -100,7 +100,7 @@ export class ReportNotSuccessBill extends React.Component {
             label: "Lí Do",
             width: "40%",
             minWidth: "150",
-            display: (bill) => bill.reason.split(", ").map((reason, index) => (
+            display: (bill) => bill.reason?.split(", ").map((reason, index) => (
                 <div key={index}>
                     - {reason}
                 </div>
