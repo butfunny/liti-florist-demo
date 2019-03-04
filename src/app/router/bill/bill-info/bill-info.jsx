@@ -244,11 +244,11 @@ export class BillInfo extends React.Component {
                             <div className="bill-sale">
                                 <b>Loại Ship</b>
 
-                                {[{value: null, label: "Thường"}, {value: 1, label: "Ngoài Giờ"}, {value: 2, label: "Đơn Xa"}, {value: 3, label: "Đơn Xa và Ngoài Giờ"}].map((item, index) => (
+                                {[{value: 0, label: "Thường"}, {value: 1, label: "Ngoài Giờ"}, {value: 2, label: "Đơn Xa"}, {value: 3, label: "Đơn Xa và Ngoài Giờ"}].map((item, index) => (
                                     <Radio
                                         key={index}
                                         label={item.label}
-                                        value={bill.ships[0].shipType == item.value}
+                                        value={(bill.ships[0].shipType || 0) == item.value}
                                         onChange={() => onChangeBill({...bill, ships: [{...ships[0], shipType: item.value}]})}
                                     />
                                 ))}

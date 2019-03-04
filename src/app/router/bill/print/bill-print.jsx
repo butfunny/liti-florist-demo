@@ -26,7 +26,7 @@ export class BillPrint extends React.Component {
             return 0;
         });
 
-        const shipTypes = [{value: null, label: ""}, {value: "1", label: "NG"}, {value: "2", label: "ĐX"}, {value: "3", label: "ĐXNG"}];
+        const shipTypes = [{value: 0, label: ""}, {value: 1, label: "NG"}, {value: 2, label: "ĐX"}, {value: 3, label: "ĐXNG"}];
 
 
 
