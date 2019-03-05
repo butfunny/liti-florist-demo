@@ -89,6 +89,14 @@ export class OrderDraft extends React.Component {
                     header={bill.items.map((item, index) => (
                         <div key={index}>
                             <b>{item.quantity}</b> {item.name} {item.sale && <span className="text-primary">({item.sale}%)</span>} {item.vat ? <span className="text-primary"> - {item.vat}% VAT</span> : ""}
+
+                            <div style={{
+                                marginTop: "10px"
+                            }}>
+                                {bill.isOwe ?
+                                    <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> :
+                                    <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
+                            </div>
                         </div>
                     ))}
                     renderViewMoreBody={() => (
@@ -101,19 +109,7 @@ export class OrderDraft extends React.Component {
                                 <span>{bill.promotion.name}: <b>{bill.promotion.discount}%</b></span>
                             )}
 
-                            <div style={{
-                                marginTop: "10px"
-                            }}>
-                                {bill.to.paymentType == "Nợ" ? <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> : <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
-                            </div>
 
-                            <div style={{
-                                marginTop: "10px"
-                            }}>
-                                {bill.isOwe ?
-                                    <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> :
-                                    <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
-                            </div>
 
                             <div>Hình thức thanh toán: {bill.to.paymentType}</div>
 
