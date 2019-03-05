@@ -110,7 +110,7 @@ export class BillPrint extends React.Component {
                     <tbody>
                         {bill.items.map((item, index) => (
                             <tr key={index} style={{fontSize: "12px"}}>
-                                <td>{item.type} {item.name}</td>
+                                <td>{item.flowerType} {item.name}</td>
                                 <td className="text-right">{item.quantity}</td>
                                 <td className="text-right">{formatNumber(item.price)} </td>
                                 <td className="text-right">{item.sale ? item.sale + '%' : 'Không'}</td>
