@@ -208,6 +208,13 @@ module.exports = function(app) {
             });
 
         });
+    });
+
+
+    app.post("/bill-number", Security.authorDetails, function(req, res) {
+        BillDao.find({created: {$gte: req.body.from, $lt: req.body.to}, oldData: false}, function(err, bills) {
+            res.json({bills});
+        });
     })
 
 };

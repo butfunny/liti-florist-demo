@@ -14,6 +14,9 @@ export const billApi = {
     getAllBills: (time) => {
         return api.post(`/api/bills-all`, time)
     },
+    getBillNumbers: (time) => {
+        return api.post(`/api/bill-number`, time)
+    },
     updateBillStatus: (id, status) => {
         return api.put(`/api/bill-update-status/${id}`, status)
     },
