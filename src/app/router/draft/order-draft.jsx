@@ -107,6 +107,14 @@ export class OrderDraft extends React.Component {
                                 {bill.to.paymentType == "Nợ" ? <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> : <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
                             </div>
 
+                            <div style={{
+                                marginTop: "10px"
+                            }}>
+                                {bill.isOwe ?
+                                    <span className="text-danger"> Nợ: <b>{formatNumber(getTotalBill(bill))}</b></span> :
+                                    <span>Tổng tiền: <b>{formatNumber(getTotalBill(bill))}</b></span>}
+                            </div>
+
                             <div>Hình thức thanh toán: {bill.to.paymentType}</div>
 
                             <div>

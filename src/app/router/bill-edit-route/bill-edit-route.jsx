@@ -53,7 +53,7 @@ export class BillEditRoute extends React.Component {
 
     }
 
-    submitBill() {
+    submitBill(isPrint) {
 
         let {history} = this.props;
         let {bill} = this.state;
@@ -64,6 +64,17 @@ export class BillEditRoute extends React.Component {
                 reason,
                 update_time: new Date()
             }).then(() => {
+
+                if (isPrint) {
+                    PrintService.printBill({
+                        body: (
+                            <BillPrint
+                                bill={bill}
+                            />
+                        )
+                    })
+                }
+
                 confirmModal.alert("Cập nhật thành công");
                 history.push("/");
             })
@@ -188,6 +199,25 @@ export class BillEditRoute extends React.Component {
                                                     }
                                                     className="btn btn-primary" onClick={() => this.submitBill()}>
                                                 <span className="btn-text">Cập nhật</span>
+                                                { saving && <span className="loading-icon"><i className="fa fa-spinner fa-pulse"/></span>}
+                                            </button>
+
+                                            <button type="button"
+                                                    style={{
+                                                        marginLeft: "10px"
+                                                    }}
+                                                    disabled={
+                                                        bill.items.length == 0 ||
+                                                        saving ||
+                                                        bill.sales.length == 0 ||
+                                                        bill.customer.customerName.length == 0 ||
+                                                        bill.customer.customerPhone.length == 0 ||
+                                                        bill.to.receiverName.length == 0 ||
+                                                        bill.to.receiverPhone.length == 0 ||
+                                                        bill.to.receiverPlace.length == 0
+                                                    }
+                                                    className="btn btn-success" onClick={() => this.submitBill(true)}>
+                                                <span className="btn-text">Cập nhật và In</span>
                                                 { saving && <span className="loading-icon"><i className="fa fa-spinner fa-pulse"/></span>}
                                             </button>
                                         </div>
