@@ -61,7 +61,6 @@ export class BillInfo extends React.Component {
         let {to, onChange, deliverTime, onChangeDeliverTime, bill, onChangeBill, sales, florists, ships} = this.props;
         let {error, distance, selectedSale} = this.state;
 
-        console.log(bill.ships);
 
 
         const billSaleSelected = bill.sales.find(b => b.username == selectedSale);
@@ -277,7 +276,7 @@ export class BillInfo extends React.Component {
                     <InputTag
                         className="col"
                         label="Người hưởng"
-                        tags={bill.surchargeMember}
+                        tags={bill.surchargeMember || []}
                         onChange={(surchargeMember) => onChangeBill({...bill, surchargeMember})}
                         list={sales.map(s => ({...s, isSale: true})).concat(florists)}
                     />

@@ -20,14 +20,26 @@ export class OrderDraft extends React.Component {
             bills: null
         };
 
+        const shipTypes = [{value: 0, label: ""}, {value: 1, label: "NG"}, {value: 2, label: "ĐX"}, {value: 3, label: "ĐXNG"}];
+
         billApi.getBillDraftList().then((bills) => {
-            this.setState({bills})
+            this.setState({bills: bills.map(bill => ({
+                ...bill,
+                sale: bill.sales.length > 0 ? bill.sales.map(s => `${s.username}${s.isOnl ? " (onl)" : ""}`).join(", ") : (bill.to || {}).saleEmp,
+                florist: bill.florists.length > 0 ? bill.florists.map(s => s.username).join(", ") : (bill.to || {}).florist,
+                ship: bill.ships.length > 0 ? `${bill.ships[0].username} ${bill.ships[0].shipType != undefined ? `(${shipTypes.find(s => s.value == (bill.ships[0].shipType || 0)).label})` : ""}` : null
+            }))})
         });
 
         premisesInfo.onChange(() => {
             this.setState({bills: null});
             billApi.getBillDraftList().then((bills) => {
-                this.setState({bills})
+                this.setState({bills: bills.map(bill => ({
+                    ...bill,
+                    sale: bill.sales.length > 0 ? bill.sales.map(s => `${s.username}${s.isOnl ? " (onl)" : ""}`).join(", ") : (bill.to || {}).saleEmp,
+                    florist: bill.florists.length > 0 ? bill.florists.map(s => s.username).join(", ") : (bill.to || {}).florist,
+                    ship: bill.ships.length > 0 ? `${bill.ships[0].username} ${bill.ships[0].shipType != undefined ? `(${shipTypes.find(s => s.value == (bill.ships[0].shipType || 0)).label})` : ""}` : null
+                }))})
             });
         })
     }
@@ -50,9 +62,23 @@ export class OrderDraft extends React.Component {
         let {bills} = this.state;
         let {history} = this.props;
 
+        console.log(bills);
+
         let columns = [{
             label: "Thời gian",
-            display: (bill) => moment(bill.deliverTime).format("DD/MM/YYYY HH:mm"),
+            display: (bill) => (
+                <div>
+                    {moment(bill.deliverTime).format("DD/MM/YYYY HH:mm")}
+                    <br/>
+                    <br/>
+                    <div>Sale: <b>{bill.sale}</b>
+                    </div>
+                    <div>Florist: <b>{bill.florist}</b>
+                    </div>
+                    <div>Ship: <b>{bill.ship}</b>
+                    </div>
+                </div>
+            ),
             width: "30%",
             minWidth: "100",
             sortBy: (bill) => bill.deliverTime
