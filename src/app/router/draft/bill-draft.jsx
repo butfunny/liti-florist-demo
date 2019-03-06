@@ -265,7 +265,16 @@ export class BillDraft extends React.Component {
                                             </button>
 
                                             <button type="button"
-                                                    disabled={bill.items.length == 0 || saving || bill.sales.length == 0 || !bill.customer}
+                                                    disabled={
+                                                        bill.items.length == 0 ||
+                                                        saving ||
+                                                        !bill.customer ||
+                                                        bill.customer.customerName.length == 0 ||
+                                                        bill.customer.customerPhone.length == 0 ||
+                                                        bill.to.receiverName.length == 0 ||
+                                                        bill.to.receiverPhone.length == 0 ||
+                                                        bill.to.receiverPlace.length == 0
+                                                    }
                                                     className="btn btn-primary btn-icon"
                                                     onClick={() => this.submitBill(bill)}>
                                                 <span className="btn-text">Bán Hàng</span>
