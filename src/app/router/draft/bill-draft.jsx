@@ -45,7 +45,7 @@ export class BillDraft extends React.Component {
         super(props);
 
         this.state = {
-            bill: initBill,
+            bill: null,
             saving: false,
             locations: [],
             sales: [],
@@ -195,98 +195,109 @@ export class BillDraft extends React.Component {
                 hidden={!security.isHavePermission(["bill.edit"])}
 
             >
-                <div className="bill-route">
-                    <div className="row">
-                        <div className="col-md-4">
-                            <LeftSide
-                                items={bill.items}
-                                onChangeItems={(items) => this.setState({bill: {...bill, items}})}
-                            />
-                        </div>
 
-                        <div className="col-md-8">
-                            <BillView
-                                activePromotions={activePromotions}
-                                bill={bill}
-                                onChangeBill={(bill) => this.setState({bill})}
-                                onChangeItems={(items) => this.setState({bill: {...bill, items}})}
-                            />
-
-                            <Form
-                                formValue={bill.customer}
-                                validations={[]}
-                                render={(getInvalidByKey, invalidPaths) => (
-                                    <Fragment>
-                                        <BillCustomer
-                                            ref={elem => this.billCustomer = elem}
-                                            bill={bill}
-                                            onChangeBill={(bill) => this.setState({bill})}
-                                            onChangeLocations={(locations) => this.setState({locations})}
-                                            customer={bill.customer}
-                                            onChange={(customer) => {
-                                                this.setState({bill: {...bill, customer}})
-                                            }}
-                                            infoComponent={() => (
-                                                <BillInfo
-                                                    bill={bill}
-                                                    onChangeBill={(bill) => this.setState({bill})}
-                                                    florists={florists}
-                                                    sales={sales}
-                                                    ships={ships}
-                                                    ref={elem => this.billInfo = elem}
-                                                    locations={locations}
-                                                    deliverTime={bill.deliverTime}
-                                                    onChangeDeliverTime={(deliverTime) => this.setState({
-                                                        bill: {
-                                                            ...bill,
-                                                            deliverTime,
-                                                            to: {
-                                                                ...bill.to
-                                                            }
-                                                        }
-                                                    })}
-                                                    to={bill.to}
-                                                    onChange={(to) => this.setState({bill: {...bill, to}})}
-                                                />
-                                            )}
-                                        />
-
-
-                                        <div className="text-right btn-action">
-                                            <button type="button" className="btn btn-link"
-                                                    style={{
-                                                        marginRight: "5px"
-                                                    }}
-                                                    onClick={() => this.saveDraftBill(bill)}
-                                                    disabled={bill.items.length == 0 || savingDraft}
-                                            >Cập nhật đơn sẵn {savingDraft && <span className="btn-inner--icon"><i
-                                                className="fa fa-spinner fa-pulse"/></span>}
-                                            </button>
-
-                                            <button type="button"
-                                                    disabled={
-                                                        bill.items.length == 0 ||
-                                                        saving ||
-                                                        !bill.customer ||
-                                                        bill.customer.customerName.length == 0 ||
-                                                        bill.customer.customerPhone.length == 0 ||
-                                                        bill.to.receiverName.length == 0 ||
-                                                        bill.to.receiverPhone.length == 0 ||
-                                                        bill.to.receiverPlace.length == 0
-                                                    }
-                                                    className="btn btn-primary btn-icon"
-                                                    onClick={() => this.submitBill(bill)}>
-                                                <span className="btn-text">Bán Hàng</span>
-                                                {saving && <span className="loading-icon"><i
-                                                    className="fa fa-spinner fa-pulse"/></span>}
-                                            </button>
-                                        </div>
-                                    </Fragment>
-                                )}
-                            />
+                { !bill && (
+                    <div className="card">
+                        <div className="card-body">
+                            Loading...
                         </div>
                     </div>
-                </div>
+                )}
+
+                { bill && (
+                    <div className="bill-route">
+                        <div className="row">
+                            <div className="col-md-4">
+                                <LeftSide
+                                    items={bill.items}
+                                    onChangeItems={(items) => this.setState({bill: {...bill, items}})}
+                                />
+                            </div>
+
+                            <div className="col-md-8">
+                                <BillView
+                                    activePromotions={activePromotions}
+                                    bill={bill}
+                                    onChangeBill={(bill) => this.setState({bill})}
+                                    onChangeItems={(items) => this.setState({bill: {...bill, items}})}
+                                />
+
+                                <Form
+                                    formValue={bill.customer}
+                                    validations={[]}
+                                    render={(getInvalidByKey, invalidPaths) => (
+                                        <Fragment>
+                                            <BillCustomer
+                                                ref={elem => this.billCustomer = elem}
+                                                bill={bill}
+                                                onChangeBill={(bill) => this.setState({bill})}
+                                                onChangeLocations={(locations) => this.setState({locations})}
+                                                customer={bill.customer}
+                                                onChange={(customer) => {
+                                                    this.setState({bill: {...bill, customer}})
+                                                }}
+                                                infoComponent={() => (
+                                                    <BillInfo
+                                                        bill={bill}
+                                                        onChangeBill={(bill) => this.setState({bill})}
+                                                        florists={florists}
+                                                        sales={sales}
+                                                        ships={ships}
+                                                        ref={elem => this.billInfo = elem}
+                                                        locations={locations}
+                                                        deliverTime={bill.deliverTime}
+                                                        onChangeDeliverTime={(deliverTime) => this.setState({
+                                                            bill: {
+                                                                ...bill,
+                                                                deliverTime,
+                                                                to: {
+                                                                    ...bill.to
+                                                                }
+                                                            }
+                                                        })}
+                                                        to={bill.to}
+                                                        onChange={(to) => this.setState({bill: {...bill, to}})}
+                                                    />
+                                                )}
+                                            />
+
+
+                                            <div className="text-right btn-action">
+                                                <button type="button" className="btn btn-link"
+                                                        style={{
+                                                            marginRight: "5px"
+                                                        }}
+                                                        onClick={() => this.saveDraftBill(bill)}
+                                                        disabled={bill.items.length == 0 || savingDraft}
+                                                >Cập nhật đơn sẵn {savingDraft && <span className="btn-inner--icon"><i
+                                                    className="fa fa-spinner fa-pulse"/></span>}
+                                                </button>
+
+                                                <button type="button"
+                                                        disabled={
+                                                            bill.items.length == 0 ||
+                                                            saving ||
+                                                            !bill.customer ||
+                                                            bill.customer.customerName.length == 0 ||
+                                                            bill.customer.customerPhone.length == 0 ||
+                                                            bill.to.receiverName.length == 0 ||
+                                                            bill.to.receiverPhone.length == 0 ||
+                                                            bill.to.receiverPlace.length == 0
+                                                        }
+                                                        className="btn btn-primary btn-icon"
+                                                        onClick={() => this.submitBill(bill)}>
+                                                    <span className="btn-text">Bán Hàng</span>
+                                                    {saving && <span className="loading-icon"><i
+                                                        className="fa fa-spinner fa-pulse"/></span>}
+                                                </button>
+                                            </div>
+                                        </Fragment>
+                                    )}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
             </Layout>
         );
     }
