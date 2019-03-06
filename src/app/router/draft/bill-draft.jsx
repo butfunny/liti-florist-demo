@@ -161,7 +161,7 @@ export class BillDraft extends React.Component {
                             <BillPrint
                                 bill={{
                                     ...bill,
-                                    bill_number: `${formatValue(today.getDate())}${formatValue(today.getMonth() + 1)}${today.getFullYear()}${formatValue(bills.length + 1)}`,
+                                    bill_number: `${formatValue(today.getDate())}${formatValue(today.getMonth() + 1)}${today.getFullYear()}${formatValue((bills.length || 0) + 1)}`,
                                     isOwe: bill.to.paymentType == "Nợ",
                                     created_by: userInfo.getUser().username
                                 }}
