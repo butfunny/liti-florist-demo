@@ -241,8 +241,7 @@ export class BillDraft extends React.Component {
                                                             ...bill,
                                                             deliverTime,
                                                             to: {
-                                                                ...bill.to,
-                                                                shipMoney: this.billInfo.getShipMoney(deliverTime)
+                                                                ...bill.to
                                                             }
                                                         }
                                                     })}
