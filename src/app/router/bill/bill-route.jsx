@@ -342,8 +342,7 @@ export class BillRoute extends RComponent {
                                                             ...bill,
                                                             deliverTime,
                                                             to: {
-                                                                ...bill.to,
-                                                                shipMoney: this.billInfo.getShipMoney(deliverTime)
+                                                                ...bill.to
                                                             }
                                                         }
                                                     })}
