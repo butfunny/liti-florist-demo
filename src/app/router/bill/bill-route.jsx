@@ -157,7 +157,7 @@ export class BillRoute extends RComponent {
             billApi.getBillNumbers({from: today, to: endDay}).then(({bills}) => {
                 billApi.createBill({
                     ...bill,
-                    bill_number: `${formatValue(today.getDate())}${formatValue(today.getMonth() + 1)}${today.getFullYear()}${formatValue((bills.length || 0) + 1)}`,
+                    bill_number: `${formatValue(today.getDate())}${formatValue(today.getMonth() + 1)}${today.getFullYear().toString().substring(2)}${formatValue((bills.length || 0) + 1)}`,
                     customerId: customerID,
                     premises_id: getCurrentPremise(),
                     status: "Chờ xử lý",
