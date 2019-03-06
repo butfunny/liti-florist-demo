@@ -143,10 +143,10 @@ export class BillDraft extends React.Component {
         };
 
         getCustomerID().then((customerID) => {
-            billApi.getAllBills({from: today, to: endDay}).then((bills) => {
+            billApi.getBillNumbers({from: today, to: endDay}).then((bills) => {
                 billApi.createBill({
                     ...bill,
-                    bill_number: `${formatValue(today.getDate())}${formatValue(today.getMonth() + 1)}${today.getFullYear()}${formatValue(bills.length + 1)}`,
+                    bill_number: `${formatValue(today.getDate())}${formatValue(today.getMonth() + 1)}${today.getFullYear()}${formatValue((bills.length || 0) + 1)}`,
                     customerId: customerID,
                     premises_id: getCurrentPremise(),
                     status: "Chờ xử lý",
