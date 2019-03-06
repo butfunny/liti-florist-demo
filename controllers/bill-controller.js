@@ -99,7 +99,7 @@ module.exports = function(app) {
                     if (customer) {
                         SMSService.sendMessage({
                             to: "84" + (customer.customerPhone.replace(/ /g, "")).substring(1),
-                            text: `Đon hang ${bill.bill_number} cua Anh (Chi) tai LITI FLORIST da duoc giao thanh cong den nguoi nhan. Cam on Anh (Chi) da su dung san pham dich vu cua LITI FLORIST. L/H CSKH: ‎02435766338`
+                            text: `Đon hang ${bill.bill_number} cua Anh (Chi) tai LITI FLORIST da duoc giao thanh cong den nguoi nhan. Cam on A/C da su dung san pham dich vu cua LITI FLORIST. L/H CSKH: 02435766338`
                         })
                     }
                 });
