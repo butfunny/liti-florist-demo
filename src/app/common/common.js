@@ -207,6 +207,12 @@ export const getSalary = (user, bill) => {
 
     if (user.role == "ship") {
 
+        if (bill.ship.length == 0) return {
+            money: 0,
+            percent: null,
+            isOnl
+        };
+
         const getSalary = () => {
 
             if (bill.ship[0].shipType !== undefined) {
