@@ -71,8 +71,8 @@ export const getCSVData = (bills, hasReason) => {
             ret.push(moment(bill.deliverTime).format("HH:mm"));
             ret.push(bill.bill_number);
             ret.push(generateBillItemsText(bill.items));
-            ret.push(bill.customer.customerName || "");
-            ret.push(bill.customer.customerPhone || "");
+            ret.push(bill.customer?.customerName || "");
+            ret.push(bill.customer?.customerPhone || "");
             ret.push(getTotalBillWithoutVAT(bill));
             ret.push(premises.find(p => p._id == bill.premises_id)?.name);
             ret.push(bill.to.paymentType || "");
