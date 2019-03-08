@@ -23,11 +23,13 @@ import {RevenueReportBill} from "../revenue/revenue-report-bill";
 import {ReportBillPaymentType} from "./report-bill-payment-type";
 import {ReportBillColor} from "./report-bill-color";
 import {ReportBillType} from "./report-bill-type";
+import {defaultReportDayService} from "../../app-router";
+
 export class ReportBillRoute extends React.Component {
 
     constructor(props) {
         super(props);
-        let {from, to} = getStartAndLastDayOfWeek();
+        let {from, to} = defaultReportDayService.get();
 
         this.state = {
             from,
@@ -147,7 +149,8 @@ export class ReportBillRoute extends React.Component {
                                 label="Từ Ngày"
                                 value={from}
                                 onChange={(from) => {
-                                    this.setState({from})
+                                    this.setState({from});
+                                    defaultReportDayService.set({...defaultReportDayService.get(), from});
                                 }}
                             />
 
@@ -156,7 +159,8 @@ export class ReportBillRoute extends React.Component {
                                 label="Tới Ngày"
                                 value={to}
                                 onChange={(to) => {
-                                    this.setState({to})
+                                    this.setState({to});
+                                    defaultReportDayService.set({...defaultReportDayService.get(), to});
                                 }}
                             />
 

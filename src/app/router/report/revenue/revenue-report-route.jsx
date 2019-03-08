@@ -19,13 +19,14 @@ import {RevenueReportSupplier} from "./revenue-report-supplier";
 import {Select} from "../../../components/select/select";
 import {CSVLink} from "react-csv";
 import {ReportEmployee} from "./report-employee";
+import {defaultReportDayService} from "../../app-router";
 
 
 export class RevenueReportRoute extends React.Component {
 
     constructor(props) {
         super(props);
-        let {from, to} = getStartAndLastDayOfWeek();
+        let {from, to} = defaultReportDayService.get();
 
         this.state = {
             from,
@@ -137,7 +138,8 @@ export class RevenueReportRoute extends React.Component {
                                     label="Từ Ngày"
                                     value={from}
                                     onChange={(from) => {
-                                        this.setState({from})
+                                        this.setState({from});
+                                        defaultReportDayService.set({...defaultReportDayService.get(), from});
                                     }}
                                 />
 
@@ -146,7 +148,8 @@ export class RevenueReportRoute extends React.Component {
                                     label="Tới Ngày"
                                     value={to}
                                     onChange={(to) => {
-                                        this.setState({to})
+                                        this.setState({to});
+                                        defaultReportDayService.set({...defaultReportDayService.get(), to});
                                     }}
                                 />
 

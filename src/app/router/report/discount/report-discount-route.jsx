@@ -9,11 +9,12 @@ import {Select} from "../../../components/select/select";
 import {ColumnViewMore} from "../../../components/column-view-more/column-view-more";
 import sortBy from "lodash/sortBy";
 import {DataTable} from "../../../components/data-table/data-table";
+import {defaultReportDayService} from "../../app-router";
 export class ReportDiscountRoute extends React.Component {
 
     constructor(props) {
         super(props);
-        let {from, to} = getStartAndLastDayOfWeek();
+        let {from, to} = defaultReportDayService.get();
 
         this.state = {
             from,
@@ -126,7 +127,8 @@ export class ReportDiscountRoute extends React.Component {
                                 label="Từ Ngày"
                                 value={from}
                                 onChange={(from) => {
-                                    this.setState({from})
+                                    this.setState({from});
+                                    defaultReportDayService.set({...defaultReportDayService.get(), from});
                                 }}
                             />
 
@@ -135,7 +137,8 @@ export class ReportDiscountRoute extends React.Component {
                                 label="Tới Ngày"
                                 value={to}
                                 onChange={(to) => {
-                                    this.setState({to})
+                                    this.setState({to});
+                                    defaultReportDayService.set({...defaultReportDayService.get(), to});
                                 }}
                             />
 

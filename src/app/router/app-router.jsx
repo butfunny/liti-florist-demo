@@ -37,6 +37,16 @@ import {ReportFlower} from "./request-warehouse/report-flower/report-flower";
 import {MemoriesRoute} from "./memories/memories-route";
 import {ReportSupplier} from "./report/supplier/report-supplier";
 import {FloristEditRoute} from "./florist-working-route/florist-edit-route";
+import {getStartAndLastDayOfWeek} from "../common/common";
+
+let defaultReportDays = getStartAndLastDayOfWeek();
+export const defaultReportDayService = {
+    get: () => defaultReportDays,
+    set: (updated) => {
+        defaultReportDays = {...updated}
+    }
+};
+
 export class AppRouter extends React.Component {
 
     constructor(props) {

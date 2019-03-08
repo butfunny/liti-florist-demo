@@ -12,11 +12,12 @@ import sumBy from "lodash/sumBy"
 import groupBy from "lodash/groupBy"
 import {modals} from "../../../components/modal/modals";
 import {HistoryItemModal} from "./history-item-modal";
+import {defaultReportDayService} from "../../app-router";
 export class ReportSupplier extends React.Component {
 
     constructor(props) {
         super(props);
-        let {from, to} = getStartAndLastDayOfWeek();
+        let {from, to} = defaultReportDayService.get();
 
         this.state = {
             from,
@@ -204,7 +205,8 @@ export class ReportSupplier extends React.Component {
                                 label="Từ Ngày"
                                 value={from}
                                 onChange={(from) => {
-                                    this.setState({from})
+                                    this.setState({from});
+                                    defaultReportDayService.set({...defaultReportDayService.get(), from});
                                 }}
                             />
 
@@ -213,7 +215,8 @@ export class ReportSupplier extends React.Component {
                                 label="Tới Ngày"
                                 value={to}
                                 onChange={(to) => {
-                                    this.setState({to})
+                                    this.setState({to});
+                                    defaultReportDayService.set({...defaultReportDayService.get(), to});
                                 }}
                             />
 
