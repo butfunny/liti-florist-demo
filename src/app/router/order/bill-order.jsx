@@ -195,8 +195,7 @@ export class BillOrderRoute extends RComponent {
                     "Khách cần gấp ko kịp đợi làm ",
                     "Order trước nhưng đến hôm đó ko có hoa như mẫu khách thích",
                     "Khách ok ảnh hoa nhưng ship đến KH không nhận do ảnh đẹp còn thực tế xấu",
-                    "Giá cao",
-                    "Khác"
+                    "Giá cao"
                 ]
             }, {
                 type: "Khiếu Nại",
@@ -208,8 +207,7 @@ export class BillOrderRoute extends RComponent {
                     "Sai sót chủ quan từ Ship nội bộ",
                     "Sai sót từ ship ngoài",
                     "Sai sót từ vận hành/SM",
-                    "Lỗi khách quan",
-                    "Khác"
+                    "Lỗi khách quan"
                 ]
             }];
 
@@ -506,6 +504,7 @@ export class BillOrderRoute extends RComponent {
                             name: "Hủy Đơn",
                             icon: <i className="fa fa-flag text-danger"/>,
                             click: () => this.handleChangeStatus(bill, "Huỷ Đơn"),
+                            hide: () => bill.status == "Huỷ Đơn"
                         }, {
                             name: `Xóa ${bill.status}`,
                             icon: <i className="fa fa-eraser text-success"/>,

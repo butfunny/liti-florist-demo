@@ -94,6 +94,12 @@ module.exports = function(app) {
     app.put("/bill-update-status/:bid", Security.authorDetails, (req, res) => {
         BillDao.findOneAndUpdate({_id: req.params.bid}, {status: req.body.status}, (err, bill) => {
 
+            if (req.body.reason) {
+                BillDao.findOneAndUpdate({_id: req.params.bid}, {reason: req.body.reason}, () => {
+
+                })
+            }
+
             if (req.body.status == "Done") {
                 CustomerDao.findOne({_id: bill.customerId}, (err, customer) => {
                     if (customer) {

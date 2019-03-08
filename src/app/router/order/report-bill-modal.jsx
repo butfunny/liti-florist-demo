@@ -1,17 +1,19 @@
 import React from "react";
 import {Checkbox} from "../../components/checkbox/checkbox";
+import {Input} from "../../components/input/input";
 export class ReportBillModal extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            reasons: []
+            reasons: [],
+            anotherReason: ""
         }
     }
 
     render() {
 
-        let {reasons} = this.state;
+        let {reasons, anotherReason} = this.state;
         let {type, list, onDismiss, onClose} = this.props;
 
         return (
@@ -36,11 +38,26 @@ export class ReportBillModal extends React.Component {
                                 label={reason}
                             />
                         ))}
+
+                        <div style={{
+                            marginTop: "20px"
+                        }}>
+                            <Input
+                                label="Khác"
+                                value={anotherReason}
+                                onChange={(e) => this.setState({anotherReason: e.target.value})}
+                            />
+                        </div>
                     </div>
 
                     <div className="modal-footer">
                         <button type="button" className="btn btn-link  ml-auto" data-dismiss="modal" onClick={() => onDismiss()}>Đóng</button>
-                        <button type="submit" className="btn btn-primary btn-icon" onClick={() => onClose(reasons)}>
+                        <button type="submit" className="btn btn-primary btn-icon"
+                                disabled={reasons.length == 0 && anotherReason.length == 0}
+                                onClick={() => {
+                                    if (anotherReason.length > 0) onClose(reasons.concat(anotherReason));
+                                    else onClose(reasons);
+                                }}>
                             Lưu
                         </button>
 
