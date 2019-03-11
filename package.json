@@ -72,7 +72,7 @@
   "scripts": {
     "dev": "gulp dev",
     "build": "gulp build-prod",
-    "start": "node build/dev-server.js",
+    "start": "node dev/dev-server.js",
     "deploy": "gulp deploy"
   }
 }
